@@ -9,16 +9,28 @@ import (
 
 const (
 	name = "testifylint"
+	doc  = "Checks usage of github.com/stretchr/testify."
 )
 
 func New() *analysis.Analyzer {
+	tl := &testifyLint{
+		checkers: []checkers.Checker{
+			checkers.Len,
+		},
+	}
+
 	return &analysis.Analyzer{
 		Name: name,
-		Run:  run,
+		Doc:  doc,
+		Run:  tl.run,
 	}
 }
 
-func run(pass *analysis.Pass) (interface{}, error) {
+type testifyLint struct {
+	checkers []checkers.Checker
+}
+
+func (tl *testifyLint) run(pass *analysis.Pass) (interface{}, error) {
 	// TODO: inspector
 
 	inspect := func(node ast.Node) bool {
@@ -36,13 +48,16 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		fn := se.Sel
 
 		if pOk && isAssertOrRequire(pkg.Name) {
-			checkers.Len(pass, checkers.FnMeta{
+			fn := checkers.FnMeta{
 				Pos:        ce.Lparen,
 				Pkg:        pkg.Name,
 				Name:       fn.Name,
 				IsFormatFn: strings.HasSuffix(fn.Name, "f"),
 				Args:       ce.Args,
-			})
+			}
+			for _, check := range tl.checkers {
+				check(pass, fn)
+			}
 		}
 		return true
 	}
