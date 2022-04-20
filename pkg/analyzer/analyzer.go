@@ -9,7 +9,7 @@ import (
 
 const (
 	name = "testifylint"
-	doc  = "Checks usage of github.com/stretchr/testify."
+	doc  = "InvalidChecks usage of github.com/stretchr/testify."
 )
 
 func New() *analysis.Analyzer {

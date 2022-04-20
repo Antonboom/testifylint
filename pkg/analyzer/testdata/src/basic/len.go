@@ -177,26 +177,38 @@ func TestLen(t *testing.T) {
 			assert.Len(t, a, 3)
 			assert.Len(t, a, 3, "msg")
 			assert.Len(t, a, 3, "msg with arg %d", 42)
+			assert.Lenf(t, a, 3, "msg")
+			assert.Lenf(t, a, 3, "msg with arg %d", 42)
 
 			assert.Len(t, aPtr, 3)
 			assert.Len(t, aPtr, 3, "msg")
 			assert.Len(t, aPtr, 3, "msg with arg %d", 42)
+			assert.Lenf(t, aPtr, 3, "msg")
+			assert.Lenf(t, aPtr, 3, "msg with arg %d", 42)
 
 			assert.Len(t, s, 3)
 			assert.Len(t, s, 3, "msg")
 			assert.Len(t, s, 3, "msg with arg %d", 42)
+			assert.Lenf(t, s, 3, "msg")
+			assert.Lenf(t, s, 3, "msg with arg %d", 42)
 
 			assert.Len(t, m, 3)
 			assert.Len(t, m, 3, "msg")
 			assert.Len(t, m, 3, "msg with arg %d", 42)
+			assert.Lenf(t, m, 3, "msg")
+			assert.Lenf(t, m, 3, "msg with arg %d", 42)
 
 			assert.Len(t, ss, 3)
 			assert.Len(t, ss, 3, "msg")
 			assert.Len(t, ss, 3, "msg with arg %d", 42)
+			assert.Lenf(t, ss, 3, "msg")
+			assert.Lenf(t, ss, 3, "msg with arg %d", 42)
 
 			assert.Len(t, c, 3)
 			assert.Len(t, c, 3, "msg")
 			assert.Len(t, c, 3, "msg with arg %d", 42)
+			assert.Lenf(t, c, 3, "msg")
+			assert.Lenf(t, c, 3, "msg with arg %d", 42)
 		}
 
 		{
@@ -383,26 +395,38 @@ func TestLen(t *testing.T) {
 			require.Len(t, a, 3)
 			require.Len(t, a, 3, "msg")
 			require.Len(t, a, 3, "msg with arg %d", 42)
+			require.Lenf(t, a, 3, "msg")
+			require.Lenf(t, a, 3, "msg with arg %d", 42)
 
 			require.Len(t, aPtr, 3)
 			require.Len(t, aPtr, 3, "msg")
 			require.Len(t, aPtr, 3, "msg with arg %d", 42)
+			require.Lenf(t, aPtr, 3, "msg")
+			require.Lenf(t, aPtr, 3, "msg with arg %d", 42)
 
 			require.Len(t, s, 3)
 			require.Len(t, s, 3, "msg")
 			require.Len(t, s, 3, "msg with arg %d", 42)
+			require.Lenf(t, s, 3, "msg")
+			require.Lenf(t, s, 3, "msg with arg %d", 42)
 
 			require.Len(t, m, 3)
 			require.Len(t, m, 3, "msg")
 			require.Len(t, m, 3, "msg with arg %d", 42)
+			require.Lenf(t, m, 3, "msg")
+			require.Lenf(t, m, 3, "msg with arg %d", 42)
 
 			require.Len(t, ss, 3)
 			require.Len(t, ss, 3, "msg")
 			require.Len(t, ss, 3, "msg with arg %d", 42)
+			require.Lenf(t, ss, 3, "msg")
+			require.Lenf(t, ss, 3, "msg with arg %d", 42)
 
 			require.Len(t, c, 3)
 			require.Len(t, c, 3, "msg")
 			require.Len(t, c, 3, "msg with arg %d", 42)
+			require.Lenf(t, c, 3, "msg")
+			require.Lenf(t, c, 3, "msg with arg %d", 42)
 		}
 
 		{
