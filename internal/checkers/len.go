@@ -12,17 +12,13 @@ func Len(pass *analysis.Pass, fn FnMeta) {
 			return len(fn.Args) >= 3 && xor(isLenCall(fn.Args[1]), isLenCall(fn.Args[2]))
 
 		case "True", "Truef":
-			return len(fn.Args) >= 2 && isLenComparison(fn.Args[1])
+			return len(fn.Args) >= 2 && isComparisonWithLen(fn.Args[1])
 		}
 		return false
 	}()
 
 	if invalid {
-		if fn.IsFormatFn {
-			pass.Reportf(fn.Pos, "use %s.Lenf", fn.Pkg)
-		} else {
-			pass.Reportf(fn.Pos, "use %s.Len", fn.Pkg)
-		}
+		reportUseFunction(pass, fn, "Len")
 	}
 }
 
@@ -40,11 +36,10 @@ func isLenCall(e ast.Expr) bool {
 	return fn.Name == "len" && len(ce.Args) == 1
 }
 
-func isLenComparison(e ast.Expr) bool {
+func isComparisonWithLen(e ast.Expr) bool {
 	be, ok := e.(*ast.BinaryExpr)
 	if !ok {
 		return false
 	}
-
 	return xor(isLenCall(be.X), isLenCall(be.Y))
 }

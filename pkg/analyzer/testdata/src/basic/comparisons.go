@@ -6,6 +6,10 @@ func TestComparisonInsteadOfEqual(t *testing.T) {
 
 }
 
+func TestComparisonInsteadOfNotEqual(t *testing.T) {
+
+}
+
 func TestComparisonInsteadOfGreater(t *testing.T) {
 
 }

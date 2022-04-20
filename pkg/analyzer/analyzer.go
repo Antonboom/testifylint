@@ -15,6 +15,7 @@ const (
 func New() *analysis.Analyzer {
 	tl := &testifyLint{
 		checkers: []checkers.Checker{
+			checkers.BoolCompare,
 			checkers.Len,
 		},
 	}

@@ -206,6 +206,12 @@ func TestLen(t *testing.T) {
 			assert.Equalf(t, len(m), len(ss), "msg")
 			assert.Equalf(t, len(c), len(aPtr), "msg with arg %d", 42)
 
+			assert.NotEqual(t, len(a), len(s))
+			assert.NotEqual(t, len(s), len(a), "msg")
+			assert.NotEqual(t, len(a), len(aPtr), "msg with arg %d", 42)
+			assert.NotEqualf(t, len(m), len(ss), "msg")
+			assert.NotEqualf(t, len(c), len(aPtr), "msg with arg %d", 42)
+
 			assert.True(t, len(a) == len(s))
 			assert.True(t, len(a) == len(s), "msg")
 			assert.True(t, len(ss) == len(s), "msg with arg %d", 42)
@@ -405,6 +411,12 @@ func TestLen(t *testing.T) {
 			require.Equal(t, len(a), len(aPtr), "msg with arg %d", 42)
 			require.Equalf(t, len(m), len(ss), "msg")
 			require.Equalf(t, len(c), len(aPtr), "msg with arg %d", 42)
+
+			require.NotEqual(t, len(a), len(s))
+			require.NotEqual(t, len(s), len(a), "msg")
+			require.NotEqual(t, len(a), len(aPtr), "msg with arg %d", 42)
+			require.NotEqualf(t, len(m), len(ss), "msg")
+			require.NotEqualf(t, len(c), len(aPtr), "msg with arg %d", 42)
 
 			require.True(t, len(a) == len(s))
 			require.True(t, len(a) == len(s), "msg")
