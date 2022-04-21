@@ -1,6 +1,8 @@
 package basic
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestHTTPStatusCode(t *testing.T) {
 	// f-functions

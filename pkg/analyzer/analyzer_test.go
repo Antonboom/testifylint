@@ -14,3 +14,8 @@ func TestTestifyLint(t *testing.T) {
 	}
 	analysistest.Run(t, analysistest.TestData(), analyzer.New(), pkgs...)
 }
+
+// TODO: тесты флагов
+// https://github.com/mweb/floatcompare/blob/main/analyzer_test.go
+
+// TODO: писать имя чекера перед ассертом
