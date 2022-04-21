@@ -3,9 +3,14 @@ package main
 import (
 	"fmt"
 	"strings"
+	"text/template"
 )
 
-func ExpandCheck(check check, pkg string, dynamicArgValue string) string {
+var fm = template.FuncMap{
+	"ExpandCheck": ExpandCheck,
+}
+
+func ExpandCheck(check Check, pkg string, dynamicArgValue string) string {
 	args := make([]string, len(check.Args))
 	copy(args, check.Args)
 	args[check.DynamicArgIndex] = fmt.Sprintf(args[check.DynamicArgIndex], dynamicArgValue)
@@ -29,7 +34,7 @@ func withSuffixF(s string) string {
 func buildCheck(pkg, fn string, args []string, reportedMsg string) string {
 	s := fmt.Sprintf("%s.%s(%s)", pkg, fn, strings.Join(args, ", "))
 	if reportedMsg != "" {
-		s += fmt.Sprintf("// want %q", fmt.Sprintf(reportedMsg, pkg))
+		s += fmt.Sprintf(" // want %q", fmt.Sprintf(reportedMsg, pkg))
 	}
 	return s
 }
