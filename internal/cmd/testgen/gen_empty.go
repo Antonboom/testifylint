@@ -10,23 +10,47 @@ func (g EmptyCasesGenerator) Template() *template.Template {
 }
 
 func (g EmptyCasesGenerator) Data() any {
-	return struct {
-		Pkgs          []string
-		Vars          []string
+	type test struct {
 		InvalidChecks []Check
 		ValidChecks   []Check
+	}
+
+	return struct {
+		Pkgs     []string
+		Vars     []string
+		Empty    test
+		NotEmpty test
 	}{
 		Pkgs: []string{"assert", "require"},
 		Vars: []string{"a", "aPtr", "s", "m", "ss", "c"},
-		InvalidChecks: []Check{
-			{Fn: "Len", Args: []string{"t", "%s", "0"}, DynamicArgIndex: 1, ReportedMsg: "use %s.Empty"},
-			{Fn: "Equal", Args: []string{"t", "len(%s)", "0"}, DynamicArgIndex: 1, ReportedMsg: "use %s.Empty"},
-			{Fn: "Equal", Args: []string{"t", "0", "len(%s)"}, DynamicArgIndex: 2, ReportedMsg: "use %s.Empty"},
-			{Fn: "True", Args: []string{"t", "len(%s) == 0"}, DynamicArgIndex: 1, ReportedMsg: "use %s.Empty"},
-			{Fn: "True", Args: []string{"t", "0 == len(%s)"}, DynamicArgIndex: 1, ReportedMsg: "use %s.Empty"},
+		Empty: test{
+			InvalidChecks: []Check{
+				{Fn: "Len", Args: []string{"t", "%s", "0"}, DynamicArgIndex: 1, ReportedMsg: "use %s.Empty"},
+				{Fn: "Equal", Args: []string{"t", "len(%s)", "0"}, DynamicArgIndex: 1, ReportedMsg: "use %s.Empty"},
+				{Fn: "Equal", Args: []string{"t", "0", "len(%s)"}, DynamicArgIndex: 2, ReportedMsg: "use %s.Empty"},
+				{Fn: "True", Args: []string{"t", "len(%s) == 0"}, DynamicArgIndex: 1, ReportedMsg: "use %s.Empty"},
+				{Fn: "True", Args: []string{"t", "0 == len(%s)"}, DynamicArgIndex: 1, ReportedMsg: "use %s.Empty"},
+			},
+			ValidChecks: []Check{
+				{Fn: "Empty", Args: []string{"t", "%s"}, DynamicArgIndex: 1},
+			},
 		},
-		ValidChecks: []Check{
-			{Fn: "Empty", Args: []string{"t", "%s"}, DynamicArgIndex: 1},
+		NotEmpty: test{
+			InvalidChecks: []Check{
+				{Fn: "NotEqual", Args: []string{"t", "len(%s)", "0"}, DynamicArgIndex: 1, ReportedMsg: "use %s.NotEmpty"},
+				{Fn: "NotEqual", Args: []string{"t", "0", "len(%s)"}, DynamicArgIndex: 2, ReportedMsg: "use %s.NotEmpty"},
+				{Fn: "Greater", Args: []string{"t", "len(%s)", "0"}, DynamicArgIndex: 1, ReportedMsg: "use %s.NotEmpty"},
+				{Fn: "GreaterOrEqual", Args: []string{"t", "len(%s)", "1"}, DynamicArgIndex: 1, ReportedMsg: "use %s.NotEmpty"},
+				{Fn: "True", Args: []string{"t", "len(%s) != 0"}, DynamicArgIndex: 1, ReportedMsg: "use %s.NotEmpty"},
+				{Fn: "True", Args: []string{"t", "0 != len(%s)"}, DynamicArgIndex: 1, ReportedMsg: "use %s.NotEmpty"},
+				{Fn: "True", Args: []string{"t", "len(%s) > 0"}, DynamicArgIndex: 1, ReportedMsg: "use %s.NotEmpty"},
+				{Fn: "True", Args: []string{"t", "0 < len(%s)"}, DynamicArgIndex: 1, ReportedMsg: "use %s.NotEmpty"},
+				{Fn: "True", Args: []string{"t", "len(%s) >= 1"}, DynamicArgIndex: 1, ReportedMsg: "use %s.NotEmpty"},
+				{Fn: "True", Args: []string{"t", "1 <= len(%s)"}, DynamicArgIndex: 1, ReportedMsg: "use %s.NotEmpty"},
+			},
+			ValidChecks: []Check{
+				{Fn: "NotEmpty", Args: []string{"t", "%s"}, DynamicArgIndex: 1},
+			},
 		},
 	}
 }
@@ -56,14 +80,41 @@ func TestEmptyAsserts(t *testing.T) {
 	t.Run("{{ $pkg }}", func(t *testing.T) {
 		{{- range $i, $var := $.Vars }}
 		{
-			{{- range $i, $check := $.InvalidChecks }}
+			{{- range $i, $check := $.Empty.InvalidChecks }}
 			{{ ExpandCheck $check $pkg $var }}
 			{{ end }}}
 		{{ end }}
 		// Valid {{ $pkg }}s.
 		{{ range $i, $var := $.Vars }}
 		{
-			{{- range $i, $check := $.ValidChecks }}
+			{{- range $i, $check := $.Empty.ValidChecks }}
+			{{ ExpandCheck $check $pkg $var }}
+			{{ end }}}
+		{{ end -}}
+	})
+	{{ end }}}
+
+func TestNotEmptyAsserts(t *testing.T) {
+	var (
+		a    [0]int
+		aPtr *[0]int
+		s    []int
+		m    map[int]int
+		ss   string
+		c    chan int
+	)
+	{{ range $i, $pkg := .Pkgs }}
+	t.Run("{{ $pkg }}", func(t *testing.T) {
+		{{- range $i, $var := $.Vars }}
+		{
+		{{- range $i, $check := $.NotEmpty.InvalidChecks }}
+			{{ ExpandCheck $check $pkg $var }}
+			{{ end }}}
+		{{ end }}
+		// Valid {{ $pkg }}s.
+		{{ range $i, $var := $.Vars }}
+		{
+			{{- range $i, $check := $.NotEmpty.ValidChecks }}
 			{{ ExpandCheck $check $pkg $var }}
 			{{ end }}}
 		{{ end -}}
