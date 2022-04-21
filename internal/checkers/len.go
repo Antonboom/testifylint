@@ -18,7 +18,7 @@ func Len(pass *analysis.Pass, fn FnMeta) {
 	}()
 
 	if invalid {
-		reportUseFunction(pass, fn, "Len")
+		r.ReportUseFunction(pass, fn, "Len")
 	}
 }
 

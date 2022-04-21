@@ -447,6 +447,10 @@ func TestLen(t *testing.T) {
 			require.True(t, len(ss) == len(s), "msg with arg %d", 42)
 			require.Truef(t, len(aPtr) == len(m), "msg")
 			require.Truef(t, len(c) == len(c), "msg with arg %d", 42)
+
+			//TODO:
+			// >= len(s)
+			// <, >, !=, NotEqual
 		}
 	})
 }

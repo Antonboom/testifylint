@@ -15,10 +15,10 @@ func BoolCompare(pass *analysis.Pass, fn FnMeta) {
 
 		switch lhs, rhs := fn.Args[1], fn.Args[2]; {
 		case xor(isUntypedTrue(lhs), isUntypedTrue(rhs)):
-			reportUseFunction(pass, fn, "True")
+			r.ReportUseFunction(pass, fn, "True")
 
 		case xor(isUntypedFalse(lhs), isUntypedFalse(rhs)):
-			reportUseFunction(pass, fn, "False")
+			r.ReportUseFunction(pass, fn, "False")
 		}
 
 	case "NotEqual", "NotEqualf":
@@ -28,10 +28,10 @@ func BoolCompare(pass *analysis.Pass, fn FnMeta) {
 
 		switch lhs, rhs := fn.Args[1], fn.Args[2]; {
 		case xor(isUntypedTrue(lhs), isUntypedTrue(rhs)):
-			reportUseFunction(pass, fn, "False")
+			r.ReportUseFunction(pass, fn, "False")
 
 		case xor(isUntypedFalse(lhs), isUntypedFalse(rhs)):
-			reportUseFunction(pass, fn, "True")
+			r.ReportUseFunction(pass, fn, "True")
 		}
 
 	case "True", "Truef":
@@ -41,10 +41,10 @@ func BoolCompare(pass *analysis.Pass, fn FnMeta) {
 
 		switch arg := fn.Args[1]; {
 		case isComparisonWithTrue(arg, token.EQL), isComparisonWithFalse(arg, token.NEQ):
-			reportNeedSimplifyCheck(pass, fn)
+			r.ReportNeedSimplifyCheck(pass, fn)
 
 		case isComparisonWithTrue(arg, token.NEQ), isComparisonWithFalse(arg, token.EQL), isNegation(arg):
-			reportUseFunction(pass, fn, "False")
+			r.ReportUseFunction(pass, fn, "False")
 		}
 
 	case "False", "Falsef":
@@ -54,10 +54,10 @@ func BoolCompare(pass *analysis.Pass, fn FnMeta) {
 
 		switch arg := fn.Args[1]; {
 		case isComparisonWithTrue(arg, token.EQL), isComparisonWithFalse(arg, token.NEQ):
-			reportNeedSimplifyCheck(pass, fn)
+			r.ReportNeedSimplifyCheck(pass, fn)
 
 		case isComparisonWithTrue(arg, token.NEQ), isComparisonWithFalse(arg, token.EQL), isNegation(arg):
-			reportUseFunction(pass, fn, "True")
+			r.ReportUseFunction(pass, fn, "True")
 		}
 	}
 }

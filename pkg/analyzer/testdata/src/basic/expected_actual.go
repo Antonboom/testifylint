@@ -1,6 +1,8 @@
 package basic
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestConfusedWithExpectedActual(t *testing.T) {
 	//type user struct{ name string }
