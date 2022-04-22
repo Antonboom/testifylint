@@ -451,6 +451,7 @@ func TestLen(t *testing.T) {
 			//TODO:
 			// >= len(s)
 			// <, >, !=, NotEqual
+			// False, Less, Greater
 		}
 	})
 }

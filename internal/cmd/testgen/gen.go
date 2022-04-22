@@ -8,8 +8,9 @@ type TestsGenerator interface {
 }
 
 type Check struct {
-	Fn              string   // "Equal"
-	Args            []string // ["t", "len(%s)", "0"]
-	DynamicArgIndex int      // 1
-	ReportedMsg     string   // "use assert.Empty"
+	Fn          string // "Equal"
+	ArgsTmpl    string // "t, "len(%s), "0"
+	ReportedMsg string // "use %s.Empty"
 }
+
+// TODO: валидация ArgsTmpl, ".*, .*, .*"

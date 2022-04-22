@@ -9,7 +9,8 @@ import (
 )
 
 var generators = map[string]TestsGenerator{
-	"pkg/analyzer/testdata/src/basic/empty_generated.go": new(EmptyCasesGenerator),
+	"pkg/analyzer/testdata/src/basic/empty_generated.go":         EmptyCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/float_compare_generated.go": FloatCompareCasesGenerator{},
 }
 
 func main() {
@@ -28,7 +29,7 @@ func genTests(output string, g TestsGenerator) error {
 
 	formatted, err := format.Source(b.Bytes())
 	if err != nil {
-		fmt.Println(b.String())
+		_ = ioutil.WriteFile(output, b.Bytes(), 0644) // For debug.
 		return fmt.Errorf("fmt result: %v", err)
 	}
 

@@ -9,13 +9,14 @@ import (
 
 const (
 	name = "testifylint"
-	doc  = "InvalidChecks usage of github.com/stretchr/testify."
+	doc  = "Checks usage of github.com/stretchr/testify."
 )
 
 func New() *analysis.Analyzer {
 	tl := &testifyLint{
-		checkers: []checkers.Checker{
+		checkers: []checkers.Checker{ // Order is important!
 			checkers.BoolCompare,
+			checkers.FloatCompare,
 			checkers.Empty,
 			checkers.Len,
 		},

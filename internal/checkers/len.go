@@ -36,7 +36,7 @@ func isLenCall(e ast.Expr) bool {
 	return fn.Name == "len" && len(ce.Args) == 1
 }
 
-func isComparisonWithLen(e ast.Expr) bool {
+func isComparisonWithLen(e ast.Expr) bool { // TODO: use isBinaryExpr
 	be, ok := e.(*ast.BinaryExpr)
 	if !ok {
 		return false
