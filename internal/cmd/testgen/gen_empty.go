@@ -112,7 +112,7 @@ func TestNotEmptyAsserts(t *testing.T) {
 	t.Run("{{ $pkg }}", func(t *testing.T) {
 		{{- range $vi, $vars := $.VarSets }}
 		{
-		{{- range $ci, $check := $.NotEmpty.InvalidChecks }}
+			{{- range $ci, $check := $.NotEmpty.InvalidChecks }}
 			{{ ExpandCheck $check $pkg $vars }}
 			{{ end }}}
 		{{ end }}

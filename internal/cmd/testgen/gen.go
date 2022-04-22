@@ -11,6 +11,7 @@ type Check struct {
 	Fn          string // "Equal"
 	ArgsTmpl    string // "t, "len(%s), "0"
 	ReportedMsg string // "use %s.Empty"
+	MsgAsIs     bool
 }
 
 // TODO: валидация ArgsTmpl, ".*, .*, .*"
