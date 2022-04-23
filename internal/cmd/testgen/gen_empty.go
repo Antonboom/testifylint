@@ -2,8 +2,7 @@ package main
 
 import "text/template"
 
-type EmptyCasesGenerator struct {
-}
+type EmptyCasesGenerator struct{}
 
 func (g EmptyCasesGenerator) Template() *template.Template {
 	return emptyCasesTmpl
@@ -23,7 +22,7 @@ func (g EmptyCasesGenerator) Data() any {
 	}{
 		Pkgs: []string{"assert", "require"},
 		VarSets: [][]any{
-			{"a"}, {"aPtr"}, {"s"}, {"m"}, {"ss"}, {"c"},
+			{"arr"}, {"arrPtr"}, {"sl"}, {"mp"}, {"str"}, {"ch"}, // TODO: keep only arr like in len-gen
 		},
 		Empty: test{
 			InvalidChecks: []Check{
@@ -74,12 +73,12 @@ import (
 
 func TestEmptyAsserts(t *testing.T) {
 	var (
-		a    [0]int
-		aPtr *[0]int
-		s    []int
-		m    map[int]int
-		ss   string
-		c    chan int
+		arr    [0]int
+		arrPtr *[0]int
+		sl     []int
+		mp     map[int]int
+		str    string
+		ch     chan int
 	)
 	{{ range $pi, $pkg := .Pkgs }}
 	t.Run("{{ $pkg }}", func(t *testing.T) {
@@ -101,12 +100,12 @@ func TestEmptyAsserts(t *testing.T) {
 
 func TestNotEmptyAsserts(t *testing.T) {
 	var (
-		a    [0]int
-		aPtr *[0]int
-		s    []int
-		m    map[int]int
-		ss   string
-		c    chan int
+		arr    [0]int
+		arrPtr *[0]int
+		sl     []int
+		mp     map[int]int
+		str    string
+		ch     chan int
 	)
 	{{ range $pi, $pkg := .Pkgs }}
 	t.Run("{{ $pkg }}", func(t *testing.T) {

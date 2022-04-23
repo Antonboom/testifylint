@@ -2,8 +2,7 @@ package main
 
 import "text/template"
 
-type FloatCompareCasesGenerator struct {
-}
+type FloatCompareCasesGenerator struct{}
 
 func (g FloatCompareCasesGenerator) Template() *template.Template {
 	return floatCmpCasesTmpl

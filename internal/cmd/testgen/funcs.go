@@ -5,6 +5,16 @@ import (
 	"strings"
 )
 
+func Product(a, b []any) [][]any {
+	result := make([][]any, 0, len(a))
+	for _, v := range a {
+		for _, vv := range b {
+			result = append(result, []any{v, vv})
+		}
+	}
+	return result
+}
+
 func ExpandCheck(check Check, pkg string, argValues []any) string {
 	args := check.ArgsTmpl
 

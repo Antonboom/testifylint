@@ -11,1358 +11,1358 @@ import (
 
 func TestEmptyAsserts(t *testing.T) {
 	var (
-		a    [0]int
-		aPtr *[0]int
-		s    []int
-		m    map[int]int
-		ss   string
-		c    chan int
+		arr    [0]int
+		arrPtr *[0]int
+		sl     []int
+		mp     map[int]int
+		str    string
+		ch     chan int
 	)
 
 	t.Run("assert", func(t *testing.T) {
 		{
-			assert.Len(t, a, 0)                         // want "use assert.Empty"
-			assert.Len(t, a, 0, "msg")                  // want "use assert.Empty"
-			assert.Len(t, a, 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Lenf(t, a, 0, "msg")                 // want "use assert.Emptyf"
-			assert.Lenf(t, a, 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Len(t, arr, 0)                         // want "use assert.Empty"
+			assert.Len(t, arr, 0, "msg")                  // want "use assert.Empty"
+			assert.Len(t, arr, 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Lenf(t, arr, 0, "msg")                 // want "use assert.Emptyf"
+			assert.Lenf(t, arr, 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.Equal(t, len(a), 0)                         // want "use assert.Empty"
-			assert.Equal(t, len(a), 0, "msg")                  // want "use assert.Empty"
-			assert.Equal(t, len(a), 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Equalf(t, len(a), 0, "msg")                 // want "use assert.Emptyf"
-			assert.Equalf(t, len(a), 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Equal(t, len(arr), 0)                         // want "use assert.Empty"
+			assert.Equal(t, len(arr), 0, "msg")                  // want "use assert.Empty"
+			assert.Equal(t, len(arr), 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Equalf(t, len(arr), 0, "msg")                 // want "use assert.Emptyf"
+			assert.Equalf(t, len(arr), 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.Equal(t, 0, len(a))                         // want "use assert.Empty"
-			assert.Equal(t, 0, len(a), "msg")                  // want "use assert.Empty"
-			assert.Equal(t, 0, len(a), "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Equalf(t, 0, len(a), "msg")                 // want "use assert.Emptyf"
-			assert.Equalf(t, 0, len(a), "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Equal(t, 0, len(arr))                         // want "use assert.Empty"
+			assert.Equal(t, 0, len(arr), "msg")                  // want "use assert.Empty"
+			assert.Equal(t, 0, len(arr), "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Equalf(t, 0, len(arr), "msg")                 // want "use assert.Emptyf"
+			assert.Equalf(t, 0, len(arr), "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.True(t, len(a) == 0)                         // want "use assert.Empty"
-			assert.True(t, len(a) == 0, "msg")                  // want "use assert.Empty"
-			assert.True(t, len(a) == 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Truef(t, len(a) == 0, "msg")                 // want "use assert.Emptyf"
-			assert.Truef(t, len(a) == 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.True(t, len(arr) == 0)                         // want "use assert.Empty"
+			assert.True(t, len(arr) == 0, "msg")                  // want "use assert.Empty"
+			assert.True(t, len(arr) == 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Truef(t, len(arr) == 0, "msg")                 // want "use assert.Emptyf"
+			assert.Truef(t, len(arr) == 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.True(t, 0 == len(a))                         // want "use assert.Empty"
-			assert.True(t, 0 == len(a), "msg")                  // want "use assert.Empty"
-			assert.True(t, 0 == len(a), "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Truef(t, 0 == len(a), "msg")                 // want "use assert.Emptyf"
-			assert.Truef(t, 0 == len(a), "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.True(t, 0 == len(arr))                         // want "use assert.Empty"
+			assert.True(t, 0 == len(arr), "msg")                  // want "use assert.Empty"
+			assert.True(t, 0 == len(arr), "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Truef(t, 0 == len(arr), "msg")                 // want "use assert.Emptyf"
+			assert.Truef(t, 0 == len(arr), "msg with arg %d", 42) // want "use assert.Emptyf"
 		}
 
 		{
-			assert.Len(t, aPtr, 0)                         // want "use assert.Empty"
-			assert.Len(t, aPtr, 0, "msg")                  // want "use assert.Empty"
-			assert.Len(t, aPtr, 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Lenf(t, aPtr, 0, "msg")                 // want "use assert.Emptyf"
-			assert.Lenf(t, aPtr, 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Len(t, arrPtr, 0)                         // want "use assert.Empty"
+			assert.Len(t, arrPtr, 0, "msg")                  // want "use assert.Empty"
+			assert.Len(t, arrPtr, 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Lenf(t, arrPtr, 0, "msg")                 // want "use assert.Emptyf"
+			assert.Lenf(t, arrPtr, 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.Equal(t, len(aPtr), 0)                         // want "use assert.Empty"
-			assert.Equal(t, len(aPtr), 0, "msg")                  // want "use assert.Empty"
-			assert.Equal(t, len(aPtr), 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Equalf(t, len(aPtr), 0, "msg")                 // want "use assert.Emptyf"
-			assert.Equalf(t, len(aPtr), 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Equal(t, len(arrPtr), 0)                         // want "use assert.Empty"
+			assert.Equal(t, len(arrPtr), 0, "msg")                  // want "use assert.Empty"
+			assert.Equal(t, len(arrPtr), 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Equalf(t, len(arrPtr), 0, "msg")                 // want "use assert.Emptyf"
+			assert.Equalf(t, len(arrPtr), 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.Equal(t, 0, len(aPtr))                         // want "use assert.Empty"
-			assert.Equal(t, 0, len(aPtr), "msg")                  // want "use assert.Empty"
-			assert.Equal(t, 0, len(aPtr), "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Equalf(t, 0, len(aPtr), "msg")                 // want "use assert.Emptyf"
-			assert.Equalf(t, 0, len(aPtr), "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Equal(t, 0, len(arrPtr))                         // want "use assert.Empty"
+			assert.Equal(t, 0, len(arrPtr), "msg")                  // want "use assert.Empty"
+			assert.Equal(t, 0, len(arrPtr), "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Equalf(t, 0, len(arrPtr), "msg")                 // want "use assert.Emptyf"
+			assert.Equalf(t, 0, len(arrPtr), "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.True(t, len(aPtr) == 0)                         // want "use assert.Empty"
-			assert.True(t, len(aPtr) == 0, "msg")                  // want "use assert.Empty"
-			assert.True(t, len(aPtr) == 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Truef(t, len(aPtr) == 0, "msg")                 // want "use assert.Emptyf"
-			assert.Truef(t, len(aPtr) == 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.True(t, len(arrPtr) == 0)                         // want "use assert.Empty"
+			assert.True(t, len(arrPtr) == 0, "msg")                  // want "use assert.Empty"
+			assert.True(t, len(arrPtr) == 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Truef(t, len(arrPtr) == 0, "msg")                 // want "use assert.Emptyf"
+			assert.Truef(t, len(arrPtr) == 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.True(t, 0 == len(aPtr))                         // want "use assert.Empty"
-			assert.True(t, 0 == len(aPtr), "msg")                  // want "use assert.Empty"
-			assert.True(t, 0 == len(aPtr), "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Truef(t, 0 == len(aPtr), "msg")                 // want "use assert.Emptyf"
-			assert.Truef(t, 0 == len(aPtr), "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.True(t, 0 == len(arrPtr))                         // want "use assert.Empty"
+			assert.True(t, 0 == len(arrPtr), "msg")                  // want "use assert.Empty"
+			assert.True(t, 0 == len(arrPtr), "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Truef(t, 0 == len(arrPtr), "msg")                 // want "use assert.Emptyf"
+			assert.Truef(t, 0 == len(arrPtr), "msg with arg %d", 42) // want "use assert.Emptyf"
 		}
 
 		{
-			assert.Len(t, s, 0)                         // want "use assert.Empty"
-			assert.Len(t, s, 0, "msg")                  // want "use assert.Empty"
-			assert.Len(t, s, 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Lenf(t, s, 0, "msg")                 // want "use assert.Emptyf"
-			assert.Lenf(t, s, 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Len(t, sl, 0)                         // want "use assert.Empty"
+			assert.Len(t, sl, 0, "msg")                  // want "use assert.Empty"
+			assert.Len(t, sl, 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Lenf(t, sl, 0, "msg")                 // want "use assert.Emptyf"
+			assert.Lenf(t, sl, 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.Equal(t, len(s), 0)                         // want "use assert.Empty"
-			assert.Equal(t, len(s), 0, "msg")                  // want "use assert.Empty"
-			assert.Equal(t, len(s), 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Equalf(t, len(s), 0, "msg")                 // want "use assert.Emptyf"
-			assert.Equalf(t, len(s), 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Equal(t, len(sl), 0)                         // want "use assert.Empty"
+			assert.Equal(t, len(sl), 0, "msg")                  // want "use assert.Empty"
+			assert.Equal(t, len(sl), 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Equalf(t, len(sl), 0, "msg")                 // want "use assert.Emptyf"
+			assert.Equalf(t, len(sl), 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.Equal(t, 0, len(s))                         // want "use assert.Empty"
-			assert.Equal(t, 0, len(s), "msg")                  // want "use assert.Empty"
-			assert.Equal(t, 0, len(s), "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Equalf(t, 0, len(s), "msg")                 // want "use assert.Emptyf"
-			assert.Equalf(t, 0, len(s), "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Equal(t, 0, len(sl))                         // want "use assert.Empty"
+			assert.Equal(t, 0, len(sl), "msg")                  // want "use assert.Empty"
+			assert.Equal(t, 0, len(sl), "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Equalf(t, 0, len(sl), "msg")                 // want "use assert.Emptyf"
+			assert.Equalf(t, 0, len(sl), "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.True(t, len(s) == 0)                         // want "use assert.Empty"
-			assert.True(t, len(s) == 0, "msg")                  // want "use assert.Empty"
-			assert.True(t, len(s) == 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Truef(t, len(s) == 0, "msg")                 // want "use assert.Emptyf"
-			assert.Truef(t, len(s) == 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.True(t, len(sl) == 0)                         // want "use assert.Empty"
+			assert.True(t, len(sl) == 0, "msg")                  // want "use assert.Empty"
+			assert.True(t, len(sl) == 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Truef(t, len(sl) == 0, "msg")                 // want "use assert.Emptyf"
+			assert.Truef(t, len(sl) == 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.True(t, 0 == len(s))                         // want "use assert.Empty"
-			assert.True(t, 0 == len(s), "msg")                  // want "use assert.Empty"
-			assert.True(t, 0 == len(s), "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Truef(t, 0 == len(s), "msg")                 // want "use assert.Emptyf"
-			assert.Truef(t, 0 == len(s), "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.True(t, 0 == len(sl))                         // want "use assert.Empty"
+			assert.True(t, 0 == len(sl), "msg")                  // want "use assert.Empty"
+			assert.True(t, 0 == len(sl), "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Truef(t, 0 == len(sl), "msg")                 // want "use assert.Emptyf"
+			assert.Truef(t, 0 == len(sl), "msg with arg %d", 42) // want "use assert.Emptyf"
 		}
 
 		{
-			assert.Len(t, m, 0)                         // want "use assert.Empty"
-			assert.Len(t, m, 0, "msg")                  // want "use assert.Empty"
-			assert.Len(t, m, 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Lenf(t, m, 0, "msg")                 // want "use assert.Emptyf"
-			assert.Lenf(t, m, 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Len(t, mp, 0)                         // want "use assert.Empty"
+			assert.Len(t, mp, 0, "msg")                  // want "use assert.Empty"
+			assert.Len(t, mp, 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Lenf(t, mp, 0, "msg")                 // want "use assert.Emptyf"
+			assert.Lenf(t, mp, 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.Equal(t, len(m), 0)                         // want "use assert.Empty"
-			assert.Equal(t, len(m), 0, "msg")                  // want "use assert.Empty"
-			assert.Equal(t, len(m), 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Equalf(t, len(m), 0, "msg")                 // want "use assert.Emptyf"
-			assert.Equalf(t, len(m), 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Equal(t, len(mp), 0)                         // want "use assert.Empty"
+			assert.Equal(t, len(mp), 0, "msg")                  // want "use assert.Empty"
+			assert.Equal(t, len(mp), 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Equalf(t, len(mp), 0, "msg")                 // want "use assert.Emptyf"
+			assert.Equalf(t, len(mp), 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.Equal(t, 0, len(m))                         // want "use assert.Empty"
-			assert.Equal(t, 0, len(m), "msg")                  // want "use assert.Empty"
-			assert.Equal(t, 0, len(m), "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Equalf(t, 0, len(m), "msg")                 // want "use assert.Emptyf"
-			assert.Equalf(t, 0, len(m), "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Equal(t, 0, len(mp))                         // want "use assert.Empty"
+			assert.Equal(t, 0, len(mp), "msg")                  // want "use assert.Empty"
+			assert.Equal(t, 0, len(mp), "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Equalf(t, 0, len(mp), "msg")                 // want "use assert.Emptyf"
+			assert.Equalf(t, 0, len(mp), "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.True(t, len(m) == 0)                         // want "use assert.Empty"
-			assert.True(t, len(m) == 0, "msg")                  // want "use assert.Empty"
-			assert.True(t, len(m) == 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Truef(t, len(m) == 0, "msg")                 // want "use assert.Emptyf"
-			assert.Truef(t, len(m) == 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.True(t, len(mp) == 0)                         // want "use assert.Empty"
+			assert.True(t, len(mp) == 0, "msg")                  // want "use assert.Empty"
+			assert.True(t, len(mp) == 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Truef(t, len(mp) == 0, "msg")                 // want "use assert.Emptyf"
+			assert.Truef(t, len(mp) == 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.True(t, 0 == len(m))                         // want "use assert.Empty"
-			assert.True(t, 0 == len(m), "msg")                  // want "use assert.Empty"
-			assert.True(t, 0 == len(m), "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Truef(t, 0 == len(m), "msg")                 // want "use assert.Emptyf"
-			assert.Truef(t, 0 == len(m), "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.True(t, 0 == len(mp))                         // want "use assert.Empty"
+			assert.True(t, 0 == len(mp), "msg")                  // want "use assert.Empty"
+			assert.True(t, 0 == len(mp), "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Truef(t, 0 == len(mp), "msg")                 // want "use assert.Emptyf"
+			assert.Truef(t, 0 == len(mp), "msg with arg %d", 42) // want "use assert.Emptyf"
 		}
 
 		{
-			assert.Len(t, ss, 0)                         // want "use assert.Empty"
-			assert.Len(t, ss, 0, "msg")                  // want "use assert.Empty"
-			assert.Len(t, ss, 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Lenf(t, ss, 0, "msg")                 // want "use assert.Emptyf"
-			assert.Lenf(t, ss, 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Len(t, str, 0)                         // want "use assert.Empty"
+			assert.Len(t, str, 0, "msg")                  // want "use assert.Empty"
+			assert.Len(t, str, 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Lenf(t, str, 0, "msg")                 // want "use assert.Emptyf"
+			assert.Lenf(t, str, 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.Equal(t, len(ss), 0)                         // want "use assert.Empty"
-			assert.Equal(t, len(ss), 0, "msg")                  // want "use assert.Empty"
-			assert.Equal(t, len(ss), 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Equalf(t, len(ss), 0, "msg")                 // want "use assert.Emptyf"
-			assert.Equalf(t, len(ss), 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Equal(t, len(str), 0)                         // want "use assert.Empty"
+			assert.Equal(t, len(str), 0, "msg")                  // want "use assert.Empty"
+			assert.Equal(t, len(str), 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Equalf(t, len(str), 0, "msg")                 // want "use assert.Emptyf"
+			assert.Equalf(t, len(str), 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.Equal(t, 0, len(ss))                         // want "use assert.Empty"
-			assert.Equal(t, 0, len(ss), "msg")                  // want "use assert.Empty"
-			assert.Equal(t, 0, len(ss), "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Equalf(t, 0, len(ss), "msg")                 // want "use assert.Emptyf"
-			assert.Equalf(t, 0, len(ss), "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Equal(t, 0, len(str))                         // want "use assert.Empty"
+			assert.Equal(t, 0, len(str), "msg")                  // want "use assert.Empty"
+			assert.Equal(t, 0, len(str), "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Equalf(t, 0, len(str), "msg")                 // want "use assert.Emptyf"
+			assert.Equalf(t, 0, len(str), "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.True(t, len(ss) == 0)                         // want "use assert.Empty"
-			assert.True(t, len(ss) == 0, "msg")                  // want "use assert.Empty"
-			assert.True(t, len(ss) == 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Truef(t, len(ss) == 0, "msg")                 // want "use assert.Emptyf"
-			assert.Truef(t, len(ss) == 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.True(t, len(str) == 0)                         // want "use assert.Empty"
+			assert.True(t, len(str) == 0, "msg")                  // want "use assert.Empty"
+			assert.True(t, len(str) == 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Truef(t, len(str) == 0, "msg")                 // want "use assert.Emptyf"
+			assert.Truef(t, len(str) == 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.True(t, 0 == len(ss))                         // want "use assert.Empty"
-			assert.True(t, 0 == len(ss), "msg")                  // want "use assert.Empty"
-			assert.True(t, 0 == len(ss), "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Truef(t, 0 == len(ss), "msg")                 // want "use assert.Emptyf"
-			assert.Truef(t, 0 == len(ss), "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.True(t, 0 == len(str))                         // want "use assert.Empty"
+			assert.True(t, 0 == len(str), "msg")                  // want "use assert.Empty"
+			assert.True(t, 0 == len(str), "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Truef(t, 0 == len(str), "msg")                 // want "use assert.Emptyf"
+			assert.Truef(t, 0 == len(str), "msg with arg %d", 42) // want "use assert.Emptyf"
 		}
 
 		{
-			assert.Len(t, c, 0)                         // want "use assert.Empty"
-			assert.Len(t, c, 0, "msg")                  // want "use assert.Empty"
-			assert.Len(t, c, 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Lenf(t, c, 0, "msg")                 // want "use assert.Emptyf"
-			assert.Lenf(t, c, 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Len(t, ch, 0)                         // want "use assert.Empty"
+			assert.Len(t, ch, 0, "msg")                  // want "use assert.Empty"
+			assert.Len(t, ch, 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Lenf(t, ch, 0, "msg")                 // want "use assert.Emptyf"
+			assert.Lenf(t, ch, 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.Equal(t, len(c), 0)                         // want "use assert.Empty"
-			assert.Equal(t, len(c), 0, "msg")                  // want "use assert.Empty"
-			assert.Equal(t, len(c), 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Equalf(t, len(c), 0, "msg")                 // want "use assert.Emptyf"
-			assert.Equalf(t, len(c), 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Equal(t, len(ch), 0)                         // want "use assert.Empty"
+			assert.Equal(t, len(ch), 0, "msg")                  // want "use assert.Empty"
+			assert.Equal(t, len(ch), 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Equalf(t, len(ch), 0, "msg")                 // want "use assert.Emptyf"
+			assert.Equalf(t, len(ch), 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.Equal(t, 0, len(c))                         // want "use assert.Empty"
-			assert.Equal(t, 0, len(c), "msg")                  // want "use assert.Empty"
-			assert.Equal(t, 0, len(c), "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Equalf(t, 0, len(c), "msg")                 // want "use assert.Emptyf"
-			assert.Equalf(t, 0, len(c), "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.Equal(t, 0, len(ch))                         // want "use assert.Empty"
+			assert.Equal(t, 0, len(ch), "msg")                  // want "use assert.Empty"
+			assert.Equal(t, 0, len(ch), "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Equalf(t, 0, len(ch), "msg")                 // want "use assert.Emptyf"
+			assert.Equalf(t, 0, len(ch), "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.True(t, len(c) == 0)                         // want "use assert.Empty"
-			assert.True(t, len(c) == 0, "msg")                  // want "use assert.Empty"
-			assert.True(t, len(c) == 0, "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Truef(t, len(c) == 0, "msg")                 // want "use assert.Emptyf"
-			assert.Truef(t, len(c) == 0, "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.True(t, len(ch) == 0)                         // want "use assert.Empty"
+			assert.True(t, len(ch) == 0, "msg")                  // want "use assert.Empty"
+			assert.True(t, len(ch) == 0, "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Truef(t, len(ch) == 0, "msg")                 // want "use assert.Emptyf"
+			assert.Truef(t, len(ch) == 0, "msg with arg %d", 42) // want "use assert.Emptyf"
 
-			assert.True(t, 0 == len(c))                         // want "use assert.Empty"
-			assert.True(t, 0 == len(c), "msg")                  // want "use assert.Empty"
-			assert.True(t, 0 == len(c), "msg with arg %d", 42)  // want "use assert.Empty"
-			assert.Truef(t, 0 == len(c), "msg")                 // want "use assert.Emptyf"
-			assert.Truef(t, 0 == len(c), "msg with arg %d", 42) // want "use assert.Emptyf"
+			assert.True(t, 0 == len(ch))                         // want "use assert.Empty"
+			assert.True(t, 0 == len(ch), "msg")                  // want "use assert.Empty"
+			assert.True(t, 0 == len(ch), "msg with arg %d", 42)  // want "use assert.Empty"
+			assert.Truef(t, 0 == len(ch), "msg")                 // want "use assert.Emptyf"
+			assert.Truef(t, 0 == len(ch), "msg with arg %d", 42) // want "use assert.Emptyf"
 		}
 
 		// Valid asserts.
 
 		{
-			assert.Empty(t, a)
-			assert.Empty(t, a, "msg")
-			assert.Empty(t, a, "msg with arg %d", 42)
-			assert.Emptyf(t, a, "msg")
-			assert.Emptyf(t, a, "msg with arg %d", 42)
+			assert.Empty(t, arr)
+			assert.Empty(t, arr, "msg")
+			assert.Empty(t, arr, "msg with arg %d", 42)
+			assert.Emptyf(t, arr, "msg")
+			assert.Emptyf(t, arr, "msg with arg %d", 42)
 		}
 
 		{
-			assert.Empty(t, aPtr)
-			assert.Empty(t, aPtr, "msg")
-			assert.Empty(t, aPtr, "msg with arg %d", 42)
-			assert.Emptyf(t, aPtr, "msg")
-			assert.Emptyf(t, aPtr, "msg with arg %d", 42)
+			assert.Empty(t, arrPtr)
+			assert.Empty(t, arrPtr, "msg")
+			assert.Empty(t, arrPtr, "msg with arg %d", 42)
+			assert.Emptyf(t, arrPtr, "msg")
+			assert.Emptyf(t, arrPtr, "msg with arg %d", 42)
 		}
 
 		{
-			assert.Empty(t, s)
-			assert.Empty(t, s, "msg")
-			assert.Empty(t, s, "msg with arg %d", 42)
-			assert.Emptyf(t, s, "msg")
-			assert.Emptyf(t, s, "msg with arg %d", 42)
+			assert.Empty(t, sl)
+			assert.Empty(t, sl, "msg")
+			assert.Empty(t, sl, "msg with arg %d", 42)
+			assert.Emptyf(t, sl, "msg")
+			assert.Emptyf(t, sl, "msg with arg %d", 42)
 		}
 
 		{
-			assert.Empty(t, m)
-			assert.Empty(t, m, "msg")
-			assert.Empty(t, m, "msg with arg %d", 42)
-			assert.Emptyf(t, m, "msg")
-			assert.Emptyf(t, m, "msg with arg %d", 42)
+			assert.Empty(t, mp)
+			assert.Empty(t, mp, "msg")
+			assert.Empty(t, mp, "msg with arg %d", 42)
+			assert.Emptyf(t, mp, "msg")
+			assert.Emptyf(t, mp, "msg with arg %d", 42)
 		}
 
 		{
-			assert.Empty(t, ss)
-			assert.Empty(t, ss, "msg")
-			assert.Empty(t, ss, "msg with arg %d", 42)
-			assert.Emptyf(t, ss, "msg")
-			assert.Emptyf(t, ss, "msg with arg %d", 42)
+			assert.Empty(t, str)
+			assert.Empty(t, str, "msg")
+			assert.Empty(t, str, "msg with arg %d", 42)
+			assert.Emptyf(t, str, "msg")
+			assert.Emptyf(t, str, "msg with arg %d", 42)
 		}
 
 		{
-			assert.Empty(t, c)
-			assert.Empty(t, c, "msg")
-			assert.Empty(t, c, "msg with arg %d", 42)
-			assert.Emptyf(t, c, "msg")
-			assert.Emptyf(t, c, "msg with arg %d", 42)
+			assert.Empty(t, ch)
+			assert.Empty(t, ch, "msg")
+			assert.Empty(t, ch, "msg with arg %d", 42)
+			assert.Emptyf(t, ch, "msg")
+			assert.Emptyf(t, ch, "msg with arg %d", 42)
 		}
 	})
 
 	t.Run("require", func(t *testing.T) {
 		{
-			require.Len(t, a, 0)                         // want "use require.Empty"
-			require.Len(t, a, 0, "msg")                  // want "use require.Empty"
-			require.Len(t, a, 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Lenf(t, a, 0, "msg")                 // want "use require.Emptyf"
-			require.Lenf(t, a, 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Len(t, arr, 0)                         // want "use require.Empty"
+			require.Len(t, arr, 0, "msg")                  // want "use require.Empty"
+			require.Len(t, arr, 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Lenf(t, arr, 0, "msg")                 // want "use require.Emptyf"
+			require.Lenf(t, arr, 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.Equal(t, len(a), 0)                         // want "use require.Empty"
-			require.Equal(t, len(a), 0, "msg")                  // want "use require.Empty"
-			require.Equal(t, len(a), 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Equalf(t, len(a), 0, "msg")                 // want "use require.Emptyf"
-			require.Equalf(t, len(a), 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Equal(t, len(arr), 0)                         // want "use require.Empty"
+			require.Equal(t, len(arr), 0, "msg")                  // want "use require.Empty"
+			require.Equal(t, len(arr), 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Equalf(t, len(arr), 0, "msg")                 // want "use require.Emptyf"
+			require.Equalf(t, len(arr), 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.Equal(t, 0, len(a))                         // want "use require.Empty"
-			require.Equal(t, 0, len(a), "msg")                  // want "use require.Empty"
-			require.Equal(t, 0, len(a), "msg with arg %d", 42)  // want "use require.Empty"
-			require.Equalf(t, 0, len(a), "msg")                 // want "use require.Emptyf"
-			require.Equalf(t, 0, len(a), "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Equal(t, 0, len(arr))                         // want "use require.Empty"
+			require.Equal(t, 0, len(arr), "msg")                  // want "use require.Empty"
+			require.Equal(t, 0, len(arr), "msg with arg %d", 42)  // want "use require.Empty"
+			require.Equalf(t, 0, len(arr), "msg")                 // want "use require.Emptyf"
+			require.Equalf(t, 0, len(arr), "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.True(t, len(a) == 0)                         // want "use require.Empty"
-			require.True(t, len(a) == 0, "msg")                  // want "use require.Empty"
-			require.True(t, len(a) == 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Truef(t, len(a) == 0, "msg")                 // want "use require.Emptyf"
-			require.Truef(t, len(a) == 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.True(t, len(arr) == 0)                         // want "use require.Empty"
+			require.True(t, len(arr) == 0, "msg")                  // want "use require.Empty"
+			require.True(t, len(arr) == 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Truef(t, len(arr) == 0, "msg")                 // want "use require.Emptyf"
+			require.Truef(t, len(arr) == 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.True(t, 0 == len(a))                         // want "use require.Empty"
-			require.True(t, 0 == len(a), "msg")                  // want "use require.Empty"
-			require.True(t, 0 == len(a), "msg with arg %d", 42)  // want "use require.Empty"
-			require.Truef(t, 0 == len(a), "msg")                 // want "use require.Emptyf"
-			require.Truef(t, 0 == len(a), "msg with arg %d", 42) // want "use require.Emptyf"
+			require.True(t, 0 == len(arr))                         // want "use require.Empty"
+			require.True(t, 0 == len(arr), "msg")                  // want "use require.Empty"
+			require.True(t, 0 == len(arr), "msg with arg %d", 42)  // want "use require.Empty"
+			require.Truef(t, 0 == len(arr), "msg")                 // want "use require.Emptyf"
+			require.Truef(t, 0 == len(arr), "msg with arg %d", 42) // want "use require.Emptyf"
 		}
 
 		{
-			require.Len(t, aPtr, 0)                         // want "use require.Empty"
-			require.Len(t, aPtr, 0, "msg")                  // want "use require.Empty"
-			require.Len(t, aPtr, 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Lenf(t, aPtr, 0, "msg")                 // want "use require.Emptyf"
-			require.Lenf(t, aPtr, 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Len(t, arrPtr, 0)                         // want "use require.Empty"
+			require.Len(t, arrPtr, 0, "msg")                  // want "use require.Empty"
+			require.Len(t, arrPtr, 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Lenf(t, arrPtr, 0, "msg")                 // want "use require.Emptyf"
+			require.Lenf(t, arrPtr, 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.Equal(t, len(aPtr), 0)                         // want "use require.Empty"
-			require.Equal(t, len(aPtr), 0, "msg")                  // want "use require.Empty"
-			require.Equal(t, len(aPtr), 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Equalf(t, len(aPtr), 0, "msg")                 // want "use require.Emptyf"
-			require.Equalf(t, len(aPtr), 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Equal(t, len(arrPtr), 0)                         // want "use require.Empty"
+			require.Equal(t, len(arrPtr), 0, "msg")                  // want "use require.Empty"
+			require.Equal(t, len(arrPtr), 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Equalf(t, len(arrPtr), 0, "msg")                 // want "use require.Emptyf"
+			require.Equalf(t, len(arrPtr), 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.Equal(t, 0, len(aPtr))                         // want "use require.Empty"
-			require.Equal(t, 0, len(aPtr), "msg")                  // want "use require.Empty"
-			require.Equal(t, 0, len(aPtr), "msg with arg %d", 42)  // want "use require.Empty"
-			require.Equalf(t, 0, len(aPtr), "msg")                 // want "use require.Emptyf"
-			require.Equalf(t, 0, len(aPtr), "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Equal(t, 0, len(arrPtr))                         // want "use require.Empty"
+			require.Equal(t, 0, len(arrPtr), "msg")                  // want "use require.Empty"
+			require.Equal(t, 0, len(arrPtr), "msg with arg %d", 42)  // want "use require.Empty"
+			require.Equalf(t, 0, len(arrPtr), "msg")                 // want "use require.Emptyf"
+			require.Equalf(t, 0, len(arrPtr), "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.True(t, len(aPtr) == 0)                         // want "use require.Empty"
-			require.True(t, len(aPtr) == 0, "msg")                  // want "use require.Empty"
-			require.True(t, len(aPtr) == 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Truef(t, len(aPtr) == 0, "msg")                 // want "use require.Emptyf"
-			require.Truef(t, len(aPtr) == 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.True(t, len(arrPtr) == 0)                         // want "use require.Empty"
+			require.True(t, len(arrPtr) == 0, "msg")                  // want "use require.Empty"
+			require.True(t, len(arrPtr) == 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Truef(t, len(arrPtr) == 0, "msg")                 // want "use require.Emptyf"
+			require.Truef(t, len(arrPtr) == 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.True(t, 0 == len(aPtr))                         // want "use require.Empty"
-			require.True(t, 0 == len(aPtr), "msg")                  // want "use require.Empty"
-			require.True(t, 0 == len(aPtr), "msg with arg %d", 42)  // want "use require.Empty"
-			require.Truef(t, 0 == len(aPtr), "msg")                 // want "use require.Emptyf"
-			require.Truef(t, 0 == len(aPtr), "msg with arg %d", 42) // want "use require.Emptyf"
+			require.True(t, 0 == len(arrPtr))                         // want "use require.Empty"
+			require.True(t, 0 == len(arrPtr), "msg")                  // want "use require.Empty"
+			require.True(t, 0 == len(arrPtr), "msg with arg %d", 42)  // want "use require.Empty"
+			require.Truef(t, 0 == len(arrPtr), "msg")                 // want "use require.Emptyf"
+			require.Truef(t, 0 == len(arrPtr), "msg with arg %d", 42) // want "use require.Emptyf"
 		}
 
 		{
-			require.Len(t, s, 0)                         // want "use require.Empty"
-			require.Len(t, s, 0, "msg")                  // want "use require.Empty"
-			require.Len(t, s, 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Lenf(t, s, 0, "msg")                 // want "use require.Emptyf"
-			require.Lenf(t, s, 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Len(t, sl, 0)                         // want "use require.Empty"
+			require.Len(t, sl, 0, "msg")                  // want "use require.Empty"
+			require.Len(t, sl, 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Lenf(t, sl, 0, "msg")                 // want "use require.Emptyf"
+			require.Lenf(t, sl, 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.Equal(t, len(s), 0)                         // want "use require.Empty"
-			require.Equal(t, len(s), 0, "msg")                  // want "use require.Empty"
-			require.Equal(t, len(s), 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Equalf(t, len(s), 0, "msg")                 // want "use require.Emptyf"
-			require.Equalf(t, len(s), 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Equal(t, len(sl), 0)                         // want "use require.Empty"
+			require.Equal(t, len(sl), 0, "msg")                  // want "use require.Empty"
+			require.Equal(t, len(sl), 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Equalf(t, len(sl), 0, "msg")                 // want "use require.Emptyf"
+			require.Equalf(t, len(sl), 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.Equal(t, 0, len(s))                         // want "use require.Empty"
-			require.Equal(t, 0, len(s), "msg")                  // want "use require.Empty"
-			require.Equal(t, 0, len(s), "msg with arg %d", 42)  // want "use require.Empty"
-			require.Equalf(t, 0, len(s), "msg")                 // want "use require.Emptyf"
-			require.Equalf(t, 0, len(s), "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Equal(t, 0, len(sl))                         // want "use require.Empty"
+			require.Equal(t, 0, len(sl), "msg")                  // want "use require.Empty"
+			require.Equal(t, 0, len(sl), "msg with arg %d", 42)  // want "use require.Empty"
+			require.Equalf(t, 0, len(sl), "msg")                 // want "use require.Emptyf"
+			require.Equalf(t, 0, len(sl), "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.True(t, len(s) == 0)                         // want "use require.Empty"
-			require.True(t, len(s) == 0, "msg")                  // want "use require.Empty"
-			require.True(t, len(s) == 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Truef(t, len(s) == 0, "msg")                 // want "use require.Emptyf"
-			require.Truef(t, len(s) == 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.True(t, len(sl) == 0)                         // want "use require.Empty"
+			require.True(t, len(sl) == 0, "msg")                  // want "use require.Empty"
+			require.True(t, len(sl) == 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Truef(t, len(sl) == 0, "msg")                 // want "use require.Emptyf"
+			require.Truef(t, len(sl) == 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.True(t, 0 == len(s))                         // want "use require.Empty"
-			require.True(t, 0 == len(s), "msg")                  // want "use require.Empty"
-			require.True(t, 0 == len(s), "msg with arg %d", 42)  // want "use require.Empty"
-			require.Truef(t, 0 == len(s), "msg")                 // want "use require.Emptyf"
-			require.Truef(t, 0 == len(s), "msg with arg %d", 42) // want "use require.Emptyf"
+			require.True(t, 0 == len(sl))                         // want "use require.Empty"
+			require.True(t, 0 == len(sl), "msg")                  // want "use require.Empty"
+			require.True(t, 0 == len(sl), "msg with arg %d", 42)  // want "use require.Empty"
+			require.Truef(t, 0 == len(sl), "msg")                 // want "use require.Emptyf"
+			require.Truef(t, 0 == len(sl), "msg with arg %d", 42) // want "use require.Emptyf"
 		}
 
 		{
-			require.Len(t, m, 0)                         // want "use require.Empty"
-			require.Len(t, m, 0, "msg")                  // want "use require.Empty"
-			require.Len(t, m, 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Lenf(t, m, 0, "msg")                 // want "use require.Emptyf"
-			require.Lenf(t, m, 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Len(t, mp, 0)                         // want "use require.Empty"
+			require.Len(t, mp, 0, "msg")                  // want "use require.Empty"
+			require.Len(t, mp, 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Lenf(t, mp, 0, "msg")                 // want "use require.Emptyf"
+			require.Lenf(t, mp, 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.Equal(t, len(m), 0)                         // want "use require.Empty"
-			require.Equal(t, len(m), 0, "msg")                  // want "use require.Empty"
-			require.Equal(t, len(m), 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Equalf(t, len(m), 0, "msg")                 // want "use require.Emptyf"
-			require.Equalf(t, len(m), 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Equal(t, len(mp), 0)                         // want "use require.Empty"
+			require.Equal(t, len(mp), 0, "msg")                  // want "use require.Empty"
+			require.Equal(t, len(mp), 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Equalf(t, len(mp), 0, "msg")                 // want "use require.Emptyf"
+			require.Equalf(t, len(mp), 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.Equal(t, 0, len(m))                         // want "use require.Empty"
-			require.Equal(t, 0, len(m), "msg")                  // want "use require.Empty"
-			require.Equal(t, 0, len(m), "msg with arg %d", 42)  // want "use require.Empty"
-			require.Equalf(t, 0, len(m), "msg")                 // want "use require.Emptyf"
-			require.Equalf(t, 0, len(m), "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Equal(t, 0, len(mp))                         // want "use require.Empty"
+			require.Equal(t, 0, len(mp), "msg")                  // want "use require.Empty"
+			require.Equal(t, 0, len(mp), "msg with arg %d", 42)  // want "use require.Empty"
+			require.Equalf(t, 0, len(mp), "msg")                 // want "use require.Emptyf"
+			require.Equalf(t, 0, len(mp), "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.True(t, len(m) == 0)                         // want "use require.Empty"
-			require.True(t, len(m) == 0, "msg")                  // want "use require.Empty"
-			require.True(t, len(m) == 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Truef(t, len(m) == 0, "msg")                 // want "use require.Emptyf"
-			require.Truef(t, len(m) == 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.True(t, len(mp) == 0)                         // want "use require.Empty"
+			require.True(t, len(mp) == 0, "msg")                  // want "use require.Empty"
+			require.True(t, len(mp) == 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Truef(t, len(mp) == 0, "msg")                 // want "use require.Emptyf"
+			require.Truef(t, len(mp) == 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.True(t, 0 == len(m))                         // want "use require.Empty"
-			require.True(t, 0 == len(m), "msg")                  // want "use require.Empty"
-			require.True(t, 0 == len(m), "msg with arg %d", 42)  // want "use require.Empty"
-			require.Truef(t, 0 == len(m), "msg")                 // want "use require.Emptyf"
-			require.Truef(t, 0 == len(m), "msg with arg %d", 42) // want "use require.Emptyf"
+			require.True(t, 0 == len(mp))                         // want "use require.Empty"
+			require.True(t, 0 == len(mp), "msg")                  // want "use require.Empty"
+			require.True(t, 0 == len(mp), "msg with arg %d", 42)  // want "use require.Empty"
+			require.Truef(t, 0 == len(mp), "msg")                 // want "use require.Emptyf"
+			require.Truef(t, 0 == len(mp), "msg with arg %d", 42) // want "use require.Emptyf"
 		}
 
 		{
-			require.Len(t, ss, 0)                         // want "use require.Empty"
-			require.Len(t, ss, 0, "msg")                  // want "use require.Empty"
-			require.Len(t, ss, 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Lenf(t, ss, 0, "msg")                 // want "use require.Emptyf"
-			require.Lenf(t, ss, 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Len(t, str, 0)                         // want "use require.Empty"
+			require.Len(t, str, 0, "msg")                  // want "use require.Empty"
+			require.Len(t, str, 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Lenf(t, str, 0, "msg")                 // want "use require.Emptyf"
+			require.Lenf(t, str, 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.Equal(t, len(ss), 0)                         // want "use require.Empty"
-			require.Equal(t, len(ss), 0, "msg")                  // want "use require.Empty"
-			require.Equal(t, len(ss), 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Equalf(t, len(ss), 0, "msg")                 // want "use require.Emptyf"
-			require.Equalf(t, len(ss), 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Equal(t, len(str), 0)                         // want "use require.Empty"
+			require.Equal(t, len(str), 0, "msg")                  // want "use require.Empty"
+			require.Equal(t, len(str), 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Equalf(t, len(str), 0, "msg")                 // want "use require.Emptyf"
+			require.Equalf(t, len(str), 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.Equal(t, 0, len(ss))                         // want "use require.Empty"
-			require.Equal(t, 0, len(ss), "msg")                  // want "use require.Empty"
-			require.Equal(t, 0, len(ss), "msg with arg %d", 42)  // want "use require.Empty"
-			require.Equalf(t, 0, len(ss), "msg")                 // want "use require.Emptyf"
-			require.Equalf(t, 0, len(ss), "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Equal(t, 0, len(str))                         // want "use require.Empty"
+			require.Equal(t, 0, len(str), "msg")                  // want "use require.Empty"
+			require.Equal(t, 0, len(str), "msg with arg %d", 42)  // want "use require.Empty"
+			require.Equalf(t, 0, len(str), "msg")                 // want "use require.Emptyf"
+			require.Equalf(t, 0, len(str), "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.True(t, len(ss) == 0)                         // want "use require.Empty"
-			require.True(t, len(ss) == 0, "msg")                  // want "use require.Empty"
-			require.True(t, len(ss) == 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Truef(t, len(ss) == 0, "msg")                 // want "use require.Emptyf"
-			require.Truef(t, len(ss) == 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.True(t, len(str) == 0)                         // want "use require.Empty"
+			require.True(t, len(str) == 0, "msg")                  // want "use require.Empty"
+			require.True(t, len(str) == 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Truef(t, len(str) == 0, "msg")                 // want "use require.Emptyf"
+			require.Truef(t, len(str) == 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.True(t, 0 == len(ss))                         // want "use require.Empty"
-			require.True(t, 0 == len(ss), "msg")                  // want "use require.Empty"
-			require.True(t, 0 == len(ss), "msg with arg %d", 42)  // want "use require.Empty"
-			require.Truef(t, 0 == len(ss), "msg")                 // want "use require.Emptyf"
-			require.Truef(t, 0 == len(ss), "msg with arg %d", 42) // want "use require.Emptyf"
+			require.True(t, 0 == len(str))                         // want "use require.Empty"
+			require.True(t, 0 == len(str), "msg")                  // want "use require.Empty"
+			require.True(t, 0 == len(str), "msg with arg %d", 42)  // want "use require.Empty"
+			require.Truef(t, 0 == len(str), "msg")                 // want "use require.Emptyf"
+			require.Truef(t, 0 == len(str), "msg with arg %d", 42) // want "use require.Emptyf"
 		}
 
 		{
-			require.Len(t, c, 0)                         // want "use require.Empty"
-			require.Len(t, c, 0, "msg")                  // want "use require.Empty"
-			require.Len(t, c, 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Lenf(t, c, 0, "msg")                 // want "use require.Emptyf"
-			require.Lenf(t, c, 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Len(t, ch, 0)                         // want "use require.Empty"
+			require.Len(t, ch, 0, "msg")                  // want "use require.Empty"
+			require.Len(t, ch, 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Lenf(t, ch, 0, "msg")                 // want "use require.Emptyf"
+			require.Lenf(t, ch, 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.Equal(t, len(c), 0)                         // want "use require.Empty"
-			require.Equal(t, len(c), 0, "msg")                  // want "use require.Empty"
-			require.Equal(t, len(c), 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Equalf(t, len(c), 0, "msg")                 // want "use require.Emptyf"
-			require.Equalf(t, len(c), 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Equal(t, len(ch), 0)                         // want "use require.Empty"
+			require.Equal(t, len(ch), 0, "msg")                  // want "use require.Empty"
+			require.Equal(t, len(ch), 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Equalf(t, len(ch), 0, "msg")                 // want "use require.Emptyf"
+			require.Equalf(t, len(ch), 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.Equal(t, 0, len(c))                         // want "use require.Empty"
-			require.Equal(t, 0, len(c), "msg")                  // want "use require.Empty"
-			require.Equal(t, 0, len(c), "msg with arg %d", 42)  // want "use require.Empty"
-			require.Equalf(t, 0, len(c), "msg")                 // want "use require.Emptyf"
-			require.Equalf(t, 0, len(c), "msg with arg %d", 42) // want "use require.Emptyf"
+			require.Equal(t, 0, len(ch))                         // want "use require.Empty"
+			require.Equal(t, 0, len(ch), "msg")                  // want "use require.Empty"
+			require.Equal(t, 0, len(ch), "msg with arg %d", 42)  // want "use require.Empty"
+			require.Equalf(t, 0, len(ch), "msg")                 // want "use require.Emptyf"
+			require.Equalf(t, 0, len(ch), "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.True(t, len(c) == 0)                         // want "use require.Empty"
-			require.True(t, len(c) == 0, "msg")                  // want "use require.Empty"
-			require.True(t, len(c) == 0, "msg with arg %d", 42)  // want "use require.Empty"
-			require.Truef(t, len(c) == 0, "msg")                 // want "use require.Emptyf"
-			require.Truef(t, len(c) == 0, "msg with arg %d", 42) // want "use require.Emptyf"
+			require.True(t, len(ch) == 0)                         // want "use require.Empty"
+			require.True(t, len(ch) == 0, "msg")                  // want "use require.Empty"
+			require.True(t, len(ch) == 0, "msg with arg %d", 42)  // want "use require.Empty"
+			require.Truef(t, len(ch) == 0, "msg")                 // want "use require.Emptyf"
+			require.Truef(t, len(ch) == 0, "msg with arg %d", 42) // want "use require.Emptyf"
 
-			require.True(t, 0 == len(c))                         // want "use require.Empty"
-			require.True(t, 0 == len(c), "msg")                  // want "use require.Empty"
-			require.True(t, 0 == len(c), "msg with arg %d", 42)  // want "use require.Empty"
-			require.Truef(t, 0 == len(c), "msg")                 // want "use require.Emptyf"
-			require.Truef(t, 0 == len(c), "msg with arg %d", 42) // want "use require.Emptyf"
+			require.True(t, 0 == len(ch))                         // want "use require.Empty"
+			require.True(t, 0 == len(ch), "msg")                  // want "use require.Empty"
+			require.True(t, 0 == len(ch), "msg with arg %d", 42)  // want "use require.Empty"
+			require.Truef(t, 0 == len(ch), "msg")                 // want "use require.Emptyf"
+			require.Truef(t, 0 == len(ch), "msg with arg %d", 42) // want "use require.Emptyf"
 		}
 
 		// Valid requires.
 
 		{
-			require.Empty(t, a)
-			require.Empty(t, a, "msg")
-			require.Empty(t, a, "msg with arg %d", 42)
-			require.Emptyf(t, a, "msg")
-			require.Emptyf(t, a, "msg with arg %d", 42)
+			require.Empty(t, arr)
+			require.Empty(t, arr, "msg")
+			require.Empty(t, arr, "msg with arg %d", 42)
+			require.Emptyf(t, arr, "msg")
+			require.Emptyf(t, arr, "msg with arg %d", 42)
 		}
 
 		{
-			require.Empty(t, aPtr)
-			require.Empty(t, aPtr, "msg")
-			require.Empty(t, aPtr, "msg with arg %d", 42)
-			require.Emptyf(t, aPtr, "msg")
-			require.Emptyf(t, aPtr, "msg with arg %d", 42)
+			require.Empty(t, arrPtr)
+			require.Empty(t, arrPtr, "msg")
+			require.Empty(t, arrPtr, "msg with arg %d", 42)
+			require.Emptyf(t, arrPtr, "msg")
+			require.Emptyf(t, arrPtr, "msg with arg %d", 42)
 		}
 
 		{
-			require.Empty(t, s)
-			require.Empty(t, s, "msg")
-			require.Empty(t, s, "msg with arg %d", 42)
-			require.Emptyf(t, s, "msg")
-			require.Emptyf(t, s, "msg with arg %d", 42)
+			require.Empty(t, sl)
+			require.Empty(t, sl, "msg")
+			require.Empty(t, sl, "msg with arg %d", 42)
+			require.Emptyf(t, sl, "msg")
+			require.Emptyf(t, sl, "msg with arg %d", 42)
 		}
 
 		{
-			require.Empty(t, m)
-			require.Empty(t, m, "msg")
-			require.Empty(t, m, "msg with arg %d", 42)
-			require.Emptyf(t, m, "msg")
-			require.Emptyf(t, m, "msg with arg %d", 42)
+			require.Empty(t, mp)
+			require.Empty(t, mp, "msg")
+			require.Empty(t, mp, "msg with arg %d", 42)
+			require.Emptyf(t, mp, "msg")
+			require.Emptyf(t, mp, "msg with arg %d", 42)
 		}
 
 		{
-			require.Empty(t, ss)
-			require.Empty(t, ss, "msg")
-			require.Empty(t, ss, "msg with arg %d", 42)
-			require.Emptyf(t, ss, "msg")
-			require.Emptyf(t, ss, "msg with arg %d", 42)
+			require.Empty(t, str)
+			require.Empty(t, str, "msg")
+			require.Empty(t, str, "msg with arg %d", 42)
+			require.Emptyf(t, str, "msg")
+			require.Emptyf(t, str, "msg with arg %d", 42)
 		}
 
 		{
-			require.Empty(t, c)
-			require.Empty(t, c, "msg")
-			require.Empty(t, c, "msg with arg %d", 42)
-			require.Emptyf(t, c, "msg")
-			require.Emptyf(t, c, "msg with arg %d", 42)
+			require.Empty(t, ch)
+			require.Empty(t, ch, "msg")
+			require.Empty(t, ch, "msg with arg %d", 42)
+			require.Emptyf(t, ch, "msg")
+			require.Emptyf(t, ch, "msg with arg %d", 42)
 		}
 	})
 }
 
 func TestNotEmptyAsserts(t *testing.T) {
 	var (
-		a    [0]int
-		aPtr *[0]int
-		s    []int
-		m    map[int]int
-		ss   string
-		c    chan int
+		arr    [0]int
+		arrPtr *[0]int
+		sl     []int
+		mp     map[int]int
+		str    string
+		ch     chan int
 	)
 
 	t.Run("assert", func(t *testing.T) {
 		{
-			assert.NotEqual(t, len(a), 0)                         // want "use assert.NotEmpty"
-			assert.NotEqual(t, len(a), 0, "msg")                  // want "use assert.NotEmpty"
-			assert.NotEqual(t, len(a), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.NotEqualf(t, len(a), 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.NotEqualf(t, len(a), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.NotEqual(t, len(arr), 0)                         // want "use assert.NotEmpty"
+			assert.NotEqual(t, len(arr), 0, "msg")                  // want "use assert.NotEmpty"
+			assert.NotEqual(t, len(arr), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.NotEqualf(t, len(arr), 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.NotEqualf(t, len(arr), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.NotEqual(t, 0, len(a))                         // want "use assert.NotEmpty"
-			assert.NotEqual(t, 0, len(a), "msg")                  // want "use assert.NotEmpty"
-			assert.NotEqual(t, 0, len(a), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.NotEqualf(t, 0, len(a), "msg")                 // want "use assert.NotEmptyf"
-			assert.NotEqualf(t, 0, len(a), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.NotEqual(t, 0, len(arr))                         // want "use assert.NotEmpty"
+			assert.NotEqual(t, 0, len(arr), "msg")                  // want "use assert.NotEmpty"
+			assert.NotEqual(t, 0, len(arr), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.NotEqualf(t, 0, len(arr), "msg")                 // want "use assert.NotEmptyf"
+			assert.NotEqualf(t, 0, len(arr), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.Greater(t, len(a), 0)                         // want "use assert.NotEmpty"
-			assert.Greater(t, len(a), 0, "msg")                  // want "use assert.NotEmpty"
-			assert.Greater(t, len(a), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Greaterf(t, len(a), 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Greaterf(t, len(a), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.Greater(t, len(arr), 0)                         // want "use assert.NotEmpty"
+			assert.Greater(t, len(arr), 0, "msg")                  // want "use assert.NotEmpty"
+			assert.Greater(t, len(arr), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Greaterf(t, len(arr), 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Greaterf(t, len(arr), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.GreaterOrEqual(t, len(a), 1)                         // want "use assert.NotEmpty"
-			assert.GreaterOrEqual(t, len(a), 1, "msg")                  // want "use assert.NotEmpty"
-			assert.GreaterOrEqual(t, len(a), 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.GreaterOrEqualf(t, len(a), 1, "msg")                 // want "use assert.NotEmptyf"
-			assert.GreaterOrEqualf(t, len(a), 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.GreaterOrEqual(t, len(arr), 1)                         // want "use assert.NotEmpty"
+			assert.GreaterOrEqual(t, len(arr), 1, "msg")                  // want "use assert.NotEmpty"
+			assert.GreaterOrEqual(t, len(arr), 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.GreaterOrEqualf(t, len(arr), 1, "msg")                 // want "use assert.NotEmptyf"
+			assert.GreaterOrEqualf(t, len(arr), 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(a) != 0)                         // want "use assert.NotEmpty"
-			assert.True(t, len(a) != 0, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(a) != 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(a) != 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(a) != 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(arr) != 0)                         // want "use assert.NotEmpty"
+			assert.True(t, len(arr) != 0, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(arr) != 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(arr) != 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(arr) != 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 0 != len(a))                         // want "use assert.NotEmpty"
-			assert.True(t, 0 != len(a), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 0 != len(a), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 0 != len(a), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 0 != len(a), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 0 != len(arr))                         // want "use assert.NotEmpty"
+			assert.True(t, 0 != len(arr), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 0 != len(arr), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 0 != len(arr), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 0 != len(arr), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(a) > 0)                         // want "use assert.NotEmpty"
-			assert.True(t, len(a) > 0, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(a) > 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(a) > 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(a) > 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(arr) > 0)                         // want "use assert.NotEmpty"
+			assert.True(t, len(arr) > 0, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(arr) > 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(arr) > 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(arr) > 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 0 < len(a))                         // want "use assert.NotEmpty"
-			assert.True(t, 0 < len(a), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 0 < len(a), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 0 < len(a), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 0 < len(a), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 0 < len(arr))                         // want "use assert.NotEmpty"
+			assert.True(t, 0 < len(arr), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 0 < len(arr), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 0 < len(arr), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 0 < len(arr), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(a) >= 1)                         // want "use assert.NotEmpty"
-			assert.True(t, len(a) >= 1, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(a) >= 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(a) >= 1, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(a) >= 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(arr) >= 1)                         // want "use assert.NotEmpty"
+			assert.True(t, len(arr) >= 1, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(arr) >= 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(arr) >= 1, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(arr) >= 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 1 <= len(a))                         // want "use assert.NotEmpty"
-			assert.True(t, 1 <= len(a), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 1 <= len(a), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 1 <= len(a), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 1 <= len(a), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 1 <= len(arr))                         // want "use assert.NotEmpty"
+			assert.True(t, 1 <= len(arr), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 1 <= len(arr), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 1 <= len(arr), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 1 <= len(arr), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 		}
 
 		{
-			assert.NotEqual(t, len(aPtr), 0)                         // want "use assert.NotEmpty"
-			assert.NotEqual(t, len(aPtr), 0, "msg")                  // want "use assert.NotEmpty"
-			assert.NotEqual(t, len(aPtr), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.NotEqualf(t, len(aPtr), 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.NotEqualf(t, len(aPtr), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.NotEqual(t, len(arrPtr), 0)                         // want "use assert.NotEmpty"
+			assert.NotEqual(t, len(arrPtr), 0, "msg")                  // want "use assert.NotEmpty"
+			assert.NotEqual(t, len(arrPtr), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.NotEqualf(t, len(arrPtr), 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.NotEqualf(t, len(arrPtr), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.NotEqual(t, 0, len(aPtr))                         // want "use assert.NotEmpty"
-			assert.NotEqual(t, 0, len(aPtr), "msg")                  // want "use assert.NotEmpty"
-			assert.NotEqual(t, 0, len(aPtr), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.NotEqualf(t, 0, len(aPtr), "msg")                 // want "use assert.NotEmptyf"
-			assert.NotEqualf(t, 0, len(aPtr), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.NotEqual(t, 0, len(arrPtr))                         // want "use assert.NotEmpty"
+			assert.NotEqual(t, 0, len(arrPtr), "msg")                  // want "use assert.NotEmpty"
+			assert.NotEqual(t, 0, len(arrPtr), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.NotEqualf(t, 0, len(arrPtr), "msg")                 // want "use assert.NotEmptyf"
+			assert.NotEqualf(t, 0, len(arrPtr), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.Greater(t, len(aPtr), 0)                         // want "use assert.NotEmpty"
-			assert.Greater(t, len(aPtr), 0, "msg")                  // want "use assert.NotEmpty"
-			assert.Greater(t, len(aPtr), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Greaterf(t, len(aPtr), 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Greaterf(t, len(aPtr), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.Greater(t, len(arrPtr), 0)                         // want "use assert.NotEmpty"
+			assert.Greater(t, len(arrPtr), 0, "msg")                  // want "use assert.NotEmpty"
+			assert.Greater(t, len(arrPtr), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Greaterf(t, len(arrPtr), 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Greaterf(t, len(arrPtr), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.GreaterOrEqual(t, len(aPtr), 1)                         // want "use assert.NotEmpty"
-			assert.GreaterOrEqual(t, len(aPtr), 1, "msg")                  // want "use assert.NotEmpty"
-			assert.GreaterOrEqual(t, len(aPtr), 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.GreaterOrEqualf(t, len(aPtr), 1, "msg")                 // want "use assert.NotEmptyf"
-			assert.GreaterOrEqualf(t, len(aPtr), 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.GreaterOrEqual(t, len(arrPtr), 1)                         // want "use assert.NotEmpty"
+			assert.GreaterOrEqual(t, len(arrPtr), 1, "msg")                  // want "use assert.NotEmpty"
+			assert.GreaterOrEqual(t, len(arrPtr), 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.GreaterOrEqualf(t, len(arrPtr), 1, "msg")                 // want "use assert.NotEmptyf"
+			assert.GreaterOrEqualf(t, len(arrPtr), 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(aPtr) != 0)                         // want "use assert.NotEmpty"
-			assert.True(t, len(aPtr) != 0, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(aPtr) != 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(aPtr) != 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(aPtr) != 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(arrPtr) != 0)                         // want "use assert.NotEmpty"
+			assert.True(t, len(arrPtr) != 0, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(arrPtr) != 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(arrPtr) != 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(arrPtr) != 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 0 != len(aPtr))                         // want "use assert.NotEmpty"
-			assert.True(t, 0 != len(aPtr), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 0 != len(aPtr), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 0 != len(aPtr), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 0 != len(aPtr), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 0 != len(arrPtr))                         // want "use assert.NotEmpty"
+			assert.True(t, 0 != len(arrPtr), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 0 != len(arrPtr), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 0 != len(arrPtr), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 0 != len(arrPtr), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(aPtr) > 0)                         // want "use assert.NotEmpty"
-			assert.True(t, len(aPtr) > 0, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(aPtr) > 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(aPtr) > 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(aPtr) > 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(arrPtr) > 0)                         // want "use assert.NotEmpty"
+			assert.True(t, len(arrPtr) > 0, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(arrPtr) > 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(arrPtr) > 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(arrPtr) > 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 0 < len(aPtr))                         // want "use assert.NotEmpty"
-			assert.True(t, 0 < len(aPtr), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 0 < len(aPtr), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 0 < len(aPtr), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 0 < len(aPtr), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 0 < len(arrPtr))                         // want "use assert.NotEmpty"
+			assert.True(t, 0 < len(arrPtr), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 0 < len(arrPtr), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 0 < len(arrPtr), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 0 < len(arrPtr), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(aPtr) >= 1)                         // want "use assert.NotEmpty"
-			assert.True(t, len(aPtr) >= 1, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(aPtr) >= 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(aPtr) >= 1, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(aPtr) >= 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(arrPtr) >= 1)                         // want "use assert.NotEmpty"
+			assert.True(t, len(arrPtr) >= 1, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(arrPtr) >= 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(arrPtr) >= 1, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(arrPtr) >= 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 1 <= len(aPtr))                         // want "use assert.NotEmpty"
-			assert.True(t, 1 <= len(aPtr), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 1 <= len(aPtr), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 1 <= len(aPtr), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 1 <= len(aPtr), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 1 <= len(arrPtr))                         // want "use assert.NotEmpty"
+			assert.True(t, 1 <= len(arrPtr), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 1 <= len(arrPtr), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 1 <= len(arrPtr), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 1 <= len(arrPtr), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 		}
 
 		{
-			assert.NotEqual(t, len(s), 0)                         // want "use assert.NotEmpty"
-			assert.NotEqual(t, len(s), 0, "msg")                  // want "use assert.NotEmpty"
-			assert.NotEqual(t, len(s), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.NotEqualf(t, len(s), 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.NotEqualf(t, len(s), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.NotEqual(t, len(sl), 0)                         // want "use assert.NotEmpty"
+			assert.NotEqual(t, len(sl), 0, "msg")                  // want "use assert.NotEmpty"
+			assert.NotEqual(t, len(sl), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.NotEqualf(t, len(sl), 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.NotEqualf(t, len(sl), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.NotEqual(t, 0, len(s))                         // want "use assert.NotEmpty"
-			assert.NotEqual(t, 0, len(s), "msg")                  // want "use assert.NotEmpty"
-			assert.NotEqual(t, 0, len(s), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.NotEqualf(t, 0, len(s), "msg")                 // want "use assert.NotEmptyf"
-			assert.NotEqualf(t, 0, len(s), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.NotEqual(t, 0, len(sl))                         // want "use assert.NotEmpty"
+			assert.NotEqual(t, 0, len(sl), "msg")                  // want "use assert.NotEmpty"
+			assert.NotEqual(t, 0, len(sl), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.NotEqualf(t, 0, len(sl), "msg")                 // want "use assert.NotEmptyf"
+			assert.NotEqualf(t, 0, len(sl), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.Greater(t, len(s), 0)                         // want "use assert.NotEmpty"
-			assert.Greater(t, len(s), 0, "msg")                  // want "use assert.NotEmpty"
-			assert.Greater(t, len(s), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Greaterf(t, len(s), 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Greaterf(t, len(s), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.Greater(t, len(sl), 0)                         // want "use assert.NotEmpty"
+			assert.Greater(t, len(sl), 0, "msg")                  // want "use assert.NotEmpty"
+			assert.Greater(t, len(sl), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Greaterf(t, len(sl), 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Greaterf(t, len(sl), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.GreaterOrEqual(t, len(s), 1)                         // want "use assert.NotEmpty"
-			assert.GreaterOrEqual(t, len(s), 1, "msg")                  // want "use assert.NotEmpty"
-			assert.GreaterOrEqual(t, len(s), 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.GreaterOrEqualf(t, len(s), 1, "msg")                 // want "use assert.NotEmptyf"
-			assert.GreaterOrEqualf(t, len(s), 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.GreaterOrEqual(t, len(sl), 1)                         // want "use assert.NotEmpty"
+			assert.GreaterOrEqual(t, len(sl), 1, "msg")                  // want "use assert.NotEmpty"
+			assert.GreaterOrEqual(t, len(sl), 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.GreaterOrEqualf(t, len(sl), 1, "msg")                 // want "use assert.NotEmptyf"
+			assert.GreaterOrEqualf(t, len(sl), 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(s) != 0)                         // want "use assert.NotEmpty"
-			assert.True(t, len(s) != 0, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(s) != 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(s) != 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(s) != 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(sl) != 0)                         // want "use assert.NotEmpty"
+			assert.True(t, len(sl) != 0, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(sl) != 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(sl) != 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(sl) != 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 0 != len(s))                         // want "use assert.NotEmpty"
-			assert.True(t, 0 != len(s), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 0 != len(s), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 0 != len(s), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 0 != len(s), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 0 != len(sl))                         // want "use assert.NotEmpty"
+			assert.True(t, 0 != len(sl), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 0 != len(sl), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 0 != len(sl), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 0 != len(sl), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(s) > 0)                         // want "use assert.NotEmpty"
-			assert.True(t, len(s) > 0, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(s) > 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(s) > 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(s) > 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(sl) > 0)                         // want "use assert.NotEmpty"
+			assert.True(t, len(sl) > 0, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(sl) > 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(sl) > 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(sl) > 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 0 < len(s))                         // want "use assert.NotEmpty"
-			assert.True(t, 0 < len(s), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 0 < len(s), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 0 < len(s), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 0 < len(s), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 0 < len(sl))                         // want "use assert.NotEmpty"
+			assert.True(t, 0 < len(sl), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 0 < len(sl), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 0 < len(sl), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 0 < len(sl), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(s) >= 1)                         // want "use assert.NotEmpty"
-			assert.True(t, len(s) >= 1, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(s) >= 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(s) >= 1, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(s) >= 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(sl) >= 1)                         // want "use assert.NotEmpty"
+			assert.True(t, len(sl) >= 1, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(sl) >= 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(sl) >= 1, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(sl) >= 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 1 <= len(s))                         // want "use assert.NotEmpty"
-			assert.True(t, 1 <= len(s), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 1 <= len(s), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 1 <= len(s), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 1 <= len(s), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 1 <= len(sl))                         // want "use assert.NotEmpty"
+			assert.True(t, 1 <= len(sl), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 1 <= len(sl), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 1 <= len(sl), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 1 <= len(sl), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 		}
 
 		{
-			assert.NotEqual(t, len(m), 0)                         // want "use assert.NotEmpty"
-			assert.NotEqual(t, len(m), 0, "msg")                  // want "use assert.NotEmpty"
-			assert.NotEqual(t, len(m), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.NotEqualf(t, len(m), 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.NotEqualf(t, len(m), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.NotEqual(t, len(mp), 0)                         // want "use assert.NotEmpty"
+			assert.NotEqual(t, len(mp), 0, "msg")                  // want "use assert.NotEmpty"
+			assert.NotEqual(t, len(mp), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.NotEqualf(t, len(mp), 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.NotEqualf(t, len(mp), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.NotEqual(t, 0, len(m))                         // want "use assert.NotEmpty"
-			assert.NotEqual(t, 0, len(m), "msg")                  // want "use assert.NotEmpty"
-			assert.NotEqual(t, 0, len(m), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.NotEqualf(t, 0, len(m), "msg")                 // want "use assert.NotEmptyf"
-			assert.NotEqualf(t, 0, len(m), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.NotEqual(t, 0, len(mp))                         // want "use assert.NotEmpty"
+			assert.NotEqual(t, 0, len(mp), "msg")                  // want "use assert.NotEmpty"
+			assert.NotEqual(t, 0, len(mp), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.NotEqualf(t, 0, len(mp), "msg")                 // want "use assert.NotEmptyf"
+			assert.NotEqualf(t, 0, len(mp), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.Greater(t, len(m), 0)                         // want "use assert.NotEmpty"
-			assert.Greater(t, len(m), 0, "msg")                  // want "use assert.NotEmpty"
-			assert.Greater(t, len(m), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Greaterf(t, len(m), 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Greaterf(t, len(m), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.Greater(t, len(mp), 0)                         // want "use assert.NotEmpty"
+			assert.Greater(t, len(mp), 0, "msg")                  // want "use assert.NotEmpty"
+			assert.Greater(t, len(mp), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Greaterf(t, len(mp), 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Greaterf(t, len(mp), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.GreaterOrEqual(t, len(m), 1)                         // want "use assert.NotEmpty"
-			assert.GreaterOrEqual(t, len(m), 1, "msg")                  // want "use assert.NotEmpty"
-			assert.GreaterOrEqual(t, len(m), 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.GreaterOrEqualf(t, len(m), 1, "msg")                 // want "use assert.NotEmptyf"
-			assert.GreaterOrEqualf(t, len(m), 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.GreaterOrEqual(t, len(mp), 1)                         // want "use assert.NotEmpty"
+			assert.GreaterOrEqual(t, len(mp), 1, "msg")                  // want "use assert.NotEmpty"
+			assert.GreaterOrEqual(t, len(mp), 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.GreaterOrEqualf(t, len(mp), 1, "msg")                 // want "use assert.NotEmptyf"
+			assert.GreaterOrEqualf(t, len(mp), 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(m) != 0)                         // want "use assert.NotEmpty"
-			assert.True(t, len(m) != 0, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(m) != 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(m) != 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(m) != 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(mp) != 0)                         // want "use assert.NotEmpty"
+			assert.True(t, len(mp) != 0, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(mp) != 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(mp) != 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(mp) != 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 0 != len(m))                         // want "use assert.NotEmpty"
-			assert.True(t, 0 != len(m), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 0 != len(m), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 0 != len(m), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 0 != len(m), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 0 != len(mp))                         // want "use assert.NotEmpty"
+			assert.True(t, 0 != len(mp), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 0 != len(mp), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 0 != len(mp), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 0 != len(mp), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(m) > 0)                         // want "use assert.NotEmpty"
-			assert.True(t, len(m) > 0, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(m) > 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(m) > 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(m) > 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(mp) > 0)                         // want "use assert.NotEmpty"
+			assert.True(t, len(mp) > 0, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(mp) > 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(mp) > 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(mp) > 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 0 < len(m))                         // want "use assert.NotEmpty"
-			assert.True(t, 0 < len(m), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 0 < len(m), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 0 < len(m), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 0 < len(m), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 0 < len(mp))                         // want "use assert.NotEmpty"
+			assert.True(t, 0 < len(mp), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 0 < len(mp), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 0 < len(mp), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 0 < len(mp), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(m) >= 1)                         // want "use assert.NotEmpty"
-			assert.True(t, len(m) >= 1, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(m) >= 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(m) >= 1, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(m) >= 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(mp) >= 1)                         // want "use assert.NotEmpty"
+			assert.True(t, len(mp) >= 1, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(mp) >= 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(mp) >= 1, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(mp) >= 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 1 <= len(m))                         // want "use assert.NotEmpty"
-			assert.True(t, 1 <= len(m), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 1 <= len(m), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 1 <= len(m), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 1 <= len(m), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 1 <= len(mp))                         // want "use assert.NotEmpty"
+			assert.True(t, 1 <= len(mp), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 1 <= len(mp), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 1 <= len(mp), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 1 <= len(mp), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 		}
 
 		{
-			assert.NotEqual(t, len(ss), 0)                         // want "use assert.NotEmpty"
-			assert.NotEqual(t, len(ss), 0, "msg")                  // want "use assert.NotEmpty"
-			assert.NotEqual(t, len(ss), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.NotEqualf(t, len(ss), 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.NotEqualf(t, len(ss), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.NotEqual(t, len(str), 0)                         // want "use assert.NotEmpty"
+			assert.NotEqual(t, len(str), 0, "msg")                  // want "use assert.NotEmpty"
+			assert.NotEqual(t, len(str), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.NotEqualf(t, len(str), 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.NotEqualf(t, len(str), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.NotEqual(t, 0, len(ss))                         // want "use assert.NotEmpty"
-			assert.NotEqual(t, 0, len(ss), "msg")                  // want "use assert.NotEmpty"
-			assert.NotEqual(t, 0, len(ss), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.NotEqualf(t, 0, len(ss), "msg")                 // want "use assert.NotEmptyf"
-			assert.NotEqualf(t, 0, len(ss), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.NotEqual(t, 0, len(str))                         // want "use assert.NotEmpty"
+			assert.NotEqual(t, 0, len(str), "msg")                  // want "use assert.NotEmpty"
+			assert.NotEqual(t, 0, len(str), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.NotEqualf(t, 0, len(str), "msg")                 // want "use assert.NotEmptyf"
+			assert.NotEqualf(t, 0, len(str), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.Greater(t, len(ss), 0)                         // want "use assert.NotEmpty"
-			assert.Greater(t, len(ss), 0, "msg")                  // want "use assert.NotEmpty"
-			assert.Greater(t, len(ss), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Greaterf(t, len(ss), 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Greaterf(t, len(ss), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.Greater(t, len(str), 0)                         // want "use assert.NotEmpty"
+			assert.Greater(t, len(str), 0, "msg")                  // want "use assert.NotEmpty"
+			assert.Greater(t, len(str), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Greaterf(t, len(str), 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Greaterf(t, len(str), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.GreaterOrEqual(t, len(ss), 1)                         // want "use assert.NotEmpty"
-			assert.GreaterOrEqual(t, len(ss), 1, "msg")                  // want "use assert.NotEmpty"
-			assert.GreaterOrEqual(t, len(ss), 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.GreaterOrEqualf(t, len(ss), 1, "msg")                 // want "use assert.NotEmptyf"
-			assert.GreaterOrEqualf(t, len(ss), 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.GreaterOrEqual(t, len(str), 1)                         // want "use assert.NotEmpty"
+			assert.GreaterOrEqual(t, len(str), 1, "msg")                  // want "use assert.NotEmpty"
+			assert.GreaterOrEqual(t, len(str), 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.GreaterOrEqualf(t, len(str), 1, "msg")                 // want "use assert.NotEmptyf"
+			assert.GreaterOrEqualf(t, len(str), 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(ss) != 0)                         // want "use assert.NotEmpty"
-			assert.True(t, len(ss) != 0, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(ss) != 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(ss) != 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(ss) != 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(str) != 0)                         // want "use assert.NotEmpty"
+			assert.True(t, len(str) != 0, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(str) != 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(str) != 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(str) != 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 0 != len(ss))                         // want "use assert.NotEmpty"
-			assert.True(t, 0 != len(ss), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 0 != len(ss), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 0 != len(ss), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 0 != len(ss), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 0 != len(str))                         // want "use assert.NotEmpty"
+			assert.True(t, 0 != len(str), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 0 != len(str), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 0 != len(str), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 0 != len(str), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(ss) > 0)                         // want "use assert.NotEmpty"
-			assert.True(t, len(ss) > 0, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(ss) > 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(ss) > 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(ss) > 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(str) > 0)                         // want "use assert.NotEmpty"
+			assert.True(t, len(str) > 0, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(str) > 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(str) > 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(str) > 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 0 < len(ss))                         // want "use assert.NotEmpty"
-			assert.True(t, 0 < len(ss), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 0 < len(ss), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 0 < len(ss), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 0 < len(ss), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 0 < len(str))                         // want "use assert.NotEmpty"
+			assert.True(t, 0 < len(str), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 0 < len(str), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 0 < len(str), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 0 < len(str), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(ss) >= 1)                         // want "use assert.NotEmpty"
-			assert.True(t, len(ss) >= 1, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(ss) >= 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(ss) >= 1, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(ss) >= 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(str) >= 1)                         // want "use assert.NotEmpty"
+			assert.True(t, len(str) >= 1, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(str) >= 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(str) >= 1, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(str) >= 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 1 <= len(ss))                         // want "use assert.NotEmpty"
-			assert.True(t, 1 <= len(ss), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 1 <= len(ss), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 1 <= len(ss), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 1 <= len(ss), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 1 <= len(str))                         // want "use assert.NotEmpty"
+			assert.True(t, 1 <= len(str), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 1 <= len(str), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 1 <= len(str), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 1 <= len(str), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 		}
 
 		{
-			assert.NotEqual(t, len(c), 0)                         // want "use assert.NotEmpty"
-			assert.NotEqual(t, len(c), 0, "msg")                  // want "use assert.NotEmpty"
-			assert.NotEqual(t, len(c), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.NotEqualf(t, len(c), 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.NotEqualf(t, len(c), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.NotEqual(t, len(ch), 0)                         // want "use assert.NotEmpty"
+			assert.NotEqual(t, len(ch), 0, "msg")                  // want "use assert.NotEmpty"
+			assert.NotEqual(t, len(ch), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.NotEqualf(t, len(ch), 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.NotEqualf(t, len(ch), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.NotEqual(t, 0, len(c))                         // want "use assert.NotEmpty"
-			assert.NotEqual(t, 0, len(c), "msg")                  // want "use assert.NotEmpty"
-			assert.NotEqual(t, 0, len(c), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.NotEqualf(t, 0, len(c), "msg")                 // want "use assert.NotEmptyf"
-			assert.NotEqualf(t, 0, len(c), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.NotEqual(t, 0, len(ch))                         // want "use assert.NotEmpty"
+			assert.NotEqual(t, 0, len(ch), "msg")                  // want "use assert.NotEmpty"
+			assert.NotEqual(t, 0, len(ch), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.NotEqualf(t, 0, len(ch), "msg")                 // want "use assert.NotEmptyf"
+			assert.NotEqualf(t, 0, len(ch), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.Greater(t, len(c), 0)                         // want "use assert.NotEmpty"
-			assert.Greater(t, len(c), 0, "msg")                  // want "use assert.NotEmpty"
-			assert.Greater(t, len(c), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Greaterf(t, len(c), 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Greaterf(t, len(c), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.Greater(t, len(ch), 0)                         // want "use assert.NotEmpty"
+			assert.Greater(t, len(ch), 0, "msg")                  // want "use assert.NotEmpty"
+			assert.Greater(t, len(ch), 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Greaterf(t, len(ch), 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Greaterf(t, len(ch), 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.GreaterOrEqual(t, len(c), 1)                         // want "use assert.NotEmpty"
-			assert.GreaterOrEqual(t, len(c), 1, "msg")                  // want "use assert.NotEmpty"
-			assert.GreaterOrEqual(t, len(c), 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.GreaterOrEqualf(t, len(c), 1, "msg")                 // want "use assert.NotEmptyf"
-			assert.GreaterOrEqualf(t, len(c), 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.GreaterOrEqual(t, len(ch), 1)                         // want "use assert.NotEmpty"
+			assert.GreaterOrEqual(t, len(ch), 1, "msg")                  // want "use assert.NotEmpty"
+			assert.GreaterOrEqual(t, len(ch), 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.GreaterOrEqualf(t, len(ch), 1, "msg")                 // want "use assert.NotEmptyf"
+			assert.GreaterOrEqualf(t, len(ch), 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(c) != 0)                         // want "use assert.NotEmpty"
-			assert.True(t, len(c) != 0, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(c) != 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(c) != 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(c) != 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(ch) != 0)                         // want "use assert.NotEmpty"
+			assert.True(t, len(ch) != 0, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(ch) != 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(ch) != 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(ch) != 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 0 != len(c))                         // want "use assert.NotEmpty"
-			assert.True(t, 0 != len(c), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 0 != len(c), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 0 != len(c), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 0 != len(c), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 0 != len(ch))                         // want "use assert.NotEmpty"
+			assert.True(t, 0 != len(ch), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 0 != len(ch), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 0 != len(ch), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 0 != len(ch), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(c) > 0)                         // want "use assert.NotEmpty"
-			assert.True(t, len(c) > 0, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(c) > 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(c) > 0, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(c) > 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(ch) > 0)                         // want "use assert.NotEmpty"
+			assert.True(t, len(ch) > 0, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(ch) > 0, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(ch) > 0, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(ch) > 0, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 0 < len(c))                         // want "use assert.NotEmpty"
-			assert.True(t, 0 < len(c), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 0 < len(c), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 0 < len(c), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 0 < len(c), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 0 < len(ch))                         // want "use assert.NotEmpty"
+			assert.True(t, 0 < len(ch), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 0 < len(ch), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 0 < len(ch), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 0 < len(ch), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, len(c) >= 1)                         // want "use assert.NotEmpty"
-			assert.True(t, len(c) >= 1, "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, len(c) >= 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, len(c) >= 1, "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, len(c) >= 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, len(ch) >= 1)                         // want "use assert.NotEmpty"
+			assert.True(t, len(ch) >= 1, "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, len(ch) >= 1, "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, len(ch) >= 1, "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, len(ch) >= 1, "msg with arg %d", 42) // want "use assert.NotEmptyf"
 
-			assert.True(t, 1 <= len(c))                         // want "use assert.NotEmpty"
-			assert.True(t, 1 <= len(c), "msg")                  // want "use assert.NotEmpty"
-			assert.True(t, 1 <= len(c), "msg with arg %d", 42)  // want "use assert.NotEmpty"
-			assert.Truef(t, 1 <= len(c), "msg")                 // want "use assert.NotEmptyf"
-			assert.Truef(t, 1 <= len(c), "msg with arg %d", 42) // want "use assert.NotEmptyf"
+			assert.True(t, 1 <= len(ch))                         // want "use assert.NotEmpty"
+			assert.True(t, 1 <= len(ch), "msg")                  // want "use assert.NotEmpty"
+			assert.True(t, 1 <= len(ch), "msg with arg %d", 42)  // want "use assert.NotEmpty"
+			assert.Truef(t, 1 <= len(ch), "msg")                 // want "use assert.NotEmptyf"
+			assert.Truef(t, 1 <= len(ch), "msg with arg %d", 42) // want "use assert.NotEmptyf"
 		}
 
 		// Valid asserts.
 
 		{
-			assert.NotEmpty(t, a)
-			assert.NotEmpty(t, a, "msg")
-			assert.NotEmpty(t, a, "msg with arg %d", 42)
-			assert.NotEmptyf(t, a, "msg")
-			assert.NotEmptyf(t, a, "msg with arg %d", 42)
+			assert.NotEmpty(t, arr)
+			assert.NotEmpty(t, arr, "msg")
+			assert.NotEmpty(t, arr, "msg with arg %d", 42)
+			assert.NotEmptyf(t, arr, "msg")
+			assert.NotEmptyf(t, arr, "msg with arg %d", 42)
 		}
 
 		{
-			assert.NotEmpty(t, aPtr)
-			assert.NotEmpty(t, aPtr, "msg")
-			assert.NotEmpty(t, aPtr, "msg with arg %d", 42)
-			assert.NotEmptyf(t, aPtr, "msg")
-			assert.NotEmptyf(t, aPtr, "msg with arg %d", 42)
+			assert.NotEmpty(t, arrPtr)
+			assert.NotEmpty(t, arrPtr, "msg")
+			assert.NotEmpty(t, arrPtr, "msg with arg %d", 42)
+			assert.NotEmptyf(t, arrPtr, "msg")
+			assert.NotEmptyf(t, arrPtr, "msg with arg %d", 42)
 		}
 
 		{
-			assert.NotEmpty(t, s)
-			assert.NotEmpty(t, s, "msg")
-			assert.NotEmpty(t, s, "msg with arg %d", 42)
-			assert.NotEmptyf(t, s, "msg")
-			assert.NotEmptyf(t, s, "msg with arg %d", 42)
+			assert.NotEmpty(t, sl)
+			assert.NotEmpty(t, sl, "msg")
+			assert.NotEmpty(t, sl, "msg with arg %d", 42)
+			assert.NotEmptyf(t, sl, "msg")
+			assert.NotEmptyf(t, sl, "msg with arg %d", 42)
 		}
 
 		{
-			assert.NotEmpty(t, m)
-			assert.NotEmpty(t, m, "msg")
-			assert.NotEmpty(t, m, "msg with arg %d", 42)
-			assert.NotEmptyf(t, m, "msg")
-			assert.NotEmptyf(t, m, "msg with arg %d", 42)
+			assert.NotEmpty(t, mp)
+			assert.NotEmpty(t, mp, "msg")
+			assert.NotEmpty(t, mp, "msg with arg %d", 42)
+			assert.NotEmptyf(t, mp, "msg")
+			assert.NotEmptyf(t, mp, "msg with arg %d", 42)
 		}
 
 		{
-			assert.NotEmpty(t, ss)
-			assert.NotEmpty(t, ss, "msg")
-			assert.NotEmpty(t, ss, "msg with arg %d", 42)
-			assert.NotEmptyf(t, ss, "msg")
-			assert.NotEmptyf(t, ss, "msg with arg %d", 42)
+			assert.NotEmpty(t, str)
+			assert.NotEmpty(t, str, "msg")
+			assert.NotEmpty(t, str, "msg with arg %d", 42)
+			assert.NotEmptyf(t, str, "msg")
+			assert.NotEmptyf(t, str, "msg with arg %d", 42)
 		}
 
 		{
-			assert.NotEmpty(t, c)
-			assert.NotEmpty(t, c, "msg")
-			assert.NotEmpty(t, c, "msg with arg %d", 42)
-			assert.NotEmptyf(t, c, "msg")
-			assert.NotEmptyf(t, c, "msg with arg %d", 42)
+			assert.NotEmpty(t, ch)
+			assert.NotEmpty(t, ch, "msg")
+			assert.NotEmpty(t, ch, "msg with arg %d", 42)
+			assert.NotEmptyf(t, ch, "msg")
+			assert.NotEmptyf(t, ch, "msg with arg %d", 42)
 		}
 	})
 
 	t.Run("require", func(t *testing.T) {
 		{
-			require.NotEqual(t, len(a), 0)                         // want "use require.NotEmpty"
-			require.NotEqual(t, len(a), 0, "msg")                  // want "use require.NotEmpty"
-			require.NotEqual(t, len(a), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.NotEqualf(t, len(a), 0, "msg")                 // want "use require.NotEmptyf"
-			require.NotEqualf(t, len(a), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.NotEqual(t, len(arr), 0)                         // want "use require.NotEmpty"
+			require.NotEqual(t, len(arr), 0, "msg")                  // want "use require.NotEmpty"
+			require.NotEqual(t, len(arr), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.NotEqualf(t, len(arr), 0, "msg")                 // want "use require.NotEmptyf"
+			require.NotEqualf(t, len(arr), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.NotEqual(t, 0, len(a))                         // want "use require.NotEmpty"
-			require.NotEqual(t, 0, len(a), "msg")                  // want "use require.NotEmpty"
-			require.NotEqual(t, 0, len(a), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.NotEqualf(t, 0, len(a), "msg")                 // want "use require.NotEmptyf"
-			require.NotEqualf(t, 0, len(a), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.NotEqual(t, 0, len(arr))                         // want "use require.NotEmpty"
+			require.NotEqual(t, 0, len(arr), "msg")                  // want "use require.NotEmpty"
+			require.NotEqual(t, 0, len(arr), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.NotEqualf(t, 0, len(arr), "msg")                 // want "use require.NotEmptyf"
+			require.NotEqualf(t, 0, len(arr), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.Greater(t, len(a), 0)                         // want "use require.NotEmpty"
-			require.Greater(t, len(a), 0, "msg")                  // want "use require.NotEmpty"
-			require.Greater(t, len(a), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Greaterf(t, len(a), 0, "msg")                 // want "use require.NotEmptyf"
-			require.Greaterf(t, len(a), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.Greater(t, len(arr), 0)                         // want "use require.NotEmpty"
+			require.Greater(t, len(arr), 0, "msg")                  // want "use require.NotEmpty"
+			require.Greater(t, len(arr), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Greaterf(t, len(arr), 0, "msg")                 // want "use require.NotEmptyf"
+			require.Greaterf(t, len(arr), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.GreaterOrEqual(t, len(a), 1)                         // want "use require.NotEmpty"
-			require.GreaterOrEqual(t, len(a), 1, "msg")                  // want "use require.NotEmpty"
-			require.GreaterOrEqual(t, len(a), 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.GreaterOrEqualf(t, len(a), 1, "msg")                 // want "use require.NotEmptyf"
-			require.GreaterOrEqualf(t, len(a), 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.GreaterOrEqual(t, len(arr), 1)                         // want "use require.NotEmpty"
+			require.GreaterOrEqual(t, len(arr), 1, "msg")                  // want "use require.NotEmpty"
+			require.GreaterOrEqual(t, len(arr), 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.GreaterOrEqualf(t, len(arr), 1, "msg")                 // want "use require.NotEmptyf"
+			require.GreaterOrEqualf(t, len(arr), 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(a) != 0)                         // want "use require.NotEmpty"
-			require.True(t, len(a) != 0, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(a) != 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(a) != 0, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(a) != 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(arr) != 0)                         // want "use require.NotEmpty"
+			require.True(t, len(arr) != 0, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(arr) != 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(arr) != 0, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(arr) != 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 0 != len(a))                         // want "use require.NotEmpty"
-			require.True(t, 0 != len(a), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 0 != len(a), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 0 != len(a), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 0 != len(a), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 0 != len(arr))                         // want "use require.NotEmpty"
+			require.True(t, 0 != len(arr), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 0 != len(arr), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 0 != len(arr), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 0 != len(arr), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(a) > 0)                         // want "use require.NotEmpty"
-			require.True(t, len(a) > 0, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(a) > 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(a) > 0, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(a) > 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(arr) > 0)                         // want "use require.NotEmpty"
+			require.True(t, len(arr) > 0, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(arr) > 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(arr) > 0, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(arr) > 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 0 < len(a))                         // want "use require.NotEmpty"
-			require.True(t, 0 < len(a), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 0 < len(a), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 0 < len(a), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 0 < len(a), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 0 < len(arr))                         // want "use require.NotEmpty"
+			require.True(t, 0 < len(arr), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 0 < len(arr), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 0 < len(arr), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 0 < len(arr), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(a) >= 1)                         // want "use require.NotEmpty"
-			require.True(t, len(a) >= 1, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(a) >= 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(a) >= 1, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(a) >= 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(arr) >= 1)                         // want "use require.NotEmpty"
+			require.True(t, len(arr) >= 1, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(arr) >= 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(arr) >= 1, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(arr) >= 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 1 <= len(a))                         // want "use require.NotEmpty"
-			require.True(t, 1 <= len(a), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 1 <= len(a), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 1 <= len(a), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 1 <= len(a), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 1 <= len(arr))                         // want "use require.NotEmpty"
+			require.True(t, 1 <= len(arr), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 1 <= len(arr), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 1 <= len(arr), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 1 <= len(arr), "msg with arg %d", 42) // want "use require.NotEmptyf"
 		}
 
 		{
-			require.NotEqual(t, len(aPtr), 0)                         // want "use require.NotEmpty"
-			require.NotEqual(t, len(aPtr), 0, "msg")                  // want "use require.NotEmpty"
-			require.NotEqual(t, len(aPtr), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.NotEqualf(t, len(aPtr), 0, "msg")                 // want "use require.NotEmptyf"
-			require.NotEqualf(t, len(aPtr), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.NotEqual(t, len(arrPtr), 0)                         // want "use require.NotEmpty"
+			require.NotEqual(t, len(arrPtr), 0, "msg")                  // want "use require.NotEmpty"
+			require.NotEqual(t, len(arrPtr), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.NotEqualf(t, len(arrPtr), 0, "msg")                 // want "use require.NotEmptyf"
+			require.NotEqualf(t, len(arrPtr), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.NotEqual(t, 0, len(aPtr))                         // want "use require.NotEmpty"
-			require.NotEqual(t, 0, len(aPtr), "msg")                  // want "use require.NotEmpty"
-			require.NotEqual(t, 0, len(aPtr), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.NotEqualf(t, 0, len(aPtr), "msg")                 // want "use require.NotEmptyf"
-			require.NotEqualf(t, 0, len(aPtr), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.NotEqual(t, 0, len(arrPtr))                         // want "use require.NotEmpty"
+			require.NotEqual(t, 0, len(arrPtr), "msg")                  // want "use require.NotEmpty"
+			require.NotEqual(t, 0, len(arrPtr), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.NotEqualf(t, 0, len(arrPtr), "msg")                 // want "use require.NotEmptyf"
+			require.NotEqualf(t, 0, len(arrPtr), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.Greater(t, len(aPtr), 0)                         // want "use require.NotEmpty"
-			require.Greater(t, len(aPtr), 0, "msg")                  // want "use require.NotEmpty"
-			require.Greater(t, len(aPtr), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Greaterf(t, len(aPtr), 0, "msg")                 // want "use require.NotEmptyf"
-			require.Greaterf(t, len(aPtr), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.Greater(t, len(arrPtr), 0)                         // want "use require.NotEmpty"
+			require.Greater(t, len(arrPtr), 0, "msg")                  // want "use require.NotEmpty"
+			require.Greater(t, len(arrPtr), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Greaterf(t, len(arrPtr), 0, "msg")                 // want "use require.NotEmptyf"
+			require.Greaterf(t, len(arrPtr), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.GreaterOrEqual(t, len(aPtr), 1)                         // want "use require.NotEmpty"
-			require.GreaterOrEqual(t, len(aPtr), 1, "msg")                  // want "use require.NotEmpty"
-			require.GreaterOrEqual(t, len(aPtr), 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.GreaterOrEqualf(t, len(aPtr), 1, "msg")                 // want "use require.NotEmptyf"
-			require.GreaterOrEqualf(t, len(aPtr), 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.GreaterOrEqual(t, len(arrPtr), 1)                         // want "use require.NotEmpty"
+			require.GreaterOrEqual(t, len(arrPtr), 1, "msg")                  // want "use require.NotEmpty"
+			require.GreaterOrEqual(t, len(arrPtr), 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.GreaterOrEqualf(t, len(arrPtr), 1, "msg")                 // want "use require.NotEmptyf"
+			require.GreaterOrEqualf(t, len(arrPtr), 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(aPtr) != 0)                         // want "use require.NotEmpty"
-			require.True(t, len(aPtr) != 0, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(aPtr) != 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(aPtr) != 0, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(aPtr) != 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(arrPtr) != 0)                         // want "use require.NotEmpty"
+			require.True(t, len(arrPtr) != 0, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(arrPtr) != 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(arrPtr) != 0, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(arrPtr) != 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 0 != len(aPtr))                         // want "use require.NotEmpty"
-			require.True(t, 0 != len(aPtr), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 0 != len(aPtr), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 0 != len(aPtr), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 0 != len(aPtr), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 0 != len(arrPtr))                         // want "use require.NotEmpty"
+			require.True(t, 0 != len(arrPtr), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 0 != len(arrPtr), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 0 != len(arrPtr), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 0 != len(arrPtr), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(aPtr) > 0)                         // want "use require.NotEmpty"
-			require.True(t, len(aPtr) > 0, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(aPtr) > 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(aPtr) > 0, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(aPtr) > 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(arrPtr) > 0)                         // want "use require.NotEmpty"
+			require.True(t, len(arrPtr) > 0, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(arrPtr) > 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(arrPtr) > 0, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(arrPtr) > 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 0 < len(aPtr))                         // want "use require.NotEmpty"
-			require.True(t, 0 < len(aPtr), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 0 < len(aPtr), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 0 < len(aPtr), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 0 < len(aPtr), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 0 < len(arrPtr))                         // want "use require.NotEmpty"
+			require.True(t, 0 < len(arrPtr), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 0 < len(arrPtr), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 0 < len(arrPtr), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 0 < len(arrPtr), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(aPtr) >= 1)                         // want "use require.NotEmpty"
-			require.True(t, len(aPtr) >= 1, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(aPtr) >= 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(aPtr) >= 1, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(aPtr) >= 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(arrPtr) >= 1)                         // want "use require.NotEmpty"
+			require.True(t, len(arrPtr) >= 1, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(arrPtr) >= 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(arrPtr) >= 1, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(arrPtr) >= 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 1 <= len(aPtr))                         // want "use require.NotEmpty"
-			require.True(t, 1 <= len(aPtr), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 1 <= len(aPtr), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 1 <= len(aPtr), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 1 <= len(aPtr), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 1 <= len(arrPtr))                         // want "use require.NotEmpty"
+			require.True(t, 1 <= len(arrPtr), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 1 <= len(arrPtr), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 1 <= len(arrPtr), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 1 <= len(arrPtr), "msg with arg %d", 42) // want "use require.NotEmptyf"
 		}
 
 		{
-			require.NotEqual(t, len(s), 0)                         // want "use require.NotEmpty"
-			require.NotEqual(t, len(s), 0, "msg")                  // want "use require.NotEmpty"
-			require.NotEqual(t, len(s), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.NotEqualf(t, len(s), 0, "msg")                 // want "use require.NotEmptyf"
-			require.NotEqualf(t, len(s), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.NotEqual(t, len(sl), 0)                         // want "use require.NotEmpty"
+			require.NotEqual(t, len(sl), 0, "msg")                  // want "use require.NotEmpty"
+			require.NotEqual(t, len(sl), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.NotEqualf(t, len(sl), 0, "msg")                 // want "use require.NotEmptyf"
+			require.NotEqualf(t, len(sl), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.NotEqual(t, 0, len(s))                         // want "use require.NotEmpty"
-			require.NotEqual(t, 0, len(s), "msg")                  // want "use require.NotEmpty"
-			require.NotEqual(t, 0, len(s), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.NotEqualf(t, 0, len(s), "msg")                 // want "use require.NotEmptyf"
-			require.NotEqualf(t, 0, len(s), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.NotEqual(t, 0, len(sl))                         // want "use require.NotEmpty"
+			require.NotEqual(t, 0, len(sl), "msg")                  // want "use require.NotEmpty"
+			require.NotEqual(t, 0, len(sl), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.NotEqualf(t, 0, len(sl), "msg")                 // want "use require.NotEmptyf"
+			require.NotEqualf(t, 0, len(sl), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.Greater(t, len(s), 0)                         // want "use require.NotEmpty"
-			require.Greater(t, len(s), 0, "msg")                  // want "use require.NotEmpty"
-			require.Greater(t, len(s), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Greaterf(t, len(s), 0, "msg")                 // want "use require.NotEmptyf"
-			require.Greaterf(t, len(s), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.Greater(t, len(sl), 0)                         // want "use require.NotEmpty"
+			require.Greater(t, len(sl), 0, "msg")                  // want "use require.NotEmpty"
+			require.Greater(t, len(sl), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Greaterf(t, len(sl), 0, "msg")                 // want "use require.NotEmptyf"
+			require.Greaterf(t, len(sl), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.GreaterOrEqual(t, len(s), 1)                         // want "use require.NotEmpty"
-			require.GreaterOrEqual(t, len(s), 1, "msg")                  // want "use require.NotEmpty"
-			require.GreaterOrEqual(t, len(s), 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.GreaterOrEqualf(t, len(s), 1, "msg")                 // want "use require.NotEmptyf"
-			require.GreaterOrEqualf(t, len(s), 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.GreaterOrEqual(t, len(sl), 1)                         // want "use require.NotEmpty"
+			require.GreaterOrEqual(t, len(sl), 1, "msg")                  // want "use require.NotEmpty"
+			require.GreaterOrEqual(t, len(sl), 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.GreaterOrEqualf(t, len(sl), 1, "msg")                 // want "use require.NotEmptyf"
+			require.GreaterOrEqualf(t, len(sl), 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(s) != 0)                         // want "use require.NotEmpty"
-			require.True(t, len(s) != 0, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(s) != 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(s) != 0, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(s) != 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(sl) != 0)                         // want "use require.NotEmpty"
+			require.True(t, len(sl) != 0, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(sl) != 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(sl) != 0, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(sl) != 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 0 != len(s))                         // want "use require.NotEmpty"
-			require.True(t, 0 != len(s), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 0 != len(s), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 0 != len(s), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 0 != len(s), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 0 != len(sl))                         // want "use require.NotEmpty"
+			require.True(t, 0 != len(sl), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 0 != len(sl), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 0 != len(sl), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 0 != len(sl), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(s) > 0)                         // want "use require.NotEmpty"
-			require.True(t, len(s) > 0, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(s) > 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(s) > 0, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(s) > 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(sl) > 0)                         // want "use require.NotEmpty"
+			require.True(t, len(sl) > 0, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(sl) > 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(sl) > 0, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(sl) > 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 0 < len(s))                         // want "use require.NotEmpty"
-			require.True(t, 0 < len(s), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 0 < len(s), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 0 < len(s), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 0 < len(s), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 0 < len(sl))                         // want "use require.NotEmpty"
+			require.True(t, 0 < len(sl), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 0 < len(sl), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 0 < len(sl), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 0 < len(sl), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(s) >= 1)                         // want "use require.NotEmpty"
-			require.True(t, len(s) >= 1, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(s) >= 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(s) >= 1, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(s) >= 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(sl) >= 1)                         // want "use require.NotEmpty"
+			require.True(t, len(sl) >= 1, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(sl) >= 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(sl) >= 1, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(sl) >= 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 1 <= len(s))                         // want "use require.NotEmpty"
-			require.True(t, 1 <= len(s), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 1 <= len(s), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 1 <= len(s), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 1 <= len(s), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 1 <= len(sl))                         // want "use require.NotEmpty"
+			require.True(t, 1 <= len(sl), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 1 <= len(sl), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 1 <= len(sl), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 1 <= len(sl), "msg with arg %d", 42) // want "use require.NotEmptyf"
 		}
 
 		{
-			require.NotEqual(t, len(m), 0)                         // want "use require.NotEmpty"
-			require.NotEqual(t, len(m), 0, "msg")                  // want "use require.NotEmpty"
-			require.NotEqual(t, len(m), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.NotEqualf(t, len(m), 0, "msg")                 // want "use require.NotEmptyf"
-			require.NotEqualf(t, len(m), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.NotEqual(t, len(mp), 0)                         // want "use require.NotEmpty"
+			require.NotEqual(t, len(mp), 0, "msg")                  // want "use require.NotEmpty"
+			require.NotEqual(t, len(mp), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.NotEqualf(t, len(mp), 0, "msg")                 // want "use require.NotEmptyf"
+			require.NotEqualf(t, len(mp), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.NotEqual(t, 0, len(m))                         // want "use require.NotEmpty"
-			require.NotEqual(t, 0, len(m), "msg")                  // want "use require.NotEmpty"
-			require.NotEqual(t, 0, len(m), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.NotEqualf(t, 0, len(m), "msg")                 // want "use require.NotEmptyf"
-			require.NotEqualf(t, 0, len(m), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.NotEqual(t, 0, len(mp))                         // want "use require.NotEmpty"
+			require.NotEqual(t, 0, len(mp), "msg")                  // want "use require.NotEmpty"
+			require.NotEqual(t, 0, len(mp), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.NotEqualf(t, 0, len(mp), "msg")                 // want "use require.NotEmptyf"
+			require.NotEqualf(t, 0, len(mp), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.Greater(t, len(m), 0)                         // want "use require.NotEmpty"
-			require.Greater(t, len(m), 0, "msg")                  // want "use require.NotEmpty"
-			require.Greater(t, len(m), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Greaterf(t, len(m), 0, "msg")                 // want "use require.NotEmptyf"
-			require.Greaterf(t, len(m), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.Greater(t, len(mp), 0)                         // want "use require.NotEmpty"
+			require.Greater(t, len(mp), 0, "msg")                  // want "use require.NotEmpty"
+			require.Greater(t, len(mp), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Greaterf(t, len(mp), 0, "msg")                 // want "use require.NotEmptyf"
+			require.Greaterf(t, len(mp), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.GreaterOrEqual(t, len(m), 1)                         // want "use require.NotEmpty"
-			require.GreaterOrEqual(t, len(m), 1, "msg")                  // want "use require.NotEmpty"
-			require.GreaterOrEqual(t, len(m), 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.GreaterOrEqualf(t, len(m), 1, "msg")                 // want "use require.NotEmptyf"
-			require.GreaterOrEqualf(t, len(m), 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.GreaterOrEqual(t, len(mp), 1)                         // want "use require.NotEmpty"
+			require.GreaterOrEqual(t, len(mp), 1, "msg")                  // want "use require.NotEmpty"
+			require.GreaterOrEqual(t, len(mp), 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.GreaterOrEqualf(t, len(mp), 1, "msg")                 // want "use require.NotEmptyf"
+			require.GreaterOrEqualf(t, len(mp), 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(m) != 0)                         // want "use require.NotEmpty"
-			require.True(t, len(m) != 0, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(m) != 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(m) != 0, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(m) != 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(mp) != 0)                         // want "use require.NotEmpty"
+			require.True(t, len(mp) != 0, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(mp) != 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(mp) != 0, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(mp) != 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 0 != len(m))                         // want "use require.NotEmpty"
-			require.True(t, 0 != len(m), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 0 != len(m), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 0 != len(m), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 0 != len(m), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 0 != len(mp))                         // want "use require.NotEmpty"
+			require.True(t, 0 != len(mp), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 0 != len(mp), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 0 != len(mp), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 0 != len(mp), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(m) > 0)                         // want "use require.NotEmpty"
-			require.True(t, len(m) > 0, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(m) > 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(m) > 0, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(m) > 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(mp) > 0)                         // want "use require.NotEmpty"
+			require.True(t, len(mp) > 0, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(mp) > 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(mp) > 0, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(mp) > 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 0 < len(m))                         // want "use require.NotEmpty"
-			require.True(t, 0 < len(m), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 0 < len(m), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 0 < len(m), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 0 < len(m), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 0 < len(mp))                         // want "use require.NotEmpty"
+			require.True(t, 0 < len(mp), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 0 < len(mp), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 0 < len(mp), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 0 < len(mp), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(m) >= 1)                         // want "use require.NotEmpty"
-			require.True(t, len(m) >= 1, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(m) >= 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(m) >= 1, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(m) >= 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(mp) >= 1)                         // want "use require.NotEmpty"
+			require.True(t, len(mp) >= 1, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(mp) >= 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(mp) >= 1, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(mp) >= 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 1 <= len(m))                         // want "use require.NotEmpty"
-			require.True(t, 1 <= len(m), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 1 <= len(m), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 1 <= len(m), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 1 <= len(m), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 1 <= len(mp))                         // want "use require.NotEmpty"
+			require.True(t, 1 <= len(mp), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 1 <= len(mp), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 1 <= len(mp), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 1 <= len(mp), "msg with arg %d", 42) // want "use require.NotEmptyf"
 		}
 
 		{
-			require.NotEqual(t, len(ss), 0)                         // want "use require.NotEmpty"
-			require.NotEqual(t, len(ss), 0, "msg")                  // want "use require.NotEmpty"
-			require.NotEqual(t, len(ss), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.NotEqualf(t, len(ss), 0, "msg")                 // want "use require.NotEmptyf"
-			require.NotEqualf(t, len(ss), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.NotEqual(t, len(str), 0)                         // want "use require.NotEmpty"
+			require.NotEqual(t, len(str), 0, "msg")                  // want "use require.NotEmpty"
+			require.NotEqual(t, len(str), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.NotEqualf(t, len(str), 0, "msg")                 // want "use require.NotEmptyf"
+			require.NotEqualf(t, len(str), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.NotEqual(t, 0, len(ss))                         // want "use require.NotEmpty"
-			require.NotEqual(t, 0, len(ss), "msg")                  // want "use require.NotEmpty"
-			require.NotEqual(t, 0, len(ss), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.NotEqualf(t, 0, len(ss), "msg")                 // want "use require.NotEmptyf"
-			require.NotEqualf(t, 0, len(ss), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.NotEqual(t, 0, len(str))                         // want "use require.NotEmpty"
+			require.NotEqual(t, 0, len(str), "msg")                  // want "use require.NotEmpty"
+			require.NotEqual(t, 0, len(str), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.NotEqualf(t, 0, len(str), "msg")                 // want "use require.NotEmptyf"
+			require.NotEqualf(t, 0, len(str), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.Greater(t, len(ss), 0)                         // want "use require.NotEmpty"
-			require.Greater(t, len(ss), 0, "msg")                  // want "use require.NotEmpty"
-			require.Greater(t, len(ss), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Greaterf(t, len(ss), 0, "msg")                 // want "use require.NotEmptyf"
-			require.Greaterf(t, len(ss), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.Greater(t, len(str), 0)                         // want "use require.NotEmpty"
+			require.Greater(t, len(str), 0, "msg")                  // want "use require.NotEmpty"
+			require.Greater(t, len(str), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Greaterf(t, len(str), 0, "msg")                 // want "use require.NotEmptyf"
+			require.Greaterf(t, len(str), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.GreaterOrEqual(t, len(ss), 1)                         // want "use require.NotEmpty"
-			require.GreaterOrEqual(t, len(ss), 1, "msg")                  // want "use require.NotEmpty"
-			require.GreaterOrEqual(t, len(ss), 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.GreaterOrEqualf(t, len(ss), 1, "msg")                 // want "use require.NotEmptyf"
-			require.GreaterOrEqualf(t, len(ss), 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.GreaterOrEqual(t, len(str), 1)                         // want "use require.NotEmpty"
+			require.GreaterOrEqual(t, len(str), 1, "msg")                  // want "use require.NotEmpty"
+			require.GreaterOrEqual(t, len(str), 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.GreaterOrEqualf(t, len(str), 1, "msg")                 // want "use require.NotEmptyf"
+			require.GreaterOrEqualf(t, len(str), 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(ss) != 0)                         // want "use require.NotEmpty"
-			require.True(t, len(ss) != 0, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(ss) != 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(ss) != 0, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(ss) != 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(str) != 0)                         // want "use require.NotEmpty"
+			require.True(t, len(str) != 0, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(str) != 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(str) != 0, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(str) != 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 0 != len(ss))                         // want "use require.NotEmpty"
-			require.True(t, 0 != len(ss), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 0 != len(ss), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 0 != len(ss), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 0 != len(ss), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 0 != len(str))                         // want "use require.NotEmpty"
+			require.True(t, 0 != len(str), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 0 != len(str), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 0 != len(str), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 0 != len(str), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(ss) > 0)                         // want "use require.NotEmpty"
-			require.True(t, len(ss) > 0, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(ss) > 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(ss) > 0, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(ss) > 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(str) > 0)                         // want "use require.NotEmpty"
+			require.True(t, len(str) > 0, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(str) > 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(str) > 0, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(str) > 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 0 < len(ss))                         // want "use require.NotEmpty"
-			require.True(t, 0 < len(ss), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 0 < len(ss), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 0 < len(ss), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 0 < len(ss), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 0 < len(str))                         // want "use require.NotEmpty"
+			require.True(t, 0 < len(str), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 0 < len(str), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 0 < len(str), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 0 < len(str), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(ss) >= 1)                         // want "use require.NotEmpty"
-			require.True(t, len(ss) >= 1, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(ss) >= 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(ss) >= 1, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(ss) >= 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(str) >= 1)                         // want "use require.NotEmpty"
+			require.True(t, len(str) >= 1, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(str) >= 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(str) >= 1, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(str) >= 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 1 <= len(ss))                         // want "use require.NotEmpty"
-			require.True(t, 1 <= len(ss), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 1 <= len(ss), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 1 <= len(ss), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 1 <= len(ss), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 1 <= len(str))                         // want "use require.NotEmpty"
+			require.True(t, 1 <= len(str), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 1 <= len(str), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 1 <= len(str), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 1 <= len(str), "msg with arg %d", 42) // want "use require.NotEmptyf"
 		}
 
 		{
-			require.NotEqual(t, len(c), 0)                         // want "use require.NotEmpty"
-			require.NotEqual(t, len(c), 0, "msg")                  // want "use require.NotEmpty"
-			require.NotEqual(t, len(c), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.NotEqualf(t, len(c), 0, "msg")                 // want "use require.NotEmptyf"
-			require.NotEqualf(t, len(c), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.NotEqual(t, len(ch), 0)                         // want "use require.NotEmpty"
+			require.NotEqual(t, len(ch), 0, "msg")                  // want "use require.NotEmpty"
+			require.NotEqual(t, len(ch), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.NotEqualf(t, len(ch), 0, "msg")                 // want "use require.NotEmptyf"
+			require.NotEqualf(t, len(ch), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.NotEqual(t, 0, len(c))                         // want "use require.NotEmpty"
-			require.NotEqual(t, 0, len(c), "msg")                  // want "use require.NotEmpty"
-			require.NotEqual(t, 0, len(c), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.NotEqualf(t, 0, len(c), "msg")                 // want "use require.NotEmptyf"
-			require.NotEqualf(t, 0, len(c), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.NotEqual(t, 0, len(ch))                         // want "use require.NotEmpty"
+			require.NotEqual(t, 0, len(ch), "msg")                  // want "use require.NotEmpty"
+			require.NotEqual(t, 0, len(ch), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.NotEqualf(t, 0, len(ch), "msg")                 // want "use require.NotEmptyf"
+			require.NotEqualf(t, 0, len(ch), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.Greater(t, len(c), 0)                         // want "use require.NotEmpty"
-			require.Greater(t, len(c), 0, "msg")                  // want "use require.NotEmpty"
-			require.Greater(t, len(c), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Greaterf(t, len(c), 0, "msg")                 // want "use require.NotEmptyf"
-			require.Greaterf(t, len(c), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.Greater(t, len(ch), 0)                         // want "use require.NotEmpty"
+			require.Greater(t, len(ch), 0, "msg")                  // want "use require.NotEmpty"
+			require.Greater(t, len(ch), 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Greaterf(t, len(ch), 0, "msg")                 // want "use require.NotEmptyf"
+			require.Greaterf(t, len(ch), 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.GreaterOrEqual(t, len(c), 1)                         // want "use require.NotEmpty"
-			require.GreaterOrEqual(t, len(c), 1, "msg")                  // want "use require.NotEmpty"
-			require.GreaterOrEqual(t, len(c), 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.GreaterOrEqualf(t, len(c), 1, "msg")                 // want "use require.NotEmptyf"
-			require.GreaterOrEqualf(t, len(c), 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.GreaterOrEqual(t, len(ch), 1)                         // want "use require.NotEmpty"
+			require.GreaterOrEqual(t, len(ch), 1, "msg")                  // want "use require.NotEmpty"
+			require.GreaterOrEqual(t, len(ch), 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.GreaterOrEqualf(t, len(ch), 1, "msg")                 // want "use require.NotEmptyf"
+			require.GreaterOrEqualf(t, len(ch), 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(c) != 0)                         // want "use require.NotEmpty"
-			require.True(t, len(c) != 0, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(c) != 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(c) != 0, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(c) != 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(ch) != 0)                         // want "use require.NotEmpty"
+			require.True(t, len(ch) != 0, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(ch) != 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(ch) != 0, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(ch) != 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 0 != len(c))                         // want "use require.NotEmpty"
-			require.True(t, 0 != len(c), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 0 != len(c), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 0 != len(c), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 0 != len(c), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 0 != len(ch))                         // want "use require.NotEmpty"
+			require.True(t, 0 != len(ch), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 0 != len(ch), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 0 != len(ch), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 0 != len(ch), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(c) > 0)                         // want "use require.NotEmpty"
-			require.True(t, len(c) > 0, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(c) > 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(c) > 0, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(c) > 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(ch) > 0)                         // want "use require.NotEmpty"
+			require.True(t, len(ch) > 0, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(ch) > 0, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(ch) > 0, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(ch) > 0, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 0 < len(c))                         // want "use require.NotEmpty"
-			require.True(t, 0 < len(c), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 0 < len(c), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 0 < len(c), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 0 < len(c), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 0 < len(ch))                         // want "use require.NotEmpty"
+			require.True(t, 0 < len(ch), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 0 < len(ch), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 0 < len(ch), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 0 < len(ch), "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, len(c) >= 1)                         // want "use require.NotEmpty"
-			require.True(t, len(c) >= 1, "msg")                  // want "use require.NotEmpty"
-			require.True(t, len(c) >= 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, len(c) >= 1, "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, len(c) >= 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, len(ch) >= 1)                         // want "use require.NotEmpty"
+			require.True(t, len(ch) >= 1, "msg")                  // want "use require.NotEmpty"
+			require.True(t, len(ch) >= 1, "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, len(ch) >= 1, "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, len(ch) >= 1, "msg with arg %d", 42) // want "use require.NotEmptyf"
 
-			require.True(t, 1 <= len(c))                         // want "use require.NotEmpty"
-			require.True(t, 1 <= len(c), "msg")                  // want "use require.NotEmpty"
-			require.True(t, 1 <= len(c), "msg with arg %d", 42)  // want "use require.NotEmpty"
-			require.Truef(t, 1 <= len(c), "msg")                 // want "use require.NotEmptyf"
-			require.Truef(t, 1 <= len(c), "msg with arg %d", 42) // want "use require.NotEmptyf"
+			require.True(t, 1 <= len(ch))                         // want "use require.NotEmpty"
+			require.True(t, 1 <= len(ch), "msg")                  // want "use require.NotEmpty"
+			require.True(t, 1 <= len(ch), "msg with arg %d", 42)  // want "use require.NotEmpty"
+			require.Truef(t, 1 <= len(ch), "msg")                 // want "use require.NotEmptyf"
+			require.Truef(t, 1 <= len(ch), "msg with arg %d", 42) // want "use require.NotEmptyf"
 		}
 
 		// Valid requires.
 
 		{
-			require.NotEmpty(t, a)
-			require.NotEmpty(t, a, "msg")
-			require.NotEmpty(t, a, "msg with arg %d", 42)
-			require.NotEmptyf(t, a, "msg")
-			require.NotEmptyf(t, a, "msg with arg %d", 42)
+			require.NotEmpty(t, arr)
+			require.NotEmpty(t, arr, "msg")
+			require.NotEmpty(t, arr, "msg with arg %d", 42)
+			require.NotEmptyf(t, arr, "msg")
+			require.NotEmptyf(t, arr, "msg with arg %d", 42)
 		}
 
 		{
-			require.NotEmpty(t, aPtr)
-			require.NotEmpty(t, aPtr, "msg")
-			require.NotEmpty(t, aPtr, "msg with arg %d", 42)
-			require.NotEmptyf(t, aPtr, "msg")
-			require.NotEmptyf(t, aPtr, "msg with arg %d", 42)
+			require.NotEmpty(t, arrPtr)
+			require.NotEmpty(t, arrPtr, "msg")
+			require.NotEmpty(t, arrPtr, "msg with arg %d", 42)
+			require.NotEmptyf(t, arrPtr, "msg")
+			require.NotEmptyf(t, arrPtr, "msg with arg %d", 42)
 		}
 
 		{
-			require.NotEmpty(t, s)
-			require.NotEmpty(t, s, "msg")
-			require.NotEmpty(t, s, "msg with arg %d", 42)
-			require.NotEmptyf(t, s, "msg")
-			require.NotEmptyf(t, s, "msg with arg %d", 42)
+			require.NotEmpty(t, sl)
+			require.NotEmpty(t, sl, "msg")
+			require.NotEmpty(t, sl, "msg with arg %d", 42)
+			require.NotEmptyf(t, sl, "msg")
+			require.NotEmptyf(t, sl, "msg with arg %d", 42)
 		}
 
 		{
-			require.NotEmpty(t, m)
-			require.NotEmpty(t, m, "msg")
-			require.NotEmpty(t, m, "msg with arg %d", 42)
-			require.NotEmptyf(t, m, "msg")
-			require.NotEmptyf(t, m, "msg with arg %d", 42)
+			require.NotEmpty(t, mp)
+			require.NotEmpty(t, mp, "msg")
+			require.NotEmpty(t, mp, "msg with arg %d", 42)
+			require.NotEmptyf(t, mp, "msg")
+			require.NotEmptyf(t, mp, "msg with arg %d", 42)
 		}
 
 		{
-			require.NotEmpty(t, ss)
-			require.NotEmpty(t, ss, "msg")
-			require.NotEmpty(t, ss, "msg with arg %d", 42)
-			require.NotEmptyf(t, ss, "msg")
-			require.NotEmptyf(t, ss, "msg with arg %d", 42)
+			require.NotEmpty(t, str)
+			require.NotEmpty(t, str, "msg")
+			require.NotEmpty(t, str, "msg with arg %d", 42)
+			require.NotEmptyf(t, str, "msg")
+			require.NotEmptyf(t, str, "msg with arg %d", 42)
 		}
 
 		{
-			require.NotEmpty(t, c)
-			require.NotEmpty(t, c, "msg")
-			require.NotEmpty(t, c, "msg with arg %d", 42)
-			require.NotEmptyf(t, c, "msg")
-			require.NotEmptyf(t, c, "msg with arg %d", 42)
+			require.NotEmpty(t, ch)
+			require.NotEmpty(t, ch, "msg")
+			require.NotEmpty(t, ch, "msg with arg %d", 42)
+			require.NotEmptyf(t, ch, "msg")
+			require.NotEmptyf(t, ch, "msg with arg %d", 42)
 		}
 	})
 }

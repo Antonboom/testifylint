@@ -2,8 +2,7 @@ package main
 
 import "text/template"
 
-type BoolCompareCasesGenerator struct {
-}
+type BoolCompareCasesGenerator struct{}
 
 func (g BoolCompareCasesGenerator) Template() *template.Template {
 	return boolCmpCasesTmpl

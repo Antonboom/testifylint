@@ -2,6 +2,7 @@ package checkers
 
 import (
 	"go/ast"
+	"go/token"
 	"golang.org/x/tools/go/analysis"
 )
 
@@ -12,7 +13,7 @@ func Len(pass *analysis.Pass, fn FnMeta) {
 			return len(fn.Args) >= 3 && xor(isLenCall(fn.Args[1]), isLenCall(fn.Args[2]))
 
 		case "True", "Truef":
-			return len(fn.Args) >= 2 && isComparisonWithLen(fn.Args[1])
+			return len(fn.Args) >= 2 && isLenEquality(fn.Args[1])
 		}
 		return false
 	}()
@@ -36,10 +37,10 @@ func isLenCall(e ast.Expr) bool {
 	return fn.Name == "len" && len(ce.Args) == 1
 }
 
-func isComparisonWithLen(e ast.Expr) bool { // TODO: use isBinaryExpr
+func isLenEquality(e ast.Expr) bool {
 	be, ok := e.(*ast.BinaryExpr)
 	if !ok {
 		return false
 	}
-	return xor(isLenCall(be.X), isLenCall(be.Y))
+	return be.Op == token.EQL && xor(isLenCall(be.X), isLenCall(be.Y))
 }
