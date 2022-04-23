@@ -19,6 +19,7 @@ func New() *analysis.Analyzer {
 			checkers.FloatCompare,
 			checkers.Empty,
 			checkers.Len,
+			checkers.Comparisons,
 		},
 	}
 

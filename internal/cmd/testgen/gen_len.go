@@ -10,9 +10,7 @@ func (g LenCasesGenerator) Template() *template.Template {
 
 func (g LenCasesGenerator) Data() any {
 	return struct {
-		Pkgs    []string
-		LenVars []any
-
+		Pkgs              []string
 		VarSets           [][]any
 		InvalidChecks     []Check
 		ValidChecks       []Check
@@ -41,28 +39,6 @@ func (g LenCasesGenerator) Data() any {
 			{Fn: "Less", ArgsTmpl: "t, %s, len(arr)"},
 			{Fn: "LessOrEqual", ArgsTmpl: "t, len(arr), %s"},
 			{Fn: "LessOrEqual", ArgsTmpl: "t, %s, len(arr)"},
-
-			{Fn: "True", ArgsTmpl: "t, len(arr) != %s"},
-			{Fn: "True", ArgsTmpl: "t, %s != len(arr)"},
-			{Fn: "True", ArgsTmpl: "t, len(arr) > %s"},
-			{Fn: "True", ArgsTmpl: "t, %s > len(arr)"},
-			{Fn: "True", ArgsTmpl: "t, len(arr) >= %s"},
-			{Fn: "True", ArgsTmpl: "t, %s >= len(arr)"},
-			{Fn: "True", ArgsTmpl: "t, len(arr) < %s"},
-			{Fn: "True", ArgsTmpl: "t, %s < len(arr)"},
-			{Fn: "True", ArgsTmpl: "t, len(arr) <= %s"},
-			{Fn: "True", ArgsTmpl: "t, %s <= len(arr)"},
-
-			{Fn: "False", ArgsTmpl: "t, len(arr) != %s"},
-			{Fn: "False", ArgsTmpl: "t, %s != len(arr)"},
-			{Fn: "False", ArgsTmpl: "t, len(arr) > %s"},
-			{Fn: "False", ArgsTmpl: "t, %s > len(arr)"},
-			{Fn: "False", ArgsTmpl: "t, len(arr) >= %s"},
-			{Fn: "False", ArgsTmpl: "t, %s >= len(arr)"},
-			{Fn: "False", ArgsTmpl: "t, len(arr) < %s"},
-			{Fn: "False", ArgsTmpl: "t, %s < len(arr)"},
-			{Fn: "False", ArgsTmpl: "t, len(arr) <= %s"},
-			{Fn: "False", ArgsTmpl: "t, %s <= len(arr)"},
 		},
 		ValidLenLenChecks: []Check{
 			{Fn: "Equal", ArgsTmpl: "t, len(arr), len(arr)"},
@@ -71,20 +47,6 @@ func (g LenCasesGenerator) Data() any {
 			{Fn: "GreaterOrEqual", ArgsTmpl: "t, len(arr), len(arr)"},
 			{Fn: "Less", ArgsTmpl: "t, len(arr), len(arr)"},
 			{Fn: "LessOrEqual", ArgsTmpl: "t, len(arr), len(arr)"},
-
-			{Fn: "True", ArgsTmpl: "t, len(arr) == len(arr)"},
-			{Fn: "True", ArgsTmpl: "t, len(arr) != len(arr)"},
-			{Fn: "True", ArgsTmpl: "t, len(arr) > len(arr)"},
-			{Fn: "True", ArgsTmpl: "t, len(arr) >= len(arr)"},
-			{Fn: "True", ArgsTmpl: "t, len(arr) < len(arr)"},
-			{Fn: "True", ArgsTmpl: "t, len(arr) <= len(arr)"},
-
-			{Fn: "False", ArgsTmpl: "t, len(arr) == len(arr)"},
-			{Fn: "False", ArgsTmpl: "t, len(arr) != len(arr)"},
-			{Fn: "False", ArgsTmpl: "t, len(arr) > len(arr)"},
-			{Fn: "False", ArgsTmpl: "t, len(arr) >= len(arr)"},
-			{Fn: "False", ArgsTmpl: "t, len(arr) < len(arr)"},
-			{Fn: "False", ArgsTmpl: "t, len(arr) <= len(arr)"},
 		},
 	}
 }
