@@ -9,9 +9,10 @@ import (
 )
 
 var generators = map[string]TestsGenerator{
-	"pkg/analyzer/testdata/src/basic/comparisons_generated.go":   ComparisonsCasesGenerator{},
 	"pkg/analyzer/testdata/src/basic/bool_compare_generated.go":  BoolCompareCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/comparisons_generated.go":   ComparisonsCasesGenerator{},
 	"pkg/analyzer/testdata/src/basic/empty_generated.go":         EmptyCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/error_generated.go":         ErrorCasesGenerator{},
 	"pkg/analyzer/testdata/src/basic/float_compare_generated.go": FloatCompareCasesGenerator{},
 	"pkg/analyzer/testdata/src/basic/len_generated.go":           LenCasesGenerator{},
 }

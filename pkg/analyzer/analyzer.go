@@ -20,6 +20,7 @@ func New() *analysis.Analyzer {
 			checkers.Empty,
 			checkers.Len,
 			checkers.Comparisons,
+			checkers.Error,
 		},
 	}
 

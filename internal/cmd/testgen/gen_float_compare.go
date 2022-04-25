@@ -18,7 +18,7 @@ func (g FloatCompareCasesGenerator) Data() any {
 	}{
 		Bits: []string{"32", "64"},
 		Pkgs: []string{"assert", "require"},
-		VarSets: [][]any{
+		VarSets: [][]any{ // todo: product
 			{"a", "1.01"},
 			{"1.01", "a"},
 			{"b", "bb"},
