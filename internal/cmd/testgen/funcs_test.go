@@ -11,9 +11,10 @@ func TestExpandCheck(t *testing.T) {
 	}{
 		{
 			check: Check{
-				Fn:          "Len",
-				ArgsTmpl:    "t, %s, 0",
-				ReportedMsg: "use %s.Empty",
+				Fn:           "Len",
+				ArgsTmpl:     "t, %s, 0",
+				ReportedMsgf: "use %s.%s",
+				ProposedFn:   "Empty",
 			},
 			pkg:       "assert",
 			argValues: []any{"vv"},
@@ -25,9 +26,10 @@ assert.Lenf(t, vv, 0, "msg with arg %d", 42) // want "use assert.Emptyf"`,
 		},
 		{
 			check: Check{
-				Fn:          "Equal",
-				ArgsTmpl:    "t, %s, %s",
-				ReportedMsg: "use %s.InDelta",
+				Fn:           "Equal",
+				ArgsTmpl:     "t, %s, %s",
+				ReportedMsgf: "use %s.%s",
+				ProposedFn:   "InDelta",
 			},
 			pkg:       "require",
 			argValues: []any{"42.42", "flNum"},
@@ -39,9 +41,10 @@ require.Equalf(t, 42.42, flNum, "msg with arg %d", 42) // want "use require.InDe
 		},
 		{
 			check: Check{
-				Fn:          "True",
-				ArgsTmpl:    "t, %s == %s",
-				ReportedMsg: "use %s.InDelta",
+				Fn:           "True",
+				ArgsTmpl:     "t, %s == %s",
+				ReportedMsgf: "use %s.%s",
+				ProposedFn:   "InDelta",
 			},
 			pkg:       "assert",
 			argValues: []any{"a", "b"},
@@ -55,7 +58,10 @@ assert.Truef(t, a == b, "msg with arg %d", 42) // want "use assert.InDeltaf"`,
 
 	for _, tt := range cases {
 		t.Run("", func(t *testing.T) {
-			got := ExpandCheck(tt.check, tt.pkg, tt.argValues)
+			got, err := ExpandCheck(tt.check, tt.pkg, tt.argValues)
+			if err != nil {
+				t.Fatalf(err.Error())
+			}
 			if got != tt.expected {
 				t.Fatalf("\n%v\n!=\n%v", got, tt.expected)
 			}

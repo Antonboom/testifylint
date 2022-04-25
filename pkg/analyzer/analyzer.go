@@ -21,6 +21,7 @@ func New() *analysis.Analyzer {
 			checkers.Len,
 			checkers.Comparisons,
 			checkers.Error,
+			checkers.ErrorIs,
 		},
 	}
 

@@ -41,7 +41,7 @@ func BoolCompare(pass *analysis.Pass, fn FnMeta) {
 
 		switch arg := fn.Args[1]; {
 		case isComparisonWithTrue(arg, token.EQL), isComparisonWithFalse(arg, token.NEQ):
-			r.ReportNeedSimplifyCheck(pass, fn)
+			r.Report(pass, fn, "need to simplify the check")
 
 		case isComparisonWithTrue(arg, token.NEQ), isComparisonWithFalse(arg, token.EQL), isNegation(arg):
 			r.ReportUseFunction(pass, fn, "False")
@@ -54,7 +54,7 @@ func BoolCompare(pass *analysis.Pass, fn FnMeta) {
 
 		switch arg := fn.Args[1]; {
 		case isComparisonWithTrue(arg, token.EQL), isComparisonWithFalse(arg, token.NEQ):
-			r.ReportNeedSimplifyCheck(pass, fn)
+			r.Report(pass, fn, "need to simplify the check")
 
 		case isComparisonWithTrue(arg, token.NEQ), isComparisonWithFalse(arg, token.EQL), isNegation(arg):
 			r.ReportUseFunction(pass, fn, "True")

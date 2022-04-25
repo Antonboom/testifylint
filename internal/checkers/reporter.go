@@ -15,16 +15,20 @@ func newReporter() *reporter {
 	return &reporter{cache: map[token.Pos]struct{}{}}
 }
 
-func (r *reporter) ReportUseFunction(pass *analysis.Pass, meta FnMeta, proposedFn string) {
-	if meta.IsFormatFn {
-		r.reportf(pass, meta.Pos, "use %s.%sf", meta.Pkg, proposedFn)
-	} else {
-		r.reportf(pass, meta.Pos, "use %s.%s", meta.Pkg, proposedFn)
-	}
+func (r *reporter) Report(pass *analysis.Pass, meta FnMeta, msg string) {
+	r.reportf(pass, meta.Pos, msg)
 }
 
-func (r *reporter) ReportNeedSimplifyCheck(pass *analysis.Pass, meta FnMeta) {
-	r.reportf(pass, meta.Pos, "need to simplify the check")
+func (r *reporter) Reportf(pass *analysis.Pass, meta FnMeta, msg string, proposedFn string) {
+	f := proposedFn
+	if meta.IsFormatFn {
+		f += "f"
+	}
+	r.reportf(pass, meta.Pos, msg, meta.Pkg, f)
+}
+
+func (r *reporter) ReportUseFunction(pass *analysis.Pass, meta FnMeta, proposedFn string) {
+	r.Reportf(pass, meta, "use %s.%s", proposedFn)
 }
 
 func (r *reporter) reportf(p *analysis.Pass, pos token.Pos, format string, args ...interface{}) {

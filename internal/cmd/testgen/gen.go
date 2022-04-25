@@ -8,10 +8,15 @@ type TestsGenerator interface {
 }
 
 type Check struct {
-	Fn          string // "Equal"
-	ArgsTmpl    string // "t, "len(%s), "0"
-	ReportedMsg string // "use %s.Empty"
-	MsgAsIs     bool
+	Fn                       string // "Equal"
+	ArgsTmpl                 string // "t, "len(%s), "0"
+	ReportedMsgf, ProposedFn string // "use %s.%s" "Empty"
+	ReportedMsg              string // "need to simplify the check"
 }
 
 // TODO: валидация ArgsTmpl, ".*, .*, .*"
+// TODO: валидация или reportMsgF+ProposedFn или ReportedMsg
+
+func (c Check) Validate() error {
+	return nil
+}

@@ -5,7 +5,7 @@ import "text/template"
 type ErrorCasesGenerator struct{}
 
 func (g ErrorCasesGenerator) Template() *template.Template {
-	return errCheckCasesTmpl
+	return errorCasesTmpl
 }
 
 func (g ErrorCasesGenerator) Data() any {
@@ -21,8 +21,8 @@ func (g ErrorCasesGenerator) Data() any {
 			{"a"}, {"b.Get1()"}, {"c"}, {"errOp()"},
 		},
 		InvalidChecks: []Check{
-			{Fn: "Nil", ArgsTmpl: "t, %s", ReportedMsg: "use %s.NoError"},
-			{Fn: "NotNil", ArgsTmpl: "t, %s", ReportedMsg: "use %s.Error"},
+			{Fn: "Nil", ArgsTmpl: "t, %s", ReportedMsgf: "use %s.%s", ProposedFn: "NoError"},
+			{Fn: "NotNil", ArgsTmpl: "t, %s", ReportedMsgf: "use %s.%s", ProposedFn: "Error"},
 		},
 		ValidChecks: []Check{
 			{Fn: "NoError", ArgsTmpl: "t, %s"},
@@ -48,7 +48,7 @@ func (g ErrorCasesGenerator) Data() any {
 	}
 }
 
-var errCheckCasesTmpl = template.Must(template.New("errCheckCasesTmpl").
+var errorCasesTmpl = template.Must(template.New("errorCasesTmpl").
 	Funcs(template.FuncMap{
 		"ExpandCheck": ExpandCheck,
 	}).
@@ -68,7 +68,7 @@ import (
 func TestErrorAsserts(t *testing.T) {
 	errOp := func() error { return io.EOF }
 	
-var (
+	var (
 		ptr   *int
 		iface interface{}
 		ch    chan error

@@ -21,10 +21,10 @@ func (g LenCasesGenerator) Data() any {
 			{"a"}, {"b.i"}, {"c"}, {"d"}, {"*e"}, {"f.Count()"}, {"intOp()"},
 		},
 		InvalidChecks: []Check{
-			{Fn: "Equal", ArgsTmpl: "t, len(arr), %s", ReportedMsg: "use %s.Len"},
-			{Fn: "Equal", ArgsTmpl: "t, %s, len(arr)", ReportedMsg: "use %s.Len"},
-			{Fn: "True", ArgsTmpl: "t, len(arr) == %s", ReportedMsg: "use %s.Len"},
-			{Fn: "True", ArgsTmpl: "t, %s == len(arr)", ReportedMsg: "use %s.Len"},
+			{Fn: "Equal", ArgsTmpl: "t, len(arr), %s", ReportedMsgf: "use %s.%s", ProposedFn: "Len"},
+			{Fn: "Equal", ArgsTmpl: "t, %s, len(arr)", ReportedMsgf: "use %s.%s", ProposedFn: "Len"},
+			{Fn: "True", ArgsTmpl: "t, len(arr) == %s", ReportedMsgf: "use %s.%s", ProposedFn: "Len"},
+			{Fn: "True", ArgsTmpl: "t, %s == len(arr)", ReportedMsgf: "use %s.%s", ProposedFn: "Len"},
 		},
 		ValidChecks: []Check{
 			{Fn: "Len", ArgsTmpl: "t, arr, %s"},

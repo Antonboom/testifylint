@@ -26,11 +26,11 @@ func (g EmptyCasesGenerator) Data() any {
 		},
 		Empty: test{
 			InvalidChecks: []Check{
-				{Fn: "Len", ArgsTmpl: "t, %s, 0", ReportedMsg: "use %s.Empty"},
-				{Fn: "Equal", ArgsTmpl: "t, len(%s), 0", ReportedMsg: "use %s.Empty"},
-				{Fn: "Equal", ArgsTmpl: "t, 0, len(%s)", ReportedMsg: "use %s.Empty"},
-				{Fn: "True", ArgsTmpl: "t, len(%s) == 0", ReportedMsg: "use %s.Empty"},
-				{Fn: "True", ArgsTmpl: "t, 0 == len(%s)", ReportedMsg: "use %s.Empty"},
+				{Fn: "Len", ArgsTmpl: "t, %s, 0", ReportedMsgf: "use %s.%s", ProposedFn: "Empty"},
+				{Fn: "Equal", ArgsTmpl: "t, len(%s), 0", ReportedMsgf: "use %s.%s", ProposedFn: "Empty"},
+				{Fn: "Equal", ArgsTmpl: "t, 0, len(%s)", ReportedMsgf: "use %s.%s", ProposedFn: "Empty"},
+				{Fn: "True", ArgsTmpl: "t, len(%s) == 0", ReportedMsgf: "use %s.%s", ProposedFn: "Empty"},
+				{Fn: "True", ArgsTmpl: "t, 0 == len(%s)", ReportedMsgf: "use %s.%s", ProposedFn: "Empty"},
 			},
 			ValidChecks: []Check{
 				{Fn: "Empty", ArgsTmpl: "t, %s"},
@@ -38,16 +38,16 @@ func (g EmptyCasesGenerator) Data() any {
 		},
 		NotEmpty: test{
 			InvalidChecks: []Check{
-				{Fn: "NotEqual", ArgsTmpl: "t, len(%s), 0", ReportedMsg: "use %s.NotEmpty"},
-				{Fn: "NotEqual", ArgsTmpl: "t, 0, len(%s)", ReportedMsg: "use %s.NotEmpty"},
-				{Fn: "Greater", ArgsTmpl: "t, len(%s), 0", ReportedMsg: "use %s.NotEmpty"},
-				{Fn: "GreaterOrEqual", ArgsTmpl: "t, len(%s), 1", ReportedMsg: "use %s.NotEmpty"},
-				{Fn: "True", ArgsTmpl: "t, len(%s) != 0", ReportedMsg: "use %s.NotEmpty"},
-				{Fn: "True", ArgsTmpl: "t, 0 != len(%s)", ReportedMsg: "use %s.NotEmpty"},
-				{Fn: "True", ArgsTmpl: "t, len(%s) > 0", ReportedMsg: "use %s.NotEmpty"},
-				{Fn: "True", ArgsTmpl: "t, 0 < len(%s)", ReportedMsg: "use %s.NotEmpty"},
-				{Fn: "True", ArgsTmpl: "t, len(%s) >= 1", ReportedMsg: "use %s.NotEmpty"},
-				{Fn: "True", ArgsTmpl: "t, 1 <= len(%s)", ReportedMsg: "use %s.NotEmpty"},
+				{Fn: "NotEqual", ArgsTmpl: "t, len(%s), 0", ReportedMsgf: "use %s.%s", ProposedFn: "NotEmpty"},
+				{Fn: "NotEqual", ArgsTmpl: "t, 0, len(%s)", ReportedMsgf: "use %s.%s", ProposedFn: "NotEmpty"},
+				{Fn: "Greater", ArgsTmpl: "t, len(%s), 0", ReportedMsgf: "use %s.%s", ProposedFn: "NotEmpty"},
+				{Fn: "GreaterOrEqual", ArgsTmpl: "t, len(%s), 1", ReportedMsgf: "use %s.%s", ProposedFn: "NotEmpty"},
+				{Fn: "True", ArgsTmpl: "t, len(%s) != 0", ReportedMsgf: "use %s.%s", ProposedFn: "NotEmpty"},
+				{Fn: "True", ArgsTmpl: "t, 0 != len(%s)", ReportedMsgf: "use %s.%s", ProposedFn: "NotEmpty"},
+				{Fn: "True", ArgsTmpl: "t, len(%s) > 0", ReportedMsgf: "use %s.%s", ProposedFn: "NotEmpty"},
+				{Fn: "True", ArgsTmpl: "t, 0 < len(%s)", ReportedMsgf: "use %s.%s", ProposedFn: "NotEmpty"},
+				{Fn: "True", ArgsTmpl: "t, len(%s) >= 1", ReportedMsgf: "use %s.%s", ProposedFn: "NotEmpty"},
+				{Fn: "True", ArgsTmpl: "t, 1 <= len(%s)", ReportedMsgf: "use %s.%s", ProposedFn: "NotEmpty"},
 			},
 			ValidChecks: []Check{
 				{Fn: "NotEmpty", ArgsTmpl: "t, %s"},
