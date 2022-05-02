@@ -31,7 +31,7 @@ func (r *reporter) ReportUseFunction(pass *analysis.Pass, meta FnMeta, proposedF
 	r.Reportf(pass, meta, "use %s.%s", proposedFn)
 }
 
-func (r *reporter) reportf(p *analysis.Pass, pos token.Pos, format string, args ...interface{}) {
+func (r *reporter) reportf(p *analysis.Pass, pos token.Pos, format string, args ...any) {
 	if _, ok := r.cache[pos]; ok {
 		return
 	}

@@ -16,6 +16,7 @@ type Check struct {
 
 // TODO: валидация ArgsTmpl, ".*, .*, .*"
 // TODO: валидация или reportMsgF+ProposedFn или ReportedMsg
+// TODO: ArgsTmpl -> Argsf
 
 func (c Check) Validate() error {
 	return nil

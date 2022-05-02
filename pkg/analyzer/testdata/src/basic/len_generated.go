@@ -213,12 +213,6 @@ func TestLen(t *testing.T) {
 			assert.Lenf(t, arr, a, "msg")
 			assert.Lenf(t, arr, a, "msg with arg %d", 42)
 
-			assert.NotEqual(t, len(arr), a)
-			assert.NotEqual(t, len(arr), a, "msg")
-			assert.NotEqual(t, len(arr), a, "msg with arg %d", 42)
-			assert.NotEqualf(t, len(arr), a, "msg")
-			assert.NotEqualf(t, len(arr), a, "msg with arg %d", 42)
-
 			assert.NotEqual(t, a, len(arr))
 			assert.NotEqual(t, a, len(arr), "msg")
 			assert.NotEqual(t, a, len(arr), "msg with arg %d", 42)
@@ -280,12 +274,6 @@ func TestLen(t *testing.T) {
 			assert.Len(t, arr, b.i, "msg with arg %d", 42)
 			assert.Lenf(t, arr, b.i, "msg")
 			assert.Lenf(t, arr, b.i, "msg with arg %d", 42)
-
-			assert.NotEqual(t, len(arr), b.i)
-			assert.NotEqual(t, len(arr), b.i, "msg")
-			assert.NotEqual(t, len(arr), b.i, "msg with arg %d", 42)
-			assert.NotEqualf(t, len(arr), b.i, "msg")
-			assert.NotEqualf(t, len(arr), b.i, "msg with arg %d", 42)
 
 			assert.NotEqual(t, b.i, len(arr))
 			assert.NotEqual(t, b.i, len(arr), "msg")
@@ -349,12 +337,6 @@ func TestLen(t *testing.T) {
 			assert.Lenf(t, arr, c, "msg")
 			assert.Lenf(t, arr, c, "msg with arg %d", 42)
 
-			assert.NotEqual(t, len(arr), c)
-			assert.NotEqual(t, len(arr), c, "msg")
-			assert.NotEqual(t, len(arr), c, "msg with arg %d", 42)
-			assert.NotEqualf(t, len(arr), c, "msg")
-			assert.NotEqualf(t, len(arr), c, "msg with arg %d", 42)
-
 			assert.NotEqual(t, c, len(arr))
 			assert.NotEqual(t, c, len(arr), "msg")
 			assert.NotEqual(t, c, len(arr), "msg with arg %d", 42)
@@ -416,12 +398,6 @@ func TestLen(t *testing.T) {
 			assert.Len(t, arr, d, "msg with arg %d", 42)
 			assert.Lenf(t, arr, d, "msg")
 			assert.Lenf(t, arr, d, "msg with arg %d", 42)
-
-			assert.NotEqual(t, len(arr), d)
-			assert.NotEqual(t, len(arr), d, "msg")
-			assert.NotEqual(t, len(arr), d, "msg with arg %d", 42)
-			assert.NotEqualf(t, len(arr), d, "msg")
-			assert.NotEqualf(t, len(arr), d, "msg with arg %d", 42)
 
 			assert.NotEqual(t, d, len(arr))
 			assert.NotEqual(t, d, len(arr), "msg")
@@ -485,12 +461,6 @@ func TestLen(t *testing.T) {
 			assert.Lenf(t, arr, *e, "msg")
 			assert.Lenf(t, arr, *e, "msg with arg %d", 42)
 
-			assert.NotEqual(t, len(arr), *e)
-			assert.NotEqual(t, len(arr), *e, "msg")
-			assert.NotEqual(t, len(arr), *e, "msg with arg %d", 42)
-			assert.NotEqualf(t, len(arr), *e, "msg")
-			assert.NotEqualf(t, len(arr), *e, "msg with arg %d", 42)
-
 			assert.NotEqual(t, *e, len(arr))
 			assert.NotEqual(t, *e, len(arr), "msg")
 			assert.NotEqual(t, *e, len(arr), "msg with arg %d", 42)
@@ -553,12 +523,6 @@ func TestLen(t *testing.T) {
 			assert.Lenf(t, arr, f.Count(), "msg")
 			assert.Lenf(t, arr, f.Count(), "msg with arg %d", 42)
 
-			assert.NotEqual(t, len(arr), f.Count())
-			assert.NotEqual(t, len(arr), f.Count(), "msg")
-			assert.NotEqual(t, len(arr), f.Count(), "msg with arg %d", 42)
-			assert.NotEqualf(t, len(arr), f.Count(), "msg")
-			assert.NotEqualf(t, len(arr), f.Count(), "msg with arg %d", 42)
-
 			assert.NotEqual(t, f.Count(), len(arr))
 			assert.NotEqual(t, f.Count(), len(arr), "msg")
 			assert.NotEqual(t, f.Count(), len(arr), "msg with arg %d", 42)
@@ -620,12 +584,6 @@ func TestLen(t *testing.T) {
 			assert.Len(t, arr, intOp(), "msg with arg %d", 42)
 			assert.Lenf(t, arr, intOp(), "msg")
 			assert.Lenf(t, arr, intOp(), "msg with arg %d", 42)
-
-			assert.NotEqual(t, len(arr), intOp())
-			assert.NotEqual(t, len(arr), intOp(), "msg")
-			assert.NotEqual(t, len(arr), intOp(), "msg with arg %d", 42)
-			assert.NotEqualf(t, len(arr), intOp(), "msg")
-			assert.NotEqualf(t, len(arr), intOp(), "msg with arg %d", 42)
 
 			assert.NotEqual(t, intOp(), len(arr))
 			assert.NotEqual(t, intOp(), len(arr), "msg")
@@ -912,12 +870,6 @@ func TestLen(t *testing.T) {
 			require.Lenf(t, arr, a, "msg")
 			require.Lenf(t, arr, a, "msg with arg %d", 42)
 
-			require.NotEqual(t, len(arr), a)
-			require.NotEqual(t, len(arr), a, "msg")
-			require.NotEqual(t, len(arr), a, "msg with arg %d", 42)
-			require.NotEqualf(t, len(arr), a, "msg")
-			require.NotEqualf(t, len(arr), a, "msg with arg %d", 42)
-
 			require.NotEqual(t, a, len(arr))
 			require.NotEqual(t, a, len(arr), "msg")
 			require.NotEqual(t, a, len(arr), "msg with arg %d", 42)
@@ -979,12 +931,6 @@ func TestLen(t *testing.T) {
 			require.Len(t, arr, b.i, "msg with arg %d", 42)
 			require.Lenf(t, arr, b.i, "msg")
 			require.Lenf(t, arr, b.i, "msg with arg %d", 42)
-
-			require.NotEqual(t, len(arr), b.i)
-			require.NotEqual(t, len(arr), b.i, "msg")
-			require.NotEqual(t, len(arr), b.i, "msg with arg %d", 42)
-			require.NotEqualf(t, len(arr), b.i, "msg")
-			require.NotEqualf(t, len(arr), b.i, "msg with arg %d", 42)
 
 			require.NotEqual(t, b.i, len(arr))
 			require.NotEqual(t, b.i, len(arr), "msg")
@@ -1048,12 +994,6 @@ func TestLen(t *testing.T) {
 			require.Lenf(t, arr, c, "msg")
 			require.Lenf(t, arr, c, "msg with arg %d", 42)
 
-			require.NotEqual(t, len(arr), c)
-			require.NotEqual(t, len(arr), c, "msg")
-			require.NotEqual(t, len(arr), c, "msg with arg %d", 42)
-			require.NotEqualf(t, len(arr), c, "msg")
-			require.NotEqualf(t, len(arr), c, "msg with arg %d", 42)
-
 			require.NotEqual(t, c, len(arr))
 			require.NotEqual(t, c, len(arr), "msg")
 			require.NotEqual(t, c, len(arr), "msg with arg %d", 42)
@@ -1115,12 +1055,6 @@ func TestLen(t *testing.T) {
 			require.Len(t, arr, d, "msg with arg %d", 42)
 			require.Lenf(t, arr, d, "msg")
 			require.Lenf(t, arr, d, "msg with arg %d", 42)
-
-			require.NotEqual(t, len(arr), d)
-			require.NotEqual(t, len(arr), d, "msg")
-			require.NotEqual(t, len(arr), d, "msg with arg %d", 42)
-			require.NotEqualf(t, len(arr), d, "msg")
-			require.NotEqualf(t, len(arr), d, "msg with arg %d", 42)
 
 			require.NotEqual(t, d, len(arr))
 			require.NotEqual(t, d, len(arr), "msg")
@@ -1184,12 +1118,6 @@ func TestLen(t *testing.T) {
 			require.Lenf(t, arr, *e, "msg")
 			require.Lenf(t, arr, *e, "msg with arg %d", 42)
 
-			require.NotEqual(t, len(arr), *e)
-			require.NotEqual(t, len(arr), *e, "msg")
-			require.NotEqual(t, len(arr), *e, "msg with arg %d", 42)
-			require.NotEqualf(t, len(arr), *e, "msg")
-			require.NotEqualf(t, len(arr), *e, "msg with arg %d", 42)
-
 			require.NotEqual(t, *e, len(arr))
 			require.NotEqual(t, *e, len(arr), "msg")
 			require.NotEqual(t, *e, len(arr), "msg with arg %d", 42)
@@ -1252,12 +1180,6 @@ func TestLen(t *testing.T) {
 			require.Lenf(t, arr, f.Count(), "msg")
 			require.Lenf(t, arr, f.Count(), "msg with arg %d", 42)
 
-			require.NotEqual(t, len(arr), f.Count())
-			require.NotEqual(t, len(arr), f.Count(), "msg")
-			require.NotEqual(t, len(arr), f.Count(), "msg with arg %d", 42)
-			require.NotEqualf(t, len(arr), f.Count(), "msg")
-			require.NotEqualf(t, len(arr), f.Count(), "msg with arg %d", 42)
-
 			require.NotEqual(t, f.Count(), len(arr))
 			require.NotEqual(t, f.Count(), len(arr), "msg")
 			require.NotEqual(t, f.Count(), len(arr), "msg with arg %d", 42)
@@ -1319,12 +1241,6 @@ func TestLen(t *testing.T) {
 			require.Len(t, arr, intOp(), "msg with arg %d", 42)
 			require.Lenf(t, arr, intOp(), "msg")
 			require.Lenf(t, arr, intOp(), "msg with arg %d", 42)
-
-			require.NotEqual(t, len(arr), intOp())
-			require.NotEqual(t, len(arr), intOp(), "msg")
-			require.NotEqual(t, len(arr), intOp(), "msg with arg %d", 42)
-			require.NotEqualf(t, len(arr), intOp(), "msg")
-			require.NotEqualf(t, len(arr), intOp(), "msg with arg %d", 42)
 
 			require.NotEqual(t, intOp(), len(arr))
 			require.NotEqual(t, intOp(), len(arr), "msg")

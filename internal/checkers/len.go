@@ -6,6 +6,8 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
+// todo нашёл issue, пока реализовывал этот линтер
+
 func Len(pass *analysis.Pass, fn FnMeta) {
 	invalid := func() bool {
 		switch fn.Name {

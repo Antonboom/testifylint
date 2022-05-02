@@ -67,7 +67,7 @@ func isUntypedTrue(e ast.Expr) bool {
 	return ok && val.Name == "true"
 }
 
-func isUntypedFalse(e ast.Expr) bool {
+func isUntypedFalse(e ast.Expr) bool { // TODO: use types.Universe
 	val, ok := e.(*ast.Ident)
 	return ok && val.Name == "false"
 }

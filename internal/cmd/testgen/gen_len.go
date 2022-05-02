@@ -28,8 +28,7 @@ func (g LenCasesGenerator) Data() any {
 		},
 		ValidChecks: []Check{
 			{Fn: "Len", ArgsTmpl: "t, arr, %s"},
-
-			{Fn: "NotEqual", ArgsTmpl: "t, len(arr), %s"},
+			//{Fn: "NotEqual", ArgsTmpl: "t, len(arr), %s"}, // "expected-actual" case.
 			{Fn: "NotEqual", ArgsTmpl: "t, %s, len(arr)"},
 			{Fn: "Greater", ArgsTmpl: "t, len(arr), %s"},
 			{Fn: "Greater", ArgsTmpl: "t, %s, len(arr)"},

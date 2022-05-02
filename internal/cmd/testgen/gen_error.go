@@ -70,7 +70,7 @@ func TestErrorAsserts(t *testing.T) {
 	
 	var (
 		ptr   *int
-		iface interface{}
+		iface any
 		ch    chan error
 		sl    []error
 		fn    func()

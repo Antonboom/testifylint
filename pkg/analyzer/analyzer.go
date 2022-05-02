@@ -22,6 +22,7 @@ func New() *analysis.Analyzer {
 			checkers.Comparisons,
 			checkers.Error,
 			checkers.ErrorIs,
+			checkers.ExpectedActual(nil),
 		},
 	}
 
@@ -36,7 +37,7 @@ type testifyLint struct {
 	checkers []checkers.Checker
 }
 
-func (tl *testifyLint) run(pass *analysis.Pass) (interface{}, error) {
+func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
 	// TODO: inspector
 
 	inspect := func(node ast.Node) bool {

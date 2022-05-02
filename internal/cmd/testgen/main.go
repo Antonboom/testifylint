@@ -9,13 +9,14 @@ import (
 )
 
 var generators = map[string]TestsGenerator{
-	"pkg/analyzer/testdata/src/basic/bool_compare_generated.go":  BoolCompareCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/comparisons_generated.go":   ComparisonsCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/empty_generated.go":         EmptyCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/error_generated.go":         ErrorCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/error_is_generated.go":      ErrorIsCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/float_compare_generated.go": FloatCompareCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/len_generated.go":           LenCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/bool_compare_generated.go":    BoolCompareCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/comparisons_generated.go":     ComparisonsCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/empty_generated.go":           EmptyCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/error_generated.go":           ErrorCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/error_is_generated.go":        ErrorIsCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/expected_actual_generated.go": ExpectedActualCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/float_compare_generated.go":   FloatCompareCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/len_generated.go":             LenCasesGenerator{},
 }
 
 func main() {

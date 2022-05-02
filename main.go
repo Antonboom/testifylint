@@ -15,6 +15,10 @@ func main() {
 // - Empty проверяет только для сравнений len() == 0, не трогая zero value
 // - что делать, если функции ещё нет в testify (а линтер её просит)
 
+// Open for contribution:
+// - Zero
+// - Negative
+
 // TODO:
 // - поддержка алиасов
 // - тест на переоределённый builtint
@@ -36,3 +40,6 @@ func main() {
 	}
 */
 // - сам линтер зависимостей не имеет (или по минимуму, например, нет testify)
+// кинуть issue Бакину о пресете test
+// TODO: https://github.com/ghetzel/hydra/blob/master/gen_test.go
+// TODO: checker msg in constant?
