@@ -16,8 +16,10 @@ func main() {
 // - что делать, если функции ещё нет в testify (а линтер её просит)
 
 // Open for contribution:
+// - Empty with zerovalue
 // - Zero
 // - Negative
+// - HTTPCodeConstant + HTTPSuccess + HTTPError
 
 // TODO:
 // - поддержка алиасов
@@ -43,3 +45,6 @@ func main() {
 // кинуть issue Бакину о пресете test
 // TODO: https://github.com/ghetzel/hydra/blob/master/gen_test.go
 // TODO: checker msg in constant?
+// TODO: issue, что floatcompare можно побороть с помощью generics
+// подебажить, какие Pos лучше
+// suggested fixes: https://github.com/golang/tools/blob/master/go/analysis/doc/suggested_fixes.md

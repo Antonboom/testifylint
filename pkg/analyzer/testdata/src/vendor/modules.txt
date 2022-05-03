@@ -8,6 +8,7 @@ github.com/pmezard/go-difflib/difflib
 ## explicit; go 1.13
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/require
+github.com/stretchr/testify/suite
 # gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
 ## explicit
 gopkg.in/yaml.v3
