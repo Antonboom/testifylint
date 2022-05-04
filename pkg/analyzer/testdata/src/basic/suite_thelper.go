@@ -27,7 +27,8 @@ func (s *GameRoomSuite) newRoom() int {
 	return 0
 }
 
-func (s *GameRoomSuite) joinRoom(playerID int) { // want `suite helper function should start from s\.T\(\)\.Helper\(\)`
+func (s *GameRoomSuite) joinRoom(playerID int) { // `suite helper function should start from s\.T\(\)\.Helper\(\)`
+	s.T().Helper()
 	s.True(false)
 	s.Require().Equal(1, 2)
 }

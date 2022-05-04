@@ -12,7 +12,7 @@ func TestTestifyLint(t *testing.T) {
 	pkgs := []string{
 		"basic",
 	}
-	analysistest.Run(t, analysistest.TestData(), analyzer.New(), pkgs...)
+	analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), analyzer.New(), pkgs...)
 }
 
 // TODO: тесты флагов

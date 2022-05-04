@@ -18,14 +18,14 @@ const (
 func New() *analysis.Analyzer {
 	tl := &testifyLint{
 		checkers: []checkers.Checker{ // Order is important!
-			checkers.BoolCompare,
-			checkers.FloatCompare,
-			checkers.Empty,
-			checkers.Len,
-			checkers.Comparisons,
-			checkers.Error,
+			//checkers.BoolCompare,
+			//checkers.FloatCompare,
+			//checkers.Empty,
+			//checkers.Len,
+			//checkers.Comparisons,
+			//checkers.Error,
 			checkers.ErrorIs,
-			checkers.ExpectedActual(nil),
+			//checkers.ExpectedActual(nil),
 		},
 	}
 
@@ -59,7 +59,7 @@ func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
 
 		if pOk && isAssertOrRequire(pkg.Name) {
 			fn := checkers.FnMeta{
-				Pos:        ce.Lparen, // TODO:  analysis.Range
+				Pos:        fn, // TODO:  analysis.Range
 				Pkg:        pkg.Name,
 				Name:       fn.Name,
 				IsFormatFn: strings.HasSuffix(fn.Name, "f"),

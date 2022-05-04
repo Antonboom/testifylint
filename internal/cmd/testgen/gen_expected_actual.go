@@ -40,12 +40,12 @@ func (g ExpectedActualCasesGenerator) Data() any {
 				{"expected"}, {"tt.expected"}, {"ttp.expected"},
 			},
 			InvalidChecks: []Check{
-				{Fn: "Equal", ArgsTmpl: "t, result, %s", ReportedMsg: "need to reverse actual and expected values"},
-				{Fn: "NotEqual", ArgsTmpl: "t, result, %s", ReportedMsg: "need to reverse actual and expected values"},
+				{Fn: "Equal", Argsf: "t, result, %s", ReportMsgf: "need to reverse actual and expected values"},
+				{Fn: "NotEqual", Argsf: "t, result, %s", ReportMsgf: "need to reverse actual and expected values"},
 			},
 			ValidChecks: []Check{
-				{Fn: "Equal", ArgsTmpl: "t, %s, result"},
-				{Fn: "NotEqual", ArgsTmpl: "t, %s, result"},
+				{Fn: "Equal", Argsf: "t, %s, result"},
+				{Fn: "NotEqual", Argsf: "t, %s, result"},
 			},
 		},
 		String: test{
@@ -54,12 +54,12 @@ func (g ExpectedActualCasesGenerator) Data() any {
 				{"expected"}, {"tt.expected"}, {"ttp.expected"},
 			},
 			InvalidChecks: []Check{
-				{Fn: "JSONEq", ArgsTmpl: "t, result, %s", ReportedMsg: "need to reverse actual and expected values"},
-				{Fn: "YAMLEq", ArgsTmpl: "t, result, %s", ReportedMsg: "need to reverse actual and expected values"},
+				{Fn: "JSONEq", Argsf: "t, result, %s", ReportMsgf: "need to reverse actual and expected values"},
+				{Fn: "YAMLEq", Argsf: "t, result, %s", ReportMsgf: "need to reverse actual and expected values"},
 			},
 			ValidChecks: []Check{
-				{Fn: "JSONEq", ArgsTmpl: "t, %s, result"},
-				{Fn: "YAMLEq", ArgsTmpl: "t, %s, result"},
+				{Fn: "JSONEq", Argsf: "t, %s, result"},
+				{Fn: "YAMLEq", Argsf: "t, %s, result"},
 			},
 		},
 	}

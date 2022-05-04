@@ -3,21 +3,17 @@ package main
 import "text/template"
 
 type TestsGenerator interface {
-	Template() *template.Template
 	Data() any
+	ErroredTemplate() *template.Template
+	GoldenTemplate() *template.Template
 }
 
 type Check struct {
-	Fn                       string // "Equal"
-	ArgsTmpl                 string // "t, "len(%s), "0"
-	ReportedMsgf, ProposedFn string // "use %s.%s" "Empty"
-	ReportedMsg              string // "need to simplify the check"
-}
+	Fn    string // "Equal"
+	Argsf string // "%s, %s"
 
-// TODO: валидация ArgsTmpl, ".*, .*, .*"
-// TODO: валидация или reportMsgF+ProposedFn или ReportedMsg
-// TODO: ArgsTmpl -> Argsf
+	ReportMsgf string //  "use %s.%s"
 
-func (c Check) Validate() error {
-	return nil
+	ProposedFn    string // "InDelta"
+	ProposedArgsf string // %s, %s, 0.0001"
 }

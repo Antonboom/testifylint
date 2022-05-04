@@ -14,12 +14,14 @@ func main() {
 // - не работает, если алиас для функции сделали
 // - Empty проверяет только для сравнений len() == 0, не трогая zero value
 // - что делать, если функции ещё нет в testify (а линтер её просит)
+// - не поддерживаем кастомные типы, удовлетворяющие TestingSuite
 
 // Open for contribution:
 // - Empty with zerovalue
 // - Zero
 // - Negative
 // - HTTPCodeConstant + HTTPSuccess + HTTPError
+// - нейминг для теста, запускающего suite, а также его местоположение
 
 // TODO:
 // - поддержка алиасов
@@ -48,3 +50,5 @@ func main() {
 // TODO: issue, что floatcompare можно побороть с помощью generics
 // подебажить, какие Pos лучше
 // suggested fixes: https://github.com/golang/tools/blob/master/go/analysis/doc/suggested_fixes.md
+
+// почему validateCheck не check.Validate? потому что чек не знает, что с ним будут делать

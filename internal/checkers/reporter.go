@@ -16,7 +16,7 @@ func newReporter() *reporter {
 }
 
 func (r *reporter) Report(pass *analysis.Pass, meta FnMeta, msg string) {
-	r.reportf(pass, meta.Pos, msg)
+	r.reportf(pass, meta.Pos.Pos(), msg)
 }
 
 func (r *reporter) Reportf(pass *analysis.Pass, meta FnMeta, msg string, proposedFn string) {
@@ -24,7 +24,7 @@ func (r *reporter) Reportf(pass *analysis.Pass, meta FnMeta, msg string, propose
 	if meta.IsFormatFn {
 		f += "f"
 	}
-	r.reportf(pass, meta.Pos, msg, meta.Pkg, f)
+	r.reportf(pass, meta.Pos.Pos(), msg, meta.Pkg, f)
 }
 
 func (r *reporter) ReportUseFunction(pass *analysis.Pass, meta FnMeta, proposedFn string) {

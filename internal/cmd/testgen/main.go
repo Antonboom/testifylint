@@ -6,31 +6,36 @@ import (
 	"go/format"
 	"io/ioutil"
 	"log"
+	"text/template"
 )
 
 var generators = map[string]TestsGenerator{
-	"pkg/analyzer/testdata/src/basic/bool_compare_generated.go":    BoolCompareCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/comparisons_generated.go":     ComparisonsCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/empty_generated.go":           EmptyCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/error_generated.go":           ErrorCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/error_is_generated.go":        ErrorIsCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/expected_actual_generated.go": ExpectedActualCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/float_compare_generated.go":   FloatCompareCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/len_generated.go":             LenCasesGenerator{},
+	//"pkg/analyzer/testdata/src/basic/bool_compare_generated.go":    BoolCompareCasesGenerator{},
+	//"pkg/analyzer/testdata/src/basic/comparisons_generated.go":     ComparisonsCasesGenerator{},
+	//"pkg/analyzer/testdata/src/basic/empty_generated.go":           EmptyCasesGenerator{},
+	//"pkg/analyzer/testdata/src/basic/error_generated.go":           ErrorCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/error_is.go": ErrorIsCasesGenerator{},
+	//"pkg/analyzer/testdata/src/basic/expected_actual_generated.go": ExpectedActualCasesGenerator{},
+	//"pkg/analyzer/testdata/src/basic/float_compare_generated.go":   FloatCompareCasesGenerator{},
+	//"pkg/analyzer/testdata/src/basic/len_generated.go":             LenCasesGenerator{},
 }
 
 func main() {
-	for output, gen := range generators {
-		if err := genTests(output, gen); err != nil {
+	for output, g := range generators {
+		if err := genGoFileFromTmpl(output, g.ErroredTemplate(), g.Data()); err != nil {
+			log.Panic(err)
+		}
+
+		if err := genGoFileFromTmpl(output+".golden", g.GoldenTemplate(), g.Data()); err != nil {
 			log.Panic(err)
 		}
 	}
 }
 
-func genTests(output string, g TestsGenerator) error {
+func genGoFileFromTmpl(output string, tmpl *template.Template, data any) error {
 	b := bytes.NewBuffer(nil)
-	if err := g.Template().Execute(b, g.Data()); err != nil {
-		return fmt.Errorf("execute gen tmpl: %v", err)
+	if err := tmpl.Execute(b, data); err != nil {
+		return fmt.Errorf("execute cases tmpl: %v", err)
 	}
 
 	formatted, err := format.Source(b.Bytes())
