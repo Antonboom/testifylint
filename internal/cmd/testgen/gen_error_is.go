@@ -16,18 +16,20 @@ func (g ErrorIsCasesGenerator) Data() any {
 			{
 				Fn:         "Error",
 				Argsf:      "err, errSentinel",
-				ReportMsgf: "invalid usage of %[1]s.Error, use %[1]s.%[2]s instead",
+				ReportMsgf: "error-is: invalid usage of %[1]s.Error, use %[1]s.%[2]s instead",
 				ProposedFn: "ErrorIs",
 			},
 			{
 				Fn:         "NoError",
 				Argsf:      "err, errSentinel",
-				ReportMsgf: "invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead",
+				ReportMsgf: "error-is: invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead",
 				ProposedFn: "NotErrorIs",
 			},
 		},
 		ValidChecks: []Check{
+			{Fn: "Error", Argsf: "err"},
 			{Fn: "ErrorIs", Argsf: "err, errSentinel"},
+			{Fn: "NoError", Argsf: "err"},
 			{Fn: "NotErrorIs", Argsf: "err, errSentinel"},
 		},
 	}

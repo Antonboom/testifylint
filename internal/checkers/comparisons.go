@@ -1,12 +1,13 @@
 package checkers
 
+/*
 import (
 	"go/ast"
 	"go/token"
 	"golang.org/x/tools/go/analysis"
 )
 
-func Comparisons(pass *analysis.Pass, fn FnMeta) {
+func Comparisons(pass *analysis.Pass, fn CallMeta) {
 	if len(fn.Args) < 2 {
 		return
 	}
@@ -46,3 +47,4 @@ var tokenToProposedFnInsteadOfFalse = map[token.Token]string{
 	token.LSS: "GreaterOrEqual",
 	token.LEQ: "Greater",
 }
+*/

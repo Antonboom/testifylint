@@ -15,19 +15,19 @@ func newReporter() *reporter {
 	return &reporter{cache: map[token.Pos]struct{}{}}
 }
 
-func (r *reporter) Report(pass *analysis.Pass, meta FnMeta, msg string) {
-	r.reportf(pass, meta.Pos.Pos(), msg)
+func (r *reporter) Report(pass *analysis.Pass, meta CallMeta, msg string) {
+	r.reportf(pass, meta.Range.Pos(), msg)
 }
 
-func (r *reporter) Reportf(pass *analysis.Pass, meta FnMeta, msg string, proposedFn string) {
+func (r *reporter) Reportf(pass *analysis.Pass, meta CallMeta, msg string, proposedFn string) {
 	f := proposedFn
-	if meta.IsFormatFn {
+	if meta.Fn.IsFmt {
 		f += "f"
 	}
-	r.reportf(pass, meta.Pos.Pos(), msg, meta.Pkg, f)
+	r.reportf(pass, meta.Range.Pos(), msg, meta.SelectorStr, f)
 }
 
-func (r *reporter) ReportUseFunction(pass *analysis.Pass, meta FnMeta, proposedFn string) {
+func (r *reporter) ReportUseFunction(pass *analysis.Pass, meta CallMeta, proposedFn string) {
 	r.Reportf(pass, meta, "use %s.%s", proposedFn)
 }
 

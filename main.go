@@ -15,6 +15,7 @@ func main() {
 // - Empty проверяет только для сравнений len() == 0, не трогая zero value
 // - что делать, если функции ещё нет в testify (а линтер её просит)
 // - не поддерживаем кастомные типы, удовлетворяющие TestingSuite
+// - not support exotic like eq := assert.Equal eq(1, 2)
 
 // Open for contribution:
 // - Empty with zerovalue
@@ -39,7 +40,7 @@ func main() {
 /*
 как дебагать
 
-	if !strings.HasSuffix(pass.Fset.Position(expr.Pos()).Filename, "float_compare_generated.go") {
+	if !strings.HasSuffix(pass.Fset.Position(expr.Range()).Filename, "float_compare_generated.go") {
 		return false
 	}
 */
@@ -48,7 +49,8 @@ func main() {
 // TODO: https://github.com/ghetzel/hydra/blob/master/gen_test.go
 // TODO: checker msg in constant?
 // TODO: issue, что floatcompare можно побороть с помощью generics
-// подебажить, какие Pos лучше
+// подебажить, какие Range лучше
 // suggested fixes: https://github.com/golang/tools/blob/master/go/analysis/doc/suggested_fixes.md
+// suite checkers only if suite imported
 
 // почему validateCheck не check.Validate? потому что чек не знает, что с ним будут делать

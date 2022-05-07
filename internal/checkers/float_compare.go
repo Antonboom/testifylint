@@ -1,12 +1,13 @@
 package checkers
 
+/*
 import (
 	"go/ast"
 	"go/types"
 	"golang.org/x/tools/go/analysis"
 )
 
-func FloatCompare(pass *analysis.Pass, fn FnMeta) {
+func FloatCompare(pass *analysis.Pass, fn CallMeta) {
 	invalid := func() bool {
 		switch fn.Name {
 		case "Equal", "Equalf", "NotEqual", "NotEqualf",
@@ -42,3 +43,4 @@ func isFloatCompare(p *analysis.Pass, e ast.Expr) bool {
 	}
 	return isFloat(p, be.X) && isFloat(p, be.Y)
 }
+*/

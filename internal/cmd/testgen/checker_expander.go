@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -80,7 +81,7 @@ func buildCheck(selector, fn, args, reportedMsgf, proposedFn string, withFSuffix
 		if proposedFn != "" {
 			reportedMsgf = fmt.Sprintf(reportedMsgf, selector, proposedFn)
 		}
-		s += fmt.Sprintf(" // want %q", reportedMsgf)
+		s += fmt.Sprintf(" // want %q", regexp.QuoteMeta(reportedMsgf))
 	}
 	return s
 }

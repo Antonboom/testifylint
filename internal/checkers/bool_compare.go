@@ -1,12 +1,13 @@
 package checkers
 
+/*
 import (
 	"go/ast"
 	"go/token"
 	"golang.org/x/tools/go/analysis"
 )
 
-func BoolCompare(pass *analysis.Pass, fn FnMeta) {
+func BoolCompare(pass *analysis.Pass, fn CallMeta) {
 	switch fn.Name {
 	case "Equal", "Equalf":
 		if len(fn.Args) < 3 {
@@ -95,3 +96,4 @@ func isNegation(e ast.Expr) bool {
 	}
 	return ue.Op == token.NOT
 }
+*/

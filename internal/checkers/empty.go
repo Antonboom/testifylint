@@ -1,12 +1,13 @@
 package checkers
 
+/*
 import (
 	"go/ast"
 	"go/token"
 	"golang.org/x/tools/go/analysis"
 )
 
-func Empty(pass *analysis.Pass, fn FnMeta) {
+func Empty(pass *analysis.Pass, fn CallMeta) {
 	if invalid := checkEmpty(fn); invalid {
 		r.ReportUseFunction(pass, fn, "Empty")
 	}
@@ -16,7 +17,7 @@ func Empty(pass *analysis.Pass, fn FnMeta) {
 	}
 }
 
-func checkEmpty(fn FnMeta) bool {
+func checkEmpty(fn CallMeta) bool {
 	switch fn.Name {
 	case "Len", "Lenf":
 		return len(fn.Args) >= 3 && isZero(fn.Args[2])
@@ -31,7 +32,7 @@ func checkEmpty(fn FnMeta) bool {
 	return false
 }
 
-func checkNotEmpty(fn FnMeta) bool {
+func checkNotEmpty(fn CallMeta) bool {
 	switch fn.Name {
 	case "NotEqual", "NotEqualf":
 		return len(fn.Args) >= 3 &&
@@ -80,3 +81,4 @@ func isBinaryExpr(e ast.Expr, lhs predicate, op token.Token, rhs predicate) bool
 	}
 	return (be.Op == op) && lhs(be.X) && rhs(be.Y)
 }
+*/

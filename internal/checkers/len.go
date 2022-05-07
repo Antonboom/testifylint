@@ -1,5 +1,6 @@
 package checkers
 
+/*
 import (
 	"go/ast"
 	"go/token"
@@ -8,7 +9,7 @@ import (
 
 // todo нашёл issue, пока реализовывал этот линтер
 
-func Len(pass *analysis.Pass, fn FnMeta) {
+func Len(pass *analysis.Pass, fn CallMeta) {
 	invalid := func() bool {
 		switch fn.Name {
 		case "Equal", "Equalf":
@@ -46,3 +47,4 @@ func isLenEquality(e ast.Expr) bool {
 	}
 	return be.Op == token.EQL && xor(isLenCall(be.X), isLenCall(be.Y))
 }
+*/

@@ -24,17 +24,17 @@ func TestCheckerExpander_Expand(t *testing.T) {
 			selector:  "assert",
 			argValues: []any{"vv"},
 
-			expected: `assert.Len(t, vv, 0) // want "use assert.Empty"
-assert.Len(t, vv, 0, "msg") // want "use assert.Empty"
-assert.Len(t, vv, 0, "msg with arg %d", 42) // want "use assert.Empty"
-assert.Lenf(t, vv, 0, "msg") // want "use assert.Emptyf"
-assert.Lenf(t, vv, 0, "msg with arg %d", 42) // want "use assert.Emptyf"`,
+			expected: `assert.Len(t, vv, 0) // want "use assert\\.Empty"
+assert.Len(t, vv, 0, "msg") // want "use assert\\.Empty"
+assert.Len(t, vv, 0, "msg with arg %d", 42) // want "use assert\\.Empty"
+assert.Lenf(t, vv, 0, "msg") // want "use assert\\.Emptyf"
+assert.Lenf(t, vv, 0, "msg with arg %d", 42) // want "use assert\\.Emptyf"`,
 
-			expectedGolden: `assert.Empty(t, vv) // want "use assert.Empty"
-assert.Empty(t, vv, "msg") // want "use assert.Empty"
-assert.Empty(t, vv, "msg with arg %d", 42) // want "use assert.Empty"
-assert.Emptyf(t, vv, "msg") // want "use assert.Emptyf"
-assert.Emptyf(t, vv, "msg with arg %d", 42) // want "use assert.Emptyf"`,
+			expectedGolden: `assert.Empty(t, vv) // want "use assert\\.Empty"
+assert.Empty(t, vv, "msg") // want "use assert\\.Empty"
+assert.Empty(t, vv, "msg with arg %d", 42) // want "use assert\\.Empty"
+assert.Emptyf(t, vv, "msg") // want "use assert\\.Emptyf"
+assert.Emptyf(t, vv, "msg with arg %d", 42) // want "use assert\\.Emptyf"`,
 		},
 		{
 			check: Check{
@@ -47,17 +47,17 @@ assert.Emptyf(t, vv, "msg with arg %d", 42) // want "use assert.Emptyf"`,
 			selector:  "assert",
 			argValues: []any{"42.42", "flNum"},
 
-			expected: `assert.Equal(t, 42.42, flNum) // want "use assert.InDelta"
-assert.Equal(t, 42.42, flNum, "msg") // want "use assert.InDelta"
-assert.Equal(t, 42.42, flNum, "msg with arg %d", 42) // want "use assert.InDelta"
-assert.Equalf(t, 42.42, flNum, "msg") // want "use assert.InDeltaf"
-assert.Equalf(t, 42.42, flNum, "msg with arg %d", 42) // want "use assert.InDeltaf"`,
+			expected: `assert.Equal(t, 42.42, flNum) // want "use assert\\.InDelta"
+assert.Equal(t, 42.42, flNum, "msg") // want "use assert\\.InDelta"
+assert.Equal(t, 42.42, flNum, "msg with arg %d", 42) // want "use assert\\.InDelta"
+assert.Equalf(t, 42.42, flNum, "msg") // want "use assert\\.InDeltaf"
+assert.Equalf(t, 42.42, flNum, "msg with arg %d", 42) // want "use assert\\.InDeltaf"`,
 
-			expectedGolden: `assert.InDelta(t, 42.42, flNum, 0.0001) // want "use assert.InDelta"
-assert.InDelta(t, 42.42, flNum, 0.0001, "msg") // want "use assert.InDelta"
-assert.InDelta(t, 42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use assert.InDelta"
-assert.InDeltaf(t, 42.42, flNum, 0.0001, "msg") // want "use assert.InDeltaf"
-assert.InDeltaf(t, 42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use assert.InDeltaf"`,
+			expectedGolden: `assert.InDelta(t, 42.42, flNum, 0.0001) // want "use assert\\.InDelta"
+assert.InDelta(t, 42.42, flNum, 0.0001, "msg") // want "use assert\\.InDelta"
+assert.InDelta(t, 42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use assert\\.InDelta"
+assert.InDeltaf(t, 42.42, flNum, 0.0001, "msg") // want "use assert\\.InDeltaf"
+assert.InDeltaf(t, 42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use assert\\.InDeltaf"`,
 		},
 		{
 			check: Check{
@@ -70,17 +70,17 @@ assert.InDeltaf(t, 42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use ass
 			selector:  "assert",
 			argValues: []any{"a", "b"},
 
-			expected: `assert.True(t, a == b) // want "use assert.InDelta"
-assert.True(t, a == b, "msg") // want "use assert.InDelta"
-assert.True(t, a == b, "msg with arg %d", 42) // want "use assert.InDelta"
-assert.Truef(t, a == b, "msg") // want "use assert.InDeltaf"
-assert.Truef(t, a == b, "msg with arg %d", 42) // want "use assert.InDeltaf"`,
+			expected: `assert.True(t, a == b) // want "use assert\\.InDelta"
+assert.True(t, a == b, "msg") // want "use assert\\.InDelta"
+assert.True(t, a == b, "msg with arg %d", 42) // want "use assert\\.InDelta"
+assert.Truef(t, a == b, "msg") // want "use assert\\.InDeltaf"
+assert.Truef(t, a == b, "msg with arg %d", 42) // want "use assert\\.InDeltaf"`,
 
-			expectedGolden: `assert.InDelta(t, a, b, 0.0001) // want "use assert.InDelta"
-assert.InDelta(t, a, b, 0.0001, "msg") // want "use assert.InDelta"
-assert.InDelta(t, a, b, 0.0001, "msg with arg %d", 42) // want "use assert.InDelta"
-assert.InDeltaf(t, a, b, 0.0001, "msg") // want "use assert.InDeltaf"
-assert.InDeltaf(t, a, b, 0.0001, "msg with arg %d", 42) // want "use assert.InDeltaf"`,
+			expectedGolden: `assert.InDelta(t, a, b, 0.0001) // want "use assert\\.InDelta"
+assert.InDelta(t, a, b, 0.0001, "msg") // want "use assert\\.InDelta"
+assert.InDelta(t, a, b, 0.0001, "msg with arg %d", 42) // want "use assert\\.InDelta"
+assert.InDeltaf(t, a, b, 0.0001, "msg") // want "use assert\\.InDeltaf"
+assert.InDeltaf(t, a, b, 0.0001, "msg with arg %d", 42) // want "use assert\\.InDeltaf"`,
 		},
 		{
 			check: Check{
@@ -138,13 +138,13 @@ assert.InDeltaf(t, s.c, h.Calculate(), 0.0001, "msg with arg %d", 42)`,
 			argValues:     []any{"vv"},
 			withoutFFuncs: true,
 
-			expected: `require.Len(t, vv, 0) // want "use require.Empty"
-require.Len(t, vv, 0, "msg") // want "use require.Empty"
-require.Len(t, vv, 0, "msg with arg %d", 42) // want "use require.Empty"`,
+			expected: `require.Len(t, vv, 0) // want "use require\\.Empty"
+require.Len(t, vv, 0, "msg") // want "use require\\.Empty"
+require.Len(t, vv, 0, "msg with arg %d", 42) // want "use require\\.Empty"`,
 
-			expectedGolden: `require.Empty(t, vv) // want "use require.Empty"
-require.Empty(t, vv, "msg") // want "use require.Empty"
-require.Empty(t, vv, "msg with arg %d", 42) // want "use require.Empty"`,
+			expectedGolden: `require.Empty(t, vv) // want "use require\\.Empty"
+require.Empty(t, vv, "msg") // want "use require\\.Empty"
+require.Empty(t, vv, "msg with arg %d", 42) // want "use require\\.Empty"`,
 		},
 		{
 			check: Check{
@@ -158,13 +158,13 @@ require.Empty(t, vv, "msg with arg %d", 42) // want "use require.Empty"`,
 			argValues:     []any{"42.42", "flNum"},
 			withoutFFuncs: true,
 
-			expected: `require.Equal(t, 42.42, flNum) // want "use require.InDelta"
-require.Equal(t, 42.42, flNum, "msg") // want "use require.InDelta"
-require.Equal(t, 42.42, flNum, "msg with arg %d", 42) // want "use require.InDelta"`,
+			expected: `require.Equal(t, 42.42, flNum) // want "use require\\.InDelta"
+require.Equal(t, 42.42, flNum, "msg") // want "use require\\.InDelta"
+require.Equal(t, 42.42, flNum, "msg with arg %d", 42) // want "use require\\.InDelta"`,
 
-			expectedGolden: `require.InDelta(t, 42.42, flNum, 0.0001) // want "use require.InDelta"
-require.InDelta(t, 42.42, flNum, 0.0001, "msg") // want "use require.InDelta"
-require.InDelta(t, 42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use require.InDelta"`,
+			expectedGolden: `require.InDelta(t, 42.42, flNum, 0.0001) // want "use require\\.InDelta"
+require.InDelta(t, 42.42, flNum, 0.0001, "msg") // want "use require\\.InDelta"
+require.InDelta(t, 42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use require\\.InDelta"`,
 		},
 		{
 			check: Check{
@@ -178,13 +178,13 @@ require.InDelta(t, 42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use req
 			argValues:     []any{"a", "b"},
 			withoutFFuncs: true,
 
-			expected: `require.True(t, a == b) // want "use require.InDelta"
-require.True(t, a == b, "msg") // want "use require.InDelta"
-require.True(t, a == b, "msg with arg %d", 42) // want "use require.InDelta"`,
+			expected: `require.True(t, a == b) // want "use require\\.InDelta"
+require.True(t, a == b, "msg") // want "use require\\.InDelta"
+require.True(t, a == b, "msg with arg %d", 42) // want "use require\\.InDelta"`,
 
-			expectedGolden: `require.InDelta(t, a, b, 0.0001) // want "use require.InDelta"
-require.InDelta(t, a, b, 0.0001, "msg") // want "use require.InDelta"
-require.InDelta(t, a, b, 0.0001, "msg with arg %d", 42) // want "use require.InDelta"`,
+			expectedGolden: `require.InDelta(t, a, b, 0.0001) // want "use require\\.InDelta"
+require.InDelta(t, a, b, 0.0001, "msg") // want "use require\\.InDelta"
+require.InDelta(t, a, b, 0.0001, "msg with arg %d", 42) // want "use require\\.InDelta"`,
 		},
 		{
 			check: Check{
@@ -237,17 +237,17 @@ require.InDelta(t, s.c, h.Calculate(), 0.0001, "msg with arg %d", 42)`,
 			argValues:   []any{"vv"},
 			withoutTArg: true,
 
-			expected: `assertObj.Len(vv, 0) // want "use assertObj.Empty"
-assertObj.Len(vv, 0, "msg") // want "use assertObj.Empty"
-assertObj.Len(vv, 0, "msg with arg %d", 42) // want "use assertObj.Empty"
-assertObj.Lenf(vv, 0, "msg") // want "use assertObj.Emptyf"
-assertObj.Lenf(vv, 0, "msg with arg %d", 42) // want "use assertObj.Emptyf"`,
+			expected: `assertObj.Len(vv, 0) // want "use assertObj\\.Empty"
+assertObj.Len(vv, 0, "msg") // want "use assertObj\\.Empty"
+assertObj.Len(vv, 0, "msg with arg %d", 42) // want "use assertObj\\.Empty"
+assertObj.Lenf(vv, 0, "msg") // want "use assertObj\\.Emptyf"
+assertObj.Lenf(vv, 0, "msg with arg %d", 42) // want "use assertObj\\.Emptyf"`,
 
-			expectedGolden: `assertObj.Empty(vv) // want "use assertObj.Empty"
-assertObj.Empty(vv, "msg") // want "use assertObj.Empty"
-assertObj.Empty(vv, "msg with arg %d", 42) // want "use assertObj.Empty"
-assertObj.Emptyf(vv, "msg") // want "use assertObj.Emptyf"
-assertObj.Emptyf(vv, "msg with arg %d", 42) // want "use assertObj.Emptyf"`,
+			expectedGolden: `assertObj.Empty(vv) // want "use assertObj\\.Empty"
+assertObj.Empty(vv, "msg") // want "use assertObj\\.Empty"
+assertObj.Empty(vv, "msg with arg %d", 42) // want "use assertObj\\.Empty"
+assertObj.Emptyf(vv, "msg") // want "use assertObj\\.Emptyf"
+assertObj.Emptyf(vv, "msg with arg %d", 42) // want "use assertObj\\.Emptyf"`,
 		},
 		{
 			check: Check{
@@ -261,17 +261,17 @@ assertObj.Emptyf(vv, "msg with arg %d", 42) // want "use assertObj.Emptyf"`,
 			argValues:   []any{"42.42", "flNum"},
 			withoutTArg: true,
 
-			expected: `assertObj.Equal(42.42, flNum) // want "use assertObj.InDelta"
-assertObj.Equal(42.42, flNum, "msg") // want "use assertObj.InDelta"
-assertObj.Equal(42.42, flNum, "msg with arg %d", 42) // want "use assertObj.InDelta"
-assertObj.Equalf(42.42, flNum, "msg") // want "use assertObj.InDeltaf"
-assertObj.Equalf(42.42, flNum, "msg with arg %d", 42) // want "use assertObj.InDeltaf"`,
+			expected: `assertObj.Equal(42.42, flNum) // want "use assertObj\\.InDelta"
+assertObj.Equal(42.42, flNum, "msg") // want "use assertObj\\.InDelta"
+assertObj.Equal(42.42, flNum, "msg with arg %d", 42) // want "use assertObj\\.InDelta"
+assertObj.Equalf(42.42, flNum, "msg") // want "use assertObj\\.InDeltaf"
+assertObj.Equalf(42.42, flNum, "msg with arg %d", 42) // want "use assertObj\\.InDeltaf"`,
 
-			expectedGolden: `assertObj.InDelta(42.42, flNum, 0.0001) // want "use assertObj.InDelta"
-assertObj.InDelta(42.42, flNum, 0.0001, "msg") // want "use assertObj.InDelta"
-assertObj.InDelta(42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use assertObj.InDelta"
-assertObj.InDeltaf(42.42, flNum, 0.0001, "msg") // want "use assertObj.InDeltaf"
-assertObj.InDeltaf(42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use assertObj.InDeltaf"`,
+			expectedGolden: `assertObj.InDelta(42.42, flNum, 0.0001) // want "use assertObj\\.InDelta"
+assertObj.InDelta(42.42, flNum, 0.0001, "msg") // want "use assertObj\\.InDelta"
+assertObj.InDelta(42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use assertObj\\.InDelta"
+assertObj.InDeltaf(42.42, flNum, 0.0001, "msg") // want "use assertObj\\.InDeltaf"
+assertObj.InDeltaf(42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use assertObj\\.InDeltaf"`,
 		},
 		{
 			check: Check{
@@ -285,17 +285,17 @@ assertObj.InDeltaf(42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use ass
 			argValues:   []any{"d", "c"},
 			withoutTArg: true,
 
-			expected: `assertObj.True(d == c) // want "use assertObj.InDelta"
-assertObj.True(d == c, "msg") // want "use assertObj.InDelta"
-assertObj.True(d == c, "msg with arg %d", 42) // want "use assertObj.InDelta"
-assertObj.Truef(d == c, "msg") // want "use assertObj.InDeltaf"
-assertObj.Truef(d == c, "msg with arg %d", 42) // want "use assertObj.InDeltaf"`,
+			expected: `assertObj.True(d == c) // want "use assertObj\\.InDelta"
+assertObj.True(d == c, "msg") // want "use assertObj\\.InDelta"
+assertObj.True(d == c, "msg with arg %d", 42) // want "use assertObj\\.InDelta"
+assertObj.Truef(d == c, "msg") // want "use assertObj\\.InDeltaf"
+assertObj.Truef(d == c, "msg with arg %d", 42) // want "use assertObj\\.InDeltaf"`,
 
-			expectedGolden: `assertObj.InDelta(d, c, 0.0001) // want "use assertObj.InDelta"
-assertObj.InDelta(d, c, 0.0001, "msg") // want "use assertObj.InDelta"
-assertObj.InDelta(d, c, 0.0001, "msg with arg %d", 42) // want "use assertObj.InDelta"
-assertObj.InDeltaf(d, c, 0.0001, "msg") // want "use assertObj.InDeltaf"
-assertObj.InDeltaf(d, c, 0.0001, "msg with arg %d", 42) // want "use assertObj.InDeltaf"`,
+			expectedGolden: `assertObj.InDelta(d, c, 0.0001) // want "use assertObj\\.InDelta"
+assertObj.InDelta(d, c, 0.0001, "msg") // want "use assertObj\\.InDelta"
+assertObj.InDelta(d, c, 0.0001, "msg with arg %d", 42) // want "use assertObj\\.InDelta"
+assertObj.InDeltaf(d, c, 0.0001, "msg") // want "use assertObj\\.InDeltaf"
+assertObj.InDeltaf(d, c, 0.0001, "msg with arg %d", 42) // want "use assertObj\\.InDeltaf"`,
 		},
 		{
 			check: Check{
@@ -356,13 +356,13 @@ assertObj.InDeltaf(s.c, h.Calculate(), 0.0001, "msg with arg %d", 42)`,
 			withoutFFuncs: true,
 			withoutTArg:   true,
 
-			expected: `s.Require().Len(users, 0) // want "use s.Require().Empty"
-s.Require().Len(users, 0, "msg") // want "use s.Require().Empty"
-s.Require().Len(users, 0, "msg with arg %d", 42) // want "use s.Require().Empty"`,
+			expected: `s.Require().Len(users, 0) // want "use s\\.Require\\(\\)\\.Empty"
+s.Require().Len(users, 0, "msg") // want "use s\\.Require\\(\\)\\.Empty"
+s.Require().Len(users, 0, "msg with arg %d", 42) // want "use s\\.Require\\(\\)\\.Empty"`,
 
-			expectedGolden: `s.Require().Empty(users) // want "use s.Require().Empty"
-s.Require().Empty(users, "msg") // want "use s.Require().Empty"
-s.Require().Empty(users, "msg with arg %d", 42) // want "use s.Require().Empty"`,
+			expectedGolden: `s.Require().Empty(users) // want "use s\\.Require\\(\\)\\.Empty"
+s.Require().Empty(users, "msg") // want "use s\\.Require\\(\\)\\.Empty"
+s.Require().Empty(users, "msg with arg %d", 42) // want "use s\\.Require\\(\\)\\.Empty"`,
 		},
 		{
 			check: Check{
@@ -377,13 +377,13 @@ s.Require().Empty(users, "msg with arg %d", 42) // want "use s.Require().Empty"`
 			withoutFFuncs: true,
 			withoutTArg:   true,
 
-			expected: `s.Require().Equal(floatOp(), pi) // want "use s.Require().InDelta"
-s.Require().Equal(floatOp(), pi, "msg") // want "use s.Require().InDelta"
-s.Require().Equal(floatOp(), pi, "msg with arg %d", 42) // want "use s.Require().InDelta"`,
+			expected: `s.Require().Equal(floatOp(), pi) // want "use s\\.Require\\(\\)\\.InDelta"
+s.Require().Equal(floatOp(), pi, "msg") // want "use s\\.Require\\(\\)\\.InDelta"
+s.Require().Equal(floatOp(), pi, "msg with arg %d", 42) // want "use s\\.Require\\(\\)\\.InDelta"`,
 
-			expectedGolden: `s.Require().InDelta(floatOp(), pi, 0.0001) // want "use s.Require().InDelta"
-s.Require().InDelta(floatOp(), pi, 0.0001, "msg") // want "use s.Require().InDelta"
-s.Require().InDelta(floatOp(), pi, 0.0001, "msg with arg %d", 42) // want "use s.Require().InDelta"`,
+			expectedGolden: `s.Require().InDelta(floatOp(), pi, 0.0001) // want "use s\\.Require\\(\\)\\.InDelta"
+s.Require().InDelta(floatOp(), pi, 0.0001, "msg") // want "use s\\.Require\\(\\)\\.InDelta"
+s.Require().InDelta(floatOp(), pi, 0.0001, "msg with arg %d", 42) // want "use s\\.Require\\(\\)\\.InDelta"`,
 		},
 		{
 			check: Check{
@@ -398,13 +398,13 @@ s.Require().InDelta(floatOp(), pi, 0.0001, "msg with arg %d", 42) // want "use s
 			withoutFFuncs: true,
 			withoutTArg:   true,
 
-			expected: `s.Require().True(a == b) // want "use s.Require().InDelta"
-s.Require().True(a == b, "msg") // want "use s.Require().InDelta"
-s.Require().True(a == b, "msg with arg %d", 42) // want "use s.Require().InDelta"`,
+			expected: `s.Require().True(a == b) // want "use s\\.Require\\(\\)\\.InDelta"
+s.Require().True(a == b, "msg") // want "use s\\.Require\\(\\)\\.InDelta"
+s.Require().True(a == b, "msg with arg %d", 42) // want "use s\\.Require\\(\\)\\.InDelta"`,
 
-			expectedGolden: `s.Require().InDelta(a, b, 0.0001) // want "use s.Require().InDelta"
-s.Require().InDelta(a, b, 0.0001, "msg") // want "use s.Require().InDelta"
-s.Require().InDelta(a, b, 0.0001, "msg with arg %d", 42) // want "use s.Require().InDelta"`,
+			expectedGolden: `s.Require().InDelta(a, b, 0.0001) // want "use s\\.Require\\(\\)\\.InDelta"
+s.Require().InDelta(a, b, 0.0001, "msg") // want "use s\\.Require\\(\\)\\.InDelta"
+s.Require().InDelta(a, b, 0.0001, "msg with arg %d", 42) // want "use s\\.Require\\(\\)\\.InDelta"`,
 		},
 		{
 			check: Check{
@@ -457,13 +457,13 @@ s.Require().InDelta(s.c, h.Calculate(), 0.0001, "msg with arg %d", 42)`,
 			argValues:     nil,
 			withoutFFuncs: true,
 
-			expected: `r.Error(t, err, errSentinel) // want "invalid usage of r.Error, use r.ErrorIs instead"
-r.Error(t, err, errSentinel, "msg") // want "invalid usage of r.Error, use r.ErrorIs instead"
-r.Error(t, err, errSentinel, "msg with arg %d", 42) // want "invalid usage of r.Error, use r.ErrorIs instead"`,
+			expected: `r.Error(t, err, errSentinel) // want "invalid usage of r\\.Error, use r\\.ErrorIs instead"
+r.Error(t, err, errSentinel, "msg") // want "invalid usage of r\\.Error, use r\\.ErrorIs instead"
+r.Error(t, err, errSentinel, "msg with arg %d", 42) // want "invalid usage of r\\.Error, use r\\.ErrorIs instead"`,
 
-			expectedGolden: `r.ErrorIs(t, err, errSentinel) // want "invalid usage of r.Error, use r.ErrorIs instead"
-r.ErrorIs(t, err, errSentinel, "msg") // want "invalid usage of r.Error, use r.ErrorIs instead"
-r.ErrorIs(t, err, errSentinel, "msg with arg %d", 42) // want "invalid usage of r.Error, use r.ErrorIs instead"`,
+			expectedGolden: `r.ErrorIs(t, err, errSentinel) // want "invalid usage of r\\.Error, use r\\.ErrorIs instead"
+r.ErrorIs(t, err, errSentinel, "msg") // want "invalid usage of r\\.Error, use r\\.ErrorIs instead"
+r.ErrorIs(t, err, errSentinel, "msg with arg %d", 42) // want "invalid usage of r\\.Error, use r\\.ErrorIs instead"`,
 		},
 	}
 

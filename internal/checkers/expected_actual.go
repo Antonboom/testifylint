@@ -1,5 +1,6 @@
 package checkers
 
+/*
 import (
 	"go/ast"
 	"go/types"
@@ -27,7 +28,7 @@ func ExpectedActual(expPattern *regexp.Regexp) Checker {
 		expPattern = defaultExpectedVarPattern
 	}
 
-	return func(pass *analysis.Pass, fn FnMeta) {
+	return func(pass *analysis.Pass, fn CallMeta) {
 		switch fn.Name {
 		case "Equal", "Equalf", "NotEqual", "NotEqualf",
 			"JSONEq", "JSONEqf", "YAMLEq", "YAMLEqf":
@@ -118,3 +119,4 @@ func isStructFieldNamedAsExpected(pattern *regexp.Regexp, e ast.Expr) bool {
 	s, ok := e.(*ast.SelectorExpr)
 	return ok && isIdentNamedAsExpected(pattern, s.Sel)
 }
+*/

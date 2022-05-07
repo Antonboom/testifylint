@@ -5,26 +5,40 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-const errorIsCheckerName = "errors-is"
+type ErrorIs struct{}
 
-func ErrorIs(pass *analysis.Pass, fn FnMeta) {
-	if len(fn.Args) < 3 {
+func NewErrorIs() ErrorIs {
+	return ErrorIs{}
+}
+
+func (ErrorIs) Name() string {
+	return "error-is"
+}
+
+func (checker ErrorIs) Check(pass *analysis.Pass, call CallMeta) {
+	if len(call.Args) < 2 {
 		return
 	}
 
-	switch fn.Name {
+	switch call.Fn.Name {
 	case "Error", "Errorf":
-		if isError(pass, fn.Args[2]) {
+		if isError(pass, call.Args[1]) {
 			pass.Report(analysis.Diagnostic{
-				Pos:      fn.Pos.Pos(),
-				Category: errorIsCheckerName,
-				Message:  fmt.Sprintf("invalid usage of %[1]s.Error, use %[1]s.%[2]s instead", fn.Pkg, fn.Pkg, "ErrorIs"),
+				Pos:      call.Pos(),
+				End:      call.End(),
+				Category: checker.Name(),
+				Message: fmt.Sprintf(
+					"%[1]s: invalid usage of %[2]s.Error, use %[2]s.%[3]s instead",
+					checker.Name(),
+					call.SelectorStr,
+					"ErrorIs",
+				),
 				SuggestedFixes: []analysis.SuggestedFix{{
 					Message: "Replace Error with ErrorIs",
 					TextEdits: []analysis.TextEdit{
 						{
-							Pos:     fn.Pos.Pos(),
-							End:     fn.Pos.End(),
+							Pos:     call.Fn.Pos(),
+							End:     call.Fn.End(),
 							NewText: []byte("ErrorIs"),
 						},
 					},
@@ -35,8 +49,31 @@ func ErrorIs(pass *analysis.Pass, fn FnMeta) {
 		}
 
 	case "NoError", "NoErrorf":
-		if isError(pass, fn.Args[2]) {
-			r.Reportf(pass, fn, "invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead", "NotErrorIs")
+		if isError(pass, call.Args[1]) {
+			pass.Report(analysis.Diagnostic{
+				Pos:      call.Pos(),
+				End:      call.End(),
+				Category: checker.Name(),
+				Message: fmt.Sprintf(
+					"%[1]s: invalid usage of %[2]s.NoError, use %[2]s.%[3]s instead",
+					checker.Name(),
+					call.SelectorStr,
+					"NotErrorIs",
+				),
+				SuggestedFixes: []analysis.SuggestedFix{{
+					Message: "Replace NoError with NotErrorIs",
+					TextEdits: []analysis.TextEdit{
+						{
+							Pos:     call.Fn.Pos(),
+							End:     call.Fn.End(),
+							NewText: []byte("NotErrorIs"),
+						},
+					},
+				}},
+				Related: nil,
+			})
+
+			//r.Reportf(pass, call, "invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead", "NotErrorIs")
 		}
 	}
 }

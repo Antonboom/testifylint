@@ -5,18 +5,23 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-type FnMeta struct {
-	Pos        analysis.Range
-	Pkg        string
-	Name       string
-	IsFormatFn bool
-	Args       []ast.Expr // First arg is always *testing.T
+// CallMeta stores meta info about assert function/method call, for example
+//   assert.Equal(t, 42, result, "helpful comment")
+type CallMeta struct {
+	analysis.Range
+	Selector    *ast.SelectorExpr
+	SelectorStr string
+	Fn          FnMeta
+	Args        []ast.Expr // Without t argument.
 }
 
-//
-//type Checker interface {
-//	Name() string
-//	Check(pass *analysis.Pass, fn FnMeta) error
-//}
+type FnMeta struct {
+	analysis.Range
+	Name  string
+	IsFmt bool
+}
 
-type Checker func(pass *analysis.Pass, fn FnMeta)
+type Checker interface {
+	Name() string
+	Check(pass *analysis.Pass, call CallMeta)
+}

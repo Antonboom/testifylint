@@ -6,7 +6,14 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-func Error(pass *analysis.Pass, fn FnMeta) {
+/*
+import (
+	"go/ast"
+	"go/types"
+	"golang.org/x/tools/go/analysis"
+)
+
+func Error(pass *analysis.Pass, fn CallMeta) {
 	if len(fn.Args) < 2 {
 		return
 	}
@@ -23,7 +30,7 @@ func Error(pass *analysis.Pass, fn FnMeta) {
 		}
 	}
 }
-
+*/
 var errIface = types.Universe.Lookup("error").Type().Underlying().(*types.Interface)
 
 func isError(pass *analysis.Pass, expr ast.Expr) bool {
