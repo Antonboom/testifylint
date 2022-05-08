@@ -17,5 +17,3 @@ func TestTestifyLint(t *testing.T) {
 
 // TODO: тесты флагов
 // https://github.com/mweb/floatcompare/blob/main/analyzer_test.go
-
-// TODO: писать имя чекера перед ассертом

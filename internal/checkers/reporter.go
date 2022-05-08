@@ -19,16 +19,16 @@ func (r *reporter) Report(pass *analysis.Pass, meta CallMeta, msg string) {
 	r.reportf(pass, meta.Range.Pos(), msg)
 }
 
-func (r *reporter) Reportf(pass *analysis.Pass, meta CallMeta, msg string, proposedFn string) {
+func (r *reporter) ReportUseFunction(pass *analysis.Pass, checker string, meta CallMeta, proposedFn string) {
+	r.Reportf(pass, checker, meta, "use %s.%s", proposedFn)
+}
+
+func (r *reporter) Reportf(pass *analysis.Pass, checker string, meta CallMeta, msg string, proposedFn string) {
 	f := proposedFn
 	if meta.Fn.IsFmt {
 		f += "f"
 	}
-	r.reportf(pass, meta.Range.Pos(), msg, meta.SelectorStr, f)
-}
-
-func (r *reporter) ReportUseFunction(pass *analysis.Pass, meta CallMeta, proposedFn string) {
-	r.Reportf(pass, meta, "use %s.%s", proposedFn)
+	r.reportf(pass, meta.Range.Pos(), checker+": "+msg, meta.SelectorStr, f)
 }
 
 func (r *reporter) reportf(p *analysis.Pass, pos token.Pos, format string, args ...any) {

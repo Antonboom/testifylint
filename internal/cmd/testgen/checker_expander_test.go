@@ -6,7 +6,7 @@ func TestCheckerExpander_Expand(t *testing.T) {
 	cases := []struct {
 		check          Check
 		selector       string
-		argValues      []any
+		argValues      []string
 		withoutTArg    bool
 		withoutFFuncs  bool
 		expected       string
@@ -22,7 +22,7 @@ func TestCheckerExpander_Expand(t *testing.T) {
 				ProposedArgsf: "%s",
 			},
 			selector:  "assert",
-			argValues: []any{"vv"},
+			argValues: []string{"vv"},
 
 			expected: `assert.Len(t, vv, 0) // want "use assert\\.Empty"
 assert.Len(t, vv, 0, "msg") // want "use assert\\.Empty"
@@ -45,7 +45,7 @@ assert.Emptyf(t, vv, "msg with arg %d", 42) // want "use assert\\.Emptyf"`,
 				ProposedArgsf: "%s, %s, 0.0001",
 			},
 			selector:  "assert",
-			argValues: []any{"42.42", "flNum"},
+			argValues: []string{"42.42", "flNum"},
 
 			expected: `assert.Equal(t, 42.42, flNum) // want "use assert\\.InDelta"
 assert.Equal(t, 42.42, flNum, "msg") // want "use assert\\.InDelta"
@@ -68,7 +68,7 @@ assert.InDeltaf(t, 42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use ass
 				ProposedArgsf: "%s, %s, 0.0001",
 			},
 			selector:  "assert",
-			argValues: []any{"a", "b"},
+			argValues: []string{"a", "b"},
 
 			expected: `assert.True(t, a == b) // want "use assert\\.InDelta"
 assert.True(t, a == b, "msg") // want "use assert\\.InDelta"
@@ -90,7 +90,7 @@ assert.InDeltaf(t, a, b, 0.0001, "msg with arg %d", 42) // want "use assert\\.In
 				ProposedArgsf: "%s, result",
 			},
 			selector:  "assert",
-			argValues: []any{`"expected string"`},
+			argValues: []string{`"expected string"`},
 
 			expected: `assert.Equal(t, result, "expected string") // want "need to reverse actual and expected values"
 assert.Equal(t, result, "expected string", "msg") // want "need to reverse actual and expected values"
@@ -110,7 +110,7 @@ assert.Equalf(t, "expected string", result, "msg with arg %d", 42) // want "need
 				Argsf: "%s, %s, 0.0001",
 			},
 			selector:  "assert",
-			argValues: []any{"s.c", "h.Calculate()"},
+			argValues: []string{"s.c", "h.Calculate()"},
 
 			expected: `assert.InDelta(t, s.c, h.Calculate(), 0.0001)
 assert.InDelta(t, s.c, h.Calculate(), 0.0001, "msg")
@@ -135,7 +135,7 @@ assert.InDeltaf(t, s.c, h.Calculate(), 0.0001, "msg with arg %d", 42)`,
 				ProposedArgsf: "%s",
 			},
 			selector:      "require",
-			argValues:     []any{"vv"},
+			argValues:     []string{"vv"},
 			withoutFFuncs: true,
 
 			expected: `require.Len(t, vv, 0) // want "use require\\.Empty"
@@ -155,7 +155,7 @@ require.Empty(t, vv, "msg with arg %d", 42) // want "use require\\.Empty"`,
 				ProposedArgsf: "%s, %s, 0.0001",
 			},
 			selector:      "require",
-			argValues:     []any{"42.42", "flNum"},
+			argValues:     []string{"42.42", "flNum"},
 			withoutFFuncs: true,
 
 			expected: `require.Equal(t, 42.42, flNum) // want "use require\\.InDelta"
@@ -175,7 +175,7 @@ require.InDelta(t, 42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use req
 				ProposedArgsf: "%s, %s, 0.0001",
 			},
 			selector:      "require",
-			argValues:     []any{"a", "b"},
+			argValues:     []string{"a", "b"},
 			withoutFFuncs: true,
 
 			expected: `require.True(t, a == b) // want "use require\\.InDelta"
@@ -194,7 +194,7 @@ require.InDelta(t, a, b, 0.0001, "msg with arg %d", 42) // want "use require\\.I
 				ProposedArgsf: "%s, result",
 			},
 			selector:      "require",
-			argValues:     []any{`"expected string"`},
+			argValues:     []string{`"expected string"`},
 			withoutFFuncs: true,
 
 			expected: `require.Equal(t, result, "expected string") // want "need to reverse actual and expected values"
@@ -212,7 +212,7 @@ require.Equal(t, "expected string", result, "msg with arg %d", 42) // want "need
 				ProposedArgsf: "%s, %s, 0.0001",
 			},
 			selector:      "require",
-			argValues:     []any{"s.c", "h.Calculate()"},
+			argValues:     []string{"s.c", "h.Calculate()"},
 			withoutFFuncs: true,
 
 			expected: `require.InDelta(t, s.c, h.Calculate(), 0.0001)
@@ -234,7 +234,7 @@ require.InDelta(t, s.c, h.Calculate(), 0.0001, "msg with arg %d", 42)`,
 				ProposedArgsf: "%s",
 			},
 			selector:    "assertObj",
-			argValues:   []any{"vv"},
+			argValues:   []string{"vv"},
 			withoutTArg: true,
 
 			expected: `assertObj.Len(vv, 0) // want "use assertObj\\.Empty"
@@ -258,7 +258,7 @@ assertObj.Emptyf(vv, "msg with arg %d", 42) // want "use assertObj\\.Emptyf"`,
 				ProposedArgsf: "%s, %s, 0.0001",
 			},
 			selector:    "assertObj",
-			argValues:   []any{"42.42", "flNum"},
+			argValues:   []string{"42.42", "flNum"},
 			withoutTArg: true,
 
 			expected: `assertObj.Equal(42.42, flNum) // want "use assertObj\\.InDelta"
@@ -282,7 +282,7 @@ assertObj.InDeltaf(42.42, flNum, 0.0001, "msg with arg %d", 42) // want "use ass
 				ProposedArgsf: "%s, %s, 0.0001",
 			},
 			selector:    "assertObj",
-			argValues:   []any{"d", "c"},
+			argValues:   []string{"d", "c"},
 			withoutTArg: true,
 
 			expected: `assertObj.True(d == c) // want "use assertObj\\.InDelta"
@@ -305,7 +305,7 @@ assertObj.InDeltaf(d, c, 0.0001, "msg with arg %d", 42) // want "use assertObj\\
 				ProposedArgsf: "%s, res",
 			},
 			selector:    "assertObj",
-			argValues:   []any{`"expected string"`},
+			argValues:   []string{`"expected string"`},
 			withoutTArg: true,
 
 			expected: `assertObj.Equal(res, "expected string") // want "need to reverse actual and expected values"
@@ -326,7 +326,7 @@ assertObj.Equalf("expected string", res, "msg with arg %d", 42) // want "need to
 				Argsf: "%s, %s, 0.0001",
 			},
 			selector:    "assertObj",
-			argValues:   []any{"s.c", "h.Calculate()"},
+			argValues:   []string{"s.c", "h.Calculate()"},
 			withoutTArg: true,
 
 			expected: `assertObj.InDelta(s.c, h.Calculate(), 0.0001)
@@ -352,7 +352,7 @@ assertObj.InDeltaf(s.c, h.Calculate(), 0.0001, "msg with arg %d", 42)`,
 				ProposedArgsf: "%s",
 			},
 			selector:      "s.Require()",
-			argValues:     []any{"users"},
+			argValues:     []string{"users"},
 			withoutFFuncs: true,
 			withoutTArg:   true,
 
@@ -373,7 +373,7 @@ s.Require().Empty(users, "msg with arg %d", 42) // want "use s\\.Require\\(\\)\\
 				ProposedArgsf: "%s, %s, 0.0001",
 			},
 			selector:      "s.Require()",
-			argValues:     []any{"floatOp()", "pi"},
+			argValues:     []string{"floatOp()", "pi"},
 			withoutFFuncs: true,
 			withoutTArg:   true,
 
@@ -394,7 +394,7 @@ s.Require().InDelta(floatOp(), pi, 0.0001, "msg with arg %d", 42) // want "use s
 				ProposedArgsf: "%s, %s, 0.0001",
 			},
 			selector:      "s.Require()",
-			argValues:     []any{"a", "b"},
+			argValues:     []string{"a", "b"},
 			withoutFFuncs: true,
 			withoutTArg:   true,
 
@@ -414,7 +414,7 @@ s.Require().InDelta(a, b, 0.0001, "msg with arg %d", 42) // want "use s\\.Requir
 				ProposedArgsf: "%s, count",
 			},
 			selector:      "s.Require()",
-			argValues:     []any{`100`},
+			argValues:     []string{`100`},
 			withoutFFuncs: true,
 			withoutTArg:   true,
 
@@ -431,18 +431,18 @@ s.Require().Equal(100, count, "msg with arg %d", 42) // want "need to reverse ac
 				Fn:    "InDelta",
 				Argsf: "%s, %s, 0.0001",
 			},
-			selector:      "s.Require()",
-			argValues:     []any{"s.c", "h.Calculate()"},
+			selector:      "suite.Require()",
+			argValues:     []string{"s.c", "h.Calculate()"},
 			withoutFFuncs: true,
 			withoutTArg:   true,
 
-			expected: `s.Require().InDelta(s.c, h.Calculate(), 0.0001)
-s.Require().InDelta(s.c, h.Calculate(), 0.0001, "msg")
-s.Require().InDelta(s.c, h.Calculate(), 0.0001, "msg with arg %d", 42)`,
+			expected: `suite.Require().InDelta(s.c, h.Calculate(), 0.0001)
+suite.Require().InDelta(s.c, h.Calculate(), 0.0001, "msg")
+suite.Require().InDelta(s.c, h.Calculate(), 0.0001, "msg with arg %d", 42)`,
 
-			expectedGolden: `s.Require().InDelta(s.c, h.Calculate(), 0.0001)
-s.Require().InDelta(s.c, h.Calculate(), 0.0001, "msg")
-s.Require().InDelta(s.c, h.Calculate(), 0.0001, "msg with arg %d", 42)`,
+			expectedGolden: `suite.Require().InDelta(s.c, h.Calculate(), 0.0001)
+suite.Require().InDelta(s.c, h.Calculate(), 0.0001, "msg")
+suite.Require().InDelta(s.c, h.Calculate(), 0.0001, "msg with arg %d", 42)`,
 		},
 
 		// Special cases.

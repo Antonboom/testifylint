@@ -17,7 +17,7 @@ func New() *analysis.Analyzer {
 	tl := &testifyLint{
 		checkers: []checkers.Checker{ // Order is important!
 			//checkers.BoolCompare,
-			//checkers.FloatCompare,
+			checkers.NewFloatCompare(),
 			//checkers.Empty,
 			//checkers.Len,
 			//checkers.Comparisons,

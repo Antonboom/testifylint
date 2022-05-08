@@ -2,6 +2,10 @@ package main
 
 import "text/template"
 
+var fm = template.FuncMap{
+	"NewCheckerExpander": NewCheckerExpander,
+}
+
 type TestsGenerator interface {
 	Data() any
 	ErroredTemplate() *template.Template

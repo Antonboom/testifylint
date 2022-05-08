@@ -35,7 +35,7 @@ func (e *CheckerExpander) AsGolden() *CheckerExpander {
 	return e
 }
 
-func (e *CheckerExpander) Expand(check Check, selector string, argValues []any) string {
+func (e *CheckerExpander) Expand(check Check, selector string, argValues []string) string {
 	fn, args := check.Fn, check.Argsf
 
 	if e.asGolden {
@@ -51,7 +51,7 @@ func (e *CheckerExpander) Expand(check Check, selector string, argValues []any) 
 		args = "t, " + args
 	}
 	if len(argValues) > 0 {
-		args = fmt.Sprintf(args, argValues...)
+		args = fmt.Sprintf(args, toSliceOfAny(argValues)...)
 	}
 
 	checks := []string{
@@ -91,4 +91,12 @@ func withSuffixF(s string) string {
 		return s
 	}
 	return s + "f"
+}
+
+func toSliceOfAny(in []string) []any {
+	result := make([]any, len(in))
+	for i := range in {
+		result[i] = in[i]
+	}
+	return result
 }

@@ -23,6 +23,8 @@ func main() {
 // - Negative
 // - HTTPCodeConstant + HTTPSuccess + HTTPError
 // - нейминг для теста, запускающего suite, а также его местоположение
+// - float compare for structs with float comparisons
+// - старайтесь, чтобы тестовые файлы не превышали 3к строк
 
 // TODO:
 // - поддержка алиасов
@@ -54,3 +56,7 @@ func main() {
 // suite checkers only if suite imported
 
 // почему validateCheck не check.Validate? потому что чек не знает, что с ним будут делать
+
+// Как создавался этот линтер (ссылка на курс в ридми)
+
+// readme: имя чекера, пример, предлагаемый фикс, автоматический ли он
