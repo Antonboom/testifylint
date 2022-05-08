@@ -6,6 +6,7 @@ import (
 	"go/format"
 	"io/ioutil"
 	"log"
+	"strings"
 	"text/template"
 )
 
@@ -14,14 +15,18 @@ var generators = map[string]TestsGenerator{
 	//"pkg/analyzer/testdata/src/basic/comparisons_generated.go":     ComparisonsCasesGenerator{},
 	//"pkg/analyzer/testdata/src/basic/empty_generated.go":           EmptyCasesGenerator{},
 	//"pkg/analyzer/testdata/src/basic/error_generated.go":           ErrorCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/error_is_test.go": ErrorIsCasesGenerator{},
-	//"pkg/analyzer/testdata/src/basic/expected_actual_generated.go": ExpectedActualCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/float_compare_test.go": FloatCompareCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/error_is_test.go":        ErrorIsCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/expected_actual_test.go": ExpectedActualCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/float_compare_test.go":   FloatCompareCasesGenerator{},
 	//"pkg/analyzer/testdata/src/basic/len_generated.go":             LenCasesGenerator{},
 }
 
 func main() {
 	for output, g := range generators {
+		if !strings.HasSuffix(output, "_test.go") {
+			panic(output + " is not test file!")
+		}
+
 		if err := genGoFileFromTmpl(output, g.ErroredTemplate(), g.Data()); err != nil {
 			log.Panic(err)
 		}
@@ -43,7 +48,7 @@ func genGoFileFromTmpl(output string, tmpl *template.Template, data any) error {
 	formatted, err := format.Source(b.Bytes())
 	if err != nil {
 		_ = ioutil.WriteFile(output, b.Bytes(), 0644) // For debug.
-		return fmt.Errorf("fmt result: %v", err)
+		return fmt.Errorf("format %s: %v", output, err)
 	}
 
 	return ioutil.WriteFile(output, formatted, 0644)

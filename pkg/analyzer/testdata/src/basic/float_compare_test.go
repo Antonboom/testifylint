@@ -135,7 +135,7 @@ func TestFloat32Compare(t *testing.T) {
 			assert.Falsef(t, a <= d, "msg with arg %d", 42) // want "float-compare: use assert\\.InDeltaf"
 		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
 			assert.InDelta(t, 42.42, a, 0.0001)
@@ -167,154 +167,6 @@ func TestFloat32Compare(t *testing.T) {
 			assert.InDelta(t, 42.42, a, 0.0001, "msg with arg %d", 42)
 			assert.InDeltaf(t, 42.42, a, 0.0001, "msg")
 			assert.InDeltaf(t, 42.42, a, 0.0001, "msg with arg %d", 42)
-		}
-	})
-
-	t.Run("assertObj", func(t *testing.T) {
-		ass := assert.New(t)
-
-		{
-			ass.Equal(42.42, a)                         // want "float-compare: use ass\\.InDelta"
-			ass.Equal(42.42, a, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Equalf(42.42, a, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.NotEqual(b, cc.c)                         // want "float-compare: use ass\\.InDelta"
-			ass.NotEqual(b, cc.c, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.Greater(d, e)                         // want "float-compare: use ass\\.InDelta"
-			ass.Greater(d, e, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Greaterf(d, e, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use ass\\.InDelta"
-			ass.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.Less(h.Calculate(), floatOp())                         // want "float-compare: use ass\\.InDelta"
-			ass.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.LessOrEqual(42.42, a)                         // want "float-compare: use ass\\.InDelta"
-			ass.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.True(a == d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a == d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a == d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a == d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.True(a != d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a != d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a != d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a != d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.True(a > d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a > d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a > d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a > d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.True(a >= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a >= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a >= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.True(a < d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a < d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a < d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a < d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.True(a <= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a <= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a <= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.False(a == d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a == d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a == d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a == d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.False(a != d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a != d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a != d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a != d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.False(a > d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a > d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a > d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a > d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.False(a >= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a >= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a >= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.False(a < d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a < d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a < d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a < d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.False(a <= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a <= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a <= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-		}
-
-		// Valid asserts.
-
-		{
-			ass.InDelta(42.42, a, 0.0001)
-			ass.InDelta(42.42, a, 0.0001, "msg")
-			ass.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(42.42, a, 0.0001, "msg")
-			ass.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
-
-			ass.InDelta(b, cc.c, 0.0001)
-			ass.InDelta(b, cc.c, 0.0001, "msg")
-			ass.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(b, cc.c, 0.0001, "msg")
-			ass.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
-
-			ass.InDelta((*f).c, *g, 0.0001)
-			ass.InDelta((*f).c, *g, 0.0001, "msg")
-			ass.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf((*f).c, *g, 0.0001, "msg")
-			ass.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
-
-			ass.InDelta(h.Calculate(), floatOp(), 0.0001)
-			ass.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
-			ass.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
-			ass.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
-
-			ass.InDelta(42.42, a, 0.0001)
-			ass.InDelta(42.42, a, 0.0001, "msg")
-			ass.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(42.42, a, 0.0001, "msg")
-			ass.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 		}
 	})
 
@@ -429,7 +281,7 @@ func TestFloat32Compare(t *testing.T) {
 			require.Falsef(t, a <= d, "msg with arg %d", 42) // want "float-compare: use require\\.InDeltaf"
 		}
 
-		// Valid requires.
+		// Valid.
 
 		{
 			require.InDelta(t, 42.42, a, 0.0001)
@@ -464,151 +316,297 @@ func TestFloat32Compare(t *testing.T) {
 		}
 	})
 
-	t.Run("requireObj", func(t *testing.T) {
-		r := require.New(t)
+	assObj, reqObj := assert.New(t), require.New(t)
 
+	t.Run("assObj", func(t *testing.T) {
 		{
-			r.Equal(42.42, a)                         // want "float-compare: use r\\.InDelta"
-			r.Equal(42.42, a, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Equalf(42.42, a, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.Equal(42.42, a)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.Equal(42.42, a, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Equalf(42.42, a, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.NotEqual(b, cc.c)                         // want "float-compare: use r\\.InDelta"
-			r.NotEqual(b, cc.c, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.NotEqual(b, cc.c)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.NotEqual(b, cc.c, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.Greater(d, e)                         // want "float-compare: use r\\.InDelta"
-			r.Greater(d, e, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Greaterf(d, e, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.Greater(d, e)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.Greater(d, e, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Greaterf(d, e, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use r\\.InDelta"
-			r.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.Less(h.Calculate(), floatOp())                         // want "float-compare: use r\\.InDelta"
-			r.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use r\\.InDelta"
-			r.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.Less(h.Calculate(), floatOp())                         // want "float-compare: use assObj\\.InDelta"
+			assObj.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.LessOrEqual(42.42, a)                         // want "float-compare: use r\\.InDelta"
-			r.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.LessOrEqual(42.42, a)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.True(a == d)                         // want "float-compare: use r\\.InDelta"
-			r.True(a == d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.True(a == d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Truef(a == d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.True(a == d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a == d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a == d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a == d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.True(a != d)                         // want "float-compare: use r\\.InDelta"
-			r.True(a != d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.True(a != d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Truef(a != d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.True(a != d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a != d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a != d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a != d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.True(a > d)                         // want "float-compare: use r\\.InDelta"
-			r.True(a > d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.True(a > d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Truef(a > d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.True(a > d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a > d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a > d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a > d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.True(a >= d)                         // want "float-compare: use r\\.InDelta"
-			r.True(a >= d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Truef(a >= d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.True(a >= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a >= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a >= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.True(a < d)                         // want "float-compare: use r\\.InDelta"
-			r.True(a < d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.True(a < d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Truef(a < d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.True(a < d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a < d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a < d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a < d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.True(a <= d)                         // want "float-compare: use r\\.InDelta"
-			r.True(a <= d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Truef(a <= d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.True(a <= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a <= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a <= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.False(a == d)                         // want "float-compare: use r\\.InDelta"
-			r.False(a == d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.False(a == d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Falsef(a == d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.False(a == d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a == d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a == d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a == d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.False(a != d)                         // want "float-compare: use r\\.InDelta"
-			r.False(a != d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.False(a != d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Falsef(a != d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.False(a != d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a != d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a != d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a != d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.False(a > d)                         // want "float-compare: use r\\.InDelta"
-			r.False(a > d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.False(a > d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Falsef(a > d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.False(a > d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a > d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a > d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a > d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.False(a >= d)                         // want "float-compare: use r\\.InDelta"
-			r.False(a >= d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Falsef(a >= d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.False(a >= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a >= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a >= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.False(a < d)                         // want "float-compare: use r\\.InDelta"
-			r.False(a < d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.False(a < d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Falsef(a < d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.False(a < d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a < d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a < d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a < d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.False(a <= d)                         // want "float-compare: use r\\.InDelta"
-			r.False(a <= d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Falsef(a <= d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.False(a <= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a <= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a <= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 		}
 
-		// Valid requires.
+		// Valid.
 
 		{
-			r.InDelta(42.42, a, 0.0001)
-			r.InDelta(42.42, a, 0.0001, "msg")
-			r.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			r.InDeltaf(42.42, a, 0.0001, "msg")
-			r.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(42.42, a, 0.0001)
+			assObj.InDelta(42.42, a, 0.0001, "msg")
+			assObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(42.42, a, 0.0001, "msg")
+			assObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 
-			r.InDelta(b, cc.c, 0.0001)
-			r.InDelta(b, cc.c, 0.0001, "msg")
-			r.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
-			r.InDeltaf(b, cc.c, 0.0001, "msg")
-			r.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(b, cc.c, 0.0001)
+			assObj.InDelta(b, cc.c, 0.0001, "msg")
+			assObj.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(b, cc.c, 0.0001, "msg")
+			assObj.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
 
-			r.InDelta((*f).c, *g, 0.0001)
-			r.InDelta((*f).c, *g, 0.0001, "msg")
-			r.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
-			r.InDeltaf((*f).c, *g, 0.0001, "msg")
-			r.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta((*f).c, *g, 0.0001)
+			assObj.InDelta((*f).c, *g, 0.0001, "msg")
+			assObj.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf((*f).c, *g, 0.0001, "msg")
+			assObj.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
 
-			r.InDelta(h.Calculate(), floatOp(), 0.0001)
-			r.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
-			r.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
-			r.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
-			r.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(h.Calculate(), floatOp(), 0.0001)
+			assObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
+			assObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
+			assObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
 
-			r.InDelta(42.42, a, 0.0001)
-			r.InDelta(42.42, a, 0.0001, "msg")
-			r.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			r.InDeltaf(42.42, a, 0.0001, "msg")
-			r.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(42.42, a, 0.0001)
+			assObj.InDelta(42.42, a, 0.0001, "msg")
+			assObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(42.42, a, 0.0001, "msg")
+			assObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+		}
+	})
+
+	t.Run("reqObj", func(t *testing.T) {
+		{
+			reqObj.Equal(42.42, a)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Equal(42.42, a, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Equalf(42.42, a, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.NotEqual(b, cc.c)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.NotEqual(b, cc.c, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.Greater(d, e)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Greater(d, e, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Greaterf(d, e, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.Less(h.Calculate(), floatOp())                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.LessOrEqual(42.42, a)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.True(a == d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a == d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a == d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a == d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.True(a != d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a != d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a != d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a != d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.True(a > d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a > d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a > d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a > d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.True(a >= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a >= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a >= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.True(a < d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a < d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a < d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a < d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.True(a <= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a <= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a <= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.False(a == d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a == d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a == d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a == d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.False(a != d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a != d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a != d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a != d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.False(a > d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a > d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a > d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a > d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.False(a >= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a >= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a >= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.False(a < d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a < d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a < d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a < d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.False(a <= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a <= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a <= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+		}
+
+		// Valid.
+
+		{
+			reqObj.InDelta(42.42, a, 0.0001)
+			reqObj.InDelta(42.42, a, 0.0001, "msg")
+			reqObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg")
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+
+			reqObj.InDelta(b, cc.c, 0.0001)
+			reqObj.InDelta(b, cc.c, 0.0001, "msg")
+			reqObj.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(b, cc.c, 0.0001, "msg")
+			reqObj.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
+
+			reqObj.InDelta((*f).c, *g, 0.0001)
+			reqObj.InDelta((*f).c, *g, 0.0001, "msg")
+			reqObj.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf((*f).c, *g, 0.0001, "msg")
+			reqObj.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
+
+			reqObj.InDelta(h.Calculate(), floatOp(), 0.0001)
+			reqObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
+			reqObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
+			reqObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+
+			reqObj.InDelta(42.42, a, 0.0001)
+			reqObj.InDelta(42.42, a, 0.0001, "msg")
+			reqObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg")
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 		}
 	})
 }
@@ -617,7 +615,11 @@ type Float32CompareSuite struct {
 	suite.Suite
 }
 
-func (s *Float32CompareSuite) TestAssert() {
+func TestFloat32CompareSuite(t *testing.T) {
+	suite.Run(t, new(Float32CompareSuite))
+}
+
+func (s *Float32CompareSuite) TestAll() {
 	type number float32
 	type withFloat32 struct{ c float32 }
 	floatOp := func() float32 { return 0. }
@@ -630,6 +632,8 @@ func (s *Float32CompareSuite) TestAssert() {
 	f := new(withFloat32)
 	var g *float32
 	var h withFloat32Method
+
+	assObj, reqObj := s.Assert(), s.Require()
 
 	{
 		{
@@ -742,7 +746,7 @@ func (s *Float32CompareSuite) TestAssert() {
 			s.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use s\\.InDeltaf"
 		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
 			s.InDelta(42.42, a, 0.0001)
@@ -888,7 +892,7 @@ func (s *Float32CompareSuite) TestAssert() {
 			s.Assert().Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use s\\.Assert\\(\\)\\.InDeltaf"
 		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
 			s.Assert().InDelta(42.42, a, 0.0001)
@@ -924,167 +928,150 @@ func (s *Float32CompareSuite) TestAssert() {
 	}
 
 	{
-		ass := s.Assert()
-
 		{
-			ass.Equal(42.42, a)                         // want "float-compare: use ass\\.InDelta"
-			ass.Equal(42.42, a, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Equalf(42.42, a, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.Equal(42.42, a)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.Equal(42.42, a, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Equalf(42.42, a, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.NotEqual(b, cc.c)                         // want "float-compare: use ass\\.InDelta"
-			ass.NotEqual(b, cc.c, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.NotEqual(b, cc.c)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.NotEqual(b, cc.c, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.Greater(d, e)                         // want "float-compare: use ass\\.InDelta"
-			ass.Greater(d, e, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Greaterf(d, e, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.Greater(d, e)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.Greater(d, e, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Greaterf(d, e, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use ass\\.InDelta"
-			ass.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.Less(h.Calculate(), floatOp())                         // want "float-compare: use ass\\.InDelta"
-			ass.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.Less(h.Calculate(), floatOp())                         // want "float-compare: use assObj\\.InDelta"
+			assObj.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.LessOrEqual(42.42, a)                         // want "float-compare: use ass\\.InDelta"
-			ass.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.LessOrEqual(42.42, a)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.True(a == d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a == d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a == d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a == d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.True(a == d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a == d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a == d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a == d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.True(a != d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a != d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a != d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a != d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.True(a != d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a != d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a != d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a != d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.True(a > d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a > d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a > d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a > d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.True(a > d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a > d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a > d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a > d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.True(a >= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a >= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a >= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.True(a >= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a >= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a >= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.True(a < d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a < d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a < d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a < d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.True(a < d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a < d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a < d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a < d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.True(a <= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a <= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a <= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.True(a <= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a <= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a <= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.False(a == d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a == d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a == d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a == d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.False(a == d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a == d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a == d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a == d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.False(a != d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a != d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a != d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a != d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.False(a != d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a != d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a != d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a != d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.False(a > d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a > d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a > d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a > d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.False(a > d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a > d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a > d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a > d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.False(a >= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a >= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a >= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.False(a >= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a >= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a >= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.False(a < d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a < d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a < d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a < d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.False(a < d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a < d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a < d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a < d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.False(a <= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a <= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a <= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.False(a <= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a <= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a <= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
-			ass.InDelta(42.42, a, 0.0001)
-			ass.InDelta(42.42, a, 0.0001, "msg")
-			ass.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(42.42, a, 0.0001, "msg")
-			ass.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(42.42, a, 0.0001)
+			assObj.InDelta(42.42, a, 0.0001, "msg")
+			assObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(42.42, a, 0.0001, "msg")
+			assObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 
-			ass.InDelta(b, cc.c, 0.0001)
-			ass.InDelta(b, cc.c, 0.0001, "msg")
-			ass.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(b, cc.c, 0.0001, "msg")
-			ass.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(b, cc.c, 0.0001)
+			assObj.InDelta(b, cc.c, 0.0001, "msg")
+			assObj.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(b, cc.c, 0.0001, "msg")
+			assObj.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
 
-			ass.InDelta((*f).c, *g, 0.0001)
-			ass.InDelta((*f).c, *g, 0.0001, "msg")
-			ass.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf((*f).c, *g, 0.0001, "msg")
-			ass.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta((*f).c, *g, 0.0001)
+			assObj.InDelta((*f).c, *g, 0.0001, "msg")
+			assObj.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf((*f).c, *g, 0.0001, "msg")
+			assObj.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
 
-			ass.InDelta(h.Calculate(), floatOp(), 0.0001)
-			ass.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
-			ass.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
-			ass.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(h.Calculate(), floatOp(), 0.0001)
+			assObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
+			assObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
+			assObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
 
-			ass.InDelta(42.42, a, 0.0001)
-			ass.InDelta(42.42, a, 0.0001, "msg")
-			ass.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(42.42, a, 0.0001, "msg")
-			ass.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(42.42, a, 0.0001)
+			assObj.InDelta(42.42, a, 0.0001, "msg")
+			assObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(42.42, a, 0.0001, "msg")
+			assObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 		}
 	}
-}
-
-func (s *Float32CompareSuite) TestRequire() {
-	type number float32
-	type withFloat32 struct{ c float32 }
-	floatOp := func() float32 { return 0. }
-
-	var a float32
-	var b number
-	var cc withFloat32
-	d := float32(1.01)
-	const e = float32(2.02)
-	f := new(withFloat32)
-	var g *float32
-	var h withFloat32Method
 
 	{
 		{
@@ -1197,7 +1184,8 @@ func (s *Float32CompareSuite) TestRequire() {
 			s.Require().Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use s\\.Require\\(\\)\\.InDeltaf"
 		}
 
-		// Valid requires.
+		// Valid.
+
 		{
 			s.Require().InDelta(42.42, a, 0.0001)
 			s.Require().InDelta(42.42, a, 0.0001, "msg")
@@ -1232,150 +1220,148 @@ func (s *Float32CompareSuite) TestRequire() {
 	}
 
 	{
-		req := s.Require()
-
 		{
-			req.Equal(42.42, a)                         // want "float-compare: use req\\.InDelta"
-			req.Equal(42.42, a, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Equalf(42.42, a, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.Equal(42.42, a)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Equal(42.42, a, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Equalf(42.42, a, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.NotEqual(b, cc.c)                         // want "float-compare: use req\\.InDelta"
-			req.NotEqual(b, cc.c, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.NotEqual(b, cc.c)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.NotEqual(b, cc.c, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.Greater(d, e)                         // want "float-compare: use req\\.InDelta"
-			req.Greater(d, e, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Greaterf(d, e, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.Greater(d, e)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Greater(d, e, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Greaterf(d, e, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use req\\.InDelta"
-			req.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.Less(h.Calculate(), floatOp())                         // want "float-compare: use req\\.InDelta"
-			req.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use req\\.InDelta"
-			req.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.Less(h.Calculate(), floatOp())                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.LessOrEqual(42.42, a)                         // want "float-compare: use req\\.InDelta"
-			req.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.LessOrEqual(42.42, a)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.True(a == d)                         // want "float-compare: use req\\.InDelta"
-			req.True(a == d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.True(a == d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Truef(a == d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.True(a == d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a == d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a == d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a == d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.True(a != d)                         // want "float-compare: use req\\.InDelta"
-			req.True(a != d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.True(a != d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Truef(a != d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.True(a != d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a != d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a != d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a != d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.True(a > d)                         // want "float-compare: use req\\.InDelta"
-			req.True(a > d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.True(a > d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Truef(a > d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.True(a > d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a > d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a > d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a > d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.True(a >= d)                         // want "float-compare: use req\\.InDelta"
-			req.True(a >= d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Truef(a >= d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.True(a >= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a >= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a >= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.True(a < d)                         // want "float-compare: use req\\.InDelta"
-			req.True(a < d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.True(a < d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Truef(a < d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.True(a < d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a < d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a < d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a < d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.True(a <= d)                         // want "float-compare: use req\\.InDelta"
-			req.True(a <= d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Truef(a <= d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.True(a <= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a <= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a <= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.False(a == d)                         // want "float-compare: use req\\.InDelta"
-			req.False(a == d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.False(a == d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Falsef(a == d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.False(a == d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a == d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a == d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a == d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.False(a != d)                         // want "float-compare: use req\\.InDelta"
-			req.False(a != d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.False(a != d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Falsef(a != d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.False(a != d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a != d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a != d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a != d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.False(a > d)                         // want "float-compare: use req\\.InDelta"
-			req.False(a > d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.False(a > d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Falsef(a > d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.False(a > d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a > d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a > d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a > d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.False(a >= d)                         // want "float-compare: use req\\.InDelta"
-			req.False(a >= d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Falsef(a >= d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.False(a >= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a >= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a >= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.False(a < d)                         // want "float-compare: use req\\.InDelta"
-			req.False(a < d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.False(a < d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Falsef(a < d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.False(a < d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a < d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a < d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a < d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.False(a <= d)                         // want "float-compare: use req\\.InDelta"
-			req.False(a <= d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Falsef(a <= d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.False(a <= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a <= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a <= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 		}
 
-		// Valid requires.
+		// Valid.
 
 		{
-			req.InDelta(42.42, a, 0.0001)
-			req.InDelta(42.42, a, 0.0001, "msg")
-			req.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			req.InDeltaf(42.42, a, 0.0001, "msg")
-			req.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+			reqObj.InDelta(42.42, a, 0.0001)
+			reqObj.InDelta(42.42, a, 0.0001, "msg")
+			reqObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg")
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 
-			req.InDelta(b, cc.c, 0.0001)
-			req.InDelta(b, cc.c, 0.0001, "msg")
-			req.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
-			req.InDeltaf(b, cc.c, 0.0001, "msg")
-			req.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
+			reqObj.InDelta(b, cc.c, 0.0001)
+			reqObj.InDelta(b, cc.c, 0.0001, "msg")
+			reqObj.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(b, cc.c, 0.0001, "msg")
+			reqObj.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
 
-			req.InDelta((*f).c, *g, 0.0001)
-			req.InDelta((*f).c, *g, 0.0001, "msg")
-			req.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
-			req.InDeltaf((*f).c, *g, 0.0001, "msg")
-			req.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			reqObj.InDelta((*f).c, *g, 0.0001)
+			reqObj.InDelta((*f).c, *g, 0.0001, "msg")
+			reqObj.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf((*f).c, *g, 0.0001, "msg")
+			reqObj.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
 
-			req.InDelta(h.Calculate(), floatOp(), 0.0001)
-			req.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
-			req.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
-			req.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
-			req.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			reqObj.InDelta(h.Calculate(), floatOp(), 0.0001)
+			reqObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
+			reqObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
+			reqObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
 
-			req.InDelta(42.42, a, 0.0001)
-			req.InDelta(42.42, a, 0.0001, "msg")
-			req.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			req.InDeltaf(42.42, a, 0.0001, "msg")
-			req.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+			reqObj.InDelta(42.42, a, 0.0001)
+			reqObj.InDelta(42.42, a, 0.0001, "msg")
+			reqObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg")
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 		}
 	}
 }
@@ -1509,7 +1495,7 @@ func TestFloat64Compare(t *testing.T) {
 			assert.Falsef(t, a <= d, "msg with arg %d", 42) // want "float-compare: use assert\\.InDeltaf"
 		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
 			assert.InDelta(t, 42.42, a, 0.0001)
@@ -1541,154 +1527,6 @@ func TestFloat64Compare(t *testing.T) {
 			assert.InDelta(t, 42.42, a, 0.0001, "msg with arg %d", 42)
 			assert.InDeltaf(t, 42.42, a, 0.0001, "msg")
 			assert.InDeltaf(t, 42.42, a, 0.0001, "msg with arg %d", 42)
-		}
-	})
-
-	t.Run("assertObj", func(t *testing.T) {
-		ass := assert.New(t)
-
-		{
-			ass.Equal(42.42, a)                         // want "float-compare: use ass\\.InDelta"
-			ass.Equal(42.42, a, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Equalf(42.42, a, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.NotEqual(b, cc.c)                         // want "float-compare: use ass\\.InDelta"
-			ass.NotEqual(b, cc.c, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.Greater(d, e)                         // want "float-compare: use ass\\.InDelta"
-			ass.Greater(d, e, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Greaterf(d, e, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use ass\\.InDelta"
-			ass.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.Less(h.Calculate(), floatOp())                         // want "float-compare: use ass\\.InDelta"
-			ass.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.LessOrEqual(42.42, a)                         // want "float-compare: use ass\\.InDelta"
-			ass.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.True(a == d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a == d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a == d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a == d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.True(a != d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a != d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a != d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a != d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.True(a > d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a > d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a > d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a > d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.True(a >= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a >= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a >= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.True(a < d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a < d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a < d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a < d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.True(a <= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a <= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a <= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.False(a == d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a == d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a == d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a == d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.False(a != d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a != d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a != d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a != d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.False(a > d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a > d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a > d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a > d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.False(a >= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a >= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a >= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.False(a < d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a < d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a < d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a < d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-
-			ass.False(a <= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a <= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a <= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
-		}
-
-		// Valid asserts.
-
-		{
-			ass.InDelta(42.42, a, 0.0001)
-			ass.InDelta(42.42, a, 0.0001, "msg")
-			ass.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(42.42, a, 0.0001, "msg")
-			ass.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
-
-			ass.InDelta(b, cc.c, 0.0001)
-			ass.InDelta(b, cc.c, 0.0001, "msg")
-			ass.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(b, cc.c, 0.0001, "msg")
-			ass.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
-
-			ass.InDelta((*f).c, *g, 0.0001)
-			ass.InDelta((*f).c, *g, 0.0001, "msg")
-			ass.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf((*f).c, *g, 0.0001, "msg")
-			ass.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
-
-			ass.InDelta(h.Calculate(), floatOp(), 0.0001)
-			ass.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
-			ass.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
-			ass.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
-
-			ass.InDelta(42.42, a, 0.0001)
-			ass.InDelta(42.42, a, 0.0001, "msg")
-			ass.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(42.42, a, 0.0001, "msg")
-			ass.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 		}
 	})
 
@@ -1803,7 +1641,7 @@ func TestFloat64Compare(t *testing.T) {
 			require.Falsef(t, a <= d, "msg with arg %d", 42) // want "float-compare: use require\\.InDeltaf"
 		}
 
-		// Valid requires.
+		// Valid.
 
 		{
 			require.InDelta(t, 42.42, a, 0.0001)
@@ -1838,151 +1676,297 @@ func TestFloat64Compare(t *testing.T) {
 		}
 	})
 
-	t.Run("requireObj", func(t *testing.T) {
-		r := require.New(t)
+	assObj, reqObj := assert.New(t), require.New(t)
 
+	t.Run("assObj", func(t *testing.T) {
 		{
-			r.Equal(42.42, a)                         // want "float-compare: use r\\.InDelta"
-			r.Equal(42.42, a, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Equalf(42.42, a, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.Equal(42.42, a)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.Equal(42.42, a, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Equalf(42.42, a, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.NotEqual(b, cc.c)                         // want "float-compare: use r\\.InDelta"
-			r.NotEqual(b, cc.c, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.NotEqual(b, cc.c)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.NotEqual(b, cc.c, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.Greater(d, e)                         // want "float-compare: use r\\.InDelta"
-			r.Greater(d, e, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Greaterf(d, e, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.Greater(d, e)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.Greater(d, e, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Greaterf(d, e, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use r\\.InDelta"
-			r.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.Less(h.Calculate(), floatOp())                         // want "float-compare: use r\\.InDelta"
-			r.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use r\\.InDelta"
-			r.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.Less(h.Calculate(), floatOp())                         // want "float-compare: use assObj\\.InDelta"
+			assObj.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.LessOrEqual(42.42, a)                         // want "float-compare: use r\\.InDelta"
-			r.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.LessOrEqual(42.42, a)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.True(a == d)                         // want "float-compare: use r\\.InDelta"
-			r.True(a == d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.True(a == d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Truef(a == d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.True(a == d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a == d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a == d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a == d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.True(a != d)                         // want "float-compare: use r\\.InDelta"
-			r.True(a != d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.True(a != d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Truef(a != d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.True(a != d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a != d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a != d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a != d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.True(a > d)                         // want "float-compare: use r\\.InDelta"
-			r.True(a > d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.True(a > d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Truef(a > d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.True(a > d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a > d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a > d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a > d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.True(a >= d)                         // want "float-compare: use r\\.InDelta"
-			r.True(a >= d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Truef(a >= d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.True(a >= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a >= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a >= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.True(a < d)                         // want "float-compare: use r\\.InDelta"
-			r.True(a < d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.True(a < d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Truef(a < d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.True(a < d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a < d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a < d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a < d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.True(a <= d)                         // want "float-compare: use r\\.InDelta"
-			r.True(a <= d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Truef(a <= d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.True(a <= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a <= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a <= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.False(a == d)                         // want "float-compare: use r\\.InDelta"
-			r.False(a == d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.False(a == d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Falsef(a == d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.False(a == d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a == d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a == d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a == d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.False(a != d)                         // want "float-compare: use r\\.InDelta"
-			r.False(a != d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.False(a != d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Falsef(a != d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.False(a != d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a != d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a != d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a != d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.False(a > d)                         // want "float-compare: use r\\.InDelta"
-			r.False(a > d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.False(a > d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Falsef(a > d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.False(a > d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a > d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a > d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a > d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.False(a >= d)                         // want "float-compare: use r\\.InDelta"
-			r.False(a >= d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Falsef(a >= d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.False(a >= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a >= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a >= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.False(a < d)                         // want "float-compare: use r\\.InDelta"
-			r.False(a < d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.False(a < d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Falsef(a < d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.False(a < d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a < d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a < d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a < d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			r.False(a <= d)                         // want "float-compare: use r\\.InDelta"
-			r.False(a <= d, "msg")                  // want "float-compare: use r\\.InDelta"
-			r.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use r\\.InDelta"
-			r.Falsef(a <= d, "msg")                 // want "float-compare: use r\\.InDeltaf"
-			r.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use r\\.InDeltaf"
+			assObj.False(a <= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a <= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a <= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 		}
 
-		// Valid requires.
+		// Valid.
 
 		{
-			r.InDelta(42.42, a, 0.0001)
-			r.InDelta(42.42, a, 0.0001, "msg")
-			r.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			r.InDeltaf(42.42, a, 0.0001, "msg")
-			r.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(42.42, a, 0.0001)
+			assObj.InDelta(42.42, a, 0.0001, "msg")
+			assObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(42.42, a, 0.0001, "msg")
+			assObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 
-			r.InDelta(b, cc.c, 0.0001)
-			r.InDelta(b, cc.c, 0.0001, "msg")
-			r.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
-			r.InDeltaf(b, cc.c, 0.0001, "msg")
-			r.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(b, cc.c, 0.0001)
+			assObj.InDelta(b, cc.c, 0.0001, "msg")
+			assObj.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(b, cc.c, 0.0001, "msg")
+			assObj.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
 
-			r.InDelta((*f).c, *g, 0.0001)
-			r.InDelta((*f).c, *g, 0.0001, "msg")
-			r.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
-			r.InDeltaf((*f).c, *g, 0.0001, "msg")
-			r.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta((*f).c, *g, 0.0001)
+			assObj.InDelta((*f).c, *g, 0.0001, "msg")
+			assObj.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf((*f).c, *g, 0.0001, "msg")
+			assObj.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
 
-			r.InDelta(h.Calculate(), floatOp(), 0.0001)
-			r.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
-			r.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
-			r.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
-			r.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(h.Calculate(), floatOp(), 0.0001)
+			assObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
+			assObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
+			assObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
 
-			r.InDelta(42.42, a, 0.0001)
-			r.InDelta(42.42, a, 0.0001, "msg")
-			r.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			r.InDeltaf(42.42, a, 0.0001, "msg")
-			r.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(42.42, a, 0.0001)
+			assObj.InDelta(42.42, a, 0.0001, "msg")
+			assObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(42.42, a, 0.0001, "msg")
+			assObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+		}
+	})
+
+	t.Run("reqObj", func(t *testing.T) {
+		{
+			reqObj.Equal(42.42, a)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Equal(42.42, a, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Equalf(42.42, a, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.NotEqual(b, cc.c)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.NotEqual(b, cc.c, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.Greater(d, e)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Greater(d, e, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Greaterf(d, e, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.Less(h.Calculate(), floatOp())                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.LessOrEqual(42.42, a)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.True(a == d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a == d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a == d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a == d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.True(a != d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a != d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a != d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a != d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.True(a > d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a > d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a > d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a > d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.True(a >= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a >= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a >= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.True(a < d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a < d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a < d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a < d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.True(a <= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a <= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a <= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.False(a == d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a == d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a == d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a == d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.False(a != d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a != d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a != d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a != d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.False(a > d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a > d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a > d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a > d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.False(a >= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a >= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a >= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.False(a < d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a < d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a < d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a < d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+
+			reqObj.False(a <= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a <= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a <= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
+		}
+
+		// Valid.
+
+		{
+			reqObj.InDelta(42.42, a, 0.0001)
+			reqObj.InDelta(42.42, a, 0.0001, "msg")
+			reqObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg")
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+
+			reqObj.InDelta(b, cc.c, 0.0001)
+			reqObj.InDelta(b, cc.c, 0.0001, "msg")
+			reqObj.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(b, cc.c, 0.0001, "msg")
+			reqObj.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
+
+			reqObj.InDelta((*f).c, *g, 0.0001)
+			reqObj.InDelta((*f).c, *g, 0.0001, "msg")
+			reqObj.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf((*f).c, *g, 0.0001, "msg")
+			reqObj.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
+
+			reqObj.InDelta(h.Calculate(), floatOp(), 0.0001)
+			reqObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
+			reqObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
+			reqObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+
+			reqObj.InDelta(42.42, a, 0.0001)
+			reqObj.InDelta(42.42, a, 0.0001, "msg")
+			reqObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg")
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 		}
 	})
 }
@@ -1991,7 +1975,11 @@ type Float64CompareSuite struct {
 	suite.Suite
 }
 
-func (s *Float64CompareSuite) TestAssert() {
+func TestFloat64CompareSuite(t *testing.T) {
+	suite.Run(t, new(Float64CompareSuite))
+}
+
+func (s *Float64CompareSuite) TestAll() {
 	type number float64
 	type withFloat64 struct{ c float64 }
 	floatOp := func() float64 { return 0. }
@@ -2004,6 +1992,8 @@ func (s *Float64CompareSuite) TestAssert() {
 	f := new(withFloat64)
 	var g *float64
 	var h withFloat64Method
+
+	assObj, reqObj := s.Assert(), s.Require()
 
 	{
 		{
@@ -2116,7 +2106,7 @@ func (s *Float64CompareSuite) TestAssert() {
 			s.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use s\\.InDeltaf"
 		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
 			s.InDelta(42.42, a, 0.0001)
@@ -2262,7 +2252,7 @@ func (s *Float64CompareSuite) TestAssert() {
 			s.Assert().Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use s\\.Assert\\(\\)\\.InDeltaf"
 		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
 			s.Assert().InDelta(42.42, a, 0.0001)
@@ -2298,167 +2288,150 @@ func (s *Float64CompareSuite) TestAssert() {
 	}
 
 	{
-		ass := s.Assert()
-
 		{
-			ass.Equal(42.42, a)                         // want "float-compare: use ass\\.InDelta"
-			ass.Equal(42.42, a, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Equalf(42.42, a, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.Equal(42.42, a)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.Equal(42.42, a, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Equalf(42.42, a, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.NotEqual(b, cc.c)                         // want "float-compare: use ass\\.InDelta"
-			ass.NotEqual(b, cc.c, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.NotEqual(b, cc.c)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.NotEqual(b, cc.c, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.Greater(d, e)                         // want "float-compare: use ass\\.InDelta"
-			ass.Greater(d, e, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Greaterf(d, e, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.Greater(d, e)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.Greater(d, e, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Greaterf(d, e, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use ass\\.InDelta"
-			ass.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.Less(h.Calculate(), floatOp())                         // want "float-compare: use ass\\.InDelta"
-			ass.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.Less(h.Calculate(), floatOp())                         // want "float-compare: use assObj\\.InDelta"
+			assObj.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.LessOrEqual(42.42, a)                         // want "float-compare: use ass\\.InDelta"
-			ass.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.LessOrEqual(42.42, a)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.True(a == d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a == d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a == d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a == d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.True(a == d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a == d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a == d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a == d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.True(a != d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a != d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a != d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a != d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.True(a != d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a != d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a != d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a != d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.True(a > d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a > d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a > d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a > d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.True(a > d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a > d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a > d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a > d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.True(a >= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a >= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a >= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.True(a >= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a >= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a >= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.True(a < d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a < d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a < d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a < d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.True(a < d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a < d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a < d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a < d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.True(a <= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.True(a <= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Truef(a <= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.True(a <= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a <= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Truef(a <= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.False(a == d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a == d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a == d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a == d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.False(a == d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a == d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a == d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a == d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.False(a != d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a != d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a != d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a != d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.False(a != d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a != d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a != d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a != d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.False(a > d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a > d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a > d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a > d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.False(a > d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a > d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a > d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a > d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.False(a >= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a >= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a >= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.False(a >= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a >= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a >= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.False(a < d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a < d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a < d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a < d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.False(a < d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a < d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a < d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a < d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 
-			ass.False(a <= d)                         // want "float-compare: use ass\\.InDelta"
-			ass.False(a <= d, "msg")                  // want "float-compare: use ass\\.InDelta"
-			ass.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use ass\\.InDelta"
-			ass.Falsef(a <= d, "msg")                 // want "float-compare: use ass\\.InDeltaf"
-			ass.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use ass\\.InDeltaf"
+			assObj.False(a <= d)                         // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a <= d, "msg")                  // want "float-compare: use assObj\\.InDelta"
+			assObj.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use assObj\\.InDelta"
+			assObj.Falsef(a <= d, "msg")                 // want "float-compare: use assObj\\.InDeltaf"
+			assObj.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use assObj\\.InDeltaf"
 		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
-			ass.InDelta(42.42, a, 0.0001)
-			ass.InDelta(42.42, a, 0.0001, "msg")
-			ass.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(42.42, a, 0.0001, "msg")
-			ass.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(42.42, a, 0.0001)
+			assObj.InDelta(42.42, a, 0.0001, "msg")
+			assObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(42.42, a, 0.0001, "msg")
+			assObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 
-			ass.InDelta(b, cc.c, 0.0001)
-			ass.InDelta(b, cc.c, 0.0001, "msg")
-			ass.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(b, cc.c, 0.0001, "msg")
-			ass.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(b, cc.c, 0.0001)
+			assObj.InDelta(b, cc.c, 0.0001, "msg")
+			assObj.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(b, cc.c, 0.0001, "msg")
+			assObj.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
 
-			ass.InDelta((*f).c, *g, 0.0001)
-			ass.InDelta((*f).c, *g, 0.0001, "msg")
-			ass.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf((*f).c, *g, 0.0001, "msg")
-			ass.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta((*f).c, *g, 0.0001)
+			assObj.InDelta((*f).c, *g, 0.0001, "msg")
+			assObj.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf((*f).c, *g, 0.0001, "msg")
+			assObj.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
 
-			ass.InDelta(h.Calculate(), floatOp(), 0.0001)
-			ass.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
-			ass.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
-			ass.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(h.Calculate(), floatOp(), 0.0001)
+			assObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
+			assObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
+			assObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
 
-			ass.InDelta(42.42, a, 0.0001)
-			ass.InDelta(42.42, a, 0.0001, "msg")
-			ass.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			ass.InDeltaf(42.42, a, 0.0001, "msg")
-			ass.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDelta(42.42, a, 0.0001)
+			assObj.InDelta(42.42, a, 0.0001, "msg")
+			assObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			assObj.InDeltaf(42.42, a, 0.0001, "msg")
+			assObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 		}
 	}
-}
-
-func (s *Float64CompareSuite) TestRequire() {
-	type number float64
-	type withFloat64 struct{ c float64 }
-	floatOp := func() float64 { return 0. }
-
-	var a float64
-	var b number
-	var cc withFloat64
-	d := float64(1.01)
-	const e = float64(2.02)
-	f := new(withFloat64)
-	var g *float64
-	var h withFloat64Method
 
 	{
 		{
@@ -2571,7 +2544,8 @@ func (s *Float64CompareSuite) TestRequire() {
 			s.Require().Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use s\\.Require\\(\\)\\.InDeltaf"
 		}
 
-		// Valid requires.
+		// Valid.
+
 		{
 			s.Require().InDelta(42.42, a, 0.0001)
 			s.Require().InDelta(42.42, a, 0.0001, "msg")
@@ -2606,150 +2580,148 @@ func (s *Float64CompareSuite) TestRequire() {
 	}
 
 	{
-		req := s.Require()
-
 		{
-			req.Equal(42.42, a)                         // want "float-compare: use req\\.InDelta"
-			req.Equal(42.42, a, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Equalf(42.42, a, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.Equal(42.42, a)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Equal(42.42, a, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Equal(42.42, a, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Equalf(42.42, a, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Equalf(42.42, a, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.NotEqual(b, cc.c)                         // want "float-compare: use req\\.InDelta"
-			req.NotEqual(b, cc.c, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.NotEqual(b, cc.c)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.NotEqual(b, cc.c, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.NotEqual(b, cc.c, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.NotEqualf(b, cc.c, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.NotEqualf(b, cc.c, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.Greater(d, e)                         // want "float-compare: use req\\.InDelta"
-			req.Greater(d, e, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Greaterf(d, e, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.Greater(d, e)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Greater(d, e, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Greater(d, e, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Greaterf(d, e, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Greaterf(d, e, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use req\\.InDelta"
-			req.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.GreaterOrEqual((*f).c, *g)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.GreaterOrEqual((*f).c, *g, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.GreaterOrEqual((*f).c, *g, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.GreaterOrEqualf((*f).c, *g, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.GreaterOrEqualf((*f).c, *g, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.Less(h.Calculate(), floatOp())                         // want "float-compare: use req\\.InDelta"
-			req.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use req\\.InDelta"
-			req.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.Less(h.Calculate(), floatOp())                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Less(h.Calculate(), floatOp(), "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Less(h.Calculate(), floatOp(), "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Lessf(h.Calculate(), floatOp(), "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Lessf(h.Calculate(), floatOp(), "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.LessOrEqual(42.42, a)                         // want "float-compare: use req\\.InDelta"
-			req.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.LessOrEqual(42.42, a)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.LessOrEqual(42.42, a, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.LessOrEqual(42.42, a, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.LessOrEqualf(42.42, a, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.LessOrEqualf(42.42, a, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.True(a == d)                         // want "float-compare: use req\\.InDelta"
-			req.True(a == d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.True(a == d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Truef(a == d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.True(a == d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a == d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a == d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a == d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a == d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.True(a != d)                         // want "float-compare: use req\\.InDelta"
-			req.True(a != d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.True(a != d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Truef(a != d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.True(a != d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a != d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a != d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a != d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a != d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.True(a > d)                         // want "float-compare: use req\\.InDelta"
-			req.True(a > d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.True(a > d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Truef(a > d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.True(a > d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a > d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a > d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a > d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a > d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.True(a >= d)                         // want "float-compare: use req\\.InDelta"
-			req.True(a >= d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Truef(a >= d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.True(a >= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a >= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a >= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a >= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a >= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.True(a < d)                         // want "float-compare: use req\\.InDelta"
-			req.True(a < d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.True(a < d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Truef(a < d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.True(a < d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a < d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a < d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a < d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a < d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.True(a <= d)                         // want "float-compare: use req\\.InDelta"
-			req.True(a <= d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Truef(a <= d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.True(a <= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a <= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.True(a <= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Truef(a <= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Truef(a <= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.False(a == d)                         // want "float-compare: use req\\.InDelta"
-			req.False(a == d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.False(a == d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Falsef(a == d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.False(a == d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a == d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a == d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a == d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a == d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.False(a != d)                         // want "float-compare: use req\\.InDelta"
-			req.False(a != d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.False(a != d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Falsef(a != d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.False(a != d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a != d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a != d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a != d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a != d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.False(a > d)                         // want "float-compare: use req\\.InDelta"
-			req.False(a > d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.False(a > d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Falsef(a > d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.False(a > d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a > d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a > d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a > d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a > d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.False(a >= d)                         // want "float-compare: use req\\.InDelta"
-			req.False(a >= d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Falsef(a >= d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.False(a >= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a >= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a >= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a >= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a >= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.False(a < d)                         // want "float-compare: use req\\.InDelta"
-			req.False(a < d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.False(a < d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Falsef(a < d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.False(a < d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a < d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a < d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a < d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a < d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 
-			req.False(a <= d)                         // want "float-compare: use req\\.InDelta"
-			req.False(a <= d, "msg")                  // want "float-compare: use req\\.InDelta"
-			req.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use req\\.InDelta"
-			req.Falsef(a <= d, "msg")                 // want "float-compare: use req\\.InDeltaf"
-			req.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use req\\.InDeltaf"
+			reqObj.False(a <= d)                         // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a <= d, "msg")                  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.False(a <= d, "msg with arg %d", 42)  // want "float-compare: use reqObj\\.InDelta"
+			reqObj.Falsef(a <= d, "msg")                 // want "float-compare: use reqObj\\.InDeltaf"
+			reqObj.Falsef(a <= d, "msg with arg %d", 42) // want "float-compare: use reqObj\\.InDeltaf"
 		}
 
-		// Valid requires.
+		// Valid.
 
 		{
-			req.InDelta(42.42, a, 0.0001)
-			req.InDelta(42.42, a, 0.0001, "msg")
-			req.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			req.InDeltaf(42.42, a, 0.0001, "msg")
-			req.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+			reqObj.InDelta(42.42, a, 0.0001)
+			reqObj.InDelta(42.42, a, 0.0001, "msg")
+			reqObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg")
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 
-			req.InDelta(b, cc.c, 0.0001)
-			req.InDelta(b, cc.c, 0.0001, "msg")
-			req.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
-			req.InDeltaf(b, cc.c, 0.0001, "msg")
-			req.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
+			reqObj.InDelta(b, cc.c, 0.0001)
+			reqObj.InDelta(b, cc.c, 0.0001, "msg")
+			reqObj.InDelta(b, cc.c, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(b, cc.c, 0.0001, "msg")
+			reqObj.InDeltaf(b, cc.c, 0.0001, "msg with arg %d", 42)
 
-			req.InDelta((*f).c, *g, 0.0001)
-			req.InDelta((*f).c, *g, 0.0001, "msg")
-			req.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
-			req.InDeltaf((*f).c, *g, 0.0001, "msg")
-			req.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			reqObj.InDelta((*f).c, *g, 0.0001)
+			reqObj.InDelta((*f).c, *g, 0.0001, "msg")
+			reqObj.InDelta((*f).c, *g, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf((*f).c, *g, 0.0001, "msg")
+			reqObj.InDeltaf((*f).c, *g, 0.0001, "msg with arg %d", 42)
 
-			req.InDelta(h.Calculate(), floatOp(), 0.0001)
-			req.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
-			req.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
-			req.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
-			req.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			reqObj.InDelta(h.Calculate(), floatOp(), 0.0001)
+			reqObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg")
+			reqObj.InDelta(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg")
+			reqObj.InDeltaf(h.Calculate(), floatOp(), 0.0001, "msg with arg %d", 42)
 
-			req.InDelta(42.42, a, 0.0001)
-			req.InDelta(42.42, a, 0.0001, "msg")
-			req.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
-			req.InDeltaf(42.42, a, 0.0001, "msg")
-			req.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
+			reqObj.InDelta(42.42, a, 0.0001)
+			reqObj.InDelta(42.42, a, 0.0001, "msg")
+			reqObj.InDelta(42.42, a, 0.0001, "msg with arg %d", 42)
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg")
+			reqObj.InDeltaf(42.42, a, 0.0001, "msg with arg %d", 42)
 		}
 	}
 }

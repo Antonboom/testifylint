@@ -1,7 +1,7 @@
 package checkers
 
-/*
 import (
+	"fmt"
 	"go/ast"
 	"go/types"
 	"golang.org/x/tools/go/analysis"
@@ -23,33 +23,61 @@ var defaultExpectedVarPattern = regexp.MustCompile(strings.ReplaceAll(`(
 	.*[a-z0-9]Want$|
 	.*[a-z0-9]Wanted$)`, "\n\t", ""))
 
-func ExpectedActual(expPattern *regexp.Regexp) Checker {
+type ExpectedActual struct {
+	expPattern *regexp.Regexp
+}
+
+func NewExpectedActual(expPattern *regexp.Regexp) ExpectedActual {
 	if expPattern == nil {
 		expPattern = defaultExpectedVarPattern
 	}
+	return ExpectedActual{expPattern: expPattern}
+}
 
-	return func(pass *analysis.Pass, fn CallMeta) {
-		switch fn.Name {
-		case "Equal", "Equalf", "NotEqual", "NotEqualf",
-			"JSONEq", "JSONEqf", "YAMLEq", "YAMLEqf":
-		default:
-			return
-		}
+func (ExpectedActual) Name() string {
+	return "expected-actual"
+}
 
-		if len(fn.Args) < 3 {
-			return
-		}
+func (checker ExpectedActual) Check(pass *analysis.Pass, call CallMeta) {
+	switch call.Fn.Name {
+	case "Equal", "Equalf", "NotEqual", "NotEqualf",
+		"JSONEq", "JSONEqf", "YAMLEq", "YAMLEqf":
+	default:
+		return
+	}
 
-		if isWrongExpectedActualOrder(pass, expPattern, fn.Args[1], fn.Args[2]) {
-			r.Report(pass, fn, "need to reverse actual and expected values")
-		}
+	if len(call.Args) < 2 {
+		return
+	}
+
+	if isWrongExpectedActualOrder(pass, checker.expPattern, call.Args[0], call.Args[1]) {
+		pass.Report(analysis.Diagnostic{
+			Pos:      call.Pos(),
+			End:      call.End(),
+			Category: checker.Name(),
+			Message:  fmt.Sprintf("%s: need to reverse actual and expected values", checker.Name()),
+			SuggestedFixes: []analysis.SuggestedFix{{
+				Message: "Reverse actual and expected values",
+				TextEdits: []analysis.TextEdit{
+					{
+						Pos:     call.Args[0].Pos(),
+						End:     call.Args[1].End(),
+						NewText: []byte(types.ExprString(call.Args[1]) + ", " + types.ExprString(call.Args[0])),
+					},
+				},
+			}},
+			Related: nil,
+		})
 	}
 }
 
 func isWrongExpectedActualOrder(pass *analysis.Pass, expectedVarPattern *regexp.Regexp, _, second ast.Expr) bool {
-	if ce, ok := second.(*ast.CallExpr); ok { // Protection from compile-known constants results of builtin functions, for example, len().
+	// Protection from compile-known constants –
+	// results of builtin functions, for example, len().
+	if ce, ok := second.(*ast.CallExpr); ok {
 		return isCastedBasicLit(ce)
 	}
+
 	return isBasicLit(second) ||
 		isUntypedConst(pass, second) ||
 		isTypedConst(pass, second) ||
@@ -67,8 +95,10 @@ func isCastedBasicLit(ce *ast.CallExpr) bool {
 		return false
 	}
 	switch fn.Name {
-	case "uint", "uint8", "uint16", "uint32", "uint64", "int", "int8", "int16", "int32", "int64",
-		"float32", "float64", "rune":
+	case "uint", "uint8", "uint16", "uint32", "uint64",
+		"int", "int8", "int16", "int32", "int64",
+		"float32", "float64",
+		"rune":
 		return isBasicLit(ce.Args[0])
 
 	case "string":
@@ -119,4 +149,3 @@ func isStructFieldNamedAsExpected(pattern *regexp.Regexp, e ast.Expr) bool {
 	s, ok := e.(*ast.SelectorExpr)
 	return ok && isIdentNamedAsExpected(pattern, s.Sel)
 }
-*/

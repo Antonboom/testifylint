@@ -15,8 +15,8 @@ func newReporter() *reporter {
 	return &reporter{cache: map[token.Pos]struct{}{}}
 }
 
-func (r *reporter) Report(pass *analysis.Pass, meta CallMeta, msg string) {
-	r.reportf(pass, meta.Range.Pos(), msg)
+func (r *reporter) Report(pass *analysis.Pass, checker string, meta CallMeta, msg string) {
+	r.reportf(pass, checker, meta.Range.Pos(), msg)
 }
 
 func (r *reporter) ReportUseFunction(pass *analysis.Pass, checker string, meta CallMeta, proposedFn string) {
@@ -28,14 +28,14 @@ func (r *reporter) Reportf(pass *analysis.Pass, checker string, meta CallMeta, m
 	if meta.Fn.IsFmt {
 		f += "f"
 	}
-	r.reportf(pass, meta.Range.Pos(), checker+": "+msg, meta.SelectorStr, f)
+	r.reportf(pass, checker, meta.Range.Pos(), msg, meta.SelectorStr, f)
 }
 
-func (r *reporter) reportf(p *analysis.Pass, pos token.Pos, format string, args ...any) {
+func (r *reporter) reportf(p *analysis.Pass, checker string, pos token.Pos, format string, args ...any) {
 	if _, ok := r.cache[pos]; ok {
 		return
 	}
 
-	p.Reportf(pos, format, args...)
+	p.Reportf(pos, checker+": "+format, args...)
 	r.cache[pos] = struct{}{}
 }

@@ -1,6 +1,5 @@
 package checkers
 
-/*
 import "testing"
 
 func Test_defaultExpectedVarPattern(t *testing.T) {
@@ -50,4 +49,3 @@ func Test_defaultExpectedVarPattern(t *testing.T) {
 		})
 	}
 }
-*/

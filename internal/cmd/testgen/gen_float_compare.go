@@ -8,40 +8,42 @@ type FloatCompareCasesGenerator struct{}
 
 func (g FloatCompareCasesGenerator) Data() any {
 	const (
-		report        = "float-compare: use %s.%s"
-		proposedFn    = "InDelta"
-		proposedArgsf = "a, d, 0.0001"
+		report     = "float-compare: use %s.%s"
+		proposedFn = "InDelta"
 	)
 
 	return struct {
-		Bits          []string
-		Pkgs          []string
-		VarSets       [][]any
-		InvalidChecks []Check
-		ValidChecks   []Check
+		Bits           []string
+		Pkgs, Objs     []string
+		SuiteSelectors []string
+		InvalidChecks  []Check
+		ValidChecks    []Check
 	}{
-		Bits: []string{"32", "64"},
+		Bits:           []string{"32", "64"},
+		Pkgs:           []string{"assert", "require"},
+		Objs:           []string{"assObj", "reqObj"},
+		SuiteSelectors: []string{"s", "s.Assert()", "assObj", "s.Require()", "reqObj"},
 		InvalidChecks: []Check{
-			{Fn: "Equal", Argsf: "42.42, a", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "42.42, a, 0.0001"},
-			{Fn: "NotEqual", Argsf: "b, cc.c", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "b, cc.c, 0.0001"},
-			{Fn: "Greater", Argsf: "d, e", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "d, e, 0.0001"},
-			{Fn: "GreaterOrEqual", Argsf: "(*f).c, *g", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "(*f).c, *g, 0.0001"},
-			{Fn: "Less", Argsf: "h.Calculate(), floatOp()", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "h.Calculate(), floatOp(), 0.0001"},
-			{Fn: "LessOrEqual", Argsf: "42.42, a", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "42.42, a, 0.0001"},
+			{Fn: "Equal", Argsf: "42.42, a", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "NotEqual", Argsf: "b, cc.c", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "Greater", Argsf: "d, e", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "GreaterOrEqual", Argsf: "(*f).c, *g", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "Less", Argsf: "h.Calculate(), floatOp()", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "LessOrEqual", Argsf: "42.42, a", ReportMsgf: report, ProposedFn: proposedFn},
 
-			{Fn: "True", Argsf: "a == d", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: proposedArgsf},
-			{Fn: "True", Argsf: "a != d", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: proposedArgsf},
-			{Fn: "True", Argsf: "a > d", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: proposedArgsf},
-			{Fn: "True", Argsf: "a >= d", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: proposedArgsf},
-			{Fn: "True", Argsf: "a < d", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: proposedArgsf},
-			{Fn: "True", Argsf: "a <= d", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: proposedArgsf},
+			{Fn: "True", Argsf: "a == d", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "True", Argsf: "a != d", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "True", Argsf: "a > d", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "True", Argsf: "a >= d", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "True", Argsf: "a < d", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "True", Argsf: "a <= d", ReportMsgf: report, ProposedFn: proposedFn},
 
-			{Fn: "False", Argsf: "a == d", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: proposedArgsf},
-			{Fn: "False", Argsf: "a != d", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: proposedArgsf},
-			{Fn: "False", Argsf: "a > d", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: proposedArgsf},
-			{Fn: "False", Argsf: "a >= d", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: proposedArgsf},
-			{Fn: "False", Argsf: "a < d", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: proposedArgsf},
-			{Fn: "False", Argsf: "a <= d", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: proposedArgsf},
+			{Fn: "False", Argsf: "a == d", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "False", Argsf: "a != d", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "False", Argsf: "a > d", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "False", Argsf: "a >= d", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "False", Argsf: "a < d", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "False", Argsf: "a <= d", ReportMsgf: report, ProposedFn: proposedFn},
 		},
 		ValidChecks: []Check{
 			{Fn: "InDelta", Argsf: "42.42, a, 0.0001"},
@@ -89,131 +91,54 @@ func TestFloat{{ $bits }}Compare(t *testing.T) {
 	var g *float{{ $bits }}
 	var h withFloat{{ $bits }}Method
 
-	t.Run("assert", func(t *testing.T) {
+	{{ range $pi, $pkg := $.Pkgs }}
+	t.Run("{{ $pkg }}", func(t *testing.T) {
 		{
 			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.Expand $check "assert" nil }}
-			{{ end }}}
+			{{ NewCheckerExpander.Expand $check $pkg nil }}
+			{{ end -}}
+		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
 			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.Expand $check "assert" nil }}
-			{{ end }}}
+			{{ NewCheckerExpander.Expand $check $pkg nil }}
+			{{ end -}}
+		}
 	})
+	{{ end }}
 
-	t.Run("assertObj", func(t *testing.T) {
-		ass := assert.New(t)
+	assObj, reqObj := assert.New(t), require.New(t)
 
+	{{ range $oi, $obj := $.Objs }}
+	t.Run("{{ $obj }}", func(t *testing.T) {
 		{
 			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "ass" nil }}
-			{{ end }}}
+			{{ NewCheckerExpander.WithoutTArg.Expand $check $obj nil }}
+			{{ end -}}
+		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
 			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "ass" nil }}
-			{{ end }}}
+			{{ NewCheckerExpander.WithoutTArg.Expand $check $obj nil }}
+			{{ end -}}
+		}
 	})
-
-	t.Run("require", func(t *testing.T) {
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.Expand $check "require" nil }}
-			{{ end }}}
-
-		// Valid requires.
-
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.Expand $check "require" nil }}
-			{{ end }}}
-	})
-
-	t.Run("requireObj", func(t *testing.T) {
-		r := require.New(t)
-
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "r" nil }}
-			{{ end }}}
-
-		// Valid requires.
-
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "r" nil }}
-			{{ end }}}
-	})
+	{{ end -}}
 }
 
 type Float{{ $bits}}CompareSuite struct {
 	suite.Suite
 }
 
-func (s *Float{{ $bits}}CompareSuite) TestAssert() {
-	type number float{{ $bits }}
-	type withFloat{{ $bits }} struct{ c float{{ $bits }} }
-	floatOp := func() float{{ $bits }} { return 0. }
-
-	var a float{{ $bits }}
-	var b number
-	var cc withFloat{{ $bits }}
-	d := float{{ $bits }}(1.01)
-	const e = float{{ $bits }}(2.02)
-	f := new(withFloat{{ $bits }})
-	var g *float{{ $bits }}
-	var h withFloat{{ $bits }}Method
-
-	{
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "s" nil }}
-			{{ end }}}
-
-		// Valid asserts.
-
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "s" nil }}
-			{{ end }}}
-	}
-
-	{
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "s.Assert()" nil }}
-			{{ end }}}
-
-		// Valid asserts.
-
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "s.Assert()" nil }}
-			{{ end }}}
-	}
-
-	{	
-		ass := s.Assert()
-
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "ass" nil }}
-			{{ end }}}
-
-		// Valid asserts.
-
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "ass" nil }}
-			{{ end }}}
-	}
+func TestFloat{{ $bits}}CompareSuite(t *testing.T) {
+	suite.Run(t, new(Float{{ $bits}}CompareSuite))
 }
 
-func (s *Float{{ $bits}}CompareSuite) TestRequire() {
+func (s *Float{{ $bits}}CompareSuite) TestAll() {
 	type number float{{ $bits }}
 	type withFloat{{ $bits }} struct{ c float{{ $bits }} }
 	floatOp := func() float{{ $bits }} { return 0. }
@@ -227,34 +152,25 @@ func (s *Float{{ $bits}}CompareSuite) TestRequire() {
 	var g *float{{ $bits }}
 	var h withFloat{{ $bits }}Method
 
+	assObj, reqObj := s.Assert(), s.Require()
+
+	{{ range $si, $sel := $.SuiteSelectors }}
 	{
 		{
 			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "s.Require()" nil }}
-			{{ end }}}
+			{{ NewCheckerExpander.WithoutTArg.Expand $check $sel nil }}
+			{{ end -}}
+		}
 
-		// Valid requires.
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "s.Require()" nil }}
-			{{ end }}}
-	}
-
-	{
-		req := s.Require()
-
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "req" nil }}
-			{{ end }}}
-
-		// Valid requires.
+		// Valid.
 
 		{
 			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "req" nil }}
-			{{ end }}}
+			{{ NewCheckerExpander.WithoutTArg.Expand $check $sel nil }}
+			{{ end -}}
+		}
 	}
+	{{ end -}}
 }
 
 type withFloat{{ $bits }}Method struct{}

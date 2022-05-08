@@ -9,9 +9,14 @@ type ErrorIsCasesGenerator struct{}
 
 func (g ErrorIsCasesGenerator) Data() any {
 	return struct {
-		InvalidChecks []Check
-		ValidChecks   []Check
+		Pkgs, Objs     []string
+		SuiteSelectors []string
+		InvalidChecks  []Check
+		ValidChecks    []Check
 	}{
+		Pkgs:           []string{"assert", "require"},
+		Objs:           []string{"assObj", "reqObj"},
+		SuiteSelectors: []string{"s", "s.Assert()", "assObj", "s.Require()", "reqObj"},
 		InvalidChecks: []Check{
 			{
 				Fn:         "Error",
@@ -64,151 +69,74 @@ func TestErrorInsteadOfErrorIs(t *testing.T) {
 	var errSentinel = errors.New("user not found")
 	var err error
 
-	t.Run("assert", func(t *testing.T) {
+	{{ range $pi, $pkg := $.Pkgs }}
+	t.Run("{{ $pkg }}", func(t *testing.T) {
 		{
 			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutFFuncs.Expand $check "assert" nil }}
-			{{ end }}}
-		
-		// Valid asserts.
-	
+			{{ NewCheckerExpander.WithoutFFuncs.Expand $check $pkg nil }}
+			{{ end -}}
+		}
+
+		// Valid.
+
 		{
 			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.Expand $check "assert" nil }}
-			{{ end }}}
+			{{ NewCheckerExpander.Expand $check $pkg nil }}
+			{{ end -}}
+		}
 	})
+	{{ end }}
 
-	t.Run("assertObj", func(t *testing.T) {
-		ass := assert.New(t)
+	assObj, reqObj := assert.New(t), require.New(t)
 
+	{{ range $oi, $obj := $.Objs }}
+	t.Run("{{ $obj }}", func(t *testing.T) {
 		{
 			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.WithoutFFuncs.Expand $check "ass" nil }}
-			{{ end }}}
-		
-		// Valid asserts.
-	
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "ass" nil }}
-			{{ end }}}
-	})
+			{{ NewCheckerExpander.WithoutFFuncs.WithoutTArg.Expand $check $obj nil }}
+			{{ end -}}
+		}
 
-	t.Run("require", func(t *testing.T) {
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutFFuncs.Expand $check "require" nil }}
-			{{ end }}}
-		
-		// Valid requires.
-	
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.Expand $check "require" nil }}
-			{{ end }}}
-	})
-
-	t.Run("requireObj", func(t *testing.T) {
-		r := require.New(t)
+		// Valid.
 
 		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.WithoutFFuncs.Expand $check "r" nil }}
-			{{ end }}}
-		
-		// Valid requires.
-	
-		{
 			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "r" nil }}
-			{{ end }}}
+			{{ NewCheckerExpander.WithoutTArg.Expand $check $obj nil }}
+			{{ end -}}
+		}
 	})
+	{{ end -}}
 }
 
 type ErrorInsteadOfErrorIsSuite struct {
 	suite.Suite
 }
 
-func (s *ErrorInsteadOfErrorIsSuite) TestAssert() {
-	var errSentinel = errors.New("user not found")
-	var err error
-
-	{
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.WithoutFFuncs.Expand $check "s" nil }}
-			{{ end }}}
-		
-		// Valid asserts.
-	
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "s" nil }}
-			{{ end }}}
-	}
-
-	{
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.WithoutFFuncs.Expand $check "s.Assert()" nil }}
-			{{ end }}}
-		
-		// Valid asserts.
-	
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "s.Assert()" nil }}
-			{{ end }}}
-	}
-
-	{
-		ass := s.Assert()
-
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.WithoutFFuncs.Expand $check "ass" nil }}
-			{{ end }}}
-		
-		// Valid asserts.
-	
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "ass" nil }}
-			{{ end }}}
-	}
+func TestErrorInsteadOfErrorIsSuite(t *testing.T) {
+	suite.Run(t, new(ErrorInsteadOfErrorIsSuite))
 }
 
-func (s *ErrorInsteadOfErrorIsSuite) TestRequire() {
+func (s *ErrorInsteadOfErrorIsSuite) TestAll() {
 	var errSentinel = errors.New("user not found")
 	var err error
 
+	assObj, reqObj := s.Assert(), s.Require()
+
+	{{ range $si, $sel := $.SuiteSelectors }}
 	{
 		{
 			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.WithoutFFuncs.Expand $check "s.Require()" nil }}
-			{{ end }}}
-		
-		// Valid requires.
-	
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "s.Require()" nil }}
-			{{ end }}}
-	}
+			{{ NewCheckerExpander.WithoutFFuncs.WithoutTArg.Expand $check $sel nil }}
+			{{ end -}}
+		}
 
-	{
-		req := s.Require()
+		// Valid.
 
 		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.WithoutFFuncs.Expand $check "req" nil }}
-			{{ end }}}
-		
-		// Valid requires.
-	
-		{
 			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check "req" nil }}
-			{{ end }}}
+			{{ NewCheckerExpander.WithoutTArg.Expand $check $sel nil }}
+			{{ end -}}
+		}
 	}
+	{{ end -}}
 }`

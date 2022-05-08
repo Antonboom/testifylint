@@ -26,7 +26,7 @@ func TestErrorInsteadOfErrorIs(t *testing.T) {
 			assert.NoError(t, err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of assert\\.NoError, use assert\\.NotErrorIs instead"
 		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
 			assert.Error(t, err)
@@ -55,48 +55,6 @@ func TestErrorInsteadOfErrorIs(t *testing.T) {
 		}
 	})
 
-	t.Run("assertObj", func(t *testing.T) {
-		ass := assert.New(t)
-
-		{
-			ass.Error(err, errSentinel)                        // want "error-is: invalid usage of ass\\.Error, use ass\\.ErrorIs instead"
-			ass.Error(err, errSentinel, "msg")                 // want "error-is: invalid usage of ass\\.Error, use ass\\.ErrorIs instead"
-			ass.Error(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of ass\\.Error, use ass\\.ErrorIs instead"
-
-			ass.NoError(err, errSentinel)                        // want "error-is: invalid usage of ass\\.NoError, use ass\\.NotErrorIs instead"
-			ass.NoError(err, errSentinel, "msg")                 // want "error-is: invalid usage of ass\\.NoError, use ass\\.NotErrorIs instead"
-			ass.NoError(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of ass\\.NoError, use ass\\.NotErrorIs instead"
-		}
-
-		// Valid asserts.
-
-		{
-			ass.Error(err)
-			ass.Error(err, "msg")
-			ass.Error(err, "msg with arg %d", 42)
-			ass.Errorf(err, "msg")
-			ass.Errorf(err, "msg with arg %d", 42)
-
-			ass.ErrorIs(err, errSentinel)
-			ass.ErrorIs(err, errSentinel, "msg")
-			ass.ErrorIs(err, errSentinel, "msg with arg %d", 42)
-			ass.ErrorIsf(err, errSentinel, "msg")
-			ass.ErrorIsf(err, errSentinel, "msg with arg %d", 42)
-
-			ass.NoError(err)
-			ass.NoError(err, "msg")
-			ass.NoError(err, "msg with arg %d", 42)
-			ass.NoErrorf(err, "msg")
-			ass.NoErrorf(err, "msg with arg %d", 42)
-
-			ass.NotErrorIs(err, errSentinel)
-			ass.NotErrorIs(err, errSentinel, "msg")
-			ass.NotErrorIs(err, errSentinel, "msg with arg %d", 42)
-			ass.NotErrorIsf(err, errSentinel, "msg")
-			ass.NotErrorIsf(err, errSentinel, "msg with arg %d", 42)
-		}
-	})
-
 	t.Run("require", func(t *testing.T) {
 		{
 			require.Error(t, err, errSentinel)                        // want "error-is: invalid usage of require\\.Error, use require\\.ErrorIs instead"
@@ -108,7 +66,7 @@ func TestErrorInsteadOfErrorIs(t *testing.T) {
 			require.NoError(t, err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of require\\.NoError, use require\\.NotErrorIs instead"
 		}
 
-		// Valid requires.
+		// Valid.
 
 		{
 			require.Error(t, err)
@@ -137,45 +95,85 @@ func TestErrorInsteadOfErrorIs(t *testing.T) {
 		}
 	})
 
-	t.Run("requireObj", func(t *testing.T) {
-		r := require.New(t)
+	assObj, reqObj := assert.New(t), require.New(t)
 
+	t.Run("assObj", func(t *testing.T) {
 		{
-			r.Error(err, errSentinel)                        // want "error-is: invalid usage of r\\.Error, use r\\.ErrorIs instead"
-			r.Error(err, errSentinel, "msg")                 // want "error-is: invalid usage of r\\.Error, use r\\.ErrorIs instead"
-			r.Error(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of r\\.Error, use r\\.ErrorIs instead"
+			assObj.Error(err, errSentinel)                        // want "error-is: invalid usage of assObj\\.Error, use assObj\\.ErrorIs instead"
+			assObj.Error(err, errSentinel, "msg")                 // want "error-is: invalid usage of assObj\\.Error, use assObj\\.ErrorIs instead"
+			assObj.Error(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of assObj\\.Error, use assObj\\.ErrorIs instead"
 
-			r.NoError(err, errSentinel)                        // want "error-is: invalid usage of r\\.NoError, use r\\.NotErrorIs instead"
-			r.NoError(err, errSentinel, "msg")                 // want "error-is: invalid usage of r\\.NoError, use r\\.NotErrorIs instead"
-			r.NoError(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of r\\.NoError, use r\\.NotErrorIs instead"
+			assObj.NoError(err, errSentinel)                        // want "error-is: invalid usage of assObj\\.NoError, use assObj\\.NotErrorIs instead"
+			assObj.NoError(err, errSentinel, "msg")                 // want "error-is: invalid usage of assObj\\.NoError, use assObj\\.NotErrorIs instead"
+			assObj.NoError(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of assObj\\.NoError, use assObj\\.NotErrorIs instead"
 		}
 
-		// Valid requires.
+		// Valid.
 
 		{
-			r.Error(err)
-			r.Error(err, "msg")
-			r.Error(err, "msg with arg %d", 42)
-			r.Errorf(err, "msg")
-			r.Errorf(err, "msg with arg %d", 42)
+			assObj.Error(err)
+			assObj.Error(err, "msg")
+			assObj.Error(err, "msg with arg %d", 42)
+			assObj.Errorf(err, "msg")
+			assObj.Errorf(err, "msg with arg %d", 42)
 
-			r.ErrorIs(err, errSentinel)
-			r.ErrorIs(err, errSentinel, "msg")
-			r.ErrorIs(err, errSentinel, "msg with arg %d", 42)
-			r.ErrorIsf(err, errSentinel, "msg")
-			r.ErrorIsf(err, errSentinel, "msg with arg %d", 42)
+			assObj.ErrorIs(err, errSentinel)
+			assObj.ErrorIs(err, errSentinel, "msg")
+			assObj.ErrorIs(err, errSentinel, "msg with arg %d", 42)
+			assObj.ErrorIsf(err, errSentinel, "msg")
+			assObj.ErrorIsf(err, errSentinel, "msg with arg %d", 42)
 
-			r.NoError(err)
-			r.NoError(err, "msg")
-			r.NoError(err, "msg with arg %d", 42)
-			r.NoErrorf(err, "msg")
-			r.NoErrorf(err, "msg with arg %d", 42)
+			assObj.NoError(err)
+			assObj.NoError(err, "msg")
+			assObj.NoError(err, "msg with arg %d", 42)
+			assObj.NoErrorf(err, "msg")
+			assObj.NoErrorf(err, "msg with arg %d", 42)
 
-			r.NotErrorIs(err, errSentinel)
-			r.NotErrorIs(err, errSentinel, "msg")
-			r.NotErrorIs(err, errSentinel, "msg with arg %d", 42)
-			r.NotErrorIsf(err, errSentinel, "msg")
-			r.NotErrorIsf(err, errSentinel, "msg with arg %d", 42)
+			assObj.NotErrorIs(err, errSentinel)
+			assObj.NotErrorIs(err, errSentinel, "msg")
+			assObj.NotErrorIs(err, errSentinel, "msg with arg %d", 42)
+			assObj.NotErrorIsf(err, errSentinel, "msg")
+			assObj.NotErrorIsf(err, errSentinel, "msg with arg %d", 42)
+		}
+	})
+
+	t.Run("reqObj", func(t *testing.T) {
+		{
+			reqObj.Error(err, errSentinel)                        // want "error-is: invalid usage of reqObj\\.Error, use reqObj\\.ErrorIs instead"
+			reqObj.Error(err, errSentinel, "msg")                 // want "error-is: invalid usage of reqObj\\.Error, use reqObj\\.ErrorIs instead"
+			reqObj.Error(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of reqObj\\.Error, use reqObj\\.ErrorIs instead"
+
+			reqObj.NoError(err, errSentinel)                        // want "error-is: invalid usage of reqObj\\.NoError, use reqObj\\.NotErrorIs instead"
+			reqObj.NoError(err, errSentinel, "msg")                 // want "error-is: invalid usage of reqObj\\.NoError, use reqObj\\.NotErrorIs instead"
+			reqObj.NoError(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of reqObj\\.NoError, use reqObj\\.NotErrorIs instead"
+		}
+
+		// Valid.
+
+		{
+			reqObj.Error(err)
+			reqObj.Error(err, "msg")
+			reqObj.Error(err, "msg with arg %d", 42)
+			reqObj.Errorf(err, "msg")
+			reqObj.Errorf(err, "msg with arg %d", 42)
+
+			reqObj.ErrorIs(err, errSentinel)
+			reqObj.ErrorIs(err, errSentinel, "msg")
+			reqObj.ErrorIs(err, errSentinel, "msg with arg %d", 42)
+			reqObj.ErrorIsf(err, errSentinel, "msg")
+			reqObj.ErrorIsf(err, errSentinel, "msg with arg %d", 42)
+
+			reqObj.NoError(err)
+			reqObj.NoError(err, "msg")
+			reqObj.NoError(err, "msg with arg %d", 42)
+			reqObj.NoErrorf(err, "msg")
+			reqObj.NoErrorf(err, "msg with arg %d", 42)
+
+			reqObj.NotErrorIs(err, errSentinel)
+			reqObj.NotErrorIs(err, errSentinel, "msg")
+			reqObj.NotErrorIs(err, errSentinel, "msg with arg %d", 42)
+			reqObj.NotErrorIsf(err, errSentinel, "msg")
+			reqObj.NotErrorIsf(err, errSentinel, "msg with arg %d", 42)
 		}
 	})
 }
@@ -184,9 +182,15 @@ type ErrorInsteadOfErrorIsSuite struct {
 	suite.Suite
 }
 
-func (s *ErrorInsteadOfErrorIsSuite) TestAssert() {
+func TestErrorInsteadOfErrorIsSuite(t *testing.T) {
+	suite.Run(t, new(ErrorInsteadOfErrorIsSuite))
+}
+
+func (s *ErrorInsteadOfErrorIsSuite) TestAll() {
 	var errSentinel = errors.New("user not found")
 	var err error
+
+	assObj, reqObj := s.Assert(), s.Require()
 
 	{
 		{
@@ -199,7 +203,7 @@ func (s *ErrorInsteadOfErrorIsSuite) TestAssert() {
 			s.NoError(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of s\\.NoError, use s\\.NotErrorIs instead"
 		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
 			s.Error(err)
@@ -239,7 +243,7 @@ func (s *ErrorInsteadOfErrorIsSuite) TestAssert() {
 			s.Assert().NoError(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of s\\.Assert\\(\\)\\.NoError, use s\\.Assert\\(\\)\\.NotErrorIs instead"
 		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
 			s.Assert().Error(err)
@@ -269,51 +273,44 @@ func (s *ErrorInsteadOfErrorIsSuite) TestAssert() {
 	}
 
 	{
-		ass := s.Assert()
-
 		{
-			ass.Error(err, errSentinel)                        // want "error-is: invalid usage of ass\\.Error, use ass\\.ErrorIs instead"
-			ass.Error(err, errSentinel, "msg")                 // want "error-is: invalid usage of ass\\.Error, use ass\\.ErrorIs instead"
-			ass.Error(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of ass\\.Error, use ass\\.ErrorIs instead"
+			assObj.Error(err, errSentinel)                        // want "error-is: invalid usage of assObj\\.Error, use assObj\\.ErrorIs instead"
+			assObj.Error(err, errSentinel, "msg")                 // want "error-is: invalid usage of assObj\\.Error, use assObj\\.ErrorIs instead"
+			assObj.Error(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of assObj\\.Error, use assObj\\.ErrorIs instead"
 
-			ass.NoError(err, errSentinel)                        // want "error-is: invalid usage of ass\\.NoError, use ass\\.NotErrorIs instead"
-			ass.NoError(err, errSentinel, "msg")                 // want "error-is: invalid usage of ass\\.NoError, use ass\\.NotErrorIs instead"
-			ass.NoError(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of ass\\.NoError, use ass\\.NotErrorIs instead"
+			assObj.NoError(err, errSentinel)                        // want "error-is: invalid usage of assObj\\.NoError, use assObj\\.NotErrorIs instead"
+			assObj.NoError(err, errSentinel, "msg")                 // want "error-is: invalid usage of assObj\\.NoError, use assObj\\.NotErrorIs instead"
+			assObj.NoError(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of assObj\\.NoError, use assObj\\.NotErrorIs instead"
 		}
 
-		// Valid asserts.
+		// Valid.
 
 		{
-			ass.Error(err)
-			ass.Error(err, "msg")
-			ass.Error(err, "msg with arg %d", 42)
-			ass.Errorf(err, "msg")
-			ass.Errorf(err, "msg with arg %d", 42)
+			assObj.Error(err)
+			assObj.Error(err, "msg")
+			assObj.Error(err, "msg with arg %d", 42)
+			assObj.Errorf(err, "msg")
+			assObj.Errorf(err, "msg with arg %d", 42)
 
-			ass.ErrorIs(err, errSentinel)
-			ass.ErrorIs(err, errSentinel, "msg")
-			ass.ErrorIs(err, errSentinel, "msg with arg %d", 42)
-			ass.ErrorIsf(err, errSentinel, "msg")
-			ass.ErrorIsf(err, errSentinel, "msg with arg %d", 42)
+			assObj.ErrorIs(err, errSentinel)
+			assObj.ErrorIs(err, errSentinel, "msg")
+			assObj.ErrorIs(err, errSentinel, "msg with arg %d", 42)
+			assObj.ErrorIsf(err, errSentinel, "msg")
+			assObj.ErrorIsf(err, errSentinel, "msg with arg %d", 42)
 
-			ass.NoError(err)
-			ass.NoError(err, "msg")
-			ass.NoError(err, "msg with arg %d", 42)
-			ass.NoErrorf(err, "msg")
-			ass.NoErrorf(err, "msg with arg %d", 42)
+			assObj.NoError(err)
+			assObj.NoError(err, "msg")
+			assObj.NoError(err, "msg with arg %d", 42)
+			assObj.NoErrorf(err, "msg")
+			assObj.NoErrorf(err, "msg with arg %d", 42)
 
-			ass.NotErrorIs(err, errSentinel)
-			ass.NotErrorIs(err, errSentinel, "msg")
-			ass.NotErrorIs(err, errSentinel, "msg with arg %d", 42)
-			ass.NotErrorIsf(err, errSentinel, "msg")
-			ass.NotErrorIsf(err, errSentinel, "msg with arg %d", 42)
+			assObj.NotErrorIs(err, errSentinel)
+			assObj.NotErrorIs(err, errSentinel, "msg")
+			assObj.NotErrorIs(err, errSentinel, "msg with arg %d", 42)
+			assObj.NotErrorIsf(err, errSentinel, "msg")
+			assObj.NotErrorIsf(err, errSentinel, "msg with arg %d", 42)
 		}
 	}
-}
-
-func (s *ErrorInsteadOfErrorIsSuite) TestRequire() {
-	var errSentinel = errors.New("user not found")
-	var err error
 
 	{
 		{
@@ -326,7 +323,7 @@ func (s *ErrorInsteadOfErrorIsSuite) TestRequire() {
 			s.Require().NoError(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of s\\.Require\\(\\)\\.NoError, use s\\.Require\\(\\)\\.NotErrorIs instead"
 		}
 
-		// Valid requires.
+		// Valid.
 
 		{
 			s.Require().Error(err)
@@ -356,44 +353,42 @@ func (s *ErrorInsteadOfErrorIsSuite) TestRequire() {
 	}
 
 	{
-		req := s.Require()
-
 		{
-			req.Error(err, errSentinel)                        // want "error-is: invalid usage of req\\.Error, use req\\.ErrorIs instead"
-			req.Error(err, errSentinel, "msg")                 // want "error-is: invalid usage of req\\.Error, use req\\.ErrorIs instead"
-			req.Error(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of req\\.Error, use req\\.ErrorIs instead"
+			reqObj.Error(err, errSentinel)                        // want "error-is: invalid usage of reqObj\\.Error, use reqObj\\.ErrorIs instead"
+			reqObj.Error(err, errSentinel, "msg")                 // want "error-is: invalid usage of reqObj\\.Error, use reqObj\\.ErrorIs instead"
+			reqObj.Error(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of reqObj\\.Error, use reqObj\\.ErrorIs instead"
 
-			req.NoError(err, errSentinel)                        // want "error-is: invalid usage of req\\.NoError, use req\\.NotErrorIs instead"
-			req.NoError(err, errSentinel, "msg")                 // want "error-is: invalid usage of req\\.NoError, use req\\.NotErrorIs instead"
-			req.NoError(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of req\\.NoError, use req\\.NotErrorIs instead"
+			reqObj.NoError(err, errSentinel)                        // want "error-is: invalid usage of reqObj\\.NoError, use reqObj\\.NotErrorIs instead"
+			reqObj.NoError(err, errSentinel, "msg")                 // want "error-is: invalid usage of reqObj\\.NoError, use reqObj\\.NotErrorIs instead"
+			reqObj.NoError(err, errSentinel, "msg with arg %d", 42) // want "error-is: invalid usage of reqObj\\.NoError, use reqObj\\.NotErrorIs instead"
 		}
 
-		// Valid requires.
+		// Valid.
 
 		{
-			req.Error(err)
-			req.Error(err, "msg")
-			req.Error(err, "msg with arg %d", 42)
-			req.Errorf(err, "msg")
-			req.Errorf(err, "msg with arg %d", 42)
+			reqObj.Error(err)
+			reqObj.Error(err, "msg")
+			reqObj.Error(err, "msg with arg %d", 42)
+			reqObj.Errorf(err, "msg")
+			reqObj.Errorf(err, "msg with arg %d", 42)
 
-			req.ErrorIs(err, errSentinel)
-			req.ErrorIs(err, errSentinel, "msg")
-			req.ErrorIs(err, errSentinel, "msg with arg %d", 42)
-			req.ErrorIsf(err, errSentinel, "msg")
-			req.ErrorIsf(err, errSentinel, "msg with arg %d", 42)
+			reqObj.ErrorIs(err, errSentinel)
+			reqObj.ErrorIs(err, errSentinel, "msg")
+			reqObj.ErrorIs(err, errSentinel, "msg with arg %d", 42)
+			reqObj.ErrorIsf(err, errSentinel, "msg")
+			reqObj.ErrorIsf(err, errSentinel, "msg with arg %d", 42)
 
-			req.NoError(err)
-			req.NoError(err, "msg")
-			req.NoError(err, "msg with arg %d", 42)
-			req.NoErrorf(err, "msg")
-			req.NoErrorf(err, "msg with arg %d", 42)
+			reqObj.NoError(err)
+			reqObj.NoError(err, "msg")
+			reqObj.NoError(err, "msg with arg %d", 42)
+			reqObj.NoErrorf(err, "msg")
+			reqObj.NoErrorf(err, "msg with arg %d", 42)
 
-			req.NotErrorIs(err, errSentinel)
-			req.NotErrorIs(err, errSentinel, "msg")
-			req.NotErrorIs(err, errSentinel, "msg with arg %d", 42)
-			req.NotErrorIsf(err, errSentinel, "msg")
-			req.NotErrorIsf(err, errSentinel, "msg with arg %d", 42)
+			reqObj.NotErrorIs(err, errSentinel)
+			reqObj.NotErrorIs(err, errSentinel, "msg")
+			reqObj.NotErrorIs(err, errSentinel, "msg with arg %d", 42)
+			reqObj.NotErrorIsf(err, errSentinel, "msg")
+			reqObj.NotErrorIsf(err, errSentinel, "msg with arg %d", 42)
 		}
 	}
 }
