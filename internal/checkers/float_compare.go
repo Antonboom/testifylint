@@ -31,7 +31,7 @@ func (checker FloatCompare) Check(pass *analysis.Pass, call CallMeta) {
 	}()
 
 	if invalid {
-		r.ReportUseFunction(pass, checker.Name(), call, "InDelta")
+		r.ReportUseFunction(pass, checker.Name(), call, "InDelta", nil)
 	}
 }
 

@@ -16,7 +16,7 @@ const (
 func New() *analysis.Analyzer {
 	tl := &testifyLint{
 		checkers: []checkers.Checker{ // Order is important!
-			//checkers.BoolCompare,
+			checkers.NewBoolCompare(),
 			checkers.NewFloatCompare(),
 			//checkers.Empty,
 			//checkers.Len,
@@ -26,6 +26,8 @@ func New() *analysis.Analyzer {
 			checkers.NewExpectedActual(nil),
 		},
 	}
+
+	// TODO validate checkers uniques
 
 	return &analysis.Analyzer{
 		Name: name,

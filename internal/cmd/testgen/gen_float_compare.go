@@ -130,15 +130,15 @@ func TestFloat{{ $bits }}Compare(t *testing.T) {
 	{{ end -}}
 }
 
-type Float{{ $bits}}CompareSuite struct {
+type Float{{ $bits }}CompareSuite struct {
 	suite.Suite
 }
 
-func TestFloat{{ $bits}}CompareSuite(t *testing.T) {
-	suite.Run(t, new(Float{{ $bits}}CompareSuite))
+func TestFloat{{ $bits }}CompareSuite(t *testing.T) {
+	suite.Run(t, new(Float{{ $bits }}CompareSuite))
 }
 
-func (s *Float{{ $bits}}CompareSuite) TestAll() {
+func (s *Float{{ $bits }}CompareSuite) TestAll() {
 	type number float{{ $bits }}
 	type withFloat{{ $bits }} struct{ c float{{ $bits }} }
 	floatOp := func() float{{ $bits }} { return 0. }

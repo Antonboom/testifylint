@@ -1,7 +1,6 @@
 package checkers
 
 import (
-	"fmt"
 	"go/ast"
 	"go/types"
 	"golang.org/x/tools/go/analysis"
@@ -49,24 +48,18 @@ func (checker ExpectedActual) Check(pass *analysis.Pass, call CallMeta) {
 	if len(call.Args) < 2 {
 		return
 	}
+	first, second := call.Args[0], call.Args[1]
 
-	if isWrongExpectedActualOrder(pass, checker.expPattern, call.Args[0], call.Args[1]) {
-		pass.Report(analysis.Diagnostic{
-			Pos:      call.Pos(),
-			End:      call.End(),
-			Category: checker.Name(),
-			Message:  fmt.Sprintf("%s: need to reverse actual and expected values", checker.Name()),
-			SuggestedFixes: []analysis.SuggestedFix{{
-				Message: "Reverse actual and expected values",
-				TextEdits: []analysis.TextEdit{
-					{
-						Pos:     call.Args[0].Pos(),
-						End:     call.Args[1].End(),
-						NewText: []byte(types.ExprString(call.Args[1]) + ", " + types.ExprString(call.Args[0])),
-					},
+	if isWrongExpectedActualOrder(pass, checker.expPattern, first, second) {
+		r.Report(pass, checker.Name(), call, "need to reverse actual and expected values", &analysis.SuggestedFix{
+			Message: "Reverse actual and expected values",
+			TextEdits: []analysis.TextEdit{
+				{
+					Pos:     first.Pos(),
+					End:     second.End(),
+					NewText: []byte(types.ExprString(second) + ", " + types.ExprString(first)),
 				},
-			}},
-			Related: nil,
+			},
 		})
 	}
 }

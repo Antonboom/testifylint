@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run analyzer tests" type="GoTestRunConfiguration" factoryName="Go Test">
+    <module name="testifylint" />
+    <working_directory value="$PROJECT_DIR$/pkg/analyzer" />
+    <root_directory value="$PROJECT_DIR$" />
+    <kind value="PACKAGE" />
+    <package value="github.com/Antonboom/testifylint/pkg/analyzer" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$" />
+    <framework value="gotest" />
+    <pattern value="^\QTestTestifyLint\E$" />
+    <method v="2" />
+  </configuration>
+</component>

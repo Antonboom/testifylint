@@ -1,41 +1,72 @@
 package checkers
 
 import (
+	"fmt"
 	"go/token"
 	"golang.org/x/tools/go/analysis"
 )
 
 var r = newReporter()
 
+type positionID struct {
+	pkg string
+	pos token.Pos
+}
+
 type reporter struct {
-	cache map[token.Pos]struct{} // TODO: можно добавить приоритеты чекерам
+	cache map[positionID]struct{}
 }
 
 func newReporter() *reporter {
-	return &reporter{cache: map[token.Pos]struct{}{}}
+	return &reporter{cache: map[positionID]struct{}{}}
 }
 
-func (r *reporter) Report(pass *analysis.Pass, checker string, meta CallMeta, msg string) {
-	r.reportf(pass, checker, meta.Range.Pos(), msg)
-}
-
-func (r *reporter) ReportUseFunction(pass *analysis.Pass, checker string, meta CallMeta, proposedFn string) {
-	r.Reportf(pass, checker, meta, "use %s.%s", proposedFn)
-}
-
-func (r *reporter) Reportf(pass *analysis.Pass, checker string, meta CallMeta, msg string, proposedFn string) {
+func (r *reporter) ReportUseFunction(pass *analysis.Pass, checker string, call CallMeta, proposedFn string, fix *analysis.SuggestedFix) {
 	f := proposedFn
-	if meta.Fn.IsFmt {
+	if call.Fn.IsFmt {
 		f += "f"
 	}
-	r.reportf(pass, checker, meta.Range.Pos(), msg, meta.SelectorStr, f)
+	msg := fmt.Sprintf("use %s.%s", call.SelectorStr, f)
+
+	r.Report(pass, checker, call.Range, msg, fix)
 }
 
-func (r *reporter) reportf(p *analysis.Pass, checker string, pos token.Pos, format string, args ...any) {
-	if _, ok := r.cache[pos]; ok {
+func newFixViaFnReplacement(call CallMeta, proposedFn string, additionalEdits ...analysis.TextEdit) *analysis.SuggestedFix {
+	if call.Fn.IsFmt {
+		proposedFn += "f"
+	}
+	return &analysis.SuggestedFix{
+		Message: fmt.Sprintf("Replace %s with %s", call.Fn.Name, proposedFn),
+		TextEdits: append([]analysis.TextEdit{
+			{
+				Pos:     call.Fn.Pos(),
+				End:     call.Fn.End(),
+				NewText: []byte(proposedFn),
+			},
+		}, additionalEdits...),
+	}
+}
+
+func (r *reporter) Report(pass *analysis.Pass, checker string, rng analysis.Range, msg string, fix *analysis.SuggestedFix) {
+	if !rng.Pos().IsValid() || !rng.End().IsValid() {
+		panic("invalid report position")
+	}
+
+	posID := positionID{pkg: pass.Pkg.String(), pos: rng.Pos()}
+	if _, ok := r.cache[posID]; ok {
 		return
 	}
 
-	p.Reportf(pos, checker+": "+format, args...)
-	r.cache[pos] = struct{}{}
+	d := analysis.Diagnostic{
+		Pos:      rng.Pos(),
+		End:      rng.End(),
+		Category: checker,
+		Message:  checker + ": " + msg,
+	}
+	if fix != nil {
+		d.SuggestedFixes = []analysis.SuggestedFix{*fix}
+	}
+
+	pass.Report(d)
+	r.cache[posID] = struct{}{}
 }
