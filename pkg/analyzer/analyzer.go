@@ -19,7 +19,7 @@ func New() *analysis.Analyzer {
 			checkers.NewBoolCompare(),
 			checkers.NewFloatCompare(),
 			//checkers.Empty,
-			//checkers.Len,
+			checkers.NewLen(),
 			//checkers.Comparisons,
 			//checkers.Error,
 			checkers.NewErrorIs(),

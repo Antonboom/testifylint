@@ -1,5 +1,7 @@
 package checkers
 
+type Comparisons struct{}
+
 /*
 import (
 	"go/ast"

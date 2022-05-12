@@ -65,3 +65,7 @@ func main() {
 // todo save idea runs
 
 // todo отказаться от ExprString
+
+// todo нашёл issue, пока реализовывал checker len
+
+// todo: все XOR вынести в отдельный testdata/src/strange

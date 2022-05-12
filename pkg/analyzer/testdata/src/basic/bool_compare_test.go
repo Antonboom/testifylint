@@ -5729,7 +5729,6 @@ func (s *BoolCompareSuite) TestAll() {
 	assObj, reqObj := s.Assert(), s.Require()
 	// True.
 	{
-
 		{
 			{
 				s.Equal(a, true)                         // want "bool-compare: use s\\.True"
@@ -5809,16 +5808,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.False(!a, "msg with arg %d", 42)  // want "bool-compare: use s\\.True"
 				s.Falsef(!a, "msg")                 // want "bool-compare: use s\\.Truef"
 				s.Falsef(!a, "msg with arg %d", 42) // want "bool-compare: use s\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				s.True(a)
-				s.True(a, "msg")
-				s.True(a, "msg with arg %d", 42)
-				s.Truef(a, "msg")
-				s.Truef(a, "msg with arg %d", 42)
 			}
 
 			{
@@ -5901,16 +5890,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Falsef(!b.b, "msg with arg %d", 42) // want "bool-compare: use s\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				s.True(b.b)
-				s.True(b.b, "msg")
-				s.True(b.b, "msg with arg %d", 42)
-				s.Truef(b.b, "msg")
-				s.Truef(b.b, "msg with arg %d", 42)
-			}
-
 			{
 				s.Equal(c, true)                         // want "bool-compare: use s\\.True"
 				s.Equal(c, true, "msg")                  // want "bool-compare: use s\\.True"
@@ -5989,16 +5968,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.False(!c, "msg with arg %d", 42)  // want "bool-compare: use s\\.True"
 				s.Falsef(!c, "msg")                 // want "bool-compare: use s\\.Truef"
 				s.Falsef(!c, "msg with arg %d", 42) // want "bool-compare: use s\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				s.True(c)
-				s.True(c, "msg")
-				s.True(c, "msg with arg %d", 42)
-				s.Truef(c, "msg")
-				s.Truef(c, "msg with arg %d", 42)
 			}
 
 			{
@@ -6081,16 +6050,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Falsef(!d, "msg with arg %d", 42) // want "bool-compare: use s\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				s.True(d)
-				s.True(d, "msg")
-				s.True(d, "msg with arg %d", 42)
-				s.Truef(d, "msg")
-				s.Truef(d, "msg with arg %d", 42)
-			}
-
 			{
 				s.Equal(*e, true)                         // want "bool-compare: use s\\.True"
 				s.Equal(*e, true, "msg")                  // want "bool-compare: use s\\.True"
@@ -6169,16 +6128,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.False(!*e, "msg with arg %d", 42)  // want "bool-compare: use s\\.True"
 				s.Falsef(!*e, "msg")                 // want "bool-compare: use s\\.Truef"
 				s.Falsef(!*e, "msg with arg %d", 42) // want "bool-compare: use s\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				s.True(*e)
-				s.True(*e, "msg")
-				s.True(*e, "msg with arg %d", 42)
-				s.Truef(*e, "msg")
-				s.Truef(*e, "msg with arg %d", 42)
 			}
 
 			{
@@ -6261,16 +6210,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Falsef(!*f, "msg with arg %d", 42) // want "bool-compare: use s\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				s.True(*f)
-				s.True(*f, "msg")
-				s.True(*f, "msg with arg %d", 42)
-				s.Truef(*f, "msg")
-				s.Truef(*f, "msg with arg %d", 42)
-			}
-
 			{
 				s.Equal(g.TheyKilledKenny(), true)                         // want "bool-compare: use s\\.True"
 				s.Equal(g.TheyKilledKenny(), true, "msg")                  // want "bool-compare: use s\\.True"
@@ -6349,16 +6288,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.False(!g.TheyKilledKenny(), "msg with arg %d", 42)  // want "bool-compare: use s\\.True"
 				s.Falsef(!g.TheyKilledKenny(), "msg")                 // want "bool-compare: use s\\.Truef"
 				s.Falsef(!g.TheyKilledKenny(), "msg with arg %d", 42) // want "bool-compare: use s\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				s.True(g.TheyKilledKenny())
-				s.True(g.TheyKilledKenny(), "msg")
-				s.True(g.TheyKilledKenny(), "msg with arg %d", 42)
-				s.Truef(g.TheyKilledKenny(), "msg")
-				s.Truef(g.TheyKilledKenny(), "msg with arg %d", 42)
 			}
 
 			{
@@ -6442,6 +6371,62 @@ func (s *BoolCompareSuite) TestAll() {
 			}
 
 			// Valid.
+
+			{
+				s.True(a)
+				s.True(a, "msg")
+				s.True(a, "msg with arg %d", 42)
+				s.Truef(a, "msg")
+				s.Truef(a, "msg with arg %d", 42)
+			}
+
+			{
+				s.True(b.b)
+				s.True(b.b, "msg")
+				s.True(b.b, "msg with arg %d", 42)
+				s.Truef(b.b, "msg")
+				s.Truef(b.b, "msg with arg %d", 42)
+			}
+
+			{
+				s.True(c)
+				s.True(c, "msg")
+				s.True(c, "msg with arg %d", 42)
+				s.Truef(c, "msg")
+				s.Truef(c, "msg with arg %d", 42)
+			}
+
+			{
+				s.True(d)
+				s.True(d, "msg")
+				s.True(d, "msg with arg %d", 42)
+				s.Truef(d, "msg")
+				s.Truef(d, "msg with arg %d", 42)
+			}
+
+			{
+				s.True(*e)
+				s.True(*e, "msg")
+				s.True(*e, "msg with arg %d", 42)
+				s.Truef(*e, "msg")
+				s.Truef(*e, "msg with arg %d", 42)
+			}
+
+			{
+				s.True(*f)
+				s.True(*f, "msg")
+				s.True(*f, "msg with arg %d", 42)
+				s.Truef(*f, "msg")
+				s.Truef(*f, "msg with arg %d", 42)
+			}
+
+			{
+				s.True(g.TheyKilledKenny())
+				s.True(g.TheyKilledKenny(), "msg")
+				s.True(g.TheyKilledKenny(), "msg with arg %d", 42)
+				s.Truef(g.TheyKilledKenny(), "msg")
+				s.Truef(g.TheyKilledKenny(), "msg with arg %d", 42)
+			}
 
 			{
 				s.True(boolOp())
@@ -6533,16 +6518,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().Falsef(!a, "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				s.Assert().True(a)
-				s.Assert().True(a, "msg")
-				s.Assert().True(a, "msg with arg %d", 42)
-				s.Assert().Truef(a, "msg")
-				s.Assert().Truef(a, "msg with arg %d", 42)
-			}
-
 			{
 				s.Assert().Equal(b.b, true)                         // want "bool-compare: use s\\.Assert\\(\\)\\.True"
 				s.Assert().Equal(b.b, true, "msg")                  // want "bool-compare: use s\\.Assert\\(\\)\\.True"
@@ -6621,16 +6596,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().False(!b.b, "msg with arg %d", 42)  // want "bool-compare: use s\\.Assert\\(\\)\\.True"
 				s.Assert().Falsef(!b.b, "msg")                 // want "bool-compare: use s\\.Assert\\(\\)\\.Truef"
 				s.Assert().Falsef(!b.b, "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				s.Assert().True(b.b)
-				s.Assert().True(b.b, "msg")
-				s.Assert().True(b.b, "msg with arg %d", 42)
-				s.Assert().Truef(b.b, "msg")
-				s.Assert().Truef(b.b, "msg with arg %d", 42)
 			}
 
 			{
@@ -6713,16 +6678,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().Falsef(!c, "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				s.Assert().True(c)
-				s.Assert().True(c, "msg")
-				s.Assert().True(c, "msg with arg %d", 42)
-				s.Assert().Truef(c, "msg")
-				s.Assert().Truef(c, "msg with arg %d", 42)
-			}
-
 			{
 				s.Assert().Equal(d, true)                         // want "bool-compare: use s\\.Assert\\(\\)\\.True"
 				s.Assert().Equal(d, true, "msg")                  // want "bool-compare: use s\\.Assert\\(\\)\\.True"
@@ -6801,16 +6756,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().False(!d, "msg with arg %d", 42)  // want "bool-compare: use s\\.Assert\\(\\)\\.True"
 				s.Assert().Falsef(!d, "msg")                 // want "bool-compare: use s\\.Assert\\(\\)\\.Truef"
 				s.Assert().Falsef(!d, "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				s.Assert().True(d)
-				s.Assert().True(d, "msg")
-				s.Assert().True(d, "msg with arg %d", 42)
-				s.Assert().Truef(d, "msg")
-				s.Assert().Truef(d, "msg with arg %d", 42)
 			}
 
 			{
@@ -6893,16 +6838,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().Falsef(!*e, "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				s.Assert().True(*e)
-				s.Assert().True(*e, "msg")
-				s.Assert().True(*e, "msg with arg %d", 42)
-				s.Assert().Truef(*e, "msg")
-				s.Assert().Truef(*e, "msg with arg %d", 42)
-			}
-
 			{
 				s.Assert().Equal(*f, true)                         // want "bool-compare: use s\\.Assert\\(\\)\\.True"
 				s.Assert().Equal(*f, true, "msg")                  // want "bool-compare: use s\\.Assert\\(\\)\\.True"
@@ -6983,16 +6918,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().Falsef(!*f, "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				s.Assert().True(*f)
-				s.Assert().True(*f, "msg")
-				s.Assert().True(*f, "msg with arg %d", 42)
-				s.Assert().Truef(*f, "msg")
-				s.Assert().Truef(*f, "msg with arg %d", 42)
-			}
-
 			{
 				s.Assert().Equal(g.TheyKilledKenny(), true)                         // want "bool-compare: use s\\.Assert\\(\\)\\.True"
 				s.Assert().Equal(g.TheyKilledKenny(), true, "msg")                  // want "bool-compare: use s\\.Assert\\(\\)\\.True"
@@ -7071,16 +6996,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().False(!g.TheyKilledKenny(), "msg with arg %d", 42)  // want "bool-compare: use s\\.Assert\\(\\)\\.True"
 				s.Assert().Falsef(!g.TheyKilledKenny(), "msg")                 // want "bool-compare: use s\\.Assert\\(\\)\\.Truef"
 				s.Assert().Falsef(!g.TheyKilledKenny(), "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				s.Assert().True(g.TheyKilledKenny())
-				s.Assert().True(g.TheyKilledKenny(), "msg")
-				s.Assert().True(g.TheyKilledKenny(), "msg with arg %d", 42)
-				s.Assert().Truef(g.TheyKilledKenny(), "msg")
-				s.Assert().Truef(g.TheyKilledKenny(), "msg with arg %d", 42)
 			}
 
 			{
@@ -7164,6 +7079,62 @@ func (s *BoolCompareSuite) TestAll() {
 			}
 
 			// Valid.
+
+			{
+				s.Assert().True(a)
+				s.Assert().True(a, "msg")
+				s.Assert().True(a, "msg with arg %d", 42)
+				s.Assert().Truef(a, "msg")
+				s.Assert().Truef(a, "msg with arg %d", 42)
+			}
+
+			{
+				s.Assert().True(b.b)
+				s.Assert().True(b.b, "msg")
+				s.Assert().True(b.b, "msg with arg %d", 42)
+				s.Assert().Truef(b.b, "msg")
+				s.Assert().Truef(b.b, "msg with arg %d", 42)
+			}
+
+			{
+				s.Assert().True(c)
+				s.Assert().True(c, "msg")
+				s.Assert().True(c, "msg with arg %d", 42)
+				s.Assert().Truef(c, "msg")
+				s.Assert().Truef(c, "msg with arg %d", 42)
+			}
+
+			{
+				s.Assert().True(d)
+				s.Assert().True(d, "msg")
+				s.Assert().True(d, "msg with arg %d", 42)
+				s.Assert().Truef(d, "msg")
+				s.Assert().Truef(d, "msg with arg %d", 42)
+			}
+
+			{
+				s.Assert().True(*e)
+				s.Assert().True(*e, "msg")
+				s.Assert().True(*e, "msg with arg %d", 42)
+				s.Assert().Truef(*e, "msg")
+				s.Assert().Truef(*e, "msg with arg %d", 42)
+			}
+
+			{
+				s.Assert().True(*f)
+				s.Assert().True(*f, "msg")
+				s.Assert().True(*f, "msg with arg %d", 42)
+				s.Assert().Truef(*f, "msg")
+				s.Assert().Truef(*f, "msg with arg %d", 42)
+			}
+
+			{
+				s.Assert().True(g.TheyKilledKenny())
+				s.Assert().True(g.TheyKilledKenny(), "msg")
+				s.Assert().True(g.TheyKilledKenny(), "msg with arg %d", 42)
+				s.Assert().Truef(g.TheyKilledKenny(), "msg")
+				s.Assert().Truef(g.TheyKilledKenny(), "msg with arg %d", 42)
+			}
 
 			{
 				s.Assert().True(boolOp())
@@ -7255,16 +7226,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.Falsef(!a, "msg with arg %d", 42) // want "bool-compare: use assObj\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				assObj.True(a)
-				assObj.True(a, "msg")
-				assObj.True(a, "msg with arg %d", 42)
-				assObj.Truef(a, "msg")
-				assObj.Truef(a, "msg with arg %d", 42)
-			}
-
 			{
 				assObj.Equal(b.b, true)                         // want "bool-compare: use assObj\\.True"
 				assObj.Equal(b.b, true, "msg")                  // want "bool-compare: use assObj\\.True"
@@ -7343,16 +7304,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.False(!b.b, "msg with arg %d", 42)  // want "bool-compare: use assObj\\.True"
 				assObj.Falsef(!b.b, "msg")                 // want "bool-compare: use assObj\\.Truef"
 				assObj.Falsef(!b.b, "msg with arg %d", 42) // want "bool-compare: use assObj\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				assObj.True(b.b)
-				assObj.True(b.b, "msg")
-				assObj.True(b.b, "msg with arg %d", 42)
-				assObj.Truef(b.b, "msg")
-				assObj.Truef(b.b, "msg with arg %d", 42)
 			}
 
 			{
@@ -7435,16 +7386,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.Falsef(!c, "msg with arg %d", 42) // want "bool-compare: use assObj\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				assObj.True(c)
-				assObj.True(c, "msg")
-				assObj.True(c, "msg with arg %d", 42)
-				assObj.Truef(c, "msg")
-				assObj.Truef(c, "msg with arg %d", 42)
-			}
-
 			{
 				assObj.Equal(d, true)                         // want "bool-compare: use assObj\\.True"
 				assObj.Equal(d, true, "msg")                  // want "bool-compare: use assObj\\.True"
@@ -7523,16 +7464,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.False(!d, "msg with arg %d", 42)  // want "bool-compare: use assObj\\.True"
 				assObj.Falsef(!d, "msg")                 // want "bool-compare: use assObj\\.Truef"
 				assObj.Falsef(!d, "msg with arg %d", 42) // want "bool-compare: use assObj\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				assObj.True(d)
-				assObj.True(d, "msg")
-				assObj.True(d, "msg with arg %d", 42)
-				assObj.Truef(d, "msg")
-				assObj.Truef(d, "msg with arg %d", 42)
 			}
 
 			{
@@ -7615,16 +7546,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.Falsef(!*e, "msg with arg %d", 42) // want "bool-compare: use assObj\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				assObj.True(*e)
-				assObj.True(*e, "msg")
-				assObj.True(*e, "msg with arg %d", 42)
-				assObj.Truef(*e, "msg")
-				assObj.Truef(*e, "msg with arg %d", 42)
-			}
-
 			{
 				assObj.Equal(*f, true)                         // want "bool-compare: use assObj\\.True"
 				assObj.Equal(*f, true, "msg")                  // want "bool-compare: use assObj\\.True"
@@ -7705,16 +7626,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.Falsef(!*f, "msg with arg %d", 42) // want "bool-compare: use assObj\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				assObj.True(*f)
-				assObj.True(*f, "msg")
-				assObj.True(*f, "msg with arg %d", 42)
-				assObj.Truef(*f, "msg")
-				assObj.Truef(*f, "msg with arg %d", 42)
-			}
-
 			{
 				assObj.Equal(g.TheyKilledKenny(), true)                         // want "bool-compare: use assObj\\.True"
 				assObj.Equal(g.TheyKilledKenny(), true, "msg")                  // want "bool-compare: use assObj\\.True"
@@ -7793,16 +7704,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.False(!g.TheyKilledKenny(), "msg with arg %d", 42)  // want "bool-compare: use assObj\\.True"
 				assObj.Falsef(!g.TheyKilledKenny(), "msg")                 // want "bool-compare: use assObj\\.Truef"
 				assObj.Falsef(!g.TheyKilledKenny(), "msg with arg %d", 42) // want "bool-compare: use assObj\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				assObj.True(g.TheyKilledKenny())
-				assObj.True(g.TheyKilledKenny(), "msg")
-				assObj.True(g.TheyKilledKenny(), "msg with arg %d", 42)
-				assObj.Truef(g.TheyKilledKenny(), "msg")
-				assObj.Truef(g.TheyKilledKenny(), "msg with arg %d", 42)
 			}
 
 			{
@@ -7886,6 +7787,62 @@ func (s *BoolCompareSuite) TestAll() {
 			}
 
 			// Valid.
+
+			{
+				assObj.True(a)
+				assObj.True(a, "msg")
+				assObj.True(a, "msg with arg %d", 42)
+				assObj.Truef(a, "msg")
+				assObj.Truef(a, "msg with arg %d", 42)
+			}
+
+			{
+				assObj.True(b.b)
+				assObj.True(b.b, "msg")
+				assObj.True(b.b, "msg with arg %d", 42)
+				assObj.Truef(b.b, "msg")
+				assObj.Truef(b.b, "msg with arg %d", 42)
+			}
+
+			{
+				assObj.True(c)
+				assObj.True(c, "msg")
+				assObj.True(c, "msg with arg %d", 42)
+				assObj.Truef(c, "msg")
+				assObj.Truef(c, "msg with arg %d", 42)
+			}
+
+			{
+				assObj.True(d)
+				assObj.True(d, "msg")
+				assObj.True(d, "msg with arg %d", 42)
+				assObj.Truef(d, "msg")
+				assObj.Truef(d, "msg with arg %d", 42)
+			}
+
+			{
+				assObj.True(*e)
+				assObj.True(*e, "msg")
+				assObj.True(*e, "msg with arg %d", 42)
+				assObj.Truef(*e, "msg")
+				assObj.Truef(*e, "msg with arg %d", 42)
+			}
+
+			{
+				assObj.True(*f)
+				assObj.True(*f, "msg")
+				assObj.True(*f, "msg with arg %d", 42)
+				assObj.Truef(*f, "msg")
+				assObj.Truef(*f, "msg with arg %d", 42)
+			}
+
+			{
+				assObj.True(g.TheyKilledKenny())
+				assObj.True(g.TheyKilledKenny(), "msg")
+				assObj.True(g.TheyKilledKenny(), "msg with arg %d", 42)
+				assObj.Truef(g.TheyKilledKenny(), "msg")
+				assObj.Truef(g.TheyKilledKenny(), "msg with arg %d", 42)
+			}
 
 			{
 				assObj.True(boolOp())
@@ -7977,16 +7934,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().Falsef(!a, "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				s.Require().True(a)
-				s.Require().True(a, "msg")
-				s.Require().True(a, "msg with arg %d", 42)
-				s.Require().Truef(a, "msg")
-				s.Require().Truef(a, "msg with arg %d", 42)
-			}
-
 			{
 				s.Require().Equal(b.b, true)                         // want "bool-compare: use s\\.Require\\(\\)\\.True"
 				s.Require().Equal(b.b, true, "msg")                  // want "bool-compare: use s\\.Require\\(\\)\\.True"
@@ -8065,16 +8012,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().False(!b.b, "msg with arg %d", 42)  // want "bool-compare: use s\\.Require\\(\\)\\.True"
 				s.Require().Falsef(!b.b, "msg")                 // want "bool-compare: use s\\.Require\\(\\)\\.Truef"
 				s.Require().Falsef(!b.b, "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				s.Require().True(b.b)
-				s.Require().True(b.b, "msg")
-				s.Require().True(b.b, "msg with arg %d", 42)
-				s.Require().Truef(b.b, "msg")
-				s.Require().Truef(b.b, "msg with arg %d", 42)
 			}
 
 			{
@@ -8157,16 +8094,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().Falsef(!c, "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				s.Require().True(c)
-				s.Require().True(c, "msg")
-				s.Require().True(c, "msg with arg %d", 42)
-				s.Require().Truef(c, "msg")
-				s.Require().Truef(c, "msg with arg %d", 42)
-			}
-
 			{
 				s.Require().Equal(d, true)                         // want "bool-compare: use s\\.Require\\(\\)\\.True"
 				s.Require().Equal(d, true, "msg")                  // want "bool-compare: use s\\.Require\\(\\)\\.True"
@@ -8245,16 +8172,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().False(!d, "msg with arg %d", 42)  // want "bool-compare: use s\\.Require\\(\\)\\.True"
 				s.Require().Falsef(!d, "msg")                 // want "bool-compare: use s\\.Require\\(\\)\\.Truef"
 				s.Require().Falsef(!d, "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				s.Require().True(d)
-				s.Require().True(d, "msg")
-				s.Require().True(d, "msg with arg %d", 42)
-				s.Require().Truef(d, "msg")
-				s.Require().Truef(d, "msg with arg %d", 42)
 			}
 
 			{
@@ -8337,16 +8254,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().Falsef(!*e, "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				s.Require().True(*e)
-				s.Require().True(*e, "msg")
-				s.Require().True(*e, "msg with arg %d", 42)
-				s.Require().Truef(*e, "msg")
-				s.Require().Truef(*e, "msg with arg %d", 42)
-			}
-
 			{
 				s.Require().Equal(*f, true)                         // want "bool-compare: use s\\.Require\\(\\)\\.True"
 				s.Require().Equal(*f, true, "msg")                  // want "bool-compare: use s\\.Require\\(\\)\\.True"
@@ -8427,16 +8334,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().Falsef(!*f, "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				s.Require().True(*f)
-				s.Require().True(*f, "msg")
-				s.Require().True(*f, "msg with arg %d", 42)
-				s.Require().Truef(*f, "msg")
-				s.Require().Truef(*f, "msg with arg %d", 42)
-			}
-
 			{
 				s.Require().Equal(g.TheyKilledKenny(), true)                         // want "bool-compare: use s\\.Require\\(\\)\\.True"
 				s.Require().Equal(g.TheyKilledKenny(), true, "msg")                  // want "bool-compare: use s\\.Require\\(\\)\\.True"
@@ -8515,16 +8412,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().False(!g.TheyKilledKenny(), "msg with arg %d", 42)  // want "bool-compare: use s\\.Require\\(\\)\\.True"
 				s.Require().Falsef(!g.TheyKilledKenny(), "msg")                 // want "bool-compare: use s\\.Require\\(\\)\\.Truef"
 				s.Require().Falsef(!g.TheyKilledKenny(), "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				s.Require().True(g.TheyKilledKenny())
-				s.Require().True(g.TheyKilledKenny(), "msg")
-				s.Require().True(g.TheyKilledKenny(), "msg with arg %d", 42)
-				s.Require().Truef(g.TheyKilledKenny(), "msg")
-				s.Require().Truef(g.TheyKilledKenny(), "msg with arg %d", 42)
 			}
 
 			{
@@ -8608,6 +8495,62 @@ func (s *BoolCompareSuite) TestAll() {
 			}
 
 			// Valid.
+
+			{
+				s.Require().True(a)
+				s.Require().True(a, "msg")
+				s.Require().True(a, "msg with arg %d", 42)
+				s.Require().Truef(a, "msg")
+				s.Require().Truef(a, "msg with arg %d", 42)
+			}
+
+			{
+				s.Require().True(b.b)
+				s.Require().True(b.b, "msg")
+				s.Require().True(b.b, "msg with arg %d", 42)
+				s.Require().Truef(b.b, "msg")
+				s.Require().Truef(b.b, "msg with arg %d", 42)
+			}
+
+			{
+				s.Require().True(c)
+				s.Require().True(c, "msg")
+				s.Require().True(c, "msg with arg %d", 42)
+				s.Require().Truef(c, "msg")
+				s.Require().Truef(c, "msg with arg %d", 42)
+			}
+
+			{
+				s.Require().True(d)
+				s.Require().True(d, "msg")
+				s.Require().True(d, "msg with arg %d", 42)
+				s.Require().Truef(d, "msg")
+				s.Require().Truef(d, "msg with arg %d", 42)
+			}
+
+			{
+				s.Require().True(*e)
+				s.Require().True(*e, "msg")
+				s.Require().True(*e, "msg with arg %d", 42)
+				s.Require().Truef(*e, "msg")
+				s.Require().Truef(*e, "msg with arg %d", 42)
+			}
+
+			{
+				s.Require().True(*f)
+				s.Require().True(*f, "msg")
+				s.Require().True(*f, "msg with arg %d", 42)
+				s.Require().Truef(*f, "msg")
+				s.Require().Truef(*f, "msg with arg %d", 42)
+			}
+
+			{
+				s.Require().True(g.TheyKilledKenny())
+				s.Require().True(g.TheyKilledKenny(), "msg")
+				s.Require().True(g.TheyKilledKenny(), "msg with arg %d", 42)
+				s.Require().Truef(g.TheyKilledKenny(), "msg")
+				s.Require().Truef(g.TheyKilledKenny(), "msg with arg %d", 42)
+			}
 
 			{
 				s.Require().True(boolOp())
@@ -8699,16 +8642,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.Falsef(!a, "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				reqObj.True(a)
-				reqObj.True(a, "msg")
-				reqObj.True(a, "msg with arg %d", 42)
-				reqObj.Truef(a, "msg")
-				reqObj.Truef(a, "msg with arg %d", 42)
-			}
-
 			{
 				reqObj.Equal(b.b, true)                         // want "bool-compare: use reqObj\\.True"
 				reqObj.Equal(b.b, true, "msg")                  // want "bool-compare: use reqObj\\.True"
@@ -8787,16 +8720,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.False(!b.b, "msg with arg %d", 42)  // want "bool-compare: use reqObj\\.True"
 				reqObj.Falsef(!b.b, "msg")                 // want "bool-compare: use reqObj\\.Truef"
 				reqObj.Falsef(!b.b, "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				reqObj.True(b.b)
-				reqObj.True(b.b, "msg")
-				reqObj.True(b.b, "msg with arg %d", 42)
-				reqObj.Truef(b.b, "msg")
-				reqObj.Truef(b.b, "msg with arg %d", 42)
 			}
 
 			{
@@ -8879,16 +8802,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.Falsef(!c, "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				reqObj.True(c)
-				reqObj.True(c, "msg")
-				reqObj.True(c, "msg with arg %d", 42)
-				reqObj.Truef(c, "msg")
-				reqObj.Truef(c, "msg with arg %d", 42)
-			}
-
 			{
 				reqObj.Equal(d, true)                         // want "bool-compare: use reqObj\\.True"
 				reqObj.Equal(d, true, "msg")                  // want "bool-compare: use reqObj\\.True"
@@ -8967,16 +8880,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.False(!d, "msg with arg %d", 42)  // want "bool-compare: use reqObj\\.True"
 				reqObj.Falsef(!d, "msg")                 // want "bool-compare: use reqObj\\.Truef"
 				reqObj.Falsef(!d, "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				reqObj.True(d)
-				reqObj.True(d, "msg")
-				reqObj.True(d, "msg with arg %d", 42)
-				reqObj.Truef(d, "msg")
-				reqObj.Truef(d, "msg with arg %d", 42)
 			}
 
 			{
@@ -9059,16 +8962,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.Falsef(!*e, "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				reqObj.True(*e)
-				reqObj.True(*e, "msg")
-				reqObj.True(*e, "msg with arg %d", 42)
-				reqObj.Truef(*e, "msg")
-				reqObj.Truef(*e, "msg with arg %d", 42)
-			}
-
 			{
 				reqObj.Equal(*f, true)                         // want "bool-compare: use reqObj\\.True"
 				reqObj.Equal(*f, true, "msg")                  // want "bool-compare: use reqObj\\.True"
@@ -9149,16 +9042,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.Falsef(!*f, "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Truef"
 			}
 
-			// Valid.
-
-			{
-				reqObj.True(*f)
-				reqObj.True(*f, "msg")
-				reqObj.True(*f, "msg with arg %d", 42)
-				reqObj.Truef(*f, "msg")
-				reqObj.Truef(*f, "msg with arg %d", 42)
-			}
-
 			{
 				reqObj.Equal(g.TheyKilledKenny(), true)                         // want "bool-compare: use reqObj\\.True"
 				reqObj.Equal(g.TheyKilledKenny(), true, "msg")                  // want "bool-compare: use reqObj\\.True"
@@ -9237,16 +9120,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.False(!g.TheyKilledKenny(), "msg with arg %d", 42)  // want "bool-compare: use reqObj\\.True"
 				reqObj.Falsef(!g.TheyKilledKenny(), "msg")                 // want "bool-compare: use reqObj\\.Truef"
 				reqObj.Falsef(!g.TheyKilledKenny(), "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Truef"
-			}
-
-			// Valid.
-
-			{
-				reqObj.True(g.TheyKilledKenny())
-				reqObj.True(g.TheyKilledKenny(), "msg")
-				reqObj.True(g.TheyKilledKenny(), "msg with arg %d", 42)
-				reqObj.Truef(g.TheyKilledKenny(), "msg")
-				reqObj.Truef(g.TheyKilledKenny(), "msg with arg %d", 42)
 			}
 
 			{
@@ -9332,6 +9205,62 @@ func (s *BoolCompareSuite) TestAll() {
 			// Valid.
 
 			{
+				reqObj.True(a)
+				reqObj.True(a, "msg")
+				reqObj.True(a, "msg with arg %d", 42)
+				reqObj.Truef(a, "msg")
+				reqObj.Truef(a, "msg with arg %d", 42)
+			}
+
+			{
+				reqObj.True(b.b)
+				reqObj.True(b.b, "msg")
+				reqObj.True(b.b, "msg with arg %d", 42)
+				reqObj.Truef(b.b, "msg")
+				reqObj.Truef(b.b, "msg with arg %d", 42)
+			}
+
+			{
+				reqObj.True(c)
+				reqObj.True(c, "msg")
+				reqObj.True(c, "msg with arg %d", 42)
+				reqObj.Truef(c, "msg")
+				reqObj.Truef(c, "msg with arg %d", 42)
+			}
+
+			{
+				reqObj.True(d)
+				reqObj.True(d, "msg")
+				reqObj.True(d, "msg with arg %d", 42)
+				reqObj.Truef(d, "msg")
+				reqObj.Truef(d, "msg with arg %d", 42)
+			}
+
+			{
+				reqObj.True(*e)
+				reqObj.True(*e, "msg")
+				reqObj.True(*e, "msg with arg %d", 42)
+				reqObj.Truef(*e, "msg")
+				reqObj.Truef(*e, "msg with arg %d", 42)
+			}
+
+			{
+				reqObj.True(*f)
+				reqObj.True(*f, "msg")
+				reqObj.True(*f, "msg with arg %d", 42)
+				reqObj.Truef(*f, "msg")
+				reqObj.Truef(*f, "msg with arg %d", 42)
+			}
+
+			{
+				reqObj.True(g.TheyKilledKenny())
+				reqObj.True(g.TheyKilledKenny(), "msg")
+				reqObj.True(g.TheyKilledKenny(), "msg with arg %d", 42)
+				reqObj.Truef(g.TheyKilledKenny(), "msg")
+				reqObj.Truef(g.TheyKilledKenny(), "msg with arg %d", 42)
+			}
+
+			{
 				reqObj.True(boolOp())
 				reqObj.True(boolOp(), "msg")
 				reqObj.True(boolOp(), "msg with arg %d", 42)
@@ -9343,7 +9272,6 @@ func (s *BoolCompareSuite) TestAll() {
 
 	// False.
 	{
-
 		{
 			{
 				s.Equal(a, false)                         // want "bool-compare: use s\\.False"
@@ -9423,16 +9351,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.True(!a, "msg with arg %d", 42)  // want "bool-compare: use s\\.False"
 				s.Truef(!a, "msg")                 // want "bool-compare: use s\\.Falsef"
 				s.Truef(!a, "msg with arg %d", 42) // want "bool-compare: use s\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				s.False(a)
-				s.False(a, "msg")
-				s.False(a, "msg with arg %d", 42)
-				s.Falsef(a, "msg")
-				s.Falsef(a, "msg with arg %d", 42)
 			}
 
 			{
@@ -9515,16 +9433,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Truef(!b.b, "msg with arg %d", 42) // want "bool-compare: use s\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				s.False(b.b)
-				s.False(b.b, "msg")
-				s.False(b.b, "msg with arg %d", 42)
-				s.Falsef(b.b, "msg")
-				s.Falsef(b.b, "msg with arg %d", 42)
-			}
-
 			{
 				s.Equal(c, false)                         // want "bool-compare: use s\\.False"
 				s.Equal(c, false, "msg")                  // want "bool-compare: use s\\.False"
@@ -9603,16 +9511,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.True(!c, "msg with arg %d", 42)  // want "bool-compare: use s\\.False"
 				s.Truef(!c, "msg")                 // want "bool-compare: use s\\.Falsef"
 				s.Truef(!c, "msg with arg %d", 42) // want "bool-compare: use s\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				s.False(c)
-				s.False(c, "msg")
-				s.False(c, "msg with arg %d", 42)
-				s.Falsef(c, "msg")
-				s.Falsef(c, "msg with arg %d", 42)
 			}
 
 			{
@@ -9695,16 +9593,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Truef(!d, "msg with arg %d", 42) // want "bool-compare: use s\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				s.False(d)
-				s.False(d, "msg")
-				s.False(d, "msg with arg %d", 42)
-				s.Falsef(d, "msg")
-				s.Falsef(d, "msg with arg %d", 42)
-			}
-
 			{
 				s.Equal(*e, false)                         // want "bool-compare: use s\\.False"
 				s.Equal(*e, false, "msg")                  // want "bool-compare: use s\\.False"
@@ -9783,16 +9671,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.True(!*e, "msg with arg %d", 42)  // want "bool-compare: use s\\.False"
 				s.Truef(!*e, "msg")                 // want "bool-compare: use s\\.Falsef"
 				s.Truef(!*e, "msg with arg %d", 42) // want "bool-compare: use s\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				s.False(*e)
-				s.False(*e, "msg")
-				s.False(*e, "msg with arg %d", 42)
-				s.Falsef(*e, "msg")
-				s.Falsef(*e, "msg with arg %d", 42)
 			}
 
 			{
@@ -9875,16 +9753,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Truef(!*f, "msg with arg %d", 42) // want "bool-compare: use s\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				s.False(*f)
-				s.False(*f, "msg")
-				s.False(*f, "msg with arg %d", 42)
-				s.Falsef(*f, "msg")
-				s.Falsef(*f, "msg with arg %d", 42)
-			}
-
 			{
 				s.Equal(g.TheyKilledKenny(), false)                         // want "bool-compare: use s\\.False"
 				s.Equal(g.TheyKilledKenny(), false, "msg")                  // want "bool-compare: use s\\.False"
@@ -9963,16 +9831,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.True(!g.TheyKilledKenny(), "msg with arg %d", 42)  // want "bool-compare: use s\\.False"
 				s.Truef(!g.TheyKilledKenny(), "msg")                 // want "bool-compare: use s\\.Falsef"
 				s.Truef(!g.TheyKilledKenny(), "msg with arg %d", 42) // want "bool-compare: use s\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				s.False(g.TheyKilledKenny())
-				s.False(g.TheyKilledKenny(), "msg")
-				s.False(g.TheyKilledKenny(), "msg with arg %d", 42)
-				s.Falsef(g.TheyKilledKenny(), "msg")
-				s.Falsef(g.TheyKilledKenny(), "msg with arg %d", 42)
 			}
 
 			{
@@ -10056,6 +9914,62 @@ func (s *BoolCompareSuite) TestAll() {
 			}
 
 			// Valid.
+
+			{
+				s.False(a)
+				s.False(a, "msg")
+				s.False(a, "msg with arg %d", 42)
+				s.Falsef(a, "msg")
+				s.Falsef(a, "msg with arg %d", 42)
+			}
+
+			{
+				s.False(b.b)
+				s.False(b.b, "msg")
+				s.False(b.b, "msg with arg %d", 42)
+				s.Falsef(b.b, "msg")
+				s.Falsef(b.b, "msg with arg %d", 42)
+			}
+
+			{
+				s.False(c)
+				s.False(c, "msg")
+				s.False(c, "msg with arg %d", 42)
+				s.Falsef(c, "msg")
+				s.Falsef(c, "msg with arg %d", 42)
+			}
+
+			{
+				s.False(d)
+				s.False(d, "msg")
+				s.False(d, "msg with arg %d", 42)
+				s.Falsef(d, "msg")
+				s.Falsef(d, "msg with arg %d", 42)
+			}
+
+			{
+				s.False(*e)
+				s.False(*e, "msg")
+				s.False(*e, "msg with arg %d", 42)
+				s.Falsef(*e, "msg")
+				s.Falsef(*e, "msg with arg %d", 42)
+			}
+
+			{
+				s.False(*f)
+				s.False(*f, "msg")
+				s.False(*f, "msg with arg %d", 42)
+				s.Falsef(*f, "msg")
+				s.Falsef(*f, "msg with arg %d", 42)
+			}
+
+			{
+				s.False(g.TheyKilledKenny())
+				s.False(g.TheyKilledKenny(), "msg")
+				s.False(g.TheyKilledKenny(), "msg with arg %d", 42)
+				s.Falsef(g.TheyKilledKenny(), "msg")
+				s.Falsef(g.TheyKilledKenny(), "msg with arg %d", 42)
+			}
 
 			{
 				s.False(boolOp())
@@ -10147,16 +10061,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().Truef(!a, "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				s.Assert().False(a)
-				s.Assert().False(a, "msg")
-				s.Assert().False(a, "msg with arg %d", 42)
-				s.Assert().Falsef(a, "msg")
-				s.Assert().Falsef(a, "msg with arg %d", 42)
-			}
-
 			{
 				s.Assert().Equal(b.b, false)                         // want "bool-compare: use s\\.Assert\\(\\)\\.False"
 				s.Assert().Equal(b.b, false, "msg")                  // want "bool-compare: use s\\.Assert\\(\\)\\.False"
@@ -10235,16 +10139,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().True(!b.b, "msg with arg %d", 42)  // want "bool-compare: use s\\.Assert\\(\\)\\.False"
 				s.Assert().Truef(!b.b, "msg")                 // want "bool-compare: use s\\.Assert\\(\\)\\.Falsef"
 				s.Assert().Truef(!b.b, "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				s.Assert().False(b.b)
-				s.Assert().False(b.b, "msg")
-				s.Assert().False(b.b, "msg with arg %d", 42)
-				s.Assert().Falsef(b.b, "msg")
-				s.Assert().Falsef(b.b, "msg with arg %d", 42)
 			}
 
 			{
@@ -10327,16 +10221,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().Truef(!c, "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				s.Assert().False(c)
-				s.Assert().False(c, "msg")
-				s.Assert().False(c, "msg with arg %d", 42)
-				s.Assert().Falsef(c, "msg")
-				s.Assert().Falsef(c, "msg with arg %d", 42)
-			}
-
 			{
 				s.Assert().Equal(d, false)                         // want "bool-compare: use s\\.Assert\\(\\)\\.False"
 				s.Assert().Equal(d, false, "msg")                  // want "bool-compare: use s\\.Assert\\(\\)\\.False"
@@ -10415,16 +10299,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().True(!d, "msg with arg %d", 42)  // want "bool-compare: use s\\.Assert\\(\\)\\.False"
 				s.Assert().Truef(!d, "msg")                 // want "bool-compare: use s\\.Assert\\(\\)\\.Falsef"
 				s.Assert().Truef(!d, "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				s.Assert().False(d)
-				s.Assert().False(d, "msg")
-				s.Assert().False(d, "msg with arg %d", 42)
-				s.Assert().Falsef(d, "msg")
-				s.Assert().Falsef(d, "msg with arg %d", 42)
 			}
 
 			{
@@ -10507,16 +10381,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().Truef(!*e, "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				s.Assert().False(*e)
-				s.Assert().False(*e, "msg")
-				s.Assert().False(*e, "msg with arg %d", 42)
-				s.Assert().Falsef(*e, "msg")
-				s.Assert().Falsef(*e, "msg with arg %d", 42)
-			}
-
 			{
 				s.Assert().Equal(*f, false)                         // want "bool-compare: use s\\.Assert\\(\\)\\.False"
 				s.Assert().Equal(*f, false, "msg")                  // want "bool-compare: use s\\.Assert\\(\\)\\.False"
@@ -10597,16 +10461,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().Truef(!*f, "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				s.Assert().False(*f)
-				s.Assert().False(*f, "msg")
-				s.Assert().False(*f, "msg with arg %d", 42)
-				s.Assert().Falsef(*f, "msg")
-				s.Assert().Falsef(*f, "msg with arg %d", 42)
-			}
-
 			{
 				s.Assert().Equal(g.TheyKilledKenny(), false)                         // want "bool-compare: use s\\.Assert\\(\\)\\.False"
 				s.Assert().Equal(g.TheyKilledKenny(), false, "msg")                  // want "bool-compare: use s\\.Assert\\(\\)\\.False"
@@ -10685,16 +10539,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Assert().True(!g.TheyKilledKenny(), "msg with arg %d", 42)  // want "bool-compare: use s\\.Assert\\(\\)\\.False"
 				s.Assert().Truef(!g.TheyKilledKenny(), "msg")                 // want "bool-compare: use s\\.Assert\\(\\)\\.Falsef"
 				s.Assert().Truef(!g.TheyKilledKenny(), "msg with arg %d", 42) // want "bool-compare: use s\\.Assert\\(\\)\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				s.Assert().False(g.TheyKilledKenny())
-				s.Assert().False(g.TheyKilledKenny(), "msg")
-				s.Assert().False(g.TheyKilledKenny(), "msg with arg %d", 42)
-				s.Assert().Falsef(g.TheyKilledKenny(), "msg")
-				s.Assert().Falsef(g.TheyKilledKenny(), "msg with arg %d", 42)
 			}
 
 			{
@@ -10778,6 +10622,62 @@ func (s *BoolCompareSuite) TestAll() {
 			}
 
 			// Valid.
+
+			{
+				s.Assert().False(a)
+				s.Assert().False(a, "msg")
+				s.Assert().False(a, "msg with arg %d", 42)
+				s.Assert().Falsef(a, "msg")
+				s.Assert().Falsef(a, "msg with arg %d", 42)
+			}
+
+			{
+				s.Assert().False(b.b)
+				s.Assert().False(b.b, "msg")
+				s.Assert().False(b.b, "msg with arg %d", 42)
+				s.Assert().Falsef(b.b, "msg")
+				s.Assert().Falsef(b.b, "msg with arg %d", 42)
+			}
+
+			{
+				s.Assert().False(c)
+				s.Assert().False(c, "msg")
+				s.Assert().False(c, "msg with arg %d", 42)
+				s.Assert().Falsef(c, "msg")
+				s.Assert().Falsef(c, "msg with arg %d", 42)
+			}
+
+			{
+				s.Assert().False(d)
+				s.Assert().False(d, "msg")
+				s.Assert().False(d, "msg with arg %d", 42)
+				s.Assert().Falsef(d, "msg")
+				s.Assert().Falsef(d, "msg with arg %d", 42)
+			}
+
+			{
+				s.Assert().False(*e)
+				s.Assert().False(*e, "msg")
+				s.Assert().False(*e, "msg with arg %d", 42)
+				s.Assert().Falsef(*e, "msg")
+				s.Assert().Falsef(*e, "msg with arg %d", 42)
+			}
+
+			{
+				s.Assert().False(*f)
+				s.Assert().False(*f, "msg")
+				s.Assert().False(*f, "msg with arg %d", 42)
+				s.Assert().Falsef(*f, "msg")
+				s.Assert().Falsef(*f, "msg with arg %d", 42)
+			}
+
+			{
+				s.Assert().False(g.TheyKilledKenny())
+				s.Assert().False(g.TheyKilledKenny(), "msg")
+				s.Assert().False(g.TheyKilledKenny(), "msg with arg %d", 42)
+				s.Assert().Falsef(g.TheyKilledKenny(), "msg")
+				s.Assert().Falsef(g.TheyKilledKenny(), "msg with arg %d", 42)
+			}
 
 			{
 				s.Assert().False(boolOp())
@@ -10869,16 +10769,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.Truef(!a, "msg with arg %d", 42) // want "bool-compare: use assObj\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				assObj.False(a)
-				assObj.False(a, "msg")
-				assObj.False(a, "msg with arg %d", 42)
-				assObj.Falsef(a, "msg")
-				assObj.Falsef(a, "msg with arg %d", 42)
-			}
-
 			{
 				assObj.Equal(b.b, false)                         // want "bool-compare: use assObj\\.False"
 				assObj.Equal(b.b, false, "msg")                  // want "bool-compare: use assObj\\.False"
@@ -10957,16 +10847,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.True(!b.b, "msg with arg %d", 42)  // want "bool-compare: use assObj\\.False"
 				assObj.Truef(!b.b, "msg")                 // want "bool-compare: use assObj\\.Falsef"
 				assObj.Truef(!b.b, "msg with arg %d", 42) // want "bool-compare: use assObj\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				assObj.False(b.b)
-				assObj.False(b.b, "msg")
-				assObj.False(b.b, "msg with arg %d", 42)
-				assObj.Falsef(b.b, "msg")
-				assObj.Falsef(b.b, "msg with arg %d", 42)
 			}
 
 			{
@@ -11049,16 +10929,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.Truef(!c, "msg with arg %d", 42) // want "bool-compare: use assObj\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				assObj.False(c)
-				assObj.False(c, "msg")
-				assObj.False(c, "msg with arg %d", 42)
-				assObj.Falsef(c, "msg")
-				assObj.Falsef(c, "msg with arg %d", 42)
-			}
-
 			{
 				assObj.Equal(d, false)                         // want "bool-compare: use assObj\\.False"
 				assObj.Equal(d, false, "msg")                  // want "bool-compare: use assObj\\.False"
@@ -11137,16 +11007,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.True(!d, "msg with arg %d", 42)  // want "bool-compare: use assObj\\.False"
 				assObj.Truef(!d, "msg")                 // want "bool-compare: use assObj\\.Falsef"
 				assObj.Truef(!d, "msg with arg %d", 42) // want "bool-compare: use assObj\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				assObj.False(d)
-				assObj.False(d, "msg")
-				assObj.False(d, "msg with arg %d", 42)
-				assObj.Falsef(d, "msg")
-				assObj.Falsef(d, "msg with arg %d", 42)
 			}
 
 			{
@@ -11229,16 +11089,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.Truef(!*e, "msg with arg %d", 42) // want "bool-compare: use assObj\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				assObj.False(*e)
-				assObj.False(*e, "msg")
-				assObj.False(*e, "msg with arg %d", 42)
-				assObj.Falsef(*e, "msg")
-				assObj.Falsef(*e, "msg with arg %d", 42)
-			}
-
 			{
 				assObj.Equal(*f, false)                         // want "bool-compare: use assObj\\.False"
 				assObj.Equal(*f, false, "msg")                  // want "bool-compare: use assObj\\.False"
@@ -11319,16 +11169,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.Truef(!*f, "msg with arg %d", 42) // want "bool-compare: use assObj\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				assObj.False(*f)
-				assObj.False(*f, "msg")
-				assObj.False(*f, "msg with arg %d", 42)
-				assObj.Falsef(*f, "msg")
-				assObj.Falsef(*f, "msg with arg %d", 42)
-			}
-
 			{
 				assObj.Equal(g.TheyKilledKenny(), false)                         // want "bool-compare: use assObj\\.False"
 				assObj.Equal(g.TheyKilledKenny(), false, "msg")                  // want "bool-compare: use assObj\\.False"
@@ -11407,16 +11247,6 @@ func (s *BoolCompareSuite) TestAll() {
 				assObj.True(!g.TheyKilledKenny(), "msg with arg %d", 42)  // want "bool-compare: use assObj\\.False"
 				assObj.Truef(!g.TheyKilledKenny(), "msg")                 // want "bool-compare: use assObj\\.Falsef"
 				assObj.Truef(!g.TheyKilledKenny(), "msg with arg %d", 42) // want "bool-compare: use assObj\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				assObj.False(g.TheyKilledKenny())
-				assObj.False(g.TheyKilledKenny(), "msg")
-				assObj.False(g.TheyKilledKenny(), "msg with arg %d", 42)
-				assObj.Falsef(g.TheyKilledKenny(), "msg")
-				assObj.Falsef(g.TheyKilledKenny(), "msg with arg %d", 42)
 			}
 
 			{
@@ -11500,6 +11330,62 @@ func (s *BoolCompareSuite) TestAll() {
 			}
 
 			// Valid.
+
+			{
+				assObj.False(a)
+				assObj.False(a, "msg")
+				assObj.False(a, "msg with arg %d", 42)
+				assObj.Falsef(a, "msg")
+				assObj.Falsef(a, "msg with arg %d", 42)
+			}
+
+			{
+				assObj.False(b.b)
+				assObj.False(b.b, "msg")
+				assObj.False(b.b, "msg with arg %d", 42)
+				assObj.Falsef(b.b, "msg")
+				assObj.Falsef(b.b, "msg with arg %d", 42)
+			}
+
+			{
+				assObj.False(c)
+				assObj.False(c, "msg")
+				assObj.False(c, "msg with arg %d", 42)
+				assObj.Falsef(c, "msg")
+				assObj.Falsef(c, "msg with arg %d", 42)
+			}
+
+			{
+				assObj.False(d)
+				assObj.False(d, "msg")
+				assObj.False(d, "msg with arg %d", 42)
+				assObj.Falsef(d, "msg")
+				assObj.Falsef(d, "msg with arg %d", 42)
+			}
+
+			{
+				assObj.False(*e)
+				assObj.False(*e, "msg")
+				assObj.False(*e, "msg with arg %d", 42)
+				assObj.Falsef(*e, "msg")
+				assObj.Falsef(*e, "msg with arg %d", 42)
+			}
+
+			{
+				assObj.False(*f)
+				assObj.False(*f, "msg")
+				assObj.False(*f, "msg with arg %d", 42)
+				assObj.Falsef(*f, "msg")
+				assObj.Falsef(*f, "msg with arg %d", 42)
+			}
+
+			{
+				assObj.False(g.TheyKilledKenny())
+				assObj.False(g.TheyKilledKenny(), "msg")
+				assObj.False(g.TheyKilledKenny(), "msg with arg %d", 42)
+				assObj.Falsef(g.TheyKilledKenny(), "msg")
+				assObj.Falsef(g.TheyKilledKenny(), "msg with arg %d", 42)
+			}
 
 			{
 				assObj.False(boolOp())
@@ -11591,16 +11477,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().Truef(!a, "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				s.Require().False(a)
-				s.Require().False(a, "msg")
-				s.Require().False(a, "msg with arg %d", 42)
-				s.Require().Falsef(a, "msg")
-				s.Require().Falsef(a, "msg with arg %d", 42)
-			}
-
 			{
 				s.Require().Equal(b.b, false)                         // want "bool-compare: use s\\.Require\\(\\)\\.False"
 				s.Require().Equal(b.b, false, "msg")                  // want "bool-compare: use s\\.Require\\(\\)\\.False"
@@ -11679,16 +11555,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().True(!b.b, "msg with arg %d", 42)  // want "bool-compare: use s\\.Require\\(\\)\\.False"
 				s.Require().Truef(!b.b, "msg")                 // want "bool-compare: use s\\.Require\\(\\)\\.Falsef"
 				s.Require().Truef(!b.b, "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				s.Require().False(b.b)
-				s.Require().False(b.b, "msg")
-				s.Require().False(b.b, "msg with arg %d", 42)
-				s.Require().Falsef(b.b, "msg")
-				s.Require().Falsef(b.b, "msg with arg %d", 42)
 			}
 
 			{
@@ -11771,16 +11637,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().Truef(!c, "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				s.Require().False(c)
-				s.Require().False(c, "msg")
-				s.Require().False(c, "msg with arg %d", 42)
-				s.Require().Falsef(c, "msg")
-				s.Require().Falsef(c, "msg with arg %d", 42)
-			}
-
 			{
 				s.Require().Equal(d, false)                         // want "bool-compare: use s\\.Require\\(\\)\\.False"
 				s.Require().Equal(d, false, "msg")                  // want "bool-compare: use s\\.Require\\(\\)\\.False"
@@ -11859,16 +11715,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().True(!d, "msg with arg %d", 42)  // want "bool-compare: use s\\.Require\\(\\)\\.False"
 				s.Require().Truef(!d, "msg")                 // want "bool-compare: use s\\.Require\\(\\)\\.Falsef"
 				s.Require().Truef(!d, "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				s.Require().False(d)
-				s.Require().False(d, "msg")
-				s.Require().False(d, "msg with arg %d", 42)
-				s.Require().Falsef(d, "msg")
-				s.Require().Falsef(d, "msg with arg %d", 42)
 			}
 
 			{
@@ -11951,16 +11797,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().Truef(!*e, "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				s.Require().False(*e)
-				s.Require().False(*e, "msg")
-				s.Require().False(*e, "msg with arg %d", 42)
-				s.Require().Falsef(*e, "msg")
-				s.Require().Falsef(*e, "msg with arg %d", 42)
-			}
-
 			{
 				s.Require().Equal(*f, false)                         // want "bool-compare: use s\\.Require\\(\\)\\.False"
 				s.Require().Equal(*f, false, "msg")                  // want "bool-compare: use s\\.Require\\(\\)\\.False"
@@ -12041,16 +11877,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().Truef(!*f, "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				s.Require().False(*f)
-				s.Require().False(*f, "msg")
-				s.Require().False(*f, "msg with arg %d", 42)
-				s.Require().Falsef(*f, "msg")
-				s.Require().Falsef(*f, "msg with arg %d", 42)
-			}
-
 			{
 				s.Require().Equal(g.TheyKilledKenny(), false)                         // want "bool-compare: use s\\.Require\\(\\)\\.False"
 				s.Require().Equal(g.TheyKilledKenny(), false, "msg")                  // want "bool-compare: use s\\.Require\\(\\)\\.False"
@@ -12129,16 +11955,6 @@ func (s *BoolCompareSuite) TestAll() {
 				s.Require().True(!g.TheyKilledKenny(), "msg with arg %d", 42)  // want "bool-compare: use s\\.Require\\(\\)\\.False"
 				s.Require().Truef(!g.TheyKilledKenny(), "msg")                 // want "bool-compare: use s\\.Require\\(\\)\\.Falsef"
 				s.Require().Truef(!g.TheyKilledKenny(), "msg with arg %d", 42) // want "bool-compare: use s\\.Require\\(\\)\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				s.Require().False(g.TheyKilledKenny())
-				s.Require().False(g.TheyKilledKenny(), "msg")
-				s.Require().False(g.TheyKilledKenny(), "msg with arg %d", 42)
-				s.Require().Falsef(g.TheyKilledKenny(), "msg")
-				s.Require().Falsef(g.TheyKilledKenny(), "msg with arg %d", 42)
 			}
 
 			{
@@ -12222,6 +12038,62 @@ func (s *BoolCompareSuite) TestAll() {
 			}
 
 			// Valid.
+
+			{
+				s.Require().False(a)
+				s.Require().False(a, "msg")
+				s.Require().False(a, "msg with arg %d", 42)
+				s.Require().Falsef(a, "msg")
+				s.Require().Falsef(a, "msg with arg %d", 42)
+			}
+
+			{
+				s.Require().False(b.b)
+				s.Require().False(b.b, "msg")
+				s.Require().False(b.b, "msg with arg %d", 42)
+				s.Require().Falsef(b.b, "msg")
+				s.Require().Falsef(b.b, "msg with arg %d", 42)
+			}
+
+			{
+				s.Require().False(c)
+				s.Require().False(c, "msg")
+				s.Require().False(c, "msg with arg %d", 42)
+				s.Require().Falsef(c, "msg")
+				s.Require().Falsef(c, "msg with arg %d", 42)
+			}
+
+			{
+				s.Require().False(d)
+				s.Require().False(d, "msg")
+				s.Require().False(d, "msg with arg %d", 42)
+				s.Require().Falsef(d, "msg")
+				s.Require().Falsef(d, "msg with arg %d", 42)
+			}
+
+			{
+				s.Require().False(*e)
+				s.Require().False(*e, "msg")
+				s.Require().False(*e, "msg with arg %d", 42)
+				s.Require().Falsef(*e, "msg")
+				s.Require().Falsef(*e, "msg with arg %d", 42)
+			}
+
+			{
+				s.Require().False(*f)
+				s.Require().False(*f, "msg")
+				s.Require().False(*f, "msg with arg %d", 42)
+				s.Require().Falsef(*f, "msg")
+				s.Require().Falsef(*f, "msg with arg %d", 42)
+			}
+
+			{
+				s.Require().False(g.TheyKilledKenny())
+				s.Require().False(g.TheyKilledKenny(), "msg")
+				s.Require().False(g.TheyKilledKenny(), "msg with arg %d", 42)
+				s.Require().Falsef(g.TheyKilledKenny(), "msg")
+				s.Require().Falsef(g.TheyKilledKenny(), "msg with arg %d", 42)
+			}
 
 			{
 				s.Require().False(boolOp())
@@ -12313,16 +12185,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.Truef(!a, "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				reqObj.False(a)
-				reqObj.False(a, "msg")
-				reqObj.False(a, "msg with arg %d", 42)
-				reqObj.Falsef(a, "msg")
-				reqObj.Falsef(a, "msg with arg %d", 42)
-			}
-
 			{
 				reqObj.Equal(b.b, false)                         // want "bool-compare: use reqObj\\.False"
 				reqObj.Equal(b.b, false, "msg")                  // want "bool-compare: use reqObj\\.False"
@@ -12401,16 +12263,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.True(!b.b, "msg with arg %d", 42)  // want "bool-compare: use reqObj\\.False"
 				reqObj.Truef(!b.b, "msg")                 // want "bool-compare: use reqObj\\.Falsef"
 				reqObj.Truef(!b.b, "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				reqObj.False(b.b)
-				reqObj.False(b.b, "msg")
-				reqObj.False(b.b, "msg with arg %d", 42)
-				reqObj.Falsef(b.b, "msg")
-				reqObj.Falsef(b.b, "msg with arg %d", 42)
 			}
 
 			{
@@ -12493,16 +12345,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.Truef(!c, "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				reqObj.False(c)
-				reqObj.False(c, "msg")
-				reqObj.False(c, "msg with arg %d", 42)
-				reqObj.Falsef(c, "msg")
-				reqObj.Falsef(c, "msg with arg %d", 42)
-			}
-
 			{
 				reqObj.Equal(d, false)                         // want "bool-compare: use reqObj\\.False"
 				reqObj.Equal(d, false, "msg")                  // want "bool-compare: use reqObj\\.False"
@@ -12581,16 +12423,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.True(!d, "msg with arg %d", 42)  // want "bool-compare: use reqObj\\.False"
 				reqObj.Truef(!d, "msg")                 // want "bool-compare: use reqObj\\.Falsef"
 				reqObj.Truef(!d, "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				reqObj.False(d)
-				reqObj.False(d, "msg")
-				reqObj.False(d, "msg with arg %d", 42)
-				reqObj.Falsef(d, "msg")
-				reqObj.Falsef(d, "msg with arg %d", 42)
 			}
 
 			{
@@ -12673,16 +12505,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.Truef(!*e, "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				reqObj.False(*e)
-				reqObj.False(*e, "msg")
-				reqObj.False(*e, "msg with arg %d", 42)
-				reqObj.Falsef(*e, "msg")
-				reqObj.Falsef(*e, "msg with arg %d", 42)
-			}
-
 			{
 				reqObj.Equal(*f, false)                         // want "bool-compare: use reqObj\\.False"
 				reqObj.Equal(*f, false, "msg")                  // want "bool-compare: use reqObj\\.False"
@@ -12763,16 +12585,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.Truef(!*f, "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Falsef"
 			}
 
-			// Valid.
-
-			{
-				reqObj.False(*f)
-				reqObj.False(*f, "msg")
-				reqObj.False(*f, "msg with arg %d", 42)
-				reqObj.Falsef(*f, "msg")
-				reqObj.Falsef(*f, "msg with arg %d", 42)
-			}
-
 			{
 				reqObj.Equal(g.TheyKilledKenny(), false)                         // want "bool-compare: use reqObj\\.False"
 				reqObj.Equal(g.TheyKilledKenny(), false, "msg")                  // want "bool-compare: use reqObj\\.False"
@@ -12851,16 +12663,6 @@ func (s *BoolCompareSuite) TestAll() {
 				reqObj.True(!g.TheyKilledKenny(), "msg with arg %d", 42)  // want "bool-compare: use reqObj\\.False"
 				reqObj.Truef(!g.TheyKilledKenny(), "msg")                 // want "bool-compare: use reqObj\\.Falsef"
 				reqObj.Truef(!g.TheyKilledKenny(), "msg with arg %d", 42) // want "bool-compare: use reqObj\\.Falsef"
-			}
-
-			// Valid.
-
-			{
-				reqObj.False(g.TheyKilledKenny())
-				reqObj.False(g.TheyKilledKenny(), "msg")
-				reqObj.False(g.TheyKilledKenny(), "msg with arg %d", 42)
-				reqObj.Falsef(g.TheyKilledKenny(), "msg")
-				reqObj.Falsef(g.TheyKilledKenny(), "msg with arg %d", 42)
 			}
 
 			{
@@ -12944,6 +12746,62 @@ func (s *BoolCompareSuite) TestAll() {
 			}
 
 			// Valid.
+
+			{
+				reqObj.False(a)
+				reqObj.False(a, "msg")
+				reqObj.False(a, "msg with arg %d", 42)
+				reqObj.Falsef(a, "msg")
+				reqObj.Falsef(a, "msg with arg %d", 42)
+			}
+
+			{
+				reqObj.False(b.b)
+				reqObj.False(b.b, "msg")
+				reqObj.False(b.b, "msg with arg %d", 42)
+				reqObj.Falsef(b.b, "msg")
+				reqObj.Falsef(b.b, "msg with arg %d", 42)
+			}
+
+			{
+				reqObj.False(c)
+				reqObj.False(c, "msg")
+				reqObj.False(c, "msg with arg %d", 42)
+				reqObj.Falsef(c, "msg")
+				reqObj.Falsef(c, "msg with arg %d", 42)
+			}
+
+			{
+				reqObj.False(d)
+				reqObj.False(d, "msg")
+				reqObj.False(d, "msg with arg %d", 42)
+				reqObj.Falsef(d, "msg")
+				reqObj.Falsef(d, "msg with arg %d", 42)
+			}
+
+			{
+				reqObj.False(*e)
+				reqObj.False(*e, "msg")
+				reqObj.False(*e, "msg with arg %d", 42)
+				reqObj.Falsef(*e, "msg")
+				reqObj.Falsef(*e, "msg with arg %d", 42)
+			}
+
+			{
+				reqObj.False(*f)
+				reqObj.False(*f, "msg")
+				reqObj.False(*f, "msg with arg %d", 42)
+				reqObj.Falsef(*f, "msg")
+				reqObj.Falsef(*f, "msg with arg %d", 42)
+			}
+
+			{
+				reqObj.False(g.TheyKilledKenny())
+				reqObj.False(g.TheyKilledKenny(), "msg")
+				reqObj.False(g.TheyKilledKenny(), "msg with arg %d", 42)
+				reqObj.Falsef(g.TheyKilledKenny(), "msg")
+				reqObj.Falsef(g.TheyKilledKenny(), "msg with arg %d", 42)
+			}
 
 			{
 				reqObj.False(boolOp())

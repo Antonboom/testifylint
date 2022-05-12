@@ -1,26 +1,26 @@
 package checkers
 
 /*
-import (
-	"go/ast"
-	"go/token"
-	"golang.org/x/tools/go/analysis"
-)
+type Empty struct{}
 
-func Empty(pass *analysis.Pass, fn CallMeta) {
-	if invalid := checkEmpty(fn); invalid {
-		r.ReportUseFunction(pass, fn, "Empty")
+func (Empty) Name() string {
+	return "empty"
+}
+
+func (checker Empty) Check(pass *analysis.Pass, call CallMeta) {
+	if invalid := checkEmpty(call); invalid {
+		r.ReportUseFunction(pass, checker.Name(), call,"Empty", nil)
 	}
 
-	if invalid := checkNotEmpty(fn); invalid {
-		r.ReportUseFunction(pass, fn, "NotEmpty")
+	if invalid := checkNotEmpty(call); invalid {
+		r.ReportUseFunction(pass, checker.Name(), call,"NotEmpty", nil)
 	}
 }
 
-func checkEmpty(fn CallMeta) bool {
-	switch fn.Name {
+func checkEmpty(call CallMeta) bool {
+	switch call.Fn.Name {
 	case "Len", "Lenf":
-		return len(fn.Args) >= 3 && isZero(fn.Args[2])
+		return len(call.Args) >= 3 && isZero(call.Args[2])
 
 	case "Equal", "Equalf":
 		return len(fn.Args) >= 3 &&

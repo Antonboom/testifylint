@@ -1,50 +1,95 @@
 package checkers
 
-/*
 import (
 	"go/ast"
 	"go/token"
+	"go/types"
 	"golang.org/x/tools/go/analysis"
 )
 
-// todo нашёл issue, пока реализовывал этот линтер
+type Len struct{}
 
-func Len(pass *analysis.Pass, fn CallMeta) {
-	invalid := func() bool {
-		switch fn.Name {
-		case "Equal", "Equalf":
-			return len(fn.Args) >= 3 && xor(isLenCall(fn.Args[1]), isLenCall(fn.Args[2]))
+func NewLen() Len {
+	return Len{}
+}
 
-		case "True", "Truef":
-			return len(fn.Args) >= 2 && isLenEquality(fn.Args[1])
+func (Len) Name() string {
+	return "len"
+}
+
+func (checker Len) Check(pass *analysis.Pass, call CallMeta) {
+	switch call.Fn.Name {
+	case "Equal", "Equalf":
+		if len(call.Args) < 2 {
+			return
 		}
-		return false
-	}()
+		a, b := call.Args[0], call.Args[1]
 
-	if invalid {
-		r.ReportUseFunction(pass, fn, "Len")
+		if lenArg, targetVal, ok := xorLenCall(pass, a, b); ok {
+			r.ReportUseFunction(pass, checker.Name(), call, "Len",
+				newFixViaFnReplacement(call, "Len", analysis.TextEdit{
+					Pos:     a.Pos(),
+					End:     b.End(),
+					NewText: []byte(types.ExprString(lenArg) + ", " + types.ExprString(targetVal)),
+				}),
+			)
+		}
+
+	case "True", "Truef":
+		if len(call.Args) < 1 {
+			return
+		}
+		expr := call.Args[0]
+
+		if lenArg, targetVal, ok := isLenEquality(pass, expr); ok {
+			r.ReportUseFunction(pass, checker.Name(), call, "Len",
+				newFixViaFnReplacement(call, "Len", analysis.TextEdit{
+					Pos:     expr.Pos(),
+					End:     expr.End(),
+					NewText: []byte(types.ExprString(lenArg) + ", " + types.ExprString(targetVal)),
+				}),
+			)
+		}
 	}
 }
 
-func isLenCall(e ast.Expr) bool {
+func xorLenCall(pass *analysis.Pass, a, b ast.Expr) (lenArg ast.Expr, targetVal ast.Expr, ok bool) {
+	arg1, ok1 := isLenCall(pass, a)
+	arg2, ok2 := isLenCall(pass, b)
+
+	if xor(ok1, ok2) {
+		if ok1 {
+			return arg1, b, true
+		}
+		if ok2 {
+			return arg2, a, true
+		}
+	}
+	return nil, nil, false
+}
+
+var lenObj = types.Universe.Lookup("len")
+
+func isLenCall(pass *analysis.Pass, e ast.Expr) (ast.Expr, bool) {
 	ce, ok := e.(*ast.CallExpr)
 	if !ok {
-		return false
+		return nil, false
 	}
 
-	fn, ok := ce.Fun.(*ast.Ident)
-	if !ok {
-		return false
+	if isObj(pass, ce.Fun, lenObj) && len(ce.Args) == 1 {
+		return ce.Args[0], true
 	}
-
-	return fn.Name == "len" && len(ce.Args) == 1
+	return nil, false
 }
 
-func isLenEquality(e ast.Expr) bool {
+func isLenEquality(pass *analysis.Pass, e ast.Expr) (ast.Expr, ast.Expr, bool) {
 	be, ok := e.(*ast.BinaryExpr)
 	if !ok {
-		return false
+		return nil, nil, false
 	}
-	return be.Op == token.EQL && xor(isLenCall(be.X), isLenCall(be.Y))
+
+	if be.Op != token.EQL {
+		return nil, nil, false
+	}
+	return xorLenCall(pass, be.X, be.Y)
 }
-*/
