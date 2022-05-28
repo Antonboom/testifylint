@@ -18,7 +18,7 @@ func New() *analysis.Analyzer {
 		checkers: []checkers.Checker{ // Order is important!
 			checkers.NewBoolCompare(),
 			checkers.NewFloatCompare(),
-			//checkers.Empty,
+			checkers.NewEmpty(),
 			checkers.NewLen(),
 			//checkers.Comparisons,
 			//checkers.Error,

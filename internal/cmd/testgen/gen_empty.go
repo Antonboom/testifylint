@@ -35,10 +35,22 @@ func (g EmptyCasesGenerator) Data() any {
 				Name: "Empty",
 				InvalidChecks: []Check{
 					{Fn: "Len", Argsf: "%s, 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+
 					{Fn: "Equal", Argsf: "len(%s), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
 					{Fn: "Equal", Argsf: "0, len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+
+					{Fn: "Less", Argsf: "len(%s), 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+					{Fn: "Greater", Argsf: "1, len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+
 					{Fn: "True", Argsf: "len(%s) == 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
 					{Fn: "True", Argsf: "0 == len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+					{Fn: "True", Argsf: "len(%s) < 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+					{Fn: "True", Argsf: "1 > len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+
+					{Fn: "False", Argsf: "len(%s) != 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+					{Fn: "False", Argsf: "0 != len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+					{Fn: "False", Argsf: "len(%s) >= 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+					{Fn: "False", Argsf: "1 <= len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
 				},
 				ValidChecks: []Check{
 					{Fn: "Empty", Argsf: "%s"},
@@ -49,14 +61,17 @@ func (g EmptyCasesGenerator) Data() any {
 				InvalidChecks: []Check{
 					{Fn: "NotEqual", Argsf: "len(%s), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
 					{Fn: "NotEqual", Argsf: "0, len(%s)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
+
 					{Fn: "Greater", Argsf: "len(%s), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
-					{Fn: "GreaterOrEqual", Argsf: "len(%s), 1", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
+					{Fn: "Less", Argsf: "0, len(%s)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
+
 					{Fn: "True", Argsf: "len(%s) != 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
 					{Fn: "True", Argsf: "0 != len(%s)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
 					{Fn: "True", Argsf: "len(%s) > 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
 					{Fn: "True", Argsf: "0 < len(%s)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "len(%s) >= 1", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "1 <= len(%s)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
+
+					{Fn: "False", Argsf: "len(%s) == 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
+					{Fn: "False", Argsf: "0 == len(%s)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
 				},
 				ValidChecks: []Check{
 					{Fn: "NotEmpty", Argsf: "%s"},

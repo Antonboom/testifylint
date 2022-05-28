@@ -68,4 +68,6 @@ func main() {
 
 // todo нашёл issue, пока реализовывал checker len
 
-// todo: все XOR вынести в отдельный testdata/src/strange
+// todo: все тесты на XOR вынести в отдельный testdata/src/strange, обратить пристальное внимание на ошибки в выражениях
+
+// тред о паниках: https://github.com/orgs/golangci/teams/team/discussions/33?from_comment=5
