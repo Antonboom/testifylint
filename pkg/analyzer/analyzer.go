@@ -1,11 +1,13 @@
 package analyzer
 
 import (
-	"github.com/Antonboom/testifylint/internal/checkers"
 	"go/ast"
 	"go/types"
-	"golang.org/x/tools/go/analysis"
 	"strings"
+
+	"golang.org/x/tools/go/analysis"
+
+	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 const (
@@ -20,8 +22,8 @@ func New() *analysis.Analyzer {
 			checkers.NewFloatCompare(),
 			checkers.NewEmpty(),
 			checkers.NewLen(),
-			//checkers.Comparisons,
-			//checkers.Error,
+			// checkers.Comparisons,
+			// checkers.Error,
 			checkers.NewErrorIs(),
 			checkers.NewExpectedActual(nil),
 		},
@@ -147,8 +149,8 @@ func isTestingTPtr(pass *analysis.Pass, arg ast.Expr) bool {
 }
 
 func implementsTestingSuite(pass *analysis.Pass) bool {
-	//tSuiteObj := objectOf(pass, "github.com/stretchr/testify/suite", "TestingSuite")
+	// tSuiteObj := objectOf(pass, "github.com/stretchr/testify/suite", "TestingSuite")
 
-	//tSuiteIface
+	// tSuiteIface
 	return false
 }

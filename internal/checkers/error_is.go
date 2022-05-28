@@ -2,6 +2,7 @@ package checkers
 
 import (
 	"fmt"
+
 	"golang.org/x/tools/go/analysis"
 )
 
@@ -45,7 +46,7 @@ func (checker ErrorIs) Check(pass *analysis.Pass, call CallMeta) {
 				}},
 				Related: nil,
 			})
-			//r.Reportf(pass, fn, "invalid usage of %[1]s.Error, use %[1]s.%[2]s instead", "ErrorIs")
+			// r.Reportf(pass, fn, "invalid usage of %[1]s.Error, use %[1]s.%[2]s instead", "ErrorIs")
 		}
 
 	case "NoError", "NoErrorf":
@@ -73,7 +74,7 @@ func (checker ErrorIs) Check(pass *analysis.Pass, call CallMeta) {
 				Related: nil,
 			})
 
-			//r.Reportf(pass, call, "invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead", "NotErrorIs")
+			// r.Reportf(pass, call, "invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead", "NotErrorIs")
 		}
 	}
 }

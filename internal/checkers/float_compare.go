@@ -3,6 +3,7 @@ package checkers
 import (
 	"go/ast"
 	"go/types"
+
 	"golang.org/x/tools/go/analysis"
 )
 

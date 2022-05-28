@@ -3,6 +3,7 @@ package checkers
 import (
 	"fmt"
 	"go/token"
+
 	"golang.org/x/tools/go/analysis"
 )
 
@@ -21,7 +22,13 @@ func newReporter() *reporter {
 	return &reporter{cache: map[positionID]struct{}{}}
 }
 
-func (r *reporter) ReportUseFunction(pass *analysis.Pass, checker string, call CallMeta, proposedFn string, fix *analysis.SuggestedFix) {
+func (r *reporter) ReportUseFunction(
+	pass *analysis.Pass,
+	checker string,
+	call CallMeta,
+	proposedFn string,
+	fix *analysis.SuggestedFix,
+) {
 	f := proposedFn
 	if call.Fn.IsFmt {
 		f += "f"

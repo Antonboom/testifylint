@@ -3,9 +3,10 @@ package checkers
 import (
 	"go/ast"
 	"go/types"
-	"golang.org/x/tools/go/analysis"
 	"regexp"
 	"strings"
+
+	"golang.org/x/tools/go/analysis"
 )
 
 var defaultExpectedVarPattern = regexp.MustCompile(strings.ReplaceAll(`(

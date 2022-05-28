@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/types"
+
 	"golang.org/x/tools/go/analysis"
 )
 
@@ -14,9 +15,9 @@ import (
 	}
 */
 
-//testingPkg := types.NewPackage("testing", "testing")
+// testingPkg := types.NewPackage("testing", "testing")
 //
-//testingSuiteIface := types.NewInterfaceType([]*types.Func{
+// testingSuiteIface := types.NewInterfaceType([]*types.Func{
 //	types.NewFunc(
 //		token.NoPos,
 //		testingPkg,
@@ -31,9 +32,9 @@ import (
 //		types.NewSignatureType(nil, nil, nil, nil,
 //			types.NewTuple(types.NewVar(token.NoPos, testingPkg, "T", nil)), false),
 //	),
-//}, nil)
+// }, nil)
 
-//suiteTHelperInspect := func(node ast.Node) bool {
+// suiteTHelperInspect := func(node ast.Node) bool {
 //	fd, ok := node.(*ast.FuncDecl)
 //	if !ok {
 //		return true

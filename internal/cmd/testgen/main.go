@@ -12,10 +12,10 @@ import (
 
 var generators = map[string]TestsGenerator{
 	"pkg/analyzer/testdata/src/basic/bool_compare_test.go": BoolCompareCasesGenerator{},
-	//"pkg/analyzer/testdata/src/basic/comparisons_generated.go":     ComparisonsCasesGenerator{},
+	// "pkg/analyzer/testdata/src/basic/comparisons_generated.go":     ComparisonsCasesGenerator{},
 	"pkg/analyzer/testdata/src/basic/empty_test.go": EmptyCasesGenerator{},
-	//"pkg/analyzer/testdata/src/basic/error_generated.go":           ErrorCasesGenerator{},
-	//"pkg/analyzer/testdata/src/basic/error_is_test.go":        ErrorIsCasesGenerator{},
+	// "pkg/analyzer/testdata/src/basic/error_generated.go":           ErrorCasesGenerator{},
+	// "pkg/analyzer/testdata/src/basic/error_is_test.go":        ErrorIsCasesGenerator{},
 	"pkg/analyzer/testdata/src/basic/expected_actual_test.go": ExpectedActualCasesGenerator{},
 	"pkg/analyzer/testdata/src/basic/float_compare_test.go":   FloatCompareCasesGenerator{},
 	"pkg/analyzer/testdata/src/basic/len_test.go":             LenCasesGenerator{},
@@ -47,9 +47,9 @@ func genGoFileFromTmpl(output string, tmpl *template.Template, data any) error {
 
 	formatted, err := format.Source(b.Bytes())
 	if err != nil {
-		_ = ioutil.WriteFile(output, b.Bytes(), 0644) // For debug.
+		_ = ioutil.WriteFile(output, b.Bytes(), 0o644) // For debug.
 		return fmt.Errorf("format %s: %v", output, err)
 	}
 
-	return ioutil.WriteFile(output, formatted, 0644)
+	return ioutil.WriteFile(output, formatted, 0o644)
 }

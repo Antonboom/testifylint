@@ -3,6 +3,7 @@ package checkers
 import (
 	"go/ast"
 	"go/types"
+
 	"golang.org/x/tools/go/analysis"
 )
 
@@ -29,7 +30,7 @@ func Error(pass *analysis.Pass, fn CallMeta) {
 			r.ReportUseFunction(pass, fn, "NoError")
 		}
 	}
-}
+}.
 */
 var errIface = types.Universe.Lookup("error").Type().Underlying().(*types.Interface)
 

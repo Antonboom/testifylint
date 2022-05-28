@@ -1,0 +1,50 @@
+# https://taskfile.dev/#/installation
+version: '3'
+
+silent: true
+
+tasks:
+  default:
+    cmds:
+      - task: tools:install
+      - task: tidy
+      - task: fmt
+      - task: lint
+      - task: tests
+      - task: install
+
+  tools:install:
+    - echo "Install local tools..."
+    - (which gci > /dev/null) || GO111MODULE=off go get -u github.com/daixiang0/gci
+    - (which gofumpt > /dev/null) || GO111MODULE=off go get -u mvdan.cc/gofumpt
+
+  tidy:
+    cmds:
+      - echo "Tidy..."
+      - go mod tidy
+
+  fmt:
+    cmds:
+      - echo "Fmt..."
+      - gofumpt -w .
+      - gci write -s Std -s Def -s "Prefix(github.com/Antonboom/testifylint)" . 2> /dev/null
+
+  lint:
+    cmds:
+      - echo "Lint..."
+      - golangci-lint run --fix ./...
+
+  tests:
+    cmds:
+      - echo "Tests..."
+      - go test ./...
+
+  tests:coverage:
+    cmds:
+      - echo "Tests with coverage..."
+      - go test -coverprofile=coverage.out ./...
+
+  install:
+    cmds:
+      - echo "Install..."
+      - go install ./...

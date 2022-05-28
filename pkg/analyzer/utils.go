@@ -3,9 +3,10 @@ package analyzer
 import (
 	"go/ast"
 	"go/types"
-	"golang.org/x/tools/go/analysis"
 	"strconv"
 	"strings"
+
+	"golang.org/x/tools/go/analysis"
 )
 
 func isPkg(pkg *types.Package, name, path string) bool {
