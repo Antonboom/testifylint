@@ -178,7 +178,7 @@ func TestBoolCompareSuite(t *testing.T) {
 }
 
 func (s *BoolCompareSuite) TestAll() {
-	{{ template "vars" .}}
+	{{- template "vars" .}}
 
 	assObj, reqObj := s.Assert(), s.Require()
 

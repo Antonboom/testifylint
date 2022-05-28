@@ -6857,7 +6857,6 @@ func TestConfusedWithExpectedActualSuite(t *testing.T) {
 }
 
 func (s *ConfusedWithExpectedActualSuite) TestAll() {
-
 	var result string
 
 	const (

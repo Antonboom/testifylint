@@ -277,7 +277,7 @@ func TestConfusedWithExpectedActualSuite(t *testing.T) {
 }
 
 func (s *ConfusedWithExpectedActualSuite) TestAll() {
-		{{ template "vars" .}}
+	{{- template "vars" .}}
 
 	assObj, reqObj := s.Assert(), s.Require()
 

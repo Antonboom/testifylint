@@ -71,3 +71,6 @@ func main() {
 // todo: все тесты на XOR вынести в отдельный testdata/src/strange, обратить пристальное внимание на ошибки в выражениях
 
 // тред о паниках: https://github.com/orgs/golangci/teams/team/discussions/33?from_comment=5
+// todo: https://habr.com/ru/company/joom/blog/666440/
+
+// todo: дока к каждому чекеру

@@ -23,7 +23,7 @@ func (checker Empty) Check(pass *analysis.Pass, call CallMeta) {
 	checker.checkNotEmpty(pass, call)
 }
 
-func (checker Empty) checkEmpty(pass *analysis.Pass, call CallMeta) {
+func (checker Empty) checkEmpty(pass *analysis.Pass, call CallMeta) { //nolint:gocognit
 	reportUseEmpty := func(replaceStart, replaceEnd token.Pos, replaceWith ast.Expr) {
 		r.ReportUseFunction(pass, checker.Name(), call, "Empty",
 			newFixViaFnReplacement(call, "Empty", analysis.TextEdit{
@@ -144,7 +144,7 @@ func (checker Empty) checkEmpty(pass *analysis.Pass, call CallMeta) {
 	}
 }
 
-func (checker Empty) checkNotEmpty(pass *analysis.Pass, call CallMeta) {
+func (checker Empty) checkNotEmpty(pass *analysis.Pass, call CallMeta) { //nolint:gocognit
 	reportUseNotEmpty := func(replaceStart, replaceEnd token.Pos, replaceWith ast.Expr) {
 		r.ReportUseFunction(pass, checker.Name(), call, "NotEmpty",
 			newFixViaFnReplacement(call, "NotEmpty", analysis.TextEdit{

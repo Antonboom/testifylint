@@ -4,11 +4,18 @@ run:
 issues:
   max-same-issues: 0
   exclude-rules:
+    - source: "(Equalf?|NotEqualf?|Greaterf?|Lessf?|Truef?|Falsef?)"
+      linters: [ "goconst" ]
+
     - path: "_test\\.go"
       linters:
         - lll
 
 linters-settings:
+  gosec:
+    excludes:
+      - "G306" # Expect WriteFile permissions to be 0600 or less
+
   gci:
     sections:
       - standard

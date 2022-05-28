@@ -22,7 +22,7 @@ func New() *analysis.Analyzer {
 			checkers.NewFloatCompare(),
 			checkers.NewEmpty(),
 			checkers.NewLen(),
-			// checkers.Comparisons,
+			checkers.NewCompares(),
 			// checkers.Error,
 			checkers.NewErrorIs(),
 			checkers.NewExpectedActual(nil),

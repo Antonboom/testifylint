@@ -5714,7 +5714,6 @@ func TestBoolCompareSuite(t *testing.T) {
 }
 
 func (s *BoolCompareSuite) TestAll() {
-
 	type withBool struct{ b bool }
 	boolOp := func() bool { return true }
 

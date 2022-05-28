@@ -2867,7 +2867,6 @@ func TestLenSuite(t *testing.T) {
 }
 
 func (s *LenSuite) TestAll() {
-
 	type withInt struct{ i int }
 	intOp := func() int { return 42 }
 

@@ -179,7 +179,7 @@ func TestEmptySuite(t *testing.T) {
 }
 
 func (s *EmptySuite) TestAll() {
-	{{ template "vars" .}}
+	{{- template "vars" .}}
 
 	assObj, reqObj := s.Assert(), s.Require()
 

@@ -45,10 +45,10 @@ func (g LenCasesGenerator) Data() any {
 			{Fn: "LessOrEqual", Argsf: "len(arr), %s"},
 			{Fn: "LessOrEqual", Argsf: "%s, len(arr)"},
 
-			// ExpectedActual checker cases.
+			// `ExpectedActual` checker cases.
 			// {Fn: "NotEqual", Argsf: "len(arr), %s"},
 
-			// Comparisons checker cases.
+			// `Compares` checker cases.
 			// {Fn: "True", Argsf: "len(arr) != %s"},
 			// {Fn: "False", Argsf: "len(arr) != %s"},
 			// ...
@@ -147,7 +147,7 @@ func TestLenSuite(t *testing.T) {
 }
 
 func (s *LenSuite) TestAll() {
-	{{ template "vars" .}}
+	{{- template "vars" .}}
 
 	assObj, reqObj := s.Assert(), s.Require()
 

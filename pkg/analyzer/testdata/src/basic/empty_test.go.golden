@@ -3872,7 +3872,6 @@ func TestEmptySuite(t *testing.T) {
 }
 
 func (s *EmptySuite) TestAll() {
-
 	var (
 		arr    [0]int
 		arrPtr *[0]int
