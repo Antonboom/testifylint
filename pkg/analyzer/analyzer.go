@@ -23,7 +23,7 @@ func New() *analysis.Analyzer {
 			checkers.NewEmpty(),
 			checkers.NewLen(),
 			checkers.NewCompares(),
-			// checkers.Error,
+			checkers.NewError(),
 			checkers.NewErrorIs(),
 			checkers.NewExpectedActual(nil),
 		},

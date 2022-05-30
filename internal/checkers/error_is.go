@@ -20,61 +20,21 @@ func (checker ErrorIs) Check(pass *analysis.Pass, call CallMeta) {
 	if len(call.Args) < 2 {
 		return
 	}
+	errArg := call.Args[1]
 
 	switch call.Fn.Name {
 	case "Error", "Errorf":
-		if isError(pass, call.Args[1]) {
-			pass.Report(analysis.Diagnostic{
-				Pos:      call.Pos(),
-				End:      call.End(),
-				Category: checker.Name(),
-				Message: fmt.Sprintf(
-					"%[1]s: invalid usage of %[2]s.Error, use %[2]s.%[3]s instead",
-					checker.Name(),
-					call.SelectorStr,
-					"ErrorIs",
-				),
-				SuggestedFixes: []analysis.SuggestedFix{{
-					Message: "Replace Error with ErrorIs",
-					TextEdits: []analysis.TextEdit{
-						{
-							Pos:     call.Fn.Pos(),
-							End:     call.Fn.End(),
-							NewText: []byte("ErrorIs"),
-						},
-					},
-				}},
-				Related: nil,
-			})
-			// r.Reportf(pass, fn, "invalid usage of %[1]s.Error, use %[1]s.%[2]s instead", "ErrorIs")
+		if isError(pass, errArg) {
+			proposed := "ErrorIs"
+			msg := fmt.Sprintf("invalid usage of %[1]s.Error, use %[1]s.%[2]s instead", call.SelectorStr, proposed)
+			r.Report(pass, checker.Name(), call, msg, newFixViaFnReplacement(call, proposed))
 		}
 
 	case "NoError", "NoErrorf":
-		if isError(pass, call.Args[1]) {
-			pass.Report(analysis.Diagnostic{
-				Pos:      call.Pos(),
-				End:      call.End(),
-				Category: checker.Name(),
-				Message: fmt.Sprintf(
-					"%[1]s: invalid usage of %[2]s.NoError, use %[2]s.%[3]s instead",
-					checker.Name(),
-					call.SelectorStr,
-					"NotErrorIs",
-				),
-				SuggestedFixes: []analysis.SuggestedFix{{
-					Message: "Replace NoError with NotErrorIs",
-					TextEdits: []analysis.TextEdit{
-						{
-							Pos:     call.Fn.Pos(),
-							End:     call.Fn.End(),
-							NewText: []byte("NotErrorIs"),
-						},
-					},
-				}},
-				Related: nil,
-			})
-
-			// r.Reportf(pass, call, "invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead", "NotErrorIs")
+		if isError(pass, errArg) {
+			proposed := "NotErrorIs"
+			msg := fmt.Sprintf("invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead", call.SelectorStr, proposed)
+			r.Report(pass, checker.Name(), call, msg, newFixViaFnReplacement(call, proposed))
 		}
 	}
 }

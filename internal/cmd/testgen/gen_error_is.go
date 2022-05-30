@@ -66,8 +66,10 @@ import (
 )
 
 func TestErrorInsteadOfErrorIs(t *testing.T) {
+	{{- block "vars" . }}
 	var errSentinel = errors.New("user not found")
 	var err error
+	{{- end }}
 
 	{{ range $pi, $pkg := $.Pkgs }}
 	t.Run("{{ $pkg }}", func(t *testing.T) {
@@ -117,8 +119,7 @@ func TestErrorInsteadOfErrorIsSuite(t *testing.T) {
 }
 
 func (s *ErrorInsteadOfErrorIsSuite) TestAll() {
-	var errSentinel = errors.New("user not found")
-	var err error
+	{{- template "vars" .}}
 
 	assObj, reqObj := s.Assert(), s.Require()
 

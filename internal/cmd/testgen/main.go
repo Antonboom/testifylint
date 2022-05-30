@@ -11,11 +11,11 @@ import (
 )
 
 var generators = map[string]TestsGenerator{
-	"pkg/analyzer/testdata/src/basic/bool_compare_test.go": BoolCompareCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/compares_test.go":     ComparesCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/empty_test.go":        EmptyCasesGenerator{},
-	// "pkg/analyzer/testdata/src/basic/error_generated.go":           ErrorCasesGenerator{},
-	// "pkg/analyzer/testdata/src/basic/error_is_test.go":        ErrorIsCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/bool_compare_test.go":    BoolCompareCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/compares_test.go":        ComparesCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/empty_test.go":           EmptyCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/error_test.go":           ErrorCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/error_is_test.go":        ErrorIsCasesGenerator{},
 	"pkg/analyzer/testdata/src/basic/expected_actual_test.go": ExpectedActualCasesGenerator{},
 	"pkg/analyzer/testdata/src/basic/float_compare_test.go":   FloatCompareCasesGenerator{},
 	"pkg/analyzer/testdata/src/basic/len_test.go":             LenCasesGenerator{},

@@ -7,31 +7,37 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-/*
-import (
-	"go/ast"
-	"go/types"
-	"golang.org/x/tools/go/analysis"
-)
+type Error struct{}
 
-func Error(pass *analysis.Pass, fn CallMeta) {
-	if len(fn.Args) < 2 {
+func NewError() Error {
+	return Error{}
+}
+
+func (Error) Name() string {
+	return "error"
+}
+
+func (checker Error) Check(pass *analysis.Pass, call CallMeta) {
+	if len(call.Args) < 1 {
 		return
 	}
+	errArg := call.Args[0]
 
-	switch fn.Name {
+	switch call.Fn.Name {
 	case "NotNil", "NotNilf":
-		if isError(pass, fn.Args[1]) {
-			r.ReportUseFunction(pass, fn, "Error")
+		if isError(pass, errArg) {
+			r.ReportUseFunction(pass, checker.Name(), call, "Error",
+				newFixViaFnReplacement(call, "Error"))
 		}
 
 	case "Nil", "Nilf":
-		if isError(pass, fn.Args[1]) {
-			r.ReportUseFunction(pass, fn, "NoError")
+		if isError(pass, errArg) {
+			r.ReportUseFunction(pass, checker.Name(), call, "NoError",
+				newFixViaFnReplacement(call, "NoError"))
 		}
 	}
-}.
-*/
+}
+
 var errIface = types.Universe.Lookup("error").Type().Underlying().(*types.Interface)
 
 func isError(pass *analysis.Pass, expr ast.Expr) bool {

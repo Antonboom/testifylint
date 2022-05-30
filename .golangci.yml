@@ -43,7 +43,6 @@ linters:
     - exportloopref
     - forbidigo
     - gci
-    - gocognit
     - goconst
     - gocritic
     - gocyclo
