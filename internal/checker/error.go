@@ -1,4 +1,4 @@
-package checkers
+package checker
 
 import (
 	"go/ast"
@@ -15,6 +15,10 @@ func NewError() Error {
 
 func (Error) Name() string {
 	return "error"
+}
+
+func (Error) Priority() int {
+	return 6
 }
 
 func (checker Error) Check(pass *analysis.Pass, call CallMeta) {

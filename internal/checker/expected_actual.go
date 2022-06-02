@@ -1,4 +1,4 @@
-package checkers
+package checker
 
 import (
 	"go/ast"
@@ -27,15 +27,20 @@ type ExpectedActual struct {
 	expPattern *regexp.Regexp
 }
 
-func NewExpectedActual(expPattern *regexp.Regexp) ExpectedActual {
-	if expPattern == nil {
-		expPattern = defaultExpectedVarPattern
-	}
-	return ExpectedActual{expPattern: expPattern}
+func NewExpectedActual() *ExpectedActual {
+	return &ExpectedActual{expPattern: defaultExpectedVarPattern}
 }
 
 func (ExpectedActual) Name() string {
 	return "expected-actual"
+}
+
+func (ExpectedActual) Priority() int {
+	return 9
+}
+
+func (checker *ExpectedActual) SetExpPattern(p *regexp.Regexp) {
+	checker.expPattern = p
 }
 
 func (checker ExpectedActual) Check(pass *analysis.Pass, call CallMeta) {

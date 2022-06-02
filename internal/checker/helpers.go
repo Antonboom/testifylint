@@ -1,4 +1,4 @@
-package checkers
+package checker
 
 func xor(a, b bool) bool {
 	return a != b

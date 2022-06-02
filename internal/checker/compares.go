@@ -1,4 +1,4 @@
-package checkers
+package checker
 
 import (
 	"go/ast"
@@ -10,12 +10,16 @@ import (
 
 type Compares struct{}
 
-func NewCompares() Compares {
+func NewCompares() Checker {
 	return Compares{}
 }
 
 func (Compares) Name() string {
 	return "compares"
+}
+
+func (Compares) Priority() int {
+	return 5
 }
 
 func (checker Compares) Check(pass *analysis.Pass, call CallMeta) {

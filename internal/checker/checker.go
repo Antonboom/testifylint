@@ -1,4 +1,4 @@
-package checkers
+package checker
 
 import (
 	"go/ast"
@@ -27,4 +27,5 @@ type FnMeta struct {
 type Checker interface {
 	Name() string
 	Check(pass *analysis.Pass, call CallMeta)
+	Priority() int
 }

@@ -1,4 +1,4 @@
-package checkers
+package checker
 
 import (
 	"go/ast"
@@ -15,6 +15,10 @@ func NewFloatCompare() FloatCompare {
 
 func (FloatCompare) Name() string {
 	return "float-compare"
+}
+
+func (FloatCompare) Priority() int {
+	return 2
 }
 
 func (checker FloatCompare) Check(pass *analysis.Pass, call CallMeta) {

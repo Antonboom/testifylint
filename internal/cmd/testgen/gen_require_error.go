@@ -70,7 +70,7 @@ func (g RequireErrorCasesGenerator) GoldenTemplate() *template.Template {
 
 const requireErrorCasesTmplText = header + `
 
-package basic
+package requireerror
 
 import (
 	"io"

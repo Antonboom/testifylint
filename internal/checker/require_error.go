@@ -1,4 +1,4 @@
-package checkers
+package checker
 
 import "golang.org/x/tools/go/analysis"
 
@@ -10,6 +10,10 @@ func NewRequireError() RequireError {
 
 func (RequireError) Name() string {
 	return "require-error"
+}
+
+func (RequireError) Priority() int {
+	return 8
 }
 
 func (checker RequireError) Check(pass *analysis.Pass, call CallMeta) {

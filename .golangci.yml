@@ -25,6 +25,11 @@ linters-settings:
   lll:
     line-length: 130
 
+  tagliatelle:
+    case:
+      rules:
+        yaml: kebab
+
 linters:
   disable-all: true
   enable:

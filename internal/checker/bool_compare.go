@@ -1,4 +1,4 @@
-package checkers
+package checker
 
 import (
 	"go/ast"
@@ -16,6 +16,10 @@ func NewBoolCompare() BoolCompare {
 
 func (BoolCompare) Name() string {
 	return "bool-compare"
+}
+
+func (BoolCompare) Priority() int {
+	return 1
 }
 
 func (checker BoolCompare) Check(pass *analysis.Pass, call CallMeta) {

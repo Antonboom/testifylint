@@ -7,7 +7,8 @@ import (
 
 	"golang.org/x/tools/go/analysis"
 
-	"github.com/Antonboom/testifylint/internal/checkers"
+	"github.com/Antonboom/testifylint/internal/checker"
+	"github.com/Antonboom/testifylint/pkg/config"
 )
 
 const (
@@ -15,23 +16,10 @@ const (
 	doc  = "Checks usage of github.com/stretchr/testify."
 )
 
-func New() *analysis.Analyzer {
+func New(cfg config.Config) *analysis.Analyzer {
 	tl := &testifyLint{
-		checkers: []checkers.Checker{ // Order is important!
-			checkers.NewBoolCompare(),
-			checkers.NewFloatCompare(),
-			checkers.NewEmpty(),
-			checkers.NewLen(),
-			checkers.NewCompares(),
-			checkers.NewError(),
-			checkers.NewErrorIs(),
-			checkers.NewRequireError(),
-			checkers.NewExpectedActual(nil),
-		},
+		checkers: newCheckers(cfg),
 	}
-
-	// TODO validate checkers uniques
-
 	return &analysis.Analyzer{
 		Name: name,
 		Doc:  doc,
@@ -40,7 +28,7 @@ func New() *analysis.Analyzer {
 }
 
 type testifyLint struct {
-	checkers []checkers.Checker
+	checkers []checker.Checker
 }
 
 func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
@@ -102,13 +90,13 @@ func (tl *testifyLint) newCheckersRunner(pass *analysis.Pass) func(ast.Node) boo
 			return true
 		}
 
-		call := checkers.CallMeta{
+		call := checker.CallMeta{
 			Range:       ce,
 			Selector:    se,
 			SelectorStr: types.ExprString(se.X),
 			IsAssert:    isAssert,
 			IsRequire:   isRequire,
-			Fn: checkers.FnMeta{
+			Fn: checker.FnMeta{
 				Range: se.Sel,
 				Name:  fn,
 				IsFmt: strings.HasSuffix(fn, "f"),

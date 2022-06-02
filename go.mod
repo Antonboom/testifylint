@@ -2,7 +2,10 @@ module github.com/Antonboom/testifylint
 
 go 1.18
 
-require golang.org/x/tools v0.1.10
+require (
+	golang.org/x/tools v0.1.10
+	gopkg.in/yaml.v3 v3.0.1
+)
 
 require (
 	golang.org/x/mod v0.6.0-dev.0.20220106191415-9b9b3d81d5e3 // indirect

@@ -1,4 +1,4 @@
-package checkers
+package checker
 
 import (
 	"go/ast"
@@ -16,6 +16,10 @@ func NewEmpty() Empty {
 
 func (Empty) Name() string {
 	return "empty"
+}
+
+func (Empty) Priority() int {
+	return 3
 }
 
 func (checker Empty) Check(pass *analysis.Pass, call CallMeta) {

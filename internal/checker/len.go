@@ -1,4 +1,4 @@
-package checkers
+package checker
 
 import (
 	"go/ast"
@@ -16,6 +16,10 @@ func NewLen() Len {
 
 func (Len) Name() string {
 	return "len"
+}
+
+func (Len) Priority() int {
+	return 4
 }
 
 func (checker Len) Check(pass *analysis.Pass, call CallMeta) {

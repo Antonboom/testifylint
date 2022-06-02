@@ -1,4 +1,4 @@
-package checkers
+package checker
 
 import (
 	"fmt"
@@ -14,6 +14,10 @@ func NewErrorIs() ErrorIs {
 
 func (ErrorIs) Name() string {
 	return "error-is"
+}
+
+func (ErrorIs) Priority() int {
+	return 7
 }
 
 func (checker ErrorIs) Check(pass *analysis.Pass, call CallMeta) {
