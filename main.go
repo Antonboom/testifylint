@@ -74,3 +74,36 @@ func main() {
 // todo: https://habr.com/ru/company/joom/blog/666440/
 
 // todo: дока к каждому чекеру
+
+/*
+❌	require.Nil(t, err)
+✅	require.NoError(t, err)
+
+❌	assert.Equal(t, 300.0, float64(price.Amount))
+✅	assert.EqualValues(t, 300.0, price.Amount)
+
+❌	assert.Equal(t, 0, len(result.Errors))
+✅	assert.Empty(t, result.Errors)
+
+❌	require.Equal(t, len(expected), len(result)
+	sort.Slice(expected, ...)
+	sort.Slice(result, ...)
+	for i := range result {
+		assert.Equal(t, expected[i], result[i])
+	}
+✅	assert.ElementsMatch(t, expected, result)
+
+
+
+
+Также стоит быть осторожнее при использовании горутин в тестах. require-проверки производятся через runtime.goexit(),
+так что они сработают ожидаемым образом только в основной горутине.
+https://github.com/golang/go/issues/20940
+
+не использовать equalError и ErrorContains
+(покрывается линтером forbidigo)
+
+
+таблика:
+линтер, пример, имеет ли автофикс
+*/

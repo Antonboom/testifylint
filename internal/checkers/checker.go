@@ -11,6 +11,8 @@ import (
 type CallMeta struct {
 	analysis.Range
 	Selector    *ast.SelectorExpr
+	IsAssert    bool
+	IsRequire   bool
 	SelectorStr string
 	Fn          FnMeta
 	Args        []ast.Expr // Without t argument.

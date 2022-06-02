@@ -19,6 +19,7 @@ var generators = map[string]TestsGenerator{
 	"pkg/analyzer/testdata/src/basic/expected_actual_test.go": ExpectedActualCasesGenerator{},
 	"pkg/analyzer/testdata/src/basic/float_compare_test.go":   FloatCompareCasesGenerator{},
 	"pkg/analyzer/testdata/src/basic/len_test.go":             LenCasesGenerator{},
+	"pkg/analyzer/testdata/src/basic/require_error_test.go":   RequireErrorCasesGenerator{},
 }
 
 func main() {

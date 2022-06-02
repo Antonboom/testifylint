@@ -25,6 +25,7 @@ func New() *analysis.Analyzer {
 			checkers.NewCompares(),
 			checkers.NewError(),
 			checkers.NewErrorIs(),
+			checkers.NewRequireError(),
 			checkers.NewExpectedActual(nil),
 		},
 	}
@@ -94,8 +95,10 @@ func (tl *testifyLint) newCheckersRunner(pass *analysis.Pass) func(ast.Node) boo
 		if pkg == nil {
 			return true
 		}
-		if !(isPkg(pkg, "assert", "github.com/stretchr/testify/assert") ||
-			isPkg(pkg, "require", "github.com/stretchr/testify/require")) {
+
+		isAssert := isPkg(pkg, "assert", "github.com/stretchr/testify/assert")
+		isRequire := isPkg(pkg, "require", "github.com/stretchr/testify/require")
+		if !(isAssert || isRequire) {
 			return true
 		}
 
@@ -103,6 +106,8 @@ func (tl *testifyLint) newCheckersRunner(pass *analysis.Pass) func(ast.Node) boo
 			Range:       ce,
 			Selector:    se,
 			SelectorStr: types.ExprString(se.X),
+			IsAssert:    isAssert,
+			IsRequire:   isRequire,
 			Fn: checkers.FnMeta{
 				Range: se.Sel,
 				Name:  fn,

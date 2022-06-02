@@ -59,16 +59,16 @@ func (g LenCasesGenerator) Data() any {
 func (g LenCasesGenerator) ErroredTemplate() *template.Template {
 	return template.Must(template.New("LenCasesGenerator.ErroredTemplate").
 		Funcs(fm).
-		Parse(lenCasesTmplTmplText))
+		Parse(lenCasesTmplText))
 }
 
 func (g LenCasesGenerator) GoldenTemplate() *template.Template {
 	return template.Must(template.New("LenCasesGenerator.GoldenTemplate").
 		Funcs(fm).
-		Parse(strings.ReplaceAll(lenCasesTmplTmplText, "NewCheckerExpander", "NewCheckerExpander.AsGolden")))
+		Parse(strings.ReplaceAll(lenCasesTmplText, "NewCheckerExpander", "NewCheckerExpander.AsGolden")))
 }
 
-const lenCasesTmplTmplText = header + `
+const lenCasesTmplText = header + `
 
 package basic
 
