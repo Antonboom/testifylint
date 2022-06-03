@@ -33,3 +33,7 @@ func ParseFromFile(path string) (Config, error) {
 func Parse(in io.Reader) (cfg Config, err error) {
 	return cfg, yaml.NewDecoder(in).Decode(&cfg)
 }
+
+func Dump(cfg Config, out io.Writer) error {
+	return yaml.NewEncoder(out).Encode(cfg)
+}

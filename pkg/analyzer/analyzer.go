@@ -16,6 +16,7 @@ const (
 	doc  = "Checks usage of github.com/stretchr/testify."
 )
 
+// New accepts validated config.Config and returns testifylint analyzer.
 func New(cfg config.Config) *analysis.Analyzer {
 	tl := &testifyLint{
 		checkers: newCheckers(cfg),
@@ -44,7 +45,7 @@ func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
 		}
 
 		if imports(f, "github.com/stretchr/testify/suite") {
-			ast.Inspect(f, tl.newSuiteSpecificCheckersRunner(pass))
+			ast.Inspect(f, tl.newSuiteCheckersRunner(pass))
 		}
 	}
 	return nil, nil
@@ -103,14 +104,14 @@ func (tl *testifyLint) newCheckersRunner(pass *analysis.Pass) func(ast.Node) boo
 			},
 			Args: trimTArg(pass, ce.Args),
 		}
-		for _, checker := range tl.checkers {
-			checker.Check(pass, call)
+		for _, ch := range tl.checkers {
+			ch.Check(pass, call)
 		}
 		return true
 	}
 }
 
-func (tl *testifyLint) newSuiteSpecificCheckersRunner(pass *analysis.Pass) func(ast.Node) bool {
+func (tl *testifyLint) newSuiteCheckersRunner(pass *analysis.Pass) func(ast.Node) bool {
 	return func(node ast.Node) bool {
 		return false
 	}

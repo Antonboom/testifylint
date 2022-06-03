@@ -1,16 +1,15 @@
 checkers:
-  disable-all: false
-  enable:
-    - bool-compare
-    - float-compare
-    - empty
-    - compares
-    - error
-    - error-is
-    - require-error
-    - expected-actual
-  disable:
-    - len
-
+    disable-all: false
+    enable:
+        - bool-compare
+        - float-compare
+        - empty
+        - len
+        - compares
+        - error
+        - error-is
+        - require-error
+        - expected-actual
+    disable: []
 expected-actual:
-  pattern: (^exp$|^expected$|^exp[A-Z0-9].*|^expected[A-Z0-9].*|.*[a-z0-9]Exp$|.*[a-z0-9]Expected$|^want$|^wanted$|^want[A-Z0-9].*|^wanted[A-Z0-9].*|.*[a-z0-9]Want$|.*[a-z0-9]Wanted$)
+    pattern: (^exp$|^expected$|^exp[A-Z0-9].*|^expected[A-Z0-9].*|.*[a-z0-9]Exp$|.*[a-z0-9]Expected$|^want$|^wanted$|^want[A-Z0-9].*|^wanted[A-Z0-9].*|.*[a-z0-9]Want$|.*[a-z0-9]Wanted$)

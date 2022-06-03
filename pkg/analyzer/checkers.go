@@ -10,11 +10,11 @@ import (
 
 // newCheckers accepts validated config and returns slice of enabled checkers.
 func newCheckers(cfg config.Config) []checker.Checker {
-	var result []checker.Checker
+	enabledByDefault := checker.EnabledByDefaultCheckers()
+	result := make([]checker.Checker, 0, len(enabledByDefault))
 
-	knownCheckers := checker.KnownCheckers()
-	enabledCheckers := make(map[string]struct{}, len(knownCheckers))
-	for _, ch := range knownCheckers {
+	enabledCheckers := make(map[string]struct{}, len(enabledByDefault))
+	for _, ch := range enabledByDefault {
 		enabledCheckers[ch] = struct{}{}
 	}
 

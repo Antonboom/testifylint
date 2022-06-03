@@ -1,8 +1,12 @@
-package checker
+package checker_test
 
-import "testing"
+import (
+	"testing"
 
-func Test_defaultExpectedVarPattern(t *testing.T) {
+	"github.com/Antonboom/testifylint/internal/checker"
+)
+
+func TestDefaultExpectedVarPattern(t *testing.T) {
 	cases := []struct {
 		ident   string
 		matched bool
@@ -43,7 +47,7 @@ func Test_defaultExpectedVarPattern(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.ident, func(t *testing.T) {
-			if b := defaultExpectedVarPattern.MatchString(tt.ident); b != tt.matched {
+			if b := checker.DefaultExpectedVarPattern.MatchString(tt.ident); b != tt.matched {
 				t.Errorf("%q: incorrect regexp", tt.ident)
 			}
 		})

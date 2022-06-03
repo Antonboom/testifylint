@@ -9,7 +9,7 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-var defaultExpectedVarPattern = regexp.MustCompile(strings.ReplaceAll(`(
+var DefaultExpectedVarPattern = regexp.MustCompile(strings.ReplaceAll(`(
 	^exp$|
 	^expected$|
 	^exp[A-Z0-9].*|
@@ -28,7 +28,7 @@ type ExpectedActual struct {
 }
 
 func NewExpectedActual() *ExpectedActual {
-	return &ExpectedActual{expPattern: defaultExpectedVarPattern}
+	return &ExpectedActual{expPattern: DefaultExpectedVarPattern}
 }
 
 func (ExpectedActual) Name() string {

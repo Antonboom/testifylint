@@ -48,3 +48,9 @@ tasks:
     cmds:
       - echo "Install..."
       - go install ./...
+
+  config:dump:
+    cmds:
+      - task: install
+      - echo "Dump config..."
+      -  testifylint -dump-config > config.example.yml

@@ -1,13 +1,43 @@
 package main
 
 import (
+	"flag"
+	"log"
+	"os"
+
 	"golang.org/x/tools/go/analysis/singlechecker"
 
 	"github.com/Antonboom/testifylint/pkg/analyzer"
+	"github.com/Antonboom/testifylint/pkg/config"
+)
+
+var (
+	configPath = flag.String("config", "", "path to config file (yml)")
+	dumpCfg    = flag.Bool("dump-config", false, "dump config example (yml) in stdout")
 )
 
 func main() {
-	singlechecker.Main(analyzer.New())
+	flag.Parse()
+
+	if *dumpCfg {
+		mustNil(config.Dump(config.Default, os.Stdout))
+		return
+	}
+
+	var cfg config.Config
+	if *configPath != "" {
+		var err error
+		cfg, err = config.ParseFromFile(*configPath)
+		mustNil(err)
+	}
+
+	singlechecker.Main(analyzer.New(cfg))
+}
+
+func mustNil(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // Assumptions:
@@ -18,26 +48,27 @@ func main() {
 // - not support exotic like eq := assert.Equal eq(1, 2)
 
 // Open for contribution:
-// - Empty with zerovalue
-// - Zero
-// - Negative
-// - HTTPCodeConstant + HTTPSuccess + HTTPError
-// - нейминг для теста, запускающего suite, а также его местоположение
+// - zero (чекает zero value)
+// - negative-positive
+// - http-error (HTTPSuccess + HTTPError)
+// - http-code-const
 // - float compare for structs with float comparisons
+// - suite-test-name
+// - equal-values
+// - no-error-contains
+// - no-equal-error
+//
 // - старайтесь, чтобы тестовые файлы не превышали 3к строк
+// - реализуйте интерфейс Disabled для выключения
+// - сначала пишите генератор тестов
+// (я осознаю, что местами тесты избыточны. но считаю, что тестов много не бывает)
+// - добавьте тест анализатора
+// - потом реализуйте чекер и укажите его в списке
 
 // TODO:
-// - поддержка алиасов
-// - тест на переоределённый builtint
-// - проверка наличия импортов
-// - проверка, что мы сейчас находимся в тестах
-// - проверка тестов в соответствии с каждым методом API
-// - fuzzy testing?
-// - написать генератор тестов
-// - проверить что при go get линтера не ставится лишнего
-// - описать правила контрибьютинга (чекер, генератор тестов)
+// - п
 // - TODO: кинуть issue во floatcompare о недостающих проверках
-// TODO: я осознаю, что местами тесты избыточны. но считаю, что тестов много не бывает :)
+// TODO:
 // todo: предлагаю решать по задачке в день, чтобы не утомляться и не становилось скучно и лень
 /*
 как дебагать
@@ -74,6 +105,8 @@ func main() {
 // todo: https://habr.com/ru/company/joom/blog/666440/
 
 // todo: дока к каждому чекеру
+// дампить конфиг
+// вывод приоритета линтеров, какие включены, какие выключены
 
 /*
 ❌	require.Nil(t, err)
@@ -105,7 +138,11 @@ https://github.com/golang/go/issues/20940
 
 
 таблика:
-линтер, пример, имеет ли автофикс
+линтер, пример, имеет ли автофикс, enabled by default
 
-вывод приоритета линтеров
+
+
+роверить что при go get линтера не ставится лишнего
+https://stackoverflow.com/questions/64071364/best-way-to-use-test-dependencies-in-go-but-prevent-export-them
+
 */

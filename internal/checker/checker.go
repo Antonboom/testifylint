@@ -29,3 +29,5 @@ type Checker interface {
 	Check(pass *analysis.Pass, call CallMeta)
 	Priority() int
 }
+
+type CallChecker interface{}

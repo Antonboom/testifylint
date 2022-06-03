@@ -86,6 +86,7 @@ linters:
     - stylecheck
     - tagliatelle
     - tenv
+    - testpackage
     - thelper
     - typecheck
     - unconvert
