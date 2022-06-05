@@ -2,6 +2,7 @@ checkers:
     disable-all: false
     enable:
         - bool-compare
+        - suite-dont-use-pkg
         - float-compare
         - empty
         - len

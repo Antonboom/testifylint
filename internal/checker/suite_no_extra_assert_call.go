@@ -35,7 +35,7 @@ func (checker SuiteNoExtraAssertCall) Check(pass *analysis.Pass, call CallMeta) 
 	if se.X == nil || !isSuiteObj(pass, se.X) {
 		return
 	}
-	if se.Sel != nil && se.Sel.Name != "Assert" {
+	if se.Sel == nil || se.Sel.Name != "Assert" {
 		return
 	}
 

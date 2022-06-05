@@ -140,7 +140,8 @@ func (tl *testifyLint) checkCall(ce *ast.CallExpr, pass *analysis.Pass, insideSu
 			Name:  fn,
 			IsFmt: strings.HasSuffix(fn, "f"),
 		},
-		Args: trimTArg(pass, ce.Args),
+		Args:    trimTArg(pass, ce.Args),
+		ArgsRaw: ce.Args,
 	}
 	for _, ch := range tl.checkers {
 		ch.Check(pass, call)

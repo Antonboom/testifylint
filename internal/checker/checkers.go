@@ -47,6 +47,7 @@ var (
 		NewFloatCompare(),
 		NewLen(),
 		NewRequireError(),
+		NewSuiteDontUsePkg(),
 		NewSuiteNoExtraAssertCall(),
 	}
 	checkersByName = make(map[string]Checker, len(allCheckers))
@@ -56,7 +57,7 @@ var (
 )
 
 func init() {
-	sort.Slice(allCheckers, func(i, j int) bool {
+	sort.SliceStable(allCheckers, func(i, j int) bool {
 		return allCheckers[i].Priority() < allCheckers[j].Priority()
 	})
 

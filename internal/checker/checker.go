@@ -17,6 +17,7 @@ type CallMeta struct {
 	SelectorStr       string
 	Fn                FnMeta
 	Args              []ast.Expr // Without t argument.
+	ArgsRaw           []ast.Expr
 }
 
 type FnMeta struct {

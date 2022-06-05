@@ -149,4 +149,6 @@ https://stackoverflow.com/questions/64071364/best-way-to-use-test-dependencies-i
 https://grep.app/search?q=make.%2A&regexp=true&filter[lang][0]=Go
 https://sourcegraph.com/search?q=context:global+t+testing.TB+count:1000000&patternType=literal
 
+
+ревью приоритетов чекеров
 */

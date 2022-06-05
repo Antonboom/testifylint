@@ -17,6 +17,7 @@ func TestAllCheckers(t *testing.T) {
 
 	expected := []string{
 		"bool-compare",
+		"suite-dont-use-pkg",
 		"float-compare",
 		"empty",
 		"len",
@@ -40,6 +41,7 @@ func TestEnabledByDefaultCheckers(t *testing.T) {
 
 	expected := []string{
 		"bool-compare",
+		"suite-dont-use-pkg",
 		"float-compare",
 		"empty",
 		"len",

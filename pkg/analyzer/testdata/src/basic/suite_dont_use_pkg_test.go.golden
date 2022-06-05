@@ -1,0 +1,35 @@
+package basic
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
+)
+
+type SuiteDontUsePackageSuite struct {
+	suite.Suite
+}
+
+func TestSuiteDontUsePackageSuite(t *testing.T) {
+	suite.Run(t, new(SuiteDontUsePackageSuite))
+}
+
+func (s *SuiteDontUsePackageSuite) TestAll() {
+	var b bool
+
+	s.True(b)                         // want "suite-dont-use-pkg: use s\\.True"
+	s.True(b, "msg")                  // want "suite-dont-use-pkg: use s\\.True"
+	s.True(b, "msg with arg %d", 42)  // want "suite-dont-use-pkg: use s\\.True"
+	s.Truef(b, "msg")                 // want "suite-dont-use-pkg: use s\\.Truef"
+	s.Truef(b, "msg with arg %d", 42) // want "suite-dont-use-pkg: use s\\.Truef"
+
+	s.Require().False(b)                         // want "suite-dont-use-pkg: use s\\.Require\\(\\)\\.False"
+	s.Require().False(b, "msg")                  // want "suite-dont-use-pkg: use s\\.Require\\(\\)\\.False"
+	s.Require().False(b, "msg with arg %d", 42)  // want "suite-dont-use-pkg: use s\\.Require\\(\\)\\.False"
+	s.Require().Falsef(b, "msg")                 // want "suite-dont-use-pkg: use s\\.Require\\(\\)\\.Falsef"
+	s.Require().Falsef(b, "msg with arg %d", 42) // want "suite-dont-use-pkg: use s\\.Require\\(\\)\\.Falsef"
+
+	// Negative cases are covered by neighbour files.
+}
