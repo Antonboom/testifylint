@@ -10,12 +10,13 @@ import (
 //   assert.Equal(t, 42, result, "helpful comment")
 type CallMeta struct {
 	analysis.Range
-	Selector    *ast.SelectorExpr
-	IsAssert    bool
-	IsRequire   bool
-	SelectorStr string
-	Fn          FnMeta
-	Args        []ast.Expr // Without t argument.
+	Selector          *ast.SelectorExpr
+	IsAssert          bool
+	IsRequire         bool
+	InsideSuiteMethod bool
+	SelectorStr       string
+	Fn                FnMeta
+	Args              []ast.Expr // Without t argument.
 }
 
 type FnMeta struct {
@@ -26,8 +27,6 @@ type FnMeta struct {
 
 type Checker interface {
 	Name() string
-	Check(pass *analysis.Pass, call CallMeta)
 	Priority() int
+	Check(pass *analysis.Pass, call CallMeta)
 }
-
-type CallChecker interface{}

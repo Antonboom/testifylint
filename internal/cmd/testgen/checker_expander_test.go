@@ -1,4 +1,4 @@
-package main
+package main //nolint:testpackage
 
 import "testing"
 
@@ -464,6 +464,28 @@ r.Error(t, err, errSentinel, "msg with arg %d", 42) // want "invalid usage of r\
 			expectedGolden: `r.ErrorIs(t, err, errSentinel) // want "invalid usage of r\\.Error, use r\\.ErrorIs instead"
 r.ErrorIs(t, err, errSentinel, "msg") // want "invalid usage of r\\.Error, use r\\.ErrorIs instead"
 r.ErrorIs(t, err, errSentinel, "msg with arg %d", 42) // want "invalid usage of r\\.Error, use r\\.ErrorIs instead"`,
+		},
+		{
+			check: Check{
+				Fn:               "True",
+				Argsf:            "b",
+				ReportMsgf:       "need to simplify the check",
+				ProposedSelector: "s",
+			},
+			selector:    "s.Assert()",
+			withoutTArg: true,
+
+			expected: `s.Assert().True(b) // want "need to simplify the check"
+s.Assert().True(b, "msg") // want "need to simplify the check"
+s.Assert().True(b, "msg with arg %d", 42) // want "need to simplify the check"
+s.Assert().Truef(b, "msg") // want "need to simplify the check"
+s.Assert().Truef(b, "msg with arg %d", 42) // want "need to simplify the check"`,
+
+			expectedGolden: `s.True(b) // want "need to simplify the check"
+s.True(b, "msg") // want "need to simplify the check"
+s.True(b, "msg with arg %d", 42) // want "need to simplify the check"
+s.Truef(b, "msg") // want "need to simplify the check"
+s.Truef(b, "msg with arg %d", 42) // want "need to simplify the check"`,
 		},
 	}
 

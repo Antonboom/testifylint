@@ -47,6 +47,7 @@ var (
 		NewFloatCompare(),
 		NewLen(),
 		NewRequireError(),
+		NewSuiteNoExtraAssertCall(),
 	}
 	checkersByName = make(map[string]Checker, len(allCheckers))
 

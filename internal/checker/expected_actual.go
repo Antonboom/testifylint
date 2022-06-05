@@ -31,13 +31,8 @@ func NewExpectedActual() *ExpectedActual {
 	return &ExpectedActual{expPattern: DefaultExpectedVarPattern}
 }
 
-func (ExpectedActual) Name() string {
-	return "expected-actual"
-}
-
-func (ExpectedActual) Priority() int {
-	return 9
-}
+func (ExpectedActual) Name() string  { return "expected-actual" }
+func (ExpectedActual) Priority() int { return 9 }
 
 func (checker *ExpectedActual) SetExpPattern(p *regexp.Regexp) {
 	checker.expPattern = p

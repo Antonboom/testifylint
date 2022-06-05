@@ -14,13 +14,8 @@ func NewCompares() Checker {
 	return Compares{}
 }
 
-func (Compares) Name() string {
-	return "compares"
-}
-
-func (Compares) Priority() int {
-	return 5
-}
+func (Compares) Name() string  { return "compares" }
+func (Compares) Priority() int { return 5 }
 
 func (checker Compares) Check(pass *analysis.Pass, call CallMeta) {
 	if len(call.Args) < 1 {

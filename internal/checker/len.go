@@ -14,13 +14,8 @@ func NewLen() Len {
 	return Len{}
 }
 
-func (Len) Name() string {
-	return "len"
-}
-
-func (Len) Priority() int {
-	return 4
-}
+func (Len) Name() string  { return "len" }
+func (Len) Priority() int { return 4 }
 
 func (checker Len) Check(pass *analysis.Pass, call CallMeta) {
 	switch call.Fn.Name {

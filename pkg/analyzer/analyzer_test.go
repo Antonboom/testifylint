@@ -21,12 +21,21 @@ func TestTestifyLint(t *testing.T) {
 	analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), analyzer.New(cfg), pkgs...)
 }
 
-func TestTestifyLint_RequireError(t *testing.T) {
-	cfg := config.Config{
-		Checkers: config.CheckersConfig{
-			DisableAll: true,
-			Enable:     []string{"require-error"},
-		},
+func TestTestifyLint_SpecificCheckers(t *testing.T) {
+	checkers := []string{
+		"require-error",
+		"suite-no-extra-assert-call",
 	}
-	analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), analyzer.New(cfg), "require-error")
+
+	for _, checker := range checkers {
+		t.Run(checker, func(t *testing.T) {
+			cfg := config.Config{
+				Checkers: config.CheckersConfig{
+					DisableAll: true,
+					Enable:     []string{checker},
+				},
+			}
+			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), analyzer.New(cfg), checker)
+		})
+	}
 }

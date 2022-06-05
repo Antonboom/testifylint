@@ -14,13 +14,8 @@ func NewEmpty() Empty {
 	return Empty{}
 }
 
-func (Empty) Name() string {
-	return "empty"
-}
-
-func (Empty) Priority() int {
-	return 3
-}
+func (Empty) Name() string  { return "empty" }
+func (Empty) Priority() int { return 3 }
 
 func (checker Empty) Check(pass *analysis.Pass, call CallMeta) {
 	checker.checkEmpty(pass, call)

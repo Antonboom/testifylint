@@ -64,7 +64,7 @@ package checker
 //// https://github.com/stretchr/testify/blob/77977386932ab1866a4b9556a7af1ae347531786/_codegen/main.go#L158
 //// https://github.com/gostaticanalysis/analysisutil/blob/ccfdecf515f47e636ba164ce0e5f26810eaf8747/pkg.go#L21
 //
-//func firstStmtIsTHelperCall(pass *analysis.Pass, rcvName string, rcvType types.Type, fn *ast.FuncDecl) bool {
+// func firstStmtIsTHelperCall(pass *analysis.Pass, rcvName string, rcvType types.Type, fn *ast.FuncDecl) bool {
 //	if fn.Body == nil {
 //		return false
 //	}

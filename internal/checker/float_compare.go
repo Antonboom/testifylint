@@ -13,13 +13,8 @@ func NewFloatCompare() FloatCompare {
 	return FloatCompare{}
 }
 
-func (FloatCompare) Name() string {
-	return "float-compare"
-}
-
-func (FloatCompare) Priority() int {
-	return 2
-}
+func (FloatCompare) Name() string  { return "float-compare" }
+func (FloatCompare) Priority() int { return 2 }
 
 func (checker FloatCompare) Check(pass *analysis.Pass, call CallMeta) {
 	invalid := func() bool {

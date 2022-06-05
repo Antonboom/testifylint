@@ -13,13 +13,8 @@ func NewError() Error {
 	return Error{}
 }
 
-func (Error) Name() string {
-	return "error"
-}
-
-func (Error) Priority() int {
-	return 6
-}
+func (Error) Name() string  { return "error" }
+func (Error) Priority() int { return 6 }
 
 func (checker Error) Check(pass *analysis.Pass, call CallMeta) {
 	if len(call.Args) < 1 {

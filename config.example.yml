@@ -10,6 +10,7 @@ checkers:
         - error-is
         - require-error
         - expected-actual
-    disable: []
+    disable:
+        - suite-no-extra-assert-call
 expected-actual:
     pattern: (^exp$|^expected$|^exp[A-Z0-9].*|^expected[A-Z0-9].*|.*[a-z0-9]Exp$|.*[a-z0-9]Expected$|^want$|^wanted$|^want[A-Z0-9].*|^wanted[A-Z0-9].*|.*[a-z0-9]Want$|.*[a-z0-9]Wanted$)

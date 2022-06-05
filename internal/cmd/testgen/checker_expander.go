@@ -39,6 +39,9 @@ func (e *CheckerExpander) Expand(check Check, selector string, argValues []strin
 	fn, args := check.Fn, check.Argsf
 
 	if e.asGolden {
+		if check.ProposedSelector != "" {
+			selector = check.ProposedSelector
+		}
 		if check.ProposedFn != "" {
 			fn = check.ProposedFn
 		}

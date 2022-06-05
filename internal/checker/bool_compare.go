@@ -14,13 +14,8 @@ func NewBoolCompare() BoolCompare {
 	return BoolCompare{}
 }
 
-func (BoolCompare) Name() string {
-	return "bool-compare"
-}
-
-func (BoolCompare) Priority() int {
-	return 1
-}
+func (BoolCompare) Name() string  { return "bool-compare" }
+func (BoolCompare) Priority() int { return 1 }
 
 func (checker BoolCompare) Check(pass *analysis.Pass, call CallMeta) {
 	const (

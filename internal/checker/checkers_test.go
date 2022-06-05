@@ -25,6 +25,7 @@ func TestAllCheckers(t *testing.T) {
 		"error-is",
 		"require-error",
 		"expected-actual",
+		"suite-no-extra-assert-call",
 	}
 	if !reflect.DeepEqual(checkers, expected) {
 		t.Fatalf("unexpected list: %#v", checkers)
@@ -57,7 +58,7 @@ func TestDisabledByDefaultCheckers(t *testing.T) {
 	checkers := checker.DisabledByDefaultCheckers()
 
 	expected := []string{
-		// For future.
+		"suite-no-extra-assert-call",
 	}
 	if !reflect.DeepEqual(checkers, expected) {
 		t.Fatalf("unexpected list: %#v", checkers)

@@ -8,13 +8,8 @@ func NewRequireError() RequireError {
 	return RequireError{}
 }
 
-func (RequireError) Name() string {
-	return "require-error"
-}
-
-func (RequireError) Priority() int {
-	return 8
-}
+func (RequireError) Name() string  { return "require-error" }
+func (RequireError) Priority() int { return 8 }
 
 func (checker RequireError) Check(pass *analysis.Pass, call CallMeta) {
 	switch call.Fn.Name {

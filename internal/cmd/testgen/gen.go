@@ -20,6 +20,7 @@ type Check struct {
 
 	ReportMsgf string //  "use %s.%s"
 
-	ProposedFn    string // "InDelta"
-	ProposedArgsf string // %s, %s, 0.0001"
+	ProposedSelector string
+	ProposedFn       string // "InDelta"
+	ProposedArgsf    string // %s, %s, 0.0001"
 }

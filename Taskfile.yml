@@ -9,9 +9,10 @@ tasks:
       - task: tools:install
       - task: tidy
       - task: fmt
-      - task: lint
+#      - task: lint
       - task: tests
       - task: install
+      - task: config:dump
 
   tools:install:
     - echo "Install local tools..."
@@ -51,6 +52,5 @@ tasks:
 
   config:dump:
     cmds:
-      - task: install
       - echo "Dump config..."
-      -  testifylint -dump-config > config.example.yml
+      - testifylint -dump-config > config.example.yml

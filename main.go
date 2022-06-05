@@ -57,6 +57,7 @@ func mustNil(err error) {
 // - equal-values
 // - no-error-contains
 // - no-equal-error
+// - elements-match
 //
 // - старайтесь, чтобы тестовые файлы не превышали 3к строк
 // - реализуйте интерфейс Disabled для выключения
@@ -144,5 +145,8 @@ https://github.com/golang/go/issues/20940
 
 роверить что при go get линтера не ставится лишнего
 https://stackoverflow.com/questions/64071364/best-way-to-use-test-dependencies-in-go-but-prevent-export-them
+
+https://grep.app/search?q=make.%2A&regexp=true&filter[lang][0]=Go
+https://sourcegraph.com/search?q=context:global+t+testing.TB+count:1000000&patternType=literal
 
 */
