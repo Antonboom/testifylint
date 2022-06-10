@@ -1,24 +1,17 @@
-package analyzer
+package analysisutil
 
 import (
 	"go/ast"
 	"go/types"
 	"strconv"
 	"strings"
-
-	"golang.org/x/tools/go/analysis"
 )
 
-func isPkg(pkg *types.Package, name, path string) bool {
+func IsPkg(pkg *types.Package, name, path string) bool {
 	return pkg.Name() == name && trimVendor(pkg.Path()) == path
 }
 
-func isTestFile(pass *analysis.Pass, file *ast.File) bool {
-	fname := pass.Fset.Position(file.Pos()).Filename
-	return strings.HasSuffix(fname, "_test.go")
-}
-
-func imports(file *ast.File, pkg string) bool {
+func Imports(file *ast.File, pkg string) bool {
 	for _, i := range file.Imports {
 		if i.Path == nil {
 			continue

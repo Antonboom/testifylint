@@ -1,6 +1,7 @@
 package analyzer
 
 import (
+	"fmt"
 	"regexp"
 	"sort"
 
@@ -8,8 +9,8 @@ import (
 	"github.com/Antonboom/testifylint/pkg/config"
 )
 
-// newCheckers accepts validated config and returns slice of enabled checkers.
-func newCheckers(cfg config.Config) []checker.Checker {
+// newCheckers accepts validated config and returns slices of enabled checkers.
+func newCheckers(cfg config.Config) ([]checker.CallChecker, []checker.AdvancedChecker) {
 	enabledByDefault := checker.EnabledByDefaultCheckers()
 	result := make([]checker.Checker, 0, len(enabledByDefault))
 
@@ -47,5 +48,19 @@ func newCheckers(cfg config.Config) []checker.Checker {
 	sort.Slice(result, func(i, j int) bool {
 		return result[i].Priority() < result[j].Priority()
 	})
-	return result
+
+	callCheckers := make([]checker.CallChecker, 0, len(result))
+	advancedCheckers := make([]checker.AdvancedChecker, 0, len(result))
+	for _, ch := range result {
+		switch casted := ch.(type) {
+		case checker.CallChecker:
+			callCheckers = append(callCheckers, casted)
+		case checker.AdvancedChecker:
+			advancedCheckers = append(advancedCheckers, casted)
+		default:
+			panic(fmt.Sprintf("checker without core logic: %s (%T)", ch.Name(), ch))
+		}
+	}
+
+	return callCheckers, advancedCheckers
 }

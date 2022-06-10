@@ -5,6 +5,8 @@ import (
 	"go/ast"
 
 	"golang.org/x/tools/go/analysis"
+
+	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
 type SuiteDontUsePkg struct{}
@@ -38,7 +40,7 @@ func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call CallMeta) {
 	if !ok {
 		return
 	}
-	if se.X == nil || !isSuiteObj(pass, se.X) {
+	if se.X == nil || !analysisutil.IsSuiteObj(pass, se.X) {
 		return
 	}
 	if se.Sel == nil || se.Sel.Name != "T" {

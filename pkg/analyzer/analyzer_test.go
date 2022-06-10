@@ -25,6 +25,7 @@ func TestTestifyLint_SpecificCheckers(t *testing.T) {
 	checkers := []string{
 		"require-error",
 		"suite-no-extra-assert-call",
+		"suite-thelper",
 	}
 
 	for _, checker := range checkers {

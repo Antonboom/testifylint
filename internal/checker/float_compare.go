@@ -30,8 +30,10 @@ func (checker FloatCompare) Check(pass *analysis.Pass, call CallMeta) {
 		return false
 	}()
 
+	// TODO: remove all кроме Equal, True( == ), False (!=)
+
 	if invalid {
-		r.ReportUseFunction(pass, checker.Name(), call, "InDelta", nil)
+		r.ReportUseFunction(pass, checker.Name(), call, "InDelta", nil) // TODO: or InEpsilon
 	}
 }
 

@@ -2,7 +2,6 @@ package checker
 
 import (
 	"go/ast"
-	"go/types"
 
 	"golang.org/x/tools/go/analysis"
 
@@ -15,9 +14,9 @@ func NewSuiteNoExtraAssertCall() SuiteNoExtraAssertCall {
 	return SuiteNoExtraAssertCall{}
 }
 
-func (SuiteNoExtraAssertCall) Name() string            { return "suite-no-extra-assert-call" }
-func (SuiteNoExtraAssertCall) Priority() int           { return 9 }
-func (SuiteNoExtraAssertCall) DisabledByDefault() bool { return true }
+func (SuiteNoExtraAssertCall) Name() string       { return "suite-no-extra-assert-call" }
+func (SuiteNoExtraAssertCall) Priority() int      { return 9 }
+func (SuiteNoExtraAssertCall) DisabledByDefault() { return }
 
 func (checker SuiteNoExtraAssertCall) Check(pass *analysis.Pass, call CallMeta) {
 	if !call.InsideSuiteMethod {
@@ -32,7 +31,7 @@ func (checker SuiteNoExtraAssertCall) Check(pass *analysis.Pass, call CallMeta) 
 	if !ok {
 		return
 	}
-	if se.X == nil || !isSuiteObj(pass, se.X) {
+	if se.X == nil || !analysisutil.IsSuiteObj(pass, se.X) {
 		return
 	}
 	if se.Sel == nil || se.Sel.Name != "Assert" {
@@ -47,16 +46,4 @@ func (checker SuiteNoExtraAssertCall) Check(pass *analysis.Pass, call CallMeta) 
 			NewText: []byte(""),
 		}},
 	})
-}
-
-func isSuiteObj(pass *analysis.Pass, rcv ast.Expr) bool {
-	suiteIface := analysisutil.ObjectOf(pass, "github.com/stretchr/testify/suite", "TestingSuite")
-	if suiteIface == nil {
-		return false
-	}
-
-	return types.Implements(
-		pass.TypesInfo.TypeOf(rcv),
-		suiteIface.Type().Underlying().(*types.Interface),
-	)
 }

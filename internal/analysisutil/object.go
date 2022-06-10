@@ -2,11 +2,12 @@ package analysisutil
 
 import (
 	"go/types"
-	"strings"
 
 	"golang.org/x/tools/go/analysis"
 )
 
+// ObjectOf returns types.Object for the given package and name
+// and nil if the object is not found.
 func ObjectOf(pass *analysis.Pass, pkg, name string) types.Object {
 	if pass.Pkg.Path() == pkg {
 		return pass.Pkg.Scope().Lookup(name)
@@ -18,11 +19,4 @@ func ObjectOf(pass *analysis.Pass, pkg, name string) types.Object {
 		}
 	}
 	return nil
-}
-
-func trimVendor(path string) string {
-	if strings.HasPrefix(path, "vendor/") {
-		return path[len("vendor/"):]
-	}
-	return path
 }

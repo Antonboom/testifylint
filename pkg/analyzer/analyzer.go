@@ -21,8 +21,10 @@ const (
 
 // New accepts validated config.Config and returns testifylint analyzer.
 func New(cfg config.Config) *analysis.Analyzer {
+	callCheckers, advancedCheckers := newCheckers(cfg)
 	tl := &testifyLint{
-		checkers: newCheckers(cfg),
+		callCheckers:     callCheckers,
+		advancedCheckers: advancedCheckers,
 	}
 	return &analysis.Analyzer{
 		Name:     name,
@@ -33,36 +35,42 @@ func New(cfg config.Config) *analysis.Analyzer {
 }
 
 type testifyLint struct {
-	checkers []checker.Checker
+	callCheckers     []checker.CallChecker
+	advancedCheckers []checker.AdvancedChecker
 }
 
 func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
 	insp := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 
 	for _, f := range pass.Files {
-		if !isTestFile(pass, f) {
+		if !analysisutil.IsTestFile(pass, f) {
 			continue
 		}
 
-		if imports(f, "github.com/stretchr/testify/assert") ||
-			imports(f, "github.com/stretchr/testify/require") ||
-			imports(f, "github.com/stretchr/testify/suite") {
+		if analysisutil.Imports(f, "github.com/stretchr/testify/assert") ||
+			analysisutil.Imports(f, "github.com/stretchr/testify/require") ||
+			analysisutil.Imports(f, "github.com/stretchr/testify/suite") {
+
 			insp.Nodes([]ast.Node{
 				(*ast.CallExpr)(nil),
 				(*ast.FuncDecl)(nil),
-			}, tl.newCheckersRunner(pass))
+			}, tl.newCallCheckersRunner(pass))
+
+			for _, ch := range tl.advancedCheckers {
+				ch.Check(pass, insp)
+			}
 		}
 	}
 	return nil, nil
 }
 
-func (tl *testifyLint) newCheckersRunner(pass *analysis.Pass) func(ast.Node, bool) bool {
+func (tl *testifyLint) newCallCheckersRunner(pass *analysis.Pass) func(ast.Node, bool) bool {
 	var insideSuiteMethod bool
 
 	return func(node ast.Node, push bool) (proceed bool) {
 		switch v := node.(type) {
 		case *ast.FuncDecl:
-			if isSuiteMethod(v, pass) {
+			if analysisutil.IsSuiteMethod(pass, v) {
 				if push {
 					insideSuiteMethod = true
 				} else {
@@ -75,23 +83,6 @@ func (tl *testifyLint) newCheckersRunner(pass *analysis.Pass) func(ast.Node, boo
 		}
 		return true
 	}
-}
-
-func isSuiteMethod(fDecl *ast.FuncDecl, pass *analysis.Pass) bool {
-	if fDecl.Recv == nil || len(fDecl.Recv.List) == 0 {
-		return false
-	}
-
-	suiteIface := analysisutil.ObjectOf(pass, "github.com/stretchr/testify/suite", "TestingSuite")
-	if suiteIface == nil {
-		return false
-	}
-
-	rcv := fDecl.Recv.List[0]
-	return types.Implements(
-		pass.TypesInfo.TypeOf(rcv.Type),
-		suiteIface.Type().Underlying().(*types.Interface),
-	)
 }
 
 func (tl *testifyLint) checkCall(ce *ast.CallExpr, pass *analysis.Pass, insideSuiteMethod bool) {
@@ -122,8 +113,8 @@ func (tl *testifyLint) checkCall(ce *ast.CallExpr, pass *analysis.Pass, insideSu
 		return
 	}
 
-	isAssert := isPkg(pkg, "assert", "github.com/stretchr/testify/assert")
-	isRequire := isPkg(pkg, "require", "github.com/stretchr/testify/require")
+	isAssert := analysisutil.IsPkg(pkg, "assert", "github.com/stretchr/testify/assert")
+	isRequire := analysisutil.IsPkg(pkg, "require", "github.com/stretchr/testify/require")
 	if !(isAssert || isRequire) {
 		return
 	}
@@ -143,7 +134,7 @@ func (tl *testifyLint) checkCall(ce *ast.CallExpr, pass *analysis.Pass, insideSu
 		Args:    trimTArg(pass, ce.Args),
 		ArgsRaw: ce.Args,
 	}
-	for _, ch := range tl.checkers {
+	for _, ch := range tl.callCheckers {
 		ch.Check(pass, call)
 	}
 }
@@ -153,22 +144,8 @@ func trimTArg(pass *analysis.Pass, args []ast.Expr) []ast.Expr {
 		return args
 	}
 
-	if isTestingTPtr(pass, args[0]) {
+	if analysisutil.IsTestingTPtr(pass, args[0]) {
 		return args[1:]
 	}
 	return args
-}
-
-func isTestingTPtr(pass *analysis.Pass, arg ast.Expr) bool {
-	ttObj := analysisutil.ObjectOf(pass, "testing", "T")
-	if ttObj == nil {
-		return false
-	}
-
-	argType := pass.TypesInfo.TypeOf(arg)
-	if argType == nil {
-		return false
-	}
-
-	return types.Identical(argType, types.NewPointer(ttObj.Type()))
 }

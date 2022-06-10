@@ -4,6 +4,7 @@ import (
 	"go/ast"
 
 	"golang.org/x/tools/go/analysis"
+	"golang.org/x/tools/go/ast/inspector"
 )
 
 // CallMeta stores meta info about assert function/method call, for example
@@ -29,5 +30,14 @@ type FnMeta struct {
 type Checker interface {
 	Name() string
 	Priority() int
+}
+
+type CallChecker interface {
+	Checker
 	Check(pass *analysis.Pass, call CallMeta)
+}
+
+type AdvancedChecker interface {
+	Checker
+	Check(pass *analysis.Pass, inspector *inspector.Inspector)
 }

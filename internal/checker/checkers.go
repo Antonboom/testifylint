@@ -49,6 +49,7 @@ var (
 		NewRequireError(),
 		NewSuiteDontUsePkg(),
 		NewSuiteNoExtraAssertCall(),
+		NewSuiteTHelper(),
 	}
 	checkersByName = make(map[string]Checker, len(allCheckers))
 
@@ -80,7 +81,7 @@ func buildCheckersByName() {
 }
 
 type disabler interface {
-	DisabledByDefault() bool
+	DisabledByDefault()
 }
 
 func buildEnabledByDefault() {
@@ -88,7 +89,7 @@ func buildEnabledByDefault() {
 	disabledByDefault = make([]Checker, 0, len(allCheckers))
 
 	for _, ch := range allCheckers {
-		if v, ok := ch.(disabler); ok && v.DisabledByDefault() {
+		if _, ok := ch.(disabler); ok {
 			disabledByDefault = append(disabledByDefault, ch)
 		} else {
 			enabledByDefault = append(enabledByDefault, ch)
