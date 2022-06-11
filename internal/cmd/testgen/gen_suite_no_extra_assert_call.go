@@ -40,7 +40,7 @@ func (g SuiteNoExtraAssertCallCasesGenerator) GoldenTemplate() *template.Templat
 }
 
 const suiteNoExtraAssertCallCasesTmplText = header + `
-package basic
+package suitenoextraassertcall
 
 import (
 	"testing"

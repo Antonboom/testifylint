@@ -40,73 +40,13 @@ func mustNil(err error) {
 	}
 }
 
-// навести порядок с флагами!!
-
-// Assumptions:
-// - не работает, если алиас для функции сделали
-// - Empty проверяет только для сравнений len() == 0, не трогая zero value
-// - что делать, если функции ещё нет в testify (а линтер её просит)
-
-// TODO:
-// - п
-// - TODO: кинуть issue во floatcompare о недостающих проверках
-// TODO:
-// todo: предлагаю решать по задачке в день, чтобы не утомляться и не становилось скучно и лень
 /*
-как дебагать
-
-	if !strings.HasSuffix(pass.Fset.Position(expr.Range()).Filename, "float_compare_generated.go") {
-		return false
-	}
-*/
-// - сам линтер зависимостей не имеет (или по минимуму, например, нет testify)
-// кинуть issue Бакину о пресете test
-// TODO: https://github.com/ghetzel/hydra/blob/master/gen_test.go
-// TODO: issue, что floatcompare можно побороть с помощью generics
-// подебажить, какие Range лучше
-// suggested fixes: https://github.com/golang/tools/blob/master/go/analysis/doc/suggested_fixes.md
-// suite checkers only if suite imported
-
-// почему validateCheck не check.Validate? потому что чек не знает, что с ним будут делать
-
-// Как создавался этот линтер (ссылка на курс в ридми)
-
-// readme: имя чекера, пример, предлагаемый фикс, автоматический ли он
-
-// todo отказаться от ExprString
-
-// todo нашёл issue, пока реализовывал checker len
-
-// todo: все тесты на XOR вынести в отдельный testdata/src/strange, обратить пристальное внимание на ошибки в выражениях
-
-// тред о паниках: https://github.com/orgs/golangci/teams/team/discussions/33?from_comment=5
-// todo: https://habr.com/ru/company/joom/blog/666440/
-
-// todo: дока к каждому чекеру
-// дампить конфиг
-// вывод приоритета линтеров, какие включены, какие выключены
-
-/*
-
-
-Также стоит быть осторожнее при использовании горутин в тестах. require-проверки производятся через runtime.goexit(),
-так что они сработают ожидаемым образом только в основной горутине.
-https://github.com/golang/go/issues/20940
-
-не использовать equalError и ErrorContains
-(покрывается линтером forbidigo)
-
-CallChecker
-ComplexChecker
-
-
-
-роверить что при go get линтера не ставится лишнего
-https://stackoverflow.com/questions/64071364/best-way-to-use-test-dependencies-in-go-but-prevent-export-them
-
-https://grep.app/search?q=make.%2A&regexp=true&filter[lang][0]=Go
-https://sourcegraph.com/search?q=context:global+t+testing.TB+count:1000000&patternType=literal
-
-
-ревью приоритетов чекеров
+- навести порядок с флагами!!
+- бейдж доки, в доке чекеров пример ассерта и текста
+- TODO: https://github.com/ghetzel/hydra/blob/master/gen_test.go -> в тест
+- todo: все тесты на XOR вынести в отдельный testdata/src/strange, обратить пристальное внимание на ошибки в выражениях
+- подебажить, какие Range лучше
+тест, интересует ginkgo.T()
+https://github.com/kubernetes/ingress-nginx/blob/main/test/e2e/loadbalance/ewma.go
+- ревью приоритетов чекеров
 */

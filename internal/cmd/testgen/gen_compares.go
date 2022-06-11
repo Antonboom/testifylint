@@ -61,7 +61,7 @@ func (g ComparesCasesGenerator) GoldenTemplate() *template.Template {
 
 const comparesCasesTmplText = header + `
 
-package basic
+package compares
 
 import (
 	"testing"

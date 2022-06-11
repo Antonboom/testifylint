@@ -1,6 +1,7 @@
 package analyzer_test
 
 import (
+	"path/filepath"
 	"testing"
 
 	"golang.org/x/tools/go/analysis/analysistest"
@@ -16,13 +17,15 @@ func TestTestifyLint(t *testing.T) {
 		},
 	}
 	pkgs := []string{
-		"basic",
+		"negative",
+		//"pkg-alias",
 	}
 	analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), analyzer.New(cfg), pkgs...)
 }
 
-func TestTestifyLint_SpecificCheckers(t *testing.T) {
+func TestTestifyLint_SeparateCheckers(t *testing.T) {
 	checkers := []string{
+		"compares",
 		"require-error",
 		"suite-no-extra-assert-call",
 		"suite-thelper",
@@ -36,7 +39,8 @@ func TestTestifyLint_SpecificCheckers(t *testing.T) {
 					Enable:     []string{checker},
 				},
 			}
-			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), analyzer.New(cfg), checker)
+			path := filepath.Join("checkers", checker)
+			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), analyzer.New(cfg), path)
 		})
 	}
 }

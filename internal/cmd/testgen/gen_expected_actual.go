@@ -136,7 +136,7 @@ func (g ExpectedActualCasesGenerator) GoldenTemplate() *template.Template {
 
 const expectedActualCasesTmplText = header + `
 
-package basic
+package mostof
 
 import (
 	"testing"

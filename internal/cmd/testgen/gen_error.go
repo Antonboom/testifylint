@@ -65,7 +65,7 @@ func (g ErrorCasesGenerator) GoldenTemplate() *template.Template {
 // todo: исправить шаблон
 const errorCasesTmplText = header + `
 
-package basic
+package mostof
 
 import (
 	"io"

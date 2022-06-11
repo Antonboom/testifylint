@@ -8,7 +8,6 @@
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$" />
     <framework value="gotest" />
-    <pattern value="^\QTestTestifyLint\E$" />
     <method v="2" />
   </configuration>
 </component>

@@ -68,6 +68,13 @@ func (tl *testifyLint) newCallCheckersRunner(pass *analysis.Pass) func(ast.Node,
 	var insideSuiteMethod bool
 
 	return func(node ast.Node, push bool) (proceed bool) {
+		// An example of debugging the specific file.
+		/*
+			if !strings.HasSuffix(pass.Fset.Position(node.Pos()).Filename, "float_compare_generated.go") {
+				return false
+			}
+		*/
+
 		switch v := node.(type) {
 		case *ast.FuncDecl:
 			if analysisutil.IsSuiteMethod(pass, v) {

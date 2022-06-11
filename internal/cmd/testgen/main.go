@@ -6,22 +6,27 @@ import (
 	"go/format"
 	"io/ioutil"
 	"log"
+	"path/filepath"
 	"strings"
 	"text/template"
 )
 
 var generators = map[string]TestsGenerator{
-	"pkg/analyzer/testdata/src/basic/bool_compare_test.go":          BoolCompareCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/compares_test.go":              ComparesCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/empty_test.go":                 EmptyCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/error_test.go":                 ErrorCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/error_is_test.go":              ErrorIsCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/expected_actual_test.go":       ExpectedActualCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/float_compare_test.go":         FloatCompareCasesGenerator{},
-	"pkg/analyzer/testdata/src/basic/len_test.go":                   LenCasesGenerator{},
-	"pkg/analyzer/testdata/src/require-error/require_error_test.go": RequireErrorCasesGenerator{},
-	// Long key.
-	"pkg/analyzer/testdata/src/suite-no-extra-assert-call/suite_no_extra_assert_call_test.go": SuiteNoExtraAssertCallCasesGenerator{},
+	toCheckersPath("most-of", "bool_compare_test.go"):        BoolCompareCasesGenerator{},
+	toCheckersPath("compares", "compares_test.go"):           ComparesCasesGenerator{},
+	toCheckersPath("most-of", "empty_test.go"):               EmptyCasesGenerator{},
+	toCheckersPath("most-of", "error_test.go"):               ErrorCasesGenerator{},
+	toCheckersPath("most-of", "error_is_test.go"):            ErrorIsCasesGenerator{},
+	toCheckersPath("most-of", "expected_actual_test.go"):     ExpectedActualCasesGenerator{},
+	toCheckersPath("most-of", "float_compare_test.go"):       FloatCompareCasesGenerator{},
+	toCheckersPath("most-of", "len_test.go"):                 LenCasesGenerator{},
+	toCheckersPath("require-error", "require_error_test.go"): RequireErrorCasesGenerator{},
+	toCheckersPath("suite-no-extra-assert-call",
+		"suite_no_extra_assert_call_test.go"): SuiteNoExtraAssertCallCasesGenerator{},
+}
+
+func toCheckersPath(dirsFile ...string) string {
+	return filepath.Join(append([]string{"pkg", "analyzer", "testdata", "src", "checkers"}, dirsFile...)...)
 }
 
 func main() {

@@ -9,7 +9,7 @@ type FloatCompareCasesGenerator struct{}
 func (g FloatCompareCasesGenerator) Data() any {
 	const (
 		report     = "float-compare: use %s.%s"
-		proposedFn = "InDelta"
+		proposedFn = "InDelta (or InEpsilon)"
 	)
 
 	return struct {
@@ -24,33 +24,40 @@ func (g FloatCompareCasesGenerator) Data() any {
 		Objs:           []string{"assObj", "reqObj"},
 		SuiteSelectors: []string{"s", "s.Assert()", "assObj", "s.Require()", "reqObj"},
 		InvalidChecks: []Check{
-			{Fn: "Equal", Argsf: "42.42, a", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "NotEqual", Argsf: "b, cc.c", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "Greater", Argsf: "d, e", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "GreaterOrEqual", Argsf: "(*f).c, *g", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "Less", Argsf: "h.Calculate(), floatOp()", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "LessOrEqual", Argsf: "42.42, a", ReportMsgf: report, ProposedFn: proposedFn},
-
-			{Fn: "True", Argsf: "a == d", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "True", Argsf: "a != d", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "True", Argsf: "a > d", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "True", Argsf: "a >= d", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "True", Argsf: "a < d", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "True", Argsf: "a <= d", ReportMsgf: report, ProposedFn: proposedFn},
-
-			{Fn: "False", Argsf: "a == d", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "False", Argsf: "a != d", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "False", Argsf: "a > d", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "False", Argsf: "a >= d", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "False", Argsf: "a < d", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "False", Argsf: "a <= d", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "Equal", Argsf: "42.42, b", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "True", Argsf: "cc.c == a", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "False", Argsf: "h.Calculate() != floatOp()", ReportMsgf: report, ProposedFn: proposedFn},
 		},
 		ValidChecks: []Check{
+			{Fn: "NotEqual", Argsf: "b, cc.c"},
+			{Fn: "Greater", Argsf: "d, e"},
+			{Fn: "GreaterOrEqual", Argsf: "(*f).c, *g"},
+			{Fn: "Less", Argsf: "h.Calculate(), floatOp()"},
+			{Fn: "LessOrEqual", Argsf: "42.42, a"},
+
+			{Fn: "True", Argsf: "a != d"},
+			{Fn: "True", Argsf: "a > d"},
+			{Fn: "True", Argsf: "a >= d"},
+			{Fn: "True", Argsf: "a < d"},
+			{Fn: "True", Argsf: "a <= d"},
+
+			{Fn: "False", Argsf: "a == d"},
+			{Fn: "False", Argsf: "a > d"},
+			{Fn: "False", Argsf: "a >= d"},
+			{Fn: "False", Argsf: "a < d"},
+			{Fn: "False", Argsf: "a <= d"},
+
 			{Fn: "InDelta", Argsf: "42.42, a, 0.0001"},
 			{Fn: "InDelta", Argsf: "b, cc.c, 0.0001"},
 			{Fn: "InDelta", Argsf: "(*f).c, *g, 0.0001"},
 			{Fn: "InDelta", Argsf: "h.Calculate(), floatOp(), 0.0001"},
 			{Fn: "InDelta", Argsf: "42.42, a, 0.0001"},
+
+			{Fn: "InEpsilon", Argsf: "42.42, a, 0.01"},
+			{Fn: "InEpsilon", Argsf: "b, cc.c, 0.02"},
+			{Fn: "InEpsilon", Argsf: "(*f).c, *g, 0.03"},
+			{Fn: "InEpsilon", Argsf: "h.Calculate(), floatOp(), 0.04"},
+			{Fn: "InEpsilon", Argsf: "42.42, a, 0.05"},
 		},
 	}
 }
@@ -67,7 +74,7 @@ func (g FloatCompareCasesGenerator) GoldenTemplate() *template.Template {
 
 const floatCompareCasesTmplText = header + `
 
-package basic
+package mostof
 
 import (
 	"testing"

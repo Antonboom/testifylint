@@ -92,7 +92,7 @@ func (g BoolCompareCasesGenerator) GoldenTemplate() *template.Template {
 
 const boolCompareCasesTmplText = header + `
 
-package basic
+package mostof
 
 import (
 	"testing"

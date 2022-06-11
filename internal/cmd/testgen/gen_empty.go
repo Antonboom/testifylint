@@ -95,7 +95,7 @@ func (g EmptyCasesGenerator) GoldenTemplate() *template.Template {
 
 const emptyCasesTmplText = header + `
 
-package basic
+package mostof
 
 import (
 	"testing"

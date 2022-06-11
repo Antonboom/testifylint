@@ -54,7 +54,7 @@ func (g ErrorIsCasesGenerator) GoldenTemplate() *template.Template {
 
 const errorIsCasesTmplText = header + `
 
-package basic
+package mostof
 
 import (
 	"errors"

@@ -70,7 +70,7 @@ func (g LenCasesGenerator) GoldenTemplate() *template.Template {
 
 const lenCasesTmplText = header + `
 
-package basic
+package mostof
 
 import (
 	"testing"

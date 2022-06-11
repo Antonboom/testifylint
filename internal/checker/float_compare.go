@@ -2,6 +2,7 @@ package checker
 
 import (
 	"go/ast"
+	"go/token"
 	"go/types"
 
 	"golang.org/x/tools/go/analysis"
@@ -19,21 +20,20 @@ func (FloatCompare) Priority() int { return 2 }
 func (checker FloatCompare) Check(pass *analysis.Pass, call CallMeta) {
 	invalid := func() bool {
 		switch call.Fn.Name {
-		case "Equal", "Equalf", "NotEqual", "NotEqualf",
-			"Greater", "Greaterf", "GreaterOrEqual", "GreaterOrEqualf",
-			"Less", "Lessf", "LessOrEqual", "LessOrEqualf":
+		case "Equal", "Equalf":
 			return len(call.Args) >= 2 && isFloat(pass, call.Args[0]) && isFloat(pass, call.Args[1])
 
-		case "True", "Truef", "False", "Falsef":
-			return len(call.Args) >= 1 && isFloatCompare(pass, call.Args[0])
+		case "True", "Truef":
+			return len(call.Args) >= 1 && isFloatCompare(pass, call.Args[0], token.EQL)
+
+		case "False", "Falsef":
+			return len(call.Args) >= 1 && isFloatCompare(pass, call.Args[0], token.NEQ)
 		}
 		return false
 	}()
 
-	// TODO: remove all кроме Equal, True( == ), False (!=)
-
 	if invalid {
-		r.ReportUseFunction(pass, checker.Name(), call, "InDelta", nil) // TODO: or InEpsilon
+		r.ReportUseFunction(pass, checker.Name(), call, "InDelta (or InEpsilon)", nil)
 	}
 }
 
@@ -47,10 +47,10 @@ func isFloat(pass *analysis.Pass, expr ast.Expr) bool {
 	return ok && (bt.Info()&types.IsFloat > 0)
 }
 
-func isFloatCompare(p *analysis.Pass, e ast.Expr) bool {
+func isFloatCompare(p *analysis.Pass, e ast.Expr, op token.Token) bool {
 	be, ok := e.(*ast.BinaryExpr)
 	if !ok {
 		return false
 	}
-	return isFloat(p, be.X) && isFloat(p, be.Y)
+	return be.Op == op && xor(isFloat(p, be.X), isFloat(p, be.Y))
 }
