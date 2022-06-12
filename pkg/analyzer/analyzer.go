@@ -50,7 +50,6 @@ func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
 		if analysisutil.Imports(f, "github.com/stretchr/testify/assert") ||
 			analysisutil.Imports(f, "github.com/stretchr/testify/require") ||
 			analysisutil.Imports(f, "github.com/stretchr/testify/suite") {
-
 			insp.Nodes([]ast.Node{
 				(*ast.CallExpr)(nil),
 				(*ast.FuncDecl)(nil),
@@ -68,12 +67,9 @@ func (tl *testifyLint) newCallCheckersRunner(pass *analysis.Pass) func(ast.Node,
 	var insideSuiteMethod bool
 
 	return func(node ast.Node, push bool) (proceed bool) {
-		// An example of debugging the specific file.
-		/*
-			if !strings.HasSuffix(pass.Fset.Position(node.Pos()).Filename, "float_compare_generated.go") {
-				return false
-			}
-		*/
+		if skipFile(pass, node) {
+			return false
+		}
 
 		switch v := node.(type) {
 		case *ast.FuncDecl:
@@ -90,6 +86,10 @@ func (tl *testifyLint) newCallCheckersRunner(pass *analysis.Pass) func(ast.Node,
 		}
 		return true
 	}
+}
+
+func skipFile(pass *analysis.Pass, node ast.Node) bool {
+	return false
 }
 
 func (tl *testifyLint) checkCall(ce *ast.CallExpr, pass *analysis.Pass, insideSuiteMethod bool) {

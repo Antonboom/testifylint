@@ -16,7 +16,7 @@ func NewSuiteNoExtraAssertCall() SuiteNoExtraAssertCall {
 
 func (SuiteNoExtraAssertCall) Name() string       { return "suite-no-extra-assert-call" }
 func (SuiteNoExtraAssertCall) Priority() int      { return 9 }
-func (SuiteNoExtraAssertCall) DisabledByDefault() { return }
+func (SuiteNoExtraAssertCall) DisabledByDefault() {}
 
 func (checker SuiteNoExtraAssertCall) Check(pass *analysis.Pass, call CallMeta) {
 	if !call.InsideSuiteMethod {

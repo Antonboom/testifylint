@@ -7,10 +7,13 @@ import (
 	"strings"
 )
 
+// IsPkg checks that pkg has provided name & path.
+// Supports vendored packages.
 func IsPkg(pkg *types.Package, name, path string) bool {
 	return pkg.Name() == name && trimVendor(pkg.Path()) == path
 }
 
+// Imports tells if the file imports the pkg.
 func Imports(file *ast.File, pkg string) bool {
 	for _, i := range file.Imports {
 		if i.Path == nil {
@@ -21,8 +24,7 @@ func Imports(file *ast.File, pkg string) bool {
 		if err != nil {
 			continue
 		}
-
-		if trimVendor(path) == pkg {
+		if path == pkg {
 			return true
 		}
 	}

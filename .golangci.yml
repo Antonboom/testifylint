@@ -12,6 +12,10 @@ issues:
         - lll
 
 linters-settings:
+  gocritic:
+    disabled-checks:
+      - singleCaseSwitch
+
   gosec:
     excludes:
       - "G306" # Expect WriteFile permissions to be 0600 or less
@@ -50,7 +54,6 @@ linters:
     - gci
     - goconst
     - gocritic
-    - gocyclo
     - godot
     - godox
     - gofmt

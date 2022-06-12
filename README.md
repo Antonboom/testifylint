@@ -230,6 +230,7 @@ Dump config...
 
 ### Global
 - find a way to opt out of the `types.ExprString`.
+- TODO: исследовать переход на perpass reporter
 
 ### empty (existent checker)
 Add config like
@@ -262,6 +263,9 @@ type Tx struct {
 ✅   assert.Equal(t, "xxx", tx.ID)
      assert.InDelta(t, 0.9643, tx.Score, 0.0001)
 ```
+
+// TODO: slices
+// require.Equal(t, [4]float64{0, .50, .50, 0}, rs.Column)
 
 2) Support other cases
 ```go

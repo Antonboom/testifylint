@@ -3,6 +3,7 @@ package checker
 import (
 	"fmt"
 	"go/token"
+	"sync"
 
 	"golang.org/x/tools/go/analysis"
 )
@@ -15,11 +16,15 @@ type positionID struct {
 }
 
 type reporter struct {
-	cache map[positionID]struct{}
+	cache   map[positionID]struct{}
+	cacheMu *sync.Mutex
 }
 
 func newReporter() *reporter {
-	return &reporter{cache: map[positionID]struct{}{}}
+	return &reporter{
+		cache:   map[positionID]struct{}{},
+		cacheMu: new(sync.Mutex),
+	}
 }
 
 func (r *reporter) ReportUseFunction(
@@ -58,6 +63,9 @@ func (r *reporter) Report(pass *analysis.Pass, checker string, rng analysis.Rang
 	if !rng.Pos().IsValid() || !rng.End().IsValid() {
 		panic("invalid report position")
 	}
+
+	r.cacheMu.Lock()
+	defer r.cacheMu.Unlock()
 
 	posID := positionID{pkg: pass.Pkg.String(), pos: rng.Pos()}
 	if _, ok := r.cache[posID]; ok {

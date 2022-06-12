@@ -13,12 +13,16 @@ import (
 func TestTestifyLint(t *testing.T) {
 	cfg := config.Config{
 		Checkers: config.CheckersConfig{
-			Disable: []string{"require-error"},
+			Disable: []string{
+				"compares",
+				"require-error",
+			},
 		},
 	}
 	pkgs := []string{
+		filepath.Join("checkers", "most-of"),
 		"negative",
-		//"pkg-alias",
+		// "pkg-alias",
 	}
 	analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), analyzer.New(cfg), pkgs...)
 }

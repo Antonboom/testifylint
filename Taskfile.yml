@@ -9,7 +9,7 @@ tasks:
       - task: tools:install
       - task: tidy
       - task: fmt
-#      - task: lint
+      - task: lint
       - task: tests
       - task: install
       - task: config:dump
@@ -43,7 +43,7 @@ tasks:
   tests:coverage:
     cmds:
       - echo "Tests with coverage..."
-      - go test -coverprofile=coverage.out ./...
+      - go test -coverpkg ./internal/analysisutil,./internal/checker,./pkg/... -coverprofile=coverage.out ./...
 
   install:
     cmds:

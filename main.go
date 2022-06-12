@@ -24,11 +24,12 @@ func main() {
 		return
 	}
 
-	var cfg config.Config
+	cfg := config.Default
 	if *configPath != "" {
 		var err error
 		cfg, err = config.ParseFromFile(*configPath)
 		mustNil(err)
+		mustNil(config.Validate(cfg))
 	}
 
 	singlechecker.Main(analyzer.New(cfg))
@@ -41,7 +42,7 @@ func mustNil(err error) {
 }
 
 /*
-- навести порядок с флагами!!
+- Flags Issue: https://github.com/golang/go/issues/53336
 - бейдж доки, в доке чекеров пример ассерта и текста
 - TODO: https://github.com/ghetzel/hydra/blob/master/gen_test.go -> в тест
 - todo: все тесты на XOR вынести в отдельный testdata/src/strange, обратить пристальное внимание на ошибки в выражениях

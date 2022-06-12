@@ -20,7 +20,7 @@ func NewSuiteTHelper() SuiteTHelper {
 
 func (SuiteTHelper) Name() string       { return "suite-thelper" }
 func (SuiteTHelper) Priority() int      { return 11 }
-func (SuiteTHelper) DisabledByDefault() { return }
+func (SuiteTHelper) DisabledByDefault() {}
 
 func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Inspector) {
 	inspector.Preorder([]ast.Node{(*ast.FuncDecl)(nil)}, func(node ast.Node) {

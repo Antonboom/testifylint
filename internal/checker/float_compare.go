@@ -21,13 +21,13 @@ func (checker FloatCompare) Check(pass *analysis.Pass, call CallMeta) {
 	invalid := func() bool {
 		switch call.Fn.Name {
 		case "Equal", "Equalf":
-			return len(call.Args) >= 2 && isFloat(pass, call.Args[0]) && isFloat(pass, call.Args[1])
+			return len(call.Args) > 1 && isFloat(pass, call.Args[0]) && isFloat(pass, call.Args[1])
 
 		case "True", "Truef":
-			return len(call.Args) >= 1 && isFloatCompare(pass, call.Args[0], token.EQL)
+			return len(call.Args) > 0 && isFloatCompare(pass, call.Args[0], token.EQL)
 
 		case "False", "Falsef":
-			return len(call.Args) >= 1 && isFloatCompare(pass, call.Args[0], token.NEQ)
+			return len(call.Args) > 0 && isFloatCompare(pass, call.Args[0], token.NEQ)
 		}
 		return false
 	}()
@@ -52,5 +52,5 @@ func isFloatCompare(p *analysis.Pass, e ast.Expr, op token.Token) bool {
 	if !ok {
 		return false
 	}
-	return be.Op == op && xor(isFloat(p, be.X), isFloat(p, be.Y))
+	return be.Op == op && (isFloat(p, be.X) || isFloat(p, be.Y))
 }
