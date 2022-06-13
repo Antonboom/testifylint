@@ -39,7 +39,7 @@ func newCheckers(cfg config.Config) ([]checker.CallChecker, []checker.AdvancedCh
 		switch c := ch.(type) {
 		case *checker.ExpectedActual:
 			if p := cfg.ExpectedActual.Pattern; p != "" {
-				c.SetExpPattern(regexp.MustCompile(cfg.ExpectedActual.Pattern))
+				c.SetExpPattern(regexp.MustCompile(cfg.ExpectedActual.Pattern)) // Validated before.
 			}
 		}
 		result = append(result, ch)

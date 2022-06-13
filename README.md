@@ -209,7 +209,7 @@ Add the checker in `allCheckers` slice in [internal/checker/checkers.go](interna
 Add the `DisabledByDefault()` method to the checker to disable it by default.
 Set up the checker (if needed) in the [newCheckers](pkg/analyzer/checkers.go) function.
 
-4) Add new checker in `TestAllCheckers`, `TestEnabledByDefaultCheckers` and `TestDisabledByDefaultCheckers`.
+4) Add new checker in `Test_newCheckers`, `TestAllCheckers`, `TestEnabledByDefaultCheckers` and `TestDisabledByDefaultCheckers`.
 
 5) Run the `task` command from the project's root directory.
 ```bash

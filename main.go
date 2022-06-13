@@ -24,7 +24,7 @@ func main() {
 		return
 	}
 
-	cfg := config.Default
+	var cfg config.Config
 	if *configPath != "" {
 		var err error
 		cfg, err = config.ParseFromFile(*configPath)
@@ -43,11 +43,13 @@ func mustNil(err error) {
 
 /*
 - Flags Issue: https://github.com/golang/go/issues/53336
+- ругаться, если ни одного чекера не включено
+- expected-actual config test
 - бейдж доки, в доке чекеров пример ассерта и текста
 - TODO: https://github.com/ghetzel/hydra/blob/master/gen_test.go -> в тест
 - todo: все тесты на XOR вынести в отдельный testdata/src/strange, обратить пристальное внимание на ошибки в выражениях
 - подебажить, какие Range лучше
 тест, интересует ginkgo.T()
 https://github.com/kubernetes/ingress-nginx/blob/main/test/e2e/loadbalance/ewma.go
-- ревью приоритетов чекеров
+- ревью приоритетов чекеров, проверять при сборке, что приоритеты разные
 */

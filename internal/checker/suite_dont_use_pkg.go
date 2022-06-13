@@ -16,7 +16,7 @@ func NewSuiteDontUsePkg() SuiteDontUsePkg {
 }
 
 func (SuiteDontUsePkg) Name() string  { return "suite-dont-use-pkg" }
-func (SuiteDontUsePkg) Priority() int { return 1 }
+func (SuiteDontUsePkg) Priority() int { return 12 }
 
 func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call CallMeta) {
 	if !call.InsideSuiteMethod {

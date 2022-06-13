@@ -35,5 +35,7 @@ func Parse(in io.Reader) (cfg Config, err error) {
 }
 
 func Dump(cfg Config, out io.Writer) error {
-	return yaml.NewEncoder(out).Encode(cfg)
+	enc := yaml.NewEncoder(out)
+	enc.SetIndent(2)
+	return enc.Encode(cfg)
 }

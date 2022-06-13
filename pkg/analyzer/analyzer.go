@@ -88,7 +88,7 @@ func (tl *testifyLint) newCallCheckersRunner(pass *analysis.Pass) func(ast.Node,
 	}
 }
 
-func skipFile(pass *analysis.Pass, node ast.Node) bool {
+func skipFile(_ *analysis.Pass, _ ast.Node) bool {
 	return false
 }
 

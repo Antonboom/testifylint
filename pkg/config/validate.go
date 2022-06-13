@@ -20,7 +20,7 @@ func Validate(cfg Config) error {
 func validateCheckersConf(cfg CheckersConfig) error {
 	if cfg.DisableAll {
 		if len(cfg.Enable) == 0 {
-			return fmt.Errorf("all checkers were disabled, but no one checker was enabled: must enable at least one")
+			return fmt.Errorf("checkers.disable-all is true, but no one checker was enabled")
 		}
 
 		if len(cfg.Disable) != 0 {
@@ -30,7 +30,7 @@ func validateCheckersConf(cfg CheckersConfig) error {
 
 	for _, checkerName := range cfg.Enable {
 		if ok := checker.IsKnown(checkerName); !ok {
-			return fmt.Errorf("checkers.enable: unknown checker %v", checkerName)
+			return fmt.Errorf("checkers.enable: unknown checker %q", checkerName)
 		}
 	}
 
