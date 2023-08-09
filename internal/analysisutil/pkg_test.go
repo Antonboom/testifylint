@@ -94,7 +94,7 @@ func TestSimple(t *testing.T) {
 
 	f, err := parser.ParseFile(fset, "", src, parser.ImportsOnly)
 	if err != nil {
-		t.Fatal(err.Error())
+		t.Fatal(err)
 	}
 
 	t.Run("import", func(t *testing.T) {

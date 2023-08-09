@@ -3,11 +3,17 @@ package main
 import (
 	"strings"
 	"text/template"
+
+	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 type ComparesCasesGenerator struct{}
 
-func (g ComparesCasesGenerator) Data() any {
+func (ComparesCasesGenerator) CheckerName() string {
+	return checkers.ComparesCheckerName
+}
+
+func (ComparesCasesGenerator) Data() any {
 	const (
 		report = "compares: use %s.%s"
 	)
@@ -47,13 +53,13 @@ func (g ComparesCasesGenerator) Data() any {
 	}
 }
 
-func (g ComparesCasesGenerator) ErroredTemplate() *template.Template {
+func (ComparesCasesGenerator) ErroredTemplate() *template.Template {
 	return template.Must(template.New("ComparesCasesGenerator.ErroredTemplate").
 		Funcs(fm).
 		Parse(comparesCasesTmplText))
 }
 
-func (g ComparesCasesGenerator) GoldenTemplate() *template.Template {
+func (ComparesCasesGenerator) GoldenTemplate() *template.Template {
 	return template.Must(template.New("ComparesCasesGenerator.GoldenTemplate").
 		Funcs(fm).
 		Parse(strings.ReplaceAll(comparesCasesTmplText, "NewCheckerExpander", "NewCheckerExpander.AsGolden")))

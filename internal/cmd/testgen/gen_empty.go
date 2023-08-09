@@ -3,11 +3,17 @@ package main
 import (
 	"strings"
 	"text/template"
+
+	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 type EmptyCasesGenerator struct{}
 
-func (g EmptyCasesGenerator) Data() any {
+func (EmptyCasesGenerator) CheckerName() string {
+	return checkers.EmptyCheckerName
+}
+
+func (EmptyCasesGenerator) Data() any {
 	const (
 		report = "empty: use %s.%s"
 	)
@@ -81,13 +87,13 @@ func (g EmptyCasesGenerator) Data() any {
 	}
 }
 
-func (g EmptyCasesGenerator) ErroredTemplate() *template.Template {
+func (EmptyCasesGenerator) ErroredTemplate() *template.Template {
 	return template.Must(template.New("EmptyCasesGenerator.ErroredTemplate").
 		Funcs(fm).
 		Parse(emptyCasesTmplText))
 }
 
-func (g EmptyCasesGenerator) GoldenTemplate() *template.Template {
+func (EmptyCasesGenerator) GoldenTemplate() *template.Template {
 	return template.Must(template.New("EmptyCasesGenerator.GoldenTemplate").
 		Funcs(fm).
 		Parse(strings.ReplaceAll(emptyCasesTmplText, "NewCheckerExpander", "NewCheckerExpander.AsGolden")))

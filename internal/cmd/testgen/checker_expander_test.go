@@ -1,4 +1,4 @@
-package main //nolint:testpackage
+package main
 
 import "testing"
 

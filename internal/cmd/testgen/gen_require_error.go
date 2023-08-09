@@ -2,11 +2,17 @@ package main
 
 import (
 	"text/template"
+
+	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 type RequireErrorCasesGenerator struct{}
 
-func (g RequireErrorCasesGenerator) Data() any {
+func (RequireErrorCasesGenerator) CheckerName() string {
+	return checkers.RequireErrorCheckerName
+}
+
+func (RequireErrorCasesGenerator) Data() any {
 	const (
 		report = "require-error: for error assertions use the `require` package"
 	)
@@ -58,13 +64,13 @@ func (g RequireErrorCasesGenerator) Data() any {
 	}
 }
 
-func (g RequireErrorCasesGenerator) ErroredTemplate() *template.Template {
+func (RequireErrorCasesGenerator) ErroredTemplate() *template.Template {
 	return template.Must(template.New("RequireErrorCasesGenerator.ErroredTemplate").
 		Funcs(fm).
 		Parse(requireErrorCasesTmplText))
 }
 
-func (g RequireErrorCasesGenerator) GoldenTemplate() *template.Template {
+func (RequireErrorCasesGenerator) GoldenTemplate() *template.Template {
 	return nil
 }
 

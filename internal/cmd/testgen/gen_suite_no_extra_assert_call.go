@@ -3,11 +3,17 @@ package main
 import (
 	"strings"
 	"text/template"
+
+	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 type SuiteNoExtraAssertCallCasesGenerator struct{}
 
-func (g SuiteNoExtraAssertCallCasesGenerator) Data() any {
+func (SuiteNoExtraAssertCallCasesGenerator) CheckerName() string {
+	return checkers.SuiteNoExtraAssertCallCheckerName
+}
+
+func (SuiteNoExtraAssertCallCasesGenerator) Data() any {
 	const (
 		report = "suite-no-extra-assert-call: need to simplify the check"
 	)
@@ -27,13 +33,13 @@ func (g SuiteNoExtraAssertCallCasesGenerator) Data() any {
 	}
 }
 
-func (g SuiteNoExtraAssertCallCasesGenerator) ErroredTemplate() *template.Template {
+func (SuiteNoExtraAssertCallCasesGenerator) ErroredTemplate() *template.Template {
 	return template.Must(template.New("SuiteNoExtraAssertCallCasesGenerator.ErroredTemplate").
 		Funcs(fm).
 		Parse(suiteNoExtraAssertCallCasesTmplText))
 }
 
-func (g SuiteNoExtraAssertCallCasesGenerator) GoldenTemplate() *template.Template {
+func (SuiteNoExtraAssertCallCasesGenerator) GoldenTemplate() *template.Template {
 	return template.Must(template.New("SuiteNoExtraAssertCallCasesGenerator.GoldenTemplate").
 		Funcs(fm).
 		Parse(strings.ReplaceAll(suiteNoExtraAssertCallCasesTmplText, "NewCheckerExpander", "NewCheckerExpander.AsGolden")))

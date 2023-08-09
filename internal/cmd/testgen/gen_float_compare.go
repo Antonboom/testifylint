@@ -2,11 +2,17 @@ package main
 
 import (
 	"text/template"
+
+	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 type FloatCompareCasesGenerator struct{}
 
-func (g FloatCompareCasesGenerator) Data() any {
+func (FloatCompareCasesGenerator) CheckerName() string {
+	return checkers.FloatCompareCheckerName
+}
+
+func (FloatCompareCasesGenerator) Data() any {
 	const (
 		report     = "float-compare: use %s.%s"
 		proposedFn = "InDelta (or InEpsilon)"
@@ -62,13 +68,13 @@ func (g FloatCompareCasesGenerator) Data() any {
 	}
 }
 
-func (g FloatCompareCasesGenerator) ErroredTemplate() *template.Template {
+func (FloatCompareCasesGenerator) ErroredTemplate() *template.Template {
 	return template.Must(template.New("FloatCompareCasesGenerator.ErroredTemplate").
 		Funcs(fm).
 		Parse(floatCompareCasesTmplText))
 }
 
-func (g FloatCompareCasesGenerator) GoldenTemplate() *template.Template {
+func (FloatCompareCasesGenerator) GoldenTemplate() *template.Template {
 	return nil
 }
 

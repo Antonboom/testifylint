@@ -3,11 +3,17 @@ package main
 import (
 	"strings"
 	"text/template"
+
+	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 type ExpectedActualCasesGenerator struct{}
 
-func (g ExpectedActualCasesGenerator) Data() any {
+func (ExpectedActualCasesGenerator) CheckerName() string {
+	return checkers.ExpectedActualCheckerName
+}
+
+func (ExpectedActualCasesGenerator) Data() any {
 	const (
 		report = "expected-actual: need to reverse actual and expected values"
 	)
@@ -122,13 +128,13 @@ func (g ExpectedActualCasesGenerator) Data() any {
 	}
 }
 
-func (g ExpectedActualCasesGenerator) ErroredTemplate() *template.Template {
+func (ExpectedActualCasesGenerator) ErroredTemplate() *template.Template {
 	return template.Must(template.New("ExpectedActualCasesGenerator.ErroredTemplate").
 		Funcs(fm).
 		Parse(expectedActualCasesTmplText))
 }
 
-func (g ExpectedActualCasesGenerator) GoldenTemplate() *template.Template {
+func (ExpectedActualCasesGenerator) GoldenTemplate() *template.Template {
 	return template.Must(template.New("ExpectedActualCasesGenerator.GoldenTemplate").
 		Funcs(fm).
 		Parse(strings.ReplaceAll(expectedActualCasesTmplText, "NewCheckerExpander", "NewCheckerExpander.AsGolden")))

@@ -3,11 +3,17 @@ package main
 import (
 	"strings"
 	"text/template"
+
+	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 type LenCasesGenerator struct{}
 
-func (g LenCasesGenerator) Data() any {
+func (LenCasesGenerator) CheckerName() string {
+	return checkers.LenCheckerName
+}
+
+func (LenCasesGenerator) Data() any {
 	const (
 		report     = "len: use %s.%s"
 		proposedFn = "Len"
@@ -56,13 +62,13 @@ func (g LenCasesGenerator) Data() any {
 	}
 }
 
-func (g LenCasesGenerator) ErroredTemplate() *template.Template {
+func (LenCasesGenerator) ErroredTemplate() *template.Template {
 	return template.Must(template.New("LenCasesGenerator.ErroredTemplate").
 		Funcs(fm).
 		Parse(lenCasesTmplText))
 }
 
-func (g LenCasesGenerator) GoldenTemplate() *template.Template {
+func (LenCasesGenerator) GoldenTemplate() *template.Template {
 	return template.Must(template.New("LenCasesGenerator.GoldenTemplate").
 		Funcs(fm).
 		Parse(strings.ReplaceAll(lenCasesTmplText, "NewCheckerExpander", "NewCheckerExpander.AsGolden")))

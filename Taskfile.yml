@@ -3,10 +3,12 @@ version: '3'
 
 silent: true
 
+vars:
+  CONFIG_EXAMPLE_PATH: .testifylint.yml
+
 tasks:
   default:
     cmds:
-      - task: tools:install
       - task: tidy
       - task: fmt
       - task: lint
@@ -16,8 +18,8 @@ tasks:
 
   tools:install:
     - echo "Install local tools..."
-    - (which gci > /dev/null) || GO111MODULE=off go get -u github.com/daixiang0/gci
-    - (which gofumpt > /dev/null) || GO111MODULE=off go get -u mvdan.cc/gofumpt
+    - (which gci > /dev/null) || go install github.com/daixiang0/gci@latest
+    - (which gofumpt > /dev/null) || go install mvdan.cc/gofumpt@latest
 
   tidy:
     cmds:
@@ -28,7 +30,7 @@ tasks:
     cmds:
       - echo "Fmt..."
       - gofumpt -w .
-      - gci write -s Std -s Def -s "Prefix(github.com/Antonboom/testifylint)" . 2> /dev/null
+      - gci write -s standard -s default -s "Prefix(github.com/Antonboom/testifylint)" . 2> /dev/null
 
   lint:
     cmds:
@@ -43,14 +45,14 @@ tasks:
   tests:coverage:
     cmds:
       - echo "Tests with coverage..."
-      - go test -coverpkg ./internal/analysisutil,./internal/checker,./pkg/... -coverprofile=coverage.out ./...
+      - go test -coverpkg ./analyzer,./config,./internal/analysisutil,./internal/checkers -coverprofile=coverage.out ./...
 
   install:
     cmds:
       - echo "Install..."
-      - go install ./...
+      - go install ./... && testifylint -h 2> /dev/null
 
   config:dump:
     cmds:
       - echo "Dump config..."
-      - testifylint -dump-config > config.example.yml
+      - testifylint -dump-config > {{.CONFIG_EXAMPLE_PATH}}

@@ -1,0 +1,17 @@
+enabled-checkers:
+  - bool-compare
+  - compares
+  - empty
+  - error
+  - error-is
+  - expected-actual
+  - float-compare
+  - len
+  - require-error
+  - suite-dont-use-pkg
+  # - suite-no-extra-assert-call
+  # - suite-thelper
+
+expected-actual:
+  # Pattern for expected variable name.
+  pattern: (^exp$|^expected$|^exp[A-Z0-9].*|^expected[A-Z0-9].*|.*[a-z0-9]Exp$|.*[a-z0-9]Expected$|^want$|^wanted$|^want[A-Z0-9].*|^wanted[A-Z0-9].*|.*[a-z0-9]Want$|.*[a-z0-9]Wanted$)

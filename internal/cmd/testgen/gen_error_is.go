@@ -3,11 +3,17 @@ package main
 import (
 	"strings"
 	"text/template"
+
+	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 type ErrorIsCasesGenerator struct{}
 
-func (g ErrorIsCasesGenerator) Data() any {
+func (ErrorIsCasesGenerator) CheckerName() string {
+	return checkers.ErrorIsCheckerName
+}
+
+func (ErrorIsCasesGenerator) Data() any {
 	return struct {
 		Pkgs, Objs     []string
 		SuiteSelectors []string
@@ -40,13 +46,13 @@ func (g ErrorIsCasesGenerator) Data() any {
 	}
 }
 
-func (g ErrorIsCasesGenerator) ErroredTemplate() *template.Template {
+func (ErrorIsCasesGenerator) ErroredTemplate() *template.Template {
 	return template.Must(template.New("ErrorIsCasesGenerator.ErroredTemplate").
 		Funcs(fm).
 		Parse(errorIsCasesTmplText))
 }
 
-func (g ErrorIsCasesGenerator) GoldenTemplate() *template.Template {
+func (ErrorIsCasesGenerator) GoldenTemplate() *template.Template {
 	return template.Must(template.New("ErrorIsCasesGenerator.GoldenTemplate").
 		Funcs(fm).
 		Parse(strings.ReplaceAll(errorIsCasesTmplText, "NewCheckerExpander", "NewCheckerExpander.AsGolden")))

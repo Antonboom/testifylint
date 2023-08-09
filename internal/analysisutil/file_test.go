@@ -16,12 +16,12 @@ func TestIsTestFile(t *testing.T) {
 
 	svcFile, err := parser.ParseFile(fset, "service.go", `package service`, parser.PackageClauseOnly)
 	if err != nil {
-		t.Fatal(err.Error())
+		t.Fatal(err)
 	}
 
 	svcTestFile, err := parser.ParseFile(fset, "service_test.go", `package servicetest`, parser.PackageClauseOnly)
 	if err != nil {
-		t.Fatal(err.Error())
+		t.Fatal(err)
 	}
 
 	pass := &analysis.Pass{

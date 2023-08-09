@@ -9,6 +9,7 @@ var fm = template.FuncMap{
 }
 
 type TestsGenerator interface {
+	CheckerName() string
 	Data() any
 	ErroredTemplate() *template.Template
 	GoldenTemplate() *template.Template
