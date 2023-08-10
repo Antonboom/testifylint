@@ -16,7 +16,7 @@ var Default = Config{
 	},
 }
 
-// DumpDefault dumps more complex YML than just marshalled Default,
+// DumpDefault dumps more complex YML than just marshalled Default:
 // output contains comments and extra padding.
 func DumpDefault(out io.Writer) error {
 	return defaultConfTmpl.Execute(out, struct {

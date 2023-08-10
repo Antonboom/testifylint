@@ -6,6 +6,7 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
+// Validate validates linter configuration.
 func Validate(cfg Config) error {
 	return validateEnabledCheckers(cfg.EnabledCheckers)
 }

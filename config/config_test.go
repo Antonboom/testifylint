@@ -2,6 +2,7 @@ package config_test
 
 import (
 	"reflect"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -9,53 +10,70 @@ import (
 )
 
 func TestParse(t *testing.T) {
-	const conf = `
+	cases := []struct {
+		name    string
+		cfg     string
+		expCfg  config.Config
+		wantErr bool
+	}{
+		{
+			name: "valid config",
+			cfg: `
 enabled-checkers:
   - error-is
   - expected-actual
+  - another-yet-checker
 expected-actual:
   pattern: ^want$
-`
-	loaded, err := config.Parse(strings.NewReader(conf))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected := config.Config{
-		EnabledCheckers: []string{"error-is", "expected-actual"},
-		ExpectedActual: config.ExpectedActualConfig{
-			Pattern: config.MustRegexp(`^want$`),
+`,
+			expCfg: config.Config{
+				EnabledCheckers: []string{"error-is", "expected-actual", "another-yet-checker"},
+				ExpectedActual: config.ExpectedActualConfig{
+					Pattern: config.Regexp{regexp.MustCompile(`^want$`)},
+				},
+			},
 		},
-	}
-	if !reflect.DeepEqual(expected, loaded) {
-		t.Fatal("config was parsed incorrectly")
-	}
-}
-
-func TestParse_EmptyConfig(t *testing.T) {
-	const conf = `
+		{
+			name: "empty config",
+			cfg: `
 enabled-checkers:
 expected-actual:
-`
-	loaded, err := config.Parse(strings.NewReader(conf))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !reflect.DeepEqual(config.Config{}, loaded) {
-		t.Fatal("empty config was parsed incorrectly")
-	}
-}
-
-func TestParse_InvalidYAML(t *testing.T) {
-	const conf = `
+`,
+			expCfg: config.Config{},
+		},
+		{
+			name: "invalid yaml",
+			cfg: `
 enabled-checkers:
   - error-is
   -- expected-actual
-`
-	_, err := config.Parse(strings.NewReader(conf))
-	if err == nil {
-		t.Fatal("no error but expected")
+`,
+			wantErr: true,
+		},
+		{
+			name: "invalid expected-actual config",
+			cfg: `
+expected-actual:
+  pattern: ^want($
+`,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			parsedCfg, err := config.Parse(strings.NewReader(tt.cfg))
+
+			if tt.wantErr {
+				if nil == err {
+					t.Fatalf("no error but expected, value: %+v", parsedCfg)
+				}
+			} else {
+				if !reflect.DeepEqual(tt.expCfg, parsedCfg) {
+					t.Fatal("config parsed incorrectly")
+				}
+			}
+		})
 	}
 }
 

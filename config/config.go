@@ -13,6 +13,7 @@ type Config struct {
 	ExpectedActual  ExpectedActualConfig `yaml:"expected-actual"`
 }
 
+// ExpectedActualConfig implements configuration of checkers.ExpectedActual.
 type ExpectedActualConfig struct {
 	Pattern Regexp `yaml:"pattern"`
 }
