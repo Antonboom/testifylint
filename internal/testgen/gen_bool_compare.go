@@ -10,13 +10,13 @@ import (
 type BoolCompareCasesGenerator struct{}
 
 func (BoolCompareCasesGenerator) CheckerName() string {
-	return checkers.BoolCompareCheckerName
+	return checkers.NewBoolCompare().Name()
 }
 
-func (BoolCompareCasesGenerator) Data() any {
-	const (
-		reportUse      = "bool-compare: use %s.%s"
-		reportSimplify = "bool-compare: need to simplify the check"
+func (g BoolCompareCasesGenerator) Data() any {
+	var (
+		reportUse      = g.CheckerName() + ": use %s.%s"
+		reportSimplify = g.CheckerName() + ": need to simplify the check"
 	)
 
 	type test struct {
@@ -98,7 +98,7 @@ func (BoolCompareCasesGenerator) GoldenTemplate() *template.Template {
 
 const boolCompareCasesTmplText = header + `
 
-package mostof
+package {{ .CheckerName }}
 
 import (
 	"testing"

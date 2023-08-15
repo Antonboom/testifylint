@@ -10,7 +10,7 @@ import (
 type ErrorCasesGenerator struct{}
 
 func (ErrorCasesGenerator) CheckerName() string {
-	return checkers.ErrorCheckerName
+	return checkers.NewError().Name()
 }
 
 func (ErrorCasesGenerator) Data() any {
@@ -71,7 +71,7 @@ func (ErrorCasesGenerator) GoldenTemplate() *template.Template {
 // todo: исправить шаблон
 const errorCasesTmplText = header + `
 
-package mostof
+package {{ .CheckerName }}
 
 import (
 	"io"

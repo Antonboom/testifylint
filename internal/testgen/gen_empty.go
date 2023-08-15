@@ -10,7 +10,7 @@ import (
 type EmptyCasesGenerator struct{}
 
 func (EmptyCasesGenerator) CheckerName() string {
-	return checkers.EmptyCheckerName
+	return checkers.NewEmpty().Name()
 }
 
 func (EmptyCasesGenerator) Data() any {
@@ -101,7 +101,7 @@ func (EmptyCasesGenerator) GoldenTemplate() *template.Template {
 
 const emptyCasesTmplText = header + `
 
-package mostof
+package {{ .CheckerName }}
 
 import (
 	"testing"

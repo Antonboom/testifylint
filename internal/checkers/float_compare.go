@@ -8,8 +8,6 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-const FloatCompareCheckerName = "float-compare"
-
 // FloatCompare checks situation like
 //
 //	assert.Equal(t, 42.42, a)
@@ -17,11 +15,13 @@ const FloatCompareCheckerName = "float-compare"
 // and requires e.g.
 //
 //	assert.InDelta(t, 42.42, a, 0.0001)
-type FloatCompare struct{}          //
-func NewFloatCompare() FloatCompare { return FloatCompare{} }
-func (FloatCompare) Name() string   { return FloatCompareCheckerName }
+type FloatCompare struct{}
 
-func (checker FloatCompare) Check(pass *analysis.Pass, call CallMeta) {
+// NewFloatCompare constructs FloatCompare checker.
+func NewFloatCompare() FloatCompare { return FloatCompare{} }
+func (FloatCompare) Name() string   { return "float-compare" }
+
+func (checker FloatCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	invalid := func() bool {
 		switch call.Fn.Name {
 		case "Equal", "Equalf":
@@ -37,8 +37,9 @@ func (checker FloatCompare) Check(pass *analysis.Pass, call CallMeta) {
 	}()
 
 	if invalid {
-		r.ReportUseFunction(pass, checker.Name(), call, "InDelta (or InEpsilon)", nil)
+		return newUseFunctionDiagnostic(checker.Name(), call, "InDelta (or InEpsilon)", nil)
 	}
+	return nil
 }
 
 func isFloat(pass *analysis.Pass, expr ast.Expr) bool {

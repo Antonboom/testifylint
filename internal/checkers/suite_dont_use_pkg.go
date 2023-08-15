@@ -9,8 +9,6 @@ import (
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-const SuiteDontUsePkgCheckerName = "suite-dont-use-pkg"
-
 // SuiteDontUsePkg checks situation like
 //
 //	func (s *MySuite) TestSomething() {
@@ -22,45 +20,47 @@ const SuiteDontUsePkgCheckerName = "suite-dont-use-pkg"
 //	func (s *MySuite) TestSomething() {
 //		s.Equal(42, value)
 //	}
-type SuiteDontUsePkg struct{}             //
-func NewSuiteDontUsePkg() SuiteDontUsePkg { return SuiteDontUsePkg{} }
-func (SuiteDontUsePkg) Name() string      { return SuiteDontUsePkgCheckerName }
+type SuiteDontUsePkg struct{}
 
-func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call CallMeta) {
+// NewSuiteDontUsePkg constructs SuiteDontUsePkg checker.
+func NewSuiteDontUsePkg() SuiteDontUsePkg { return SuiteDontUsePkg{} }
+func (SuiteDontUsePkg) Name() string      { return "suite-dont-use-pkg" }
+
+func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	if !call.InsideSuiteMethod {
-		return
+		return nil
 	}
-	if s := call.SelectorStr; !(s == "assert" || s == "require") {
-		return
+	if s := call.SelectorXStr; !(s == "assert" || s == "require") {
+		return nil
 	}
 
 	args := call.ArgsRaw
 	if len(args) < 2 {
-		return
+		return nil
 	}
 	t := args[0]
 
 	ce, ok := t.(*ast.CallExpr)
 	if !ok {
-		return
+		return nil
 	}
 	se, ok := ce.Fun.(*ast.SelectorExpr)
 	if !ok {
-		return
+		return nil
 	}
-	if se.X == nil || !analysisutil.IsSuiteObj(pass, se.X) {
-		return
+	if se.X == nil || !analysisutil.IsTestifySuiteObj(pass, se.X) {
+		return nil
 	}
 	if se.Sel == nil || se.Sel.Name != "T" {
-		return
+		return nil
 	}
 	rcv, ok := se.X.(*ast.Ident)
 	if !ok {
-		return
+		return nil
 	}
 
 	var newSelector string
-	switch call.SelectorStr {
+	switch call.SelectorXStr {
 	case "assert":
 		newSelector = rcv.Name
 	case "require":
@@ -68,8 +68,8 @@ func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call CallMeta) {
 	}
 
 	msg := fmt.Sprintf("use %s.%s", newSelector, call.Fn.Name)
-	r.Report(pass, checker.Name(), call, msg, &analysis.SuggestedFix{
-		Message: fmt.Sprintf("Replace %s with %s", call.SelectorStr, newSelector),
+	return newDiagnostic(checker.Name(), call, msg, &analysis.SuggestedFix{
+		Message: fmt.Sprintf("Replace %s with %s", call.SelectorXStr, newSelector),
 		TextEdits: []analysis.TextEdit{
 			{
 				Pos:     call.Selector.Pos(),

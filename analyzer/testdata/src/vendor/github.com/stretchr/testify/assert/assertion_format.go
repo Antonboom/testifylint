@@ -90,6 +90,23 @@ func EqualErrorf(t TestingT, theError error, errString string, msg string, args 
 	return EqualError(t, theError, errString, append([]interface{}{msg}, args...)...)
 }
 
+// EqualExportedValuesf asserts that the types of two objects are equal and their public
+// fields are also equal. This is useful for comparing structs that have private fields
+// that could potentially differ.
+//
+//	 type S struct {
+//		Exported     	int
+//		notExported   	int
+//	 }
+//	 assert.EqualExportedValuesf(t, S{1, 2}, S{1, 3}, "error message %s", "formatted") => true
+//	 assert.EqualExportedValuesf(t, S{1, 2}, S{2, 3}, "error message %s", "formatted") => false
+func EqualExportedValuesf(t TestingT, expected interface{}, actual interface{}, msg string, args ...interface{}) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	return EqualExportedValues(t, expected, actual, append([]interface{}{msg}, args...)...)
+}
+
 // EqualValuesf asserts that two objects are equal or convertable to the same types
 // and equal.
 //
@@ -153,6 +170,31 @@ func Eventuallyf(t TestingT, condition func() bool, waitFor time.Duration, tick 
 		h.Helper()
 	}
 	return Eventually(t, condition, waitFor, tick, append([]interface{}{msg}, args...)...)
+}
+
+// EventuallyWithTf asserts that given condition will be met in waitFor time,
+// periodically checking target function each tick. In contrast to Eventually,
+// it supplies a CollectT to the condition function, so that the condition
+// function can use the CollectT to call other assertions.
+// The condition is considered "met" if no errors are raised in a tick.
+// The supplied CollectT collects all errors from one tick (if there are any).
+// If the condition is not met before waitFor, the collected errors of
+// the last tick are copied to t.
+//
+//	externalValue := false
+//	go func() {
+//		time.Sleep(8*time.Second)
+//		externalValue = true
+//	}()
+//	assert.EventuallyWithTf(t, func(c *assert.CollectT, "error message %s", "formatted") {
+//		// add assertions as needed; any assertion failure will fail the current tick
+//		assert.True(c, externalValue, "expected 'externalValue' to be true")
+//	}, 1*time.Second, 10*time.Second, "external state has not changed to 'true'; still false")
+func EventuallyWithTf(t TestingT, condition func(collect *CollectT), waitFor time.Duration, tick time.Duration, msg string, args ...interface{}) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	return EventuallyWithT(t, condition, waitFor, tick, append([]interface{}{msg}, args...)...)
 }
 
 // Exactlyf asserts that two objects are equal in value and type.
@@ -734,6 +776,16 @@ func WithinDurationf(t TestingT, expected time.Time, actual time.Time, delta tim
 		h.Helper()
 	}
 	return WithinDuration(t, expected, actual, delta, append([]interface{}{msg}, args...)...)
+}
+
+// WithinRangef asserts that a time is within a time range (inclusive).
+//
+//	assert.WithinRangef(t, time.Now(), time.Now().Add(-time.Second), time.Now().Add(time.Second), "error message %s", "formatted")
+func WithinRangef(t TestingT, actual time.Time, start time.Time, end time.Time, msg string, args ...interface{}) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	return WithinRange(t, actual, start, end, append([]interface{}{msg}, args...)...)
 }
 
 // YAMLEqf asserts that two YAML strings are equivalent.

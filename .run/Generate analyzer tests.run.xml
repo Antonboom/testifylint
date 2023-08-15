@@ -13,7 +13,7 @@
       </ENTRIES>
     </EXTENSION>
     <kind value="PACKAGE" />
-    <package value="github.com/Antonboom/testifylint/internal/cmd/testgen" />
+    <package value="github.com/Antonboom/testifylint/internal/testgen" />
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$/internal/cmd/testgen/main.go" />
     <method v="2" />

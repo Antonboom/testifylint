@@ -10,7 +10,7 @@ import (
 type SuiteNoExtraAssertCallCasesGenerator struct{}
 
 func (SuiteNoExtraAssertCallCasesGenerator) CheckerName() string {
-	return checkers.SuiteNoExtraAssertCallCheckerName
+	return checkers.NewSuiteNoExtraAssertCall().Name()
 }
 
 func (SuiteNoExtraAssertCallCasesGenerator) Data() any {
@@ -46,7 +46,7 @@ func (SuiteNoExtraAssertCallCasesGenerator) GoldenTemplate() *template.Template 
 }
 
 const suiteNoExtraAssertCallCasesTmplText = header + `
-package suitenoextraassertcall
+package {{ .CheckerName }}
 
 import (
 	"testing"

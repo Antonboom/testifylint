@@ -2,19 +2,22 @@ package analyzer
 
 import (
 	"fmt"
+
 	"github.com/Antonboom/testifylint/config"
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 // newCheckers accepts linter config and returns slices of enabled checkers.
-func newCheckers(cfg config.Config) ([]checkers.CallChecker, []checkers.AdvancedChecker, error) {
+func newCheckers(cfg config.Config) ([]checkers.RegularChecker, []checkers.AdvancedChecker, error) {
 	enabledCheckers := cfg.EnabledCheckers
 	if len(enabledCheckers) == 0 {
 		enabledCheckers = checkers.EnabledByDefault()
 	}
 
-	callCheckers := make([]checkers.CallChecker, 0, len(enabledCheckers))
-	advancedCheckers := make([]checkers.AdvancedChecker, 0, len(enabledCheckers))
+	checkers.SortByPriority(enabledCheckers)
+
+	regularCheckers := make([]checkers.RegularChecker, 0, len(enabledCheckers))
+	advancedCheckers := make([]checkers.AdvancedChecker, 0, len(enabledCheckers)/2)
 
 	for _, name := range enabledCheckers {
 		ch, ok := checkers.Get(name)
@@ -28,15 +31,12 @@ func newCheckers(cfg config.Config) ([]checkers.CallChecker, []checkers.Advanced
 		}
 
 		switch casted := ch.(type) {
-		case checkers.CallChecker:
-			callCheckers = append(callCheckers, casted)
+		case checkers.RegularChecker:
+			regularCheckers = append(regularCheckers, casted)
 		case checkers.AdvancedChecker:
 			advancedCheckers = append(advancedCheckers, casted)
 		}
 	}
 
-	checkers.SortByPriority(callCheckers)
-	checkers.SortByPriority(advancedCheckers)
-
-	return callCheckers, advancedCheckers, nil
+	return regularCheckers, advancedCheckers, nil
 }

@@ -29,7 +29,14 @@ var generators = []TestsGenerator{
 func init() {
 	genForChecker := make(map[string]struct{}, len(generators))
 	for _, g := range generators {
-		genForChecker[g.CheckerName()] = struct{}{}
+		name := g.CheckerName()
+		if name == "" {
+			panic(fmt.Sprintf("%T: checker name not defined", g))
+		}
+		if _, ok := genForChecker[name]; ok {
+			panic(fmt.Sprintf("several generators for checker %q", name))
+		}
+		genForChecker[name] = struct{}{}
 	}
 
 	for _, ch := range checkers.All() {

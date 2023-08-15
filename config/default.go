@@ -2,6 +2,7 @@ package config
 
 import (
 	"io"
+	"sort"
 	"strings"
 	"text/template"
 
@@ -36,8 +37,11 @@ expected-actual:
 `))
 
 func buildCheckersYML() string {
+	allCheckers := checkers.All()
+	sort.Strings(allCheckers)
+
 	var result strings.Builder
-	for _, checkerName := range checkers.All() {
+	for _, checkerName := range allCheckers {
 		if checkers.IsEnabledByDefault(checkerName) {
 			result.WriteString("  - " + checkerName + "\n")
 		} else {

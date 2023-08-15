@@ -9,7 +9,7 @@ import (
 type FloatCompareCasesGenerator struct{}
 
 func (FloatCompareCasesGenerator) CheckerName() string {
-	return checkers.FloatCompareCheckerName
+	return checkers.NewFloatCompare().Name()
 }
 
 func (FloatCompareCasesGenerator) Data() any {
@@ -80,7 +80,7 @@ func (FloatCompareCasesGenerator) GoldenTemplate() *template.Template {
 
 const floatCompareCasesTmplText = header + `
 
-package mostof
+package {{ .CheckerName }}
 
 import (
 	"testing"

@@ -1,9 +1,11 @@
 package config_test
 
 import (
-	"github.com/Antonboom/testifylint/config"
-	"gopkg.in/yaml.v3"
 	"testing"
+
+	"gopkg.in/yaml.v3"
+
+	"github.com/Antonboom/testifylint/config"
 )
 
 func TestRegexp_UnmarshalYAML(t *testing.T) {

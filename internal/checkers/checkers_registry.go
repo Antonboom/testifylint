@@ -3,8 +3,6 @@ package checkers
 import (
 	"fmt"
 	"sort"
-
-	"slices"
 )
 
 var (
@@ -13,6 +11,7 @@ var (
 		Checker
 		enabledByDefault bool
 	}{
+		// Regular checkers.
 		{Checker: NewBoolCompare(), enabledByDefault: true},
 		{Checker: NewFloatCompare(), enabledByDefault: true},
 		{Checker: NewEmpty(), enabledByDefault: true},
@@ -24,17 +23,18 @@ var (
 		{Checker: NewExpectedActual(), enabledByDefault: true},
 		{Checker: NewSuiteNoExtraAssertCall(), enabledByDefault: false},
 		{Checker: NewSuiteDontUsePkg(), enabledByDefault: true},
-
 		// Advanced checkers.
 		{Checker: NewSuiteTHelper(), enabledByDefault: false},
 	}
 
-	checkersByName   = make(map[string]Checker, len(checkersRegistry))
-	prioritiesByName = make(map[string]int, len(checkersRegistry))
-
-	allCheckers      = make([]string, 0, len(checkersRegistry))
-	enabledByDefault = make([]string, 0, len(checkersRegistry))
+	checkersByName = make(map[string]checkerMeta, len(checkersRegistry))
 )
+
+type checkerMeta struct {
+	Checker
+	enabledByDefault bool
+	priority         int
+}
 
 func init() {
 	for i, checker := range checkersRegistry {
@@ -46,33 +46,38 @@ func init() {
 			panic(fmt.Sprintf("duplicated checker %q: %T and %T", name, duplicate, checker))
 		}
 
-		checkersByName[name] = checker.Checker
-		prioritiesByName[name] = i
-
-		allCheckers = append(allCheckers, checker.Name())
-		if checker.enabledByDefault {
-			enabledByDefault = append(enabledByDefault, checker.Name())
+		checkersByName[name] = checkerMeta{
+			Checker:          checker.Checker,
+			enabledByDefault: checker.enabledByDefault,
+			priority:         i,
 		}
 	}
-
-	sort.Strings(allCheckers)
-	sort.Strings(enabledByDefault)
 }
 
-// All returns all checkers names sorted by name.
+// All returns all checkers names sorted by checker's priority.
 func All() []string {
-	return slices.Clone(allCheckers)
+	result := make([]string, 0, len(checkersRegistry))
+	for _, v := range checkersRegistry {
+		result = append(result, v.Name())
+	}
+	return result
 }
 
-// EnabledByDefault returns checkers enabled by default sorted by name.
+// EnabledByDefault returns checkers enabled by default sorted by checker's priority.
 func EnabledByDefault() []string {
-	return slices.Clone(enabledByDefault)
+	result := make([]string, 0, len(checkersRegistry))
+	for _, v := range checkersRegistry {
+		if v.enabledByDefault {
+			result = append(result, v.Name())
+		}
+	}
+	return result
 }
 
 // Get returns checker by its name.
 func Get(name string) (Checker, bool) {
 	ch, ok := checkersByName[name]
-	return ch, ok
+	return ch.Checker, ok
 }
 
 // IsKnown checks if there is a checker with that name.
@@ -85,13 +90,15 @@ func IsKnown(name string) bool {
 // Returns false if there is no such checker in the registry.
 // For pre-validation use Get or IsKnown.
 func IsEnabledByDefault(name string) bool {
-	return slices.Contains(enabledByDefault, name)
+	v, ok := checkersByName[name]
+	return ok && v.enabledByDefault
 }
 
-// SortByPriority mutates the input checkers by sorting them in order of priority.
-func SortByPriority[T Checker](checkers []T) {
+// SortByPriority mutates the input checkers names by sorting them in checker priority order.
+// Ignores unknown checkers. For pre-validation use Get or IsKnown.
+func SortByPriority(checkers []string) {
 	sort.Slice(checkers, func(i, j int) bool {
 		lhs, rhs := checkers[i], checkers[j]
-		return prioritiesByName[lhs.Name()] < prioritiesByName[rhs.Name()]
+		return checkersByName[lhs].priority < checkersByName[rhs].priority
 	})
 }

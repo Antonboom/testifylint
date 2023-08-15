@@ -8,8 +8,6 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-const ComparesCheckerName = "compares"
-
 // Compares checks situation like
 //
 //	assert.True(t, a >= b)
@@ -17,18 +15,20 @@ const ComparesCheckerName = "compares"
 // and requires e.g.
 //
 //	assert.GreaterOrEqual(t, a, b)
-type Compares struct{}        //
-func NewCompares() Checker    { return Compares{} }
-func (Compares) Name() string { return ComparesCheckerName }
+type Compares struct{}
 
-func (checker Compares) Check(pass *analysis.Pass, call CallMeta) {
+// NewCompares constructs Compares checker.
+func NewCompares() Compares   { return Compares{} }
+func (Compares) Name() string { return "compares" }
+
+func (checker Compares) Check(_ *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	if len(call.Args) < 1 {
-		return
+		return nil
 	}
 
 	be, ok := call.Args[0].(*ast.BinaryExpr)
 	if !ok {
-		return
+		return nil
 	}
 
 	var tokenToProposedFn map[token.Token]string
@@ -39,19 +39,20 @@ func (checker Compares) Check(pass *analysis.Pass, call CallMeta) {
 	case "False", "Falsef":
 		tokenToProposedFn = tokenToProposedFnInsteadOfFalse
 	default:
-		return
+		return nil
 	}
 
 	if proposedFn, ok := tokenToProposedFn[be.Op]; ok {
 		a, b := be.X, be.Y
-		r.ReportUseFunction(pass, checker.Name(), call, proposedFn,
-			newFixViaFnReplacement(call, proposedFn, analysis.TextEdit{
+		return newUseFunctionDiagnostic(checker.Name(), call, proposedFn,
+			newSuggestedFuncReplacement(call, proposedFn, analysis.TextEdit{
 				Pos:     be.X.Pos(),
 				End:     be.Y.End(),
 				NewText: []byte(types.ExprString(a) + ", " + types.ExprString(b)),
 			}),
 		)
 	}
+	return nil
 }
 
 var tokenToProposedFnInsteadOfTrue = map[token.Token]string{

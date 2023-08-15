@@ -155,6 +155,40 @@ func (a *Assertions) EqualErrorf(theError error, errString string, msg string, a
 	return EqualErrorf(a.t, theError, errString, msg, args...)
 }
 
+// EqualExportedValues asserts that the types of two objects are equal and their public
+// fields are also equal. This is useful for comparing structs that have private fields
+// that could potentially differ.
+//
+//	 type S struct {
+//		Exported     	int
+//		notExported   	int
+//	 }
+//	 a.EqualExportedValues(S{1, 2}, S{1, 3}) => true
+//	 a.EqualExportedValues(S{1, 2}, S{2, 3}) => false
+func (a *Assertions) EqualExportedValues(expected interface{}, actual interface{}, msgAndArgs ...interface{}) bool {
+	if h, ok := a.t.(tHelper); ok {
+		h.Helper()
+	}
+	return EqualExportedValues(a.t, expected, actual, msgAndArgs...)
+}
+
+// EqualExportedValuesf asserts that the types of two objects are equal and their public
+// fields are also equal. This is useful for comparing structs that have private fields
+// that could potentially differ.
+//
+//	 type S struct {
+//		Exported     	int
+//		notExported   	int
+//	 }
+//	 a.EqualExportedValuesf(S{1, 2}, S{1, 3}, "error message %s", "formatted") => true
+//	 a.EqualExportedValuesf(S{1, 2}, S{2, 3}, "error message %s", "formatted") => false
+func (a *Assertions) EqualExportedValuesf(expected interface{}, actual interface{}, msg string, args ...interface{}) bool {
+	if h, ok := a.t.(tHelper); ok {
+		h.Helper()
+	}
+	return EqualExportedValuesf(a.t, expected, actual, msg, args...)
+}
+
 // EqualValues asserts that two objects are equal or convertable to the same types
 // and equal.
 //
@@ -286,6 +320,56 @@ func (a *Assertions) Eventually(condition func() bool, waitFor time.Duration, ti
 		h.Helper()
 	}
 	return Eventually(a.t, condition, waitFor, tick, msgAndArgs...)
+}
+
+// EventuallyWithT asserts that given condition will be met in waitFor time,
+// periodically checking target function each tick. In contrast to Eventually,
+// it supplies a CollectT to the condition function, so that the condition
+// function can use the CollectT to call other assertions.
+// The condition is considered "met" if no errors are raised in a tick.
+// The supplied CollectT collects all errors from one tick (if there are any).
+// If the condition is not met before waitFor, the collected errors of
+// the last tick are copied to t.
+//
+//	externalValue := false
+//	go func() {
+//		time.Sleep(8*time.Second)
+//		externalValue = true
+//	}()
+//	a.EventuallyWithT(func(c *assert.CollectT) {
+//		// add assertions as needed; any assertion failure will fail the current tick
+//		assert.True(c, externalValue, "expected 'externalValue' to be true")
+//	}, 1*time.Second, 10*time.Second, "external state has not changed to 'true'; still false")
+func (a *Assertions) EventuallyWithT(condition func(collect *CollectT), waitFor time.Duration, tick time.Duration, msgAndArgs ...interface{}) bool {
+	if h, ok := a.t.(tHelper); ok {
+		h.Helper()
+	}
+	return EventuallyWithT(a.t, condition, waitFor, tick, msgAndArgs...)
+}
+
+// EventuallyWithTf asserts that given condition will be met in waitFor time,
+// periodically checking target function each tick. In contrast to Eventually,
+// it supplies a CollectT to the condition function, so that the condition
+// function can use the CollectT to call other assertions.
+// The condition is considered "met" if no errors are raised in a tick.
+// The supplied CollectT collects all errors from one tick (if there are any).
+// If the condition is not met before waitFor, the collected errors of
+// the last tick are copied to t.
+//
+//	externalValue := false
+//	go func() {
+//		time.Sleep(8*time.Second)
+//		externalValue = true
+//	}()
+//	a.EventuallyWithTf(func(c *assert.CollectT, "error message %s", "formatted") {
+//		// add assertions as needed; any assertion failure will fail the current tick
+//		assert.True(c, externalValue, "expected 'externalValue' to be true")
+//	}, 1*time.Second, 10*time.Second, "external state has not changed to 'true'; still false")
+func (a *Assertions) EventuallyWithTf(condition func(collect *CollectT), waitFor time.Duration, tick time.Duration, msg string, args ...interface{}) bool {
+	if h, ok := a.t.(tHelper); ok {
+		h.Helper()
+	}
+	return EventuallyWithTf(a.t, condition, waitFor, tick, msg, args...)
 }
 
 // Eventuallyf asserts that given condition will be met in waitFor time,
@@ -1459,6 +1543,26 @@ func (a *Assertions) WithinDurationf(expected time.Time, actual time.Time, delta
 		h.Helper()
 	}
 	return WithinDurationf(a.t, expected, actual, delta, msg, args...)
+}
+
+// WithinRange asserts that a time is within a time range (inclusive).
+//
+//	a.WithinRange(time.Now(), time.Now().Add(-time.Second), time.Now().Add(time.Second))
+func (a *Assertions) WithinRange(actual time.Time, start time.Time, end time.Time, msgAndArgs ...interface{}) bool {
+	if h, ok := a.t.(tHelper); ok {
+		h.Helper()
+	}
+	return WithinRange(a.t, actual, start, end, msgAndArgs...)
+}
+
+// WithinRangef asserts that a time is within a time range (inclusive).
+//
+//	a.WithinRangef(time.Now(), time.Now().Add(-time.Second), time.Now().Add(time.Second), "error message %s", "formatted")
+func (a *Assertions) WithinRangef(actual time.Time, start time.Time, end time.Time, msg string, args ...interface{}) bool {
+	if h, ok := a.t.(tHelper); ok {
+		h.Helper()
+	}
+	return WithinRangef(a.t, actual, start, end, msg, args...)
 }
 
 // YAMLEq asserts that two YAML strings are equivalent.

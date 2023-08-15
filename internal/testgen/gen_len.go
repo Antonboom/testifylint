@@ -10,22 +10,24 @@ import (
 type LenCasesGenerator struct{}
 
 func (LenCasesGenerator) CheckerName() string {
-	return checkers.LenCheckerName
+	return checkers.NewLen().Name()
 }
 
-func (LenCasesGenerator) Data() any {
-	const (
-		report     = "len: use %s.%s"
+func (g LenCasesGenerator) Data() any {
+	var (
+		report     = g.CheckerName() + ": use %s.%s"
 		proposedFn = "Len"
 	)
 
 	return struct {
+		CheckerName    string
 		Pkgs, Objs     []string
 		SuiteSelectors []string
 		VarSets        [][]string
 		InvalidChecks  []Check
 		ValidChecks    []Check
 	}{
+		CheckerName:    g.CheckerName(),
 		Pkgs:           []string{"assert", "require"},
 		Objs:           []string{"assObj", "reqObj"},
 		SuiteSelectors: []string{"s", "s.Assert()", "assObj", "s.Require()", "reqObj"},
@@ -76,7 +78,7 @@ func (LenCasesGenerator) GoldenTemplate() *template.Template {
 
 const lenCasesTmplText = header + `
 
-package mostof
+package {{ .CheckerName }}
 
 import (
 	"testing"

@@ -3,13 +3,24 @@ run:
 
 issues:
   max-same-issues: 0
+
+  # revive should check comments for exported (and not internal) code.
+  include: [ EXC0012, EXC0013, EXC0014 ]
+
   exclude-rules:
+    - path: "internal/testgen"
+      linters: [ "revive" ]
+      text: "exported"
+
+    - path: "internal"
+      linters: [ "revive" ]
+      text: "exported (method|const)"
+
     - source: "(Equalf?|NotEqualf?|Greaterf?|Lessf?|Truef?|Falsef?)"
       linters: [ "goconst" ]
 
     - path: "_test\\.go"
-      linters:
-        - lll
+      linters: [ "lll" ]
 
 linters-settings:
   gocritic:
@@ -41,7 +52,6 @@ linters:
     - asciicheck
     - bidichk
     - bodyclose
-    - deadcode
     - durationcheck
     - errcheck
     - errchkjson
@@ -66,16 +76,16 @@ linters:
     - gosec
     - gosimple
     - govet
-    - ifshort
     - importas
     - ineffassign
+    - ireturn
     - lll
     - makezero
     - mirror
     - misspell
+    - musttag
     - nakedret
     - nilerr
-    - nilnil
     - nestif
     - noctx
     - nolintlint
@@ -87,7 +97,6 @@ linters:
     - rowserrcheck
     - sqlclosecheck
     - staticcheck
-    - structcheck
     - stylecheck
     - tagliatelle
     - tenv
@@ -99,6 +108,5 @@ linters:
     - unparam
     - unused
     - usestdlibvars
-    - varcheck
     - wastedassign
     - whitespace

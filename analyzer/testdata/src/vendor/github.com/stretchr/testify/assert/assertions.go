@@ -75,6 +75,77 @@ func ObjectsAreEqual(expected, actual interface{}) bool {
 	return bytes.Equal(exp, act)
 }
 
+// copyExportedFields iterates downward through nested data structures and creates a copy
+// that only contains the exported struct fields.
+func copyExportedFields(expected interface{}) interface{} {
+	if isNil(expected) {
+		return expected
+	}
+
+	expectedType := reflect.TypeOf(expected)
+	expectedKind := expectedType.Kind()
+	expectedValue := reflect.ValueOf(expected)
+
+	switch expectedKind {
+	case reflect.Struct:
+		result := reflect.New(expectedType).Elem()
+		for i := 0; i < expectedType.NumField(); i++ {
+			field := expectedType.Field(i)
+			isExported := field.IsExported()
+			if isExported {
+				fieldValue := expectedValue.Field(i)
+				if isNil(fieldValue) || isNil(fieldValue.Interface()) {
+					continue
+				}
+				newValue := copyExportedFields(fieldValue.Interface())
+				result.Field(i).Set(reflect.ValueOf(newValue))
+			}
+		}
+		return result.Interface()
+
+	case reflect.Ptr:
+		result := reflect.New(expectedType.Elem())
+		unexportedRemoved := copyExportedFields(expectedValue.Elem().Interface())
+		result.Elem().Set(reflect.ValueOf(unexportedRemoved))
+		return result.Interface()
+
+	case reflect.Array, reflect.Slice:
+		result := reflect.MakeSlice(expectedType, expectedValue.Len(), expectedValue.Len())
+		for i := 0; i < expectedValue.Len(); i++ {
+			index := expectedValue.Index(i)
+			if isNil(index) {
+				continue
+			}
+			unexportedRemoved := copyExportedFields(index.Interface())
+			result.Index(i).Set(reflect.ValueOf(unexportedRemoved))
+		}
+		return result.Interface()
+
+	case reflect.Map:
+		result := reflect.MakeMap(expectedType)
+		for _, k := range expectedValue.MapKeys() {
+			index := expectedValue.MapIndex(k)
+			unexportedRemoved := copyExportedFields(index.Interface())
+			result.SetMapIndex(k, reflect.ValueOf(unexportedRemoved))
+		}
+		return result.Interface()
+
+	default:
+		return expected
+	}
+}
+
+// ObjectsExportedFieldsAreEqual determines if the exported (public) fields of two objects are
+// considered equal. This comparison of only exported fields is applied recursively to nested data
+// structures.
+//
+// This function does no assertion of any kind.
+func ObjectsExportedFieldsAreEqual(expected, actual interface{}) bool {
+	expectedCleaned := copyExportedFields(expected)
+	actualCleaned := copyExportedFields(actual)
+	return ObjectsAreEqualValues(expectedCleaned, actualCleaned)
+}
+
 // ObjectsAreEqualValues gets whether two objects are equal, or if their
 // values are equal.
 func ObjectsAreEqualValues(expected, actual interface{}) bool {
@@ -140,10 +211,10 @@ func CallerInfo() []string {
 		}
 
 		parts := strings.Split(file, "/")
-		file = parts[len(parts)-1]
 		if len(parts) > 1 {
+			filename := parts[len(parts)-1]
 			dir := parts[len(parts)-2]
-			if (dir != "assert" && dir != "mock" && dir != "require") || file == "mock_test.go" {
+			if (dir != "assert" && dir != "mock" && dir != "require") || filename == "mock_test.go" {
 				callers = append(callers, fmt.Sprintf("%s:%d", file, line))
 			}
 		}
@@ -473,6 +544,50 @@ func EqualValues(t TestingT, expected, actual interface{}, msgAndArgs ...interfa
 
 }
 
+// EqualExportedValues asserts that the types of two objects are equal and their public
+// fields are also equal. This is useful for comparing structs that have private fields
+// that could potentially differ.
+//
+//	 type S struct {
+//		Exported     	int
+//		notExported   	int
+//	 }
+//	 assert.EqualExportedValues(t, S{1, 2}, S{1, 3}) => true
+//	 assert.EqualExportedValues(t, S{1, 2}, S{2, 3}) => false
+func EqualExportedValues(t TestingT, expected, actual interface{}, msgAndArgs ...interface{}) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+
+	aType := reflect.TypeOf(expected)
+	bType := reflect.TypeOf(actual)
+
+	if aType != bType {
+		return Fail(t, fmt.Sprintf("Types expected to match exactly\n\t%v != %v", aType, bType), msgAndArgs...)
+	}
+
+	if aType.Kind() != reflect.Struct {
+		return Fail(t, fmt.Sprintf("Types expected to both be struct \n\t%v != %v", aType.Kind(), reflect.Struct), msgAndArgs...)
+	}
+
+	if bType.Kind() != reflect.Struct {
+		return Fail(t, fmt.Sprintf("Types expected to both be struct \n\t%v != %v", bType.Kind(), reflect.Struct), msgAndArgs...)
+	}
+
+	expected = copyExportedFields(expected)
+	actual = copyExportedFields(actual)
+
+	if !ObjectsAreEqualValues(expected, actual) {
+		diff := diff(expected, actual)
+		expected, actual = formatUnequalValues(expected, actual)
+		return Fail(t, fmt.Sprintf("Not equal (comparing only exported fields): \n"+
+			"expected: %s\n"+
+			"actual  : %s%s", expected, actual, diff), msgAndArgs...)
+	}
+
+	return true
+}
+
 // Exactly asserts that two objects are equal in value and type.
 //
 //	assert.Exactly(t, int32(123), int64(123))
@@ -528,7 +643,7 @@ func isNil(object interface{}) bool {
 		[]reflect.Kind{
 			reflect.Chan, reflect.Func,
 			reflect.Interface, reflect.Map,
-			reflect.Ptr, reflect.Slice},
+			reflect.Ptr, reflect.Slice, reflect.UnsafePointer},
 		kind)
 
 	if isNilableKind && value.IsNil() {
@@ -563,16 +678,17 @@ func isEmpty(object interface{}) bool {
 
 	switch objValue.Kind() {
 	// collection types are empty when they have no element
-	case reflect.Array, reflect.Chan, reflect.Map, reflect.Slice:
+	case reflect.Chan, reflect.Map, reflect.Slice:
 		return objValue.Len() == 0
-		// pointers are empty if nil or if the value they point to is empty
+	// pointers are empty if nil or if the value they point to is empty
 	case reflect.Ptr:
 		if objValue.IsNil() {
 			return true
 		}
 		deref := objValue.Elem().Interface()
 		return isEmpty(deref)
-		// for all other types, compare against the zero value
+	// for all other types, compare against the zero value
+	// array types are empty when they match their zero-initialized state
 	default:
 		zero := reflect.Zero(objValue.Type())
 		return reflect.DeepEqual(object, zero.Interface())
@@ -793,10 +909,10 @@ func NotContains(t TestingT, s, contains interface{}, msgAndArgs ...interface{})
 
 	ok, found := containsElement(s, contains)
 	if !ok {
-		return Fail(t, fmt.Sprintf("\"%s\" could not be applied builtin len()", s), msgAndArgs...)
+		return Fail(t, fmt.Sprintf("%#v could not be applied builtin len()", s), msgAndArgs...)
 	}
 	if found {
-		return Fail(t, fmt.Sprintf("\"%s\" should not contain \"%s\"", s, contains), msgAndArgs...)
+		return Fail(t, fmt.Sprintf("%#v should not contain %#v", s, contains), msgAndArgs...)
 	}
 
 	return true
@@ -815,32 +931,44 @@ func Subset(t TestingT, list, subset interface{}, msgAndArgs ...interface{}) (ok
 		return true // we consider nil to be equal to the nil set
 	}
 
-	subsetValue := reflect.ValueOf(subset)
-	defer func() {
-		if e := recover(); e != nil {
-			ok = false
-		}
-	}()
-
 	listKind := reflect.TypeOf(list).Kind()
-	subsetKind := reflect.TypeOf(subset).Kind()
-
-	if listKind != reflect.Array && listKind != reflect.Slice {
+	if listKind != reflect.Array && listKind != reflect.Slice && listKind != reflect.Map {
 		return Fail(t, fmt.Sprintf("%q has an unsupported type %s", list, listKind), msgAndArgs...)
 	}
 
-	if subsetKind != reflect.Array && subsetKind != reflect.Slice {
+	subsetKind := reflect.TypeOf(subset).Kind()
+	if subsetKind != reflect.Array && subsetKind != reflect.Slice && listKind != reflect.Map {
 		return Fail(t, fmt.Sprintf("%q has an unsupported type %s", subset, subsetKind), msgAndArgs...)
 	}
 
-	for i := 0; i < subsetValue.Len(); i++ {
-		element := subsetValue.Index(i).Interface()
+	if subsetKind == reflect.Map && listKind == reflect.Map {
+		subsetMap := reflect.ValueOf(subset)
+		actualMap := reflect.ValueOf(list)
+
+		for _, k := range subsetMap.MapKeys() {
+			ev := subsetMap.MapIndex(k)
+			av := actualMap.MapIndex(k)
+
+			if !av.IsValid() {
+				return Fail(t, fmt.Sprintf("%#v does not contain %#v", list, subset), msgAndArgs...)
+			}
+			if !ObjectsAreEqual(ev.Interface(), av.Interface()) {
+				return Fail(t, fmt.Sprintf("%#v does not contain %#v", list, subset), msgAndArgs...)
+			}
+		}
+
+		return true
+	}
+
+	subsetList := reflect.ValueOf(subset)
+	for i := 0; i < subsetList.Len(); i++ {
+		element := subsetList.Index(i).Interface()
 		ok, found := containsElement(list, element)
 		if !ok {
-			return Fail(t, fmt.Sprintf("\"%s\" could not be applied builtin len()", list), msgAndArgs...)
+			return Fail(t, fmt.Sprintf("%#v could not be applied builtin len()", list), msgAndArgs...)
 		}
 		if !found {
-			return Fail(t, fmt.Sprintf("\"%s\" does not contain \"%s\"", list, element), msgAndArgs...)
+			return Fail(t, fmt.Sprintf("%#v does not contain %#v", list, element), msgAndArgs...)
 		}
 	}
 
@@ -859,26 +987,38 @@ func NotSubset(t TestingT, list, subset interface{}, msgAndArgs ...interface{}) 
 		return Fail(t, "nil is the empty set which is a subset of every set", msgAndArgs...)
 	}
 
-	subsetValue := reflect.ValueOf(subset)
-	defer func() {
-		if e := recover(); e != nil {
-			ok = false
-		}
-	}()
-
 	listKind := reflect.TypeOf(list).Kind()
-	subsetKind := reflect.TypeOf(subset).Kind()
-
-	if listKind != reflect.Array && listKind != reflect.Slice {
+	if listKind != reflect.Array && listKind != reflect.Slice && listKind != reflect.Map {
 		return Fail(t, fmt.Sprintf("%q has an unsupported type %s", list, listKind), msgAndArgs...)
 	}
 
-	if subsetKind != reflect.Array && subsetKind != reflect.Slice {
+	subsetKind := reflect.TypeOf(subset).Kind()
+	if subsetKind != reflect.Array && subsetKind != reflect.Slice && listKind != reflect.Map {
 		return Fail(t, fmt.Sprintf("%q has an unsupported type %s", subset, subsetKind), msgAndArgs...)
 	}
 
-	for i := 0; i < subsetValue.Len(); i++ {
-		element := subsetValue.Index(i).Interface()
+	if subsetKind == reflect.Map && listKind == reflect.Map {
+		subsetMap := reflect.ValueOf(subset)
+		actualMap := reflect.ValueOf(list)
+
+		for _, k := range subsetMap.MapKeys() {
+			ev := subsetMap.MapIndex(k)
+			av := actualMap.MapIndex(k)
+
+			if !av.IsValid() {
+				return true
+			}
+			if !ObjectsAreEqual(ev.Interface(), av.Interface()) {
+				return true
+			}
+		}
+
+		return Fail(t, fmt.Sprintf("%q is a subset of %q", subset, list), msgAndArgs...)
+	}
+
+	subsetList := reflect.ValueOf(subset)
+	for i := 0; i < subsetList.Len(); i++ {
+		element := subsetList.Index(i).Interface()
 		ok, found := containsElement(list, element)
 		if !ok {
 			return Fail(t, fmt.Sprintf("\"%s\" could not be applied builtin len()", list), msgAndArgs...)
@@ -1104,6 +1244,27 @@ func WithinDuration(t TestingT, expected, actual time.Time, delta time.Duration,
 	dt := expected.Sub(actual)
 	if dt < -delta || dt > delta {
 		return Fail(t, fmt.Sprintf("Max difference between %v and %v allowed is %v, but difference was %v", expected, actual, delta, dt), msgAndArgs...)
+	}
+
+	return true
+}
+
+// WithinRange asserts that a time is within a time range (inclusive).
+//
+//	assert.WithinRange(t, time.Now(), time.Now().Add(-time.Second), time.Now().Add(time.Second))
+func WithinRange(t TestingT, actual, start, end time.Time, msgAndArgs ...interface{}) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+
+	if end.Before(start) {
+		return Fail(t, "Start should be before end", msgAndArgs...)
+	}
+
+	if actual.Before(start) {
+		return Fail(t, fmt.Sprintf("Time %v expected to be in time range %v to %v, but is before the range", actual, start, end), msgAndArgs...)
+	} else if actual.After(end) {
+		return Fail(t, fmt.Sprintf("Time %v expected to be in time range %v to %v, but is after the range", actual, start, end), msgAndArgs...)
 	}
 
 	return true
@@ -1689,6 +1850,89 @@ func Eventually(t TestingT, condition func() bool, waitFor time.Duration, tick t
 		case <-tick:
 			tick = nil
 			go func() { ch <- condition() }()
+		case v := <-ch:
+			if v {
+				return true
+			}
+			tick = ticker.C
+		}
+	}
+}
+
+// CollectT implements the TestingT interface and collects all errors.
+type CollectT struct {
+	errors []error
+}
+
+// Errorf collects the error.
+func (c *CollectT) Errorf(format string, args ...interface{}) {
+	c.errors = append(c.errors, fmt.Errorf(format, args...))
+}
+
+// FailNow panics.
+func (c *CollectT) FailNow() {
+	panic("Assertion failed")
+}
+
+// Reset clears the collected errors.
+func (c *CollectT) Reset() {
+	c.errors = nil
+}
+
+// Copy copies the collected errors to the supplied t.
+func (c *CollectT) Copy(t TestingT) {
+	if tt, ok := t.(tHelper); ok {
+		tt.Helper()
+	}
+	for _, err := range c.errors {
+		t.Errorf("%v", err)
+	}
+}
+
+// EventuallyWithT asserts that given condition will be met in waitFor time,
+// periodically checking target function each tick. In contrast to Eventually,
+// it supplies a CollectT to the condition function, so that the condition
+// function can use the CollectT to call other assertions.
+// The condition is considered "met" if no errors are raised in a tick.
+// The supplied CollectT collects all errors from one tick (if there are any).
+// If the condition is not met before waitFor, the collected errors of
+// the last tick are copied to t.
+//
+//	externalValue := false
+//	go func() {
+//		time.Sleep(8*time.Second)
+//		externalValue = true
+//	}()
+//	assert.EventuallyWithT(t, func(c *assert.CollectT) {
+//		// add assertions as needed; any assertion failure will fail the current tick
+//		assert.True(c, externalValue, "expected 'externalValue' to be true")
+//	}, 1*time.Second, 10*time.Second, "external state has not changed to 'true'; still false")
+func EventuallyWithT(t TestingT, condition func(collect *CollectT), waitFor time.Duration, tick time.Duration, msgAndArgs ...interface{}) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+
+	collect := new(CollectT)
+	ch := make(chan bool, 1)
+
+	timer := time.NewTimer(waitFor)
+	defer timer.Stop()
+
+	ticker := time.NewTicker(tick)
+	defer ticker.Stop()
+
+	for tick := ticker.C; ; {
+		select {
+		case <-timer.C:
+			collect.Copy(t)
+			return Fail(t, "Condition never satisfied", msgAndArgs...)
+		case <-tick:
+			tick = nil
+			collect.Reset()
+			go func() {
+				condition(collect)
+				ch <- len(collect.errors) == 0
+			}()
 		case v := <-ch:
 			if v {
 				return true

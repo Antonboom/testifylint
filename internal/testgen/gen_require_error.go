@@ -9,7 +9,7 @@ import (
 type RequireErrorCasesGenerator struct{}
 
 func (RequireErrorCasesGenerator) CheckerName() string {
-	return checkers.RequireErrorCheckerName
+	return checkers.NewRequireError().Name()
 }
 
 func (RequireErrorCasesGenerator) Data() any {
@@ -76,7 +76,7 @@ func (RequireErrorCasesGenerator) GoldenTemplate() *template.Template {
 
 const requireErrorCasesTmplText = header + `
 
-package requireerror
+package {{ .CheckerName }}
 
 import (
 	"io"

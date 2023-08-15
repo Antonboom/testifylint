@@ -2,11 +2,10 @@ package checkers
 
 import (
 	"fmt"
+	util "github.com/Antonboom/testifylint/internal/analysisutil"
 
 	"golang.org/x/tools/go/analysis"
 )
-
-const ErrorIsCheckerName = "error-is"
 
 // ErrorIs checks situation like
 //
@@ -15,29 +14,32 @@ const ErrorIsCheckerName = "error-is"
 // and requires e.g.
 //
 //	assert.Len(t, arr, 3)
-type ErrorIs struct{}        //
-func NewErrorIs() ErrorIs    { return ErrorIs{} }
-func (ErrorIs) Name() string { return ErrorIsCheckerName }
+type ErrorIs struct{}
 
-func (checker ErrorIs) Check(pass *analysis.Pass, call CallMeta) {
+// NewErrorIs constructs ErrorIs checker.
+func NewErrorIs() ErrorIs    { return ErrorIs{} }
+func (ErrorIs) Name() string { return "error-is" }
+
+func (checker ErrorIs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	if len(call.Args) < 2 {
-		return
+		return nil
 	}
 	errArg := call.Args[1]
 
 	switch call.Fn.Name {
 	case "Error", "Errorf":
-		if isError(pass, errArg) {
+		if util.IsError(pass, errArg) {
 			proposed := "ErrorIs"
-			msg := fmt.Sprintf("invalid usage of %[1]s.Error, use %[1]s.%[2]s instead", call.SelectorStr, proposed)
-			r.Report(pass, checker.Name(), call, msg, newFixViaFnReplacement(call, proposed))
+			msg := fmt.Sprintf("invalid usage of %[1]s.Error, use %[1]s.%[2]s instead", call.SelectorXStr, proposed)
+			return newDiagnostic(checker.Name(), call, msg, newSuggestedFuncReplacement(call, proposed))
 		}
 
 	case "NoError", "NoErrorf":
-		if isError(pass, errArg) {
+		if util.IsError(pass, errArg) {
 			proposed := "NotErrorIs"
-			msg := fmt.Sprintf("invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead", call.SelectorStr, proposed)
-			r.Report(pass, checker.Name(), call, msg, newFixViaFnReplacement(call, proposed))
+			msg := fmt.Sprintf("invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead", call.SelectorXStr, proposed)
+			return newDiagnostic(checker.Name(), call, msg, newSuggestedFuncReplacement(call, proposed))
 		}
 	}
+	return nil
 }

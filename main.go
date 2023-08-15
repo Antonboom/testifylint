@@ -54,8 +54,6 @@ https://github.com/kubernetes/ingress-nginx/blob/main/test/e2e/loadbalance/ewma.
 - ревью приоритетов чекеров, проверять при сборке, что приоритеты разные
 - продублировать полезные флаги
 - godoc к чекерам
-- вынести управление приоритетом наружу
-- обновить линтеры
 - пристальное ревью каждого файла
 - negative test cases
 - поддержка pkg alias
@@ -74,4 +72,10 @@ func Get(name string) (Checker, bool) {
 описать багу – Checker встраивался, но дальше не конвертировался в CallChecker и AdvancedChecker
 от этого спасёт маркер ну или прост использовать переменную
 покрыть тестом
+- заполнить URL'ы диагностик ссылками на ридми/checker
+- review приоритета
+readme – tests is code too
+
+- облегчить тесты, унести различные вариации на тесты фактов
+- deduplication репортов скрывает баги опхода –> хуже optimization
 */

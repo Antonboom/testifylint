@@ -12,8 +12,6 @@ import (
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-const SuiteTHelperCheckerName = "suite-thelper"
-
 // SuiteTHelper checks situation like
 //
 //	func (s *MySuite) TestSomething() {
@@ -25,14 +23,16 @@ const SuiteTHelperCheckerName = "suite-thelper"
 //	func (s *MySuite) TestSomething() {
 //		s.Equal(42, value)
 //	}
-type SuiteTHelper struct{}          //
-func NewSuiteTHelper() SuiteTHelper { return SuiteTHelper{} }
-func (SuiteTHelper) Name() string   { return SuiteTHelperCheckerName }
+type SuiteTHelper struct{}
 
-func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Inspector) {
+// NewSuiteTHelper constructs SuiteTHelper checker.
+func NewSuiteTHelper() SuiteTHelper { return SuiteTHelper{} }
+func (SuiteTHelper) Name() string   { return "suite-thelper" }
+
+func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Inspector) (diagnostics []analysis.Diagnostic) {
 	inspector.Preorder([]ast.Node{(*ast.FuncDecl)(nil)}, func(node ast.Node) {
 		fd := node.(*ast.FuncDecl)
-		if !analysisutil.IsSuiteMethod(pass, fd) {
+		if !analysisutil.IsTestifySuiteMethod(pass, fd) {
 			return
 		}
 
@@ -58,9 +58,10 @@ func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Insp
 
 		if !firstStmtIsTHelperCall(pass, fd, rcvName, rcvType) {
 			msg := fmt.Sprintf("suite helper method should start with %s.T().Helper()", rcvName)
-			r.Report(pass, checker.Name(), fd, msg, nil)
+			diagnostics = append(diagnostics, *newDiagnostic(checker.Name(), fd, msg, nil))
 		}
 	})
+	return nil
 }
 
 func isServiceSuiteMethod(name string) bool {

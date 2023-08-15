@@ -13,7 +13,7 @@ jobs:
       - uses: rlespinasse/github-slug-action@v4
       - uses: actions/setup-go@v4
         with:
-          go-version: ^1.20
+          go-version: ^1.21
       - run: cd /tmp && go install github.com/Antonboom/testifylint@${{ env.GITHUB_REF_NAME }} && testifylint -h
 
   lint:
@@ -21,11 +21,11 @@ jobs:
     steps:
       - uses: actions/setup-go@v4
         with:
-          go-version: '1.20'
+          go-version: '1.21'
       - uses: actions/checkout@v3
       - uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.53.3
+          version: v1.54.0
           args: --timeout=5m
 
   test:
@@ -33,7 +33,7 @@ jobs:
     steps:
       - uses: actions/setup-go@v4
         with:
-          go-version: ^1.20
+          go-version: ^1.21
       - uses: actions/checkout@v3
       - run: go test -coverprofile=coverage.out ./...
       - uses: shogo82148/actions-goveralls@v1

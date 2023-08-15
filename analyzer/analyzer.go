@@ -17,10 +17,10 @@ import (
 
 const (
 	name = "testifylint"
-	doc  = "Checks usage of github.com/stretchr/testify."
+	doc  = "Checks usage of " + testifyPath + "."
 )
 
-// New accepts validated config.Config and returns testifylint analyzer.
+// New accepts config.Config and returns testifylint analyzer.
 func New(cfg config.Config) *analysis.Analyzer {
 	return &analysis.Analyzer{
 		Name: name,
@@ -30,13 +30,13 @@ func New(cfg config.Config) *analysis.Analyzer {
 				return nil, fmt.Errorf("invalid config: %v", err)
 			}
 
-			callCheckers, advancedCheckers, err := newCheckers(cfg)
+			regularCheckers, advancedCheckers, err := newCheckers(cfg)
 			if err != nil {
 				return nil, fmt.Errorf("build checkers: %v", err)
 			}
 
 			tl := &testifyLint{
-				callCheckers:     callCheckers,
+				regularCheckers:  regularCheckers,
 				advancedCheckers: advancedCheckers,
 			}
 			return tl.run(pass)
@@ -45,8 +45,20 @@ func New(cfg config.Config) *analysis.Analyzer {
 	}
 }
 
+const (
+	testifyPath = "github.com/stretchr/testify"
+
+	assertPkgName  = "assert"
+	requirePkgName = "require"
+	suitePkgName   = "suite"
+
+	testifyAssertPath  = testifyPath + "/" + assertPkgName
+	testifyRequirePath = testifyPath + "/" + requirePkgName
+	testifySuitePath   = testifyPath + "/" + suitePkgName
+)
+
 type testifyLint struct {
-	callCheckers     []checkers.CallChecker
+	regularCheckers  []checkers.RegularChecker
 	advancedCheckers []checkers.AdvancedChecker
 }
 
@@ -58,29 +70,29 @@ func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
 			continue
 		}
 
-		if analysisutil.Imports(f, "github.com/stretchr/testify/assert") ||
-			analysisutil.Imports(f, "github.com/stretchr/testify/require") ||
-			analysisutil.Imports(f, "github.com/stretchr/testify/suite") {
+		if analysisutil.Imports(f, testifyAssertPath, testifyRequirePath, testifySuitePath) {
 			insp.Nodes([]ast.Node{
 				(*ast.CallExpr)(nil),
 				(*ast.FuncDecl)(nil),
-			}, tl.newCallCheckersRunner(pass))
+			}, tl.newRegularCheckersRunner(pass))
 
 			for _, ch := range tl.advancedCheckers {
-				ch.Check(pass, insp)
+				for _, d := range ch.Check(pass, insp) {
+					pass.Report(d)
+				}
 			}
 		}
 	}
 	return nil, nil
 }
 
-func (tl *testifyLint) newCallCheckersRunner(pass *analysis.Pass) func(ast.Node, bool) bool {
+func (tl *testifyLint) newRegularCheckersRunner(pass *analysis.Pass) func(ast.Node, bool) bool {
 	var insideSuiteMethod bool
 
 	return func(node ast.Node, push bool) (proceed bool) {
 		switch v := node.(type) {
 		case *ast.FuncDecl:
-			if analysisutil.IsSuiteMethod(pass, v) {
+			if analysisutil.IsTestifySuiteMethod(pass, v) {
 				if push {
 					insideSuiteMethod = true
 				} else {
@@ -89,7 +101,10 @@ func (tl *testifyLint) newCallCheckersRunner(pass *analysis.Pass) func(ast.Node,
 			}
 
 		case *ast.CallExpr:
-			tl.checkCall(v, pass, insideSuiteMethod)
+			// NOTE(a.telyshev): Process call expressions once.
+			if push {
+				tl.checkCall(v, pass, insideSuiteMethod)
+			}
 		}
 		return true
 	}
@@ -123,19 +138,19 @@ func (tl *testifyLint) checkCall(ce *ast.CallExpr, pass *analysis.Pass, insideSu
 		return
 	}
 
-	isAssert := analysisutil.IsPkg(pkg, "assert", "github.com/stretchr/testify/assert")
-	isRequire := analysisutil.IsPkg(pkg, "require", "github.com/stretchr/testify/require")
+	isAssert := analysisutil.IsPkg(pkg, assertPkgName, testifyAssertPath)
+	isRequire := analysisutil.IsPkg(pkg, requirePkgName, testifyRequirePath)
 	if !(isAssert || isRequire) {
 		return
 	}
 
-	call := checkers.CallMeta{
+	call := &checkers.CallMeta{
 		Range:             ce,
-		Selector:          se,
 		IsAssert:          isAssert,
 		IsRequire:         isRequire,
 		InsideSuiteMethod: insideSuiteMethod,
-		SelectorStr:       types.ExprString(se.X),
+		Selector:          se,
+		SelectorXStr:      types.ExprString(se.X),
 		Fn: checkers.FnMeta{
 			Range: se.Sel,
 			Name:  fn,
@@ -144,8 +159,13 @@ func (tl *testifyLint) checkCall(ce *ast.CallExpr, pass *analysis.Pass, insideSu
 		Args:    trimTArg(pass, ce.Args),
 		ArgsRaw: ce.Args,
 	}
-	for _, ch := range tl.callCheckers {
-		ch.Check(pass, call)
+	for _, ch := range tl.regularCheckers {
+		if d := ch.Check(pass, call); d != nil {
+			pass.Report(*d)
+			// NOTE(a.telyshev): I'm not interested in multiple diagnostics per assertion.
+			// This simplifies the code and also makes the linter more efficient.
+			return
+		}
 	}
 }
 

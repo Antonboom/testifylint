@@ -1,7 +1,6 @@
 package analyzer_test
 
 import (
-	"github.com/Antonboom/testifylint/internal/checkers"
 	"path/filepath"
 	"testing"
 
@@ -9,6 +8,7 @@ import (
 
 	"github.com/Antonboom/testifylint/analyzer"
 	"github.com/Antonboom/testifylint/config"
+	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 func TestTestifyLint(t *testing.T) {

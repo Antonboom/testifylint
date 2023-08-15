@@ -10,7 +10,7 @@ import (
 type ComparesCasesGenerator struct{}
 
 func (ComparesCasesGenerator) CheckerName() string {
-	return checkers.ComparesCheckerName
+	return checkers.NewCompares().Name()
 }
 
 func (ComparesCasesGenerator) Data() any {
@@ -67,7 +67,7 @@ func (ComparesCasesGenerator) GoldenTemplate() *template.Template {
 
 const comparesCasesTmplText = header + `
 
-package compares
+package {{ .CheckerName }}
 
 import (
 	"testing"

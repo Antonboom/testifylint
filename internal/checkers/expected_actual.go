@@ -9,9 +9,7 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-const ExpectedActualCheckerName = "expected-actual"
-
-// TODO: упростить регулярку + тесты
+// TODO: упростить регулярку + тесты.
 var DefaultExpectedVarPattern = regexp.MustCompile(strings.ReplaceAll(`(
 	^exp$|
 	^expected$|
@@ -37,34 +35,35 @@ type ExpectedActual struct {
 	expPattern *regexp.Regexp
 }
 
+// NewExpectedActual constructs ExpectedActual checker using DefaultExpectedVarPattern.
 func NewExpectedActual() *ExpectedActual {
 	return &ExpectedActual{expPattern: DefaultExpectedVarPattern}
 }
 
-func (ExpectedActual) Name() string { return ExpectedActualCheckerName }
+func (ExpectedActual) Name() string { return "expected-actual" }
 
-func (checker *ExpectedActual) SetExpPattern(p *regexp.Regexp) {
-	if p == nil {
-		return
+func (checker *ExpectedActual) SetExpPattern(p *regexp.Regexp) *ExpectedActual {
+	if p != nil {
+		checker.expPattern = p
 	}
-	checker.expPattern = p
+	return checker
 }
 
-func (checker ExpectedActual) Check(pass *analysis.Pass, call CallMeta) {
+func (checker ExpectedActual) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	switch call.Fn.Name {
 	case "Equal", "Equalf", "NotEqual", "NotEqualf",
 		"JSONEq", "JSONEqf", "YAMLEq", "YAMLEqf":
 	default:
-		return
+		return nil
 	}
 
 	if len(call.Args) < 2 {
-		return
+		return nil
 	}
 	first, second := call.Args[0], call.Args[1]
 
 	if isWrongExpectedActualOrder(pass, checker.expPattern, first, second) {
-		r.Report(pass, checker.Name(), call, "need to reverse actual and expected values", &analysis.SuggestedFix{
+		return newDiagnostic(checker.Name(), call, "need to reverse actual and expected values", &analysis.SuggestedFix{
 			Message: "Reverse actual and expected values",
 			TextEdits: []analysis.TextEdit{
 				{
@@ -75,6 +74,7 @@ func (checker ExpectedActual) Check(pass *analysis.Pass, call CallMeta) {
 			},
 		})
 	}
+	return nil
 }
 
 func isWrongExpectedActualOrder(pass *analysis.Pass, expectedVarPattern *regexp.Regexp, _, second ast.Expr) bool {

@@ -10,7 +10,7 @@ import (
 type ExpectedActualCasesGenerator struct{}
 
 func (ExpectedActualCasesGenerator) CheckerName() string {
-	return checkers.ExpectedActualCheckerName
+	return checkers.NewExpectedActual().Name()
 }
 
 func (ExpectedActualCasesGenerator) Data() any {
@@ -142,7 +142,7 @@ func (ExpectedActualCasesGenerator) GoldenTemplate() *template.Template {
 
 const expectedActualCasesTmplText = header + `
 
-package mostof
+package {{ .CheckerName }}
 
 import (
 	"testing"

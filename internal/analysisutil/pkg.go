@@ -3,6 +3,7 @@ package analysisutil
 import (
 	"go/ast"
 	"go/types"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -13,8 +14,8 @@ func IsPkg(pkg *types.Package, name, path string) bool {
 	return pkg.Name() == name && trimVendor(pkg.Path()) == path
 }
 
-// Imports tells if the file imports the pkg.
-func Imports(file *ast.File, pkg string) bool {
+// Imports tells if the file imports at least one of the pkgs.
+func Imports(file *ast.File, pkgs ...string) bool {
 	for _, i := range file.Imports {
 		if i.Path == nil {
 			continue
@@ -24,7 +25,7 @@ func Imports(file *ast.File, pkg string) bool {
 		if err != nil {
 			continue
 		}
-		if path == pkg {
+		if slices.Contains(pkgs, path) {
 			return true
 		}
 	}

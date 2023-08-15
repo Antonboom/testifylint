@@ -8,39 +8,39 @@ import (
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-const SuiteNoExtraAssertCallCheckerName = "suite-no-extra-assert-call"
-
 // SuiteNoExtraAssertCall wants t.Helper() call in suite helpers:
 //
 //	func (s *RoomSuite) assertRoomRound(roundID RoundID) {
 //		s.T().Helper()
 //		s.Equal(roundID, s.getRoom().CurrentRound.ID)
 //	}
-type SuiteNoExtraAssertCall struct{}                    //
-func NewSuiteNoExtraAssertCall() SuiteNoExtraAssertCall { return SuiteNoExtraAssertCall{} }
-func (SuiteNoExtraAssertCall) Name() string             { return SuiteNoExtraAssertCallCheckerName }
+type SuiteNoExtraAssertCall struct{}
 
-func (checker SuiteNoExtraAssertCall) Check(pass *analysis.Pass, call CallMeta) {
+// NewSuiteNoExtraAssertCall constructs SuiteNoExtraAssertCall checker.
+func NewSuiteNoExtraAssertCall() SuiteNoExtraAssertCall { return SuiteNoExtraAssertCall{} }
+func (SuiteNoExtraAssertCall) Name() string             { return "suite-no-extra-assert-call" }
+
+func (checker SuiteNoExtraAssertCall) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	if !call.InsideSuiteMethod {
-		return
+		return nil
 	}
 
 	ce, ok := call.Selector.X.(*ast.CallExpr)
 	if !ok {
-		return
+		return nil
 	}
 	se, ok := ce.Fun.(*ast.SelectorExpr)
 	if !ok {
-		return
+		return nil
 	}
-	if se.X == nil || !analysisutil.IsSuiteObj(pass, se.X) {
-		return
+	if se.X == nil || !analysisutil.IsTestifySuiteObj(pass, se.X) {
+		return nil
 	}
 	if se.Sel == nil || se.Sel.Name != "Assert" {
-		return
+		return nil
 	}
 
-	r.Report(pass, checker.Name(), call, "need to simplify the check", &analysis.SuggestedFix{
+	return newDiagnostic(checker.Name(), call, "need to simplify the check", &analysis.SuggestedFix{
 		Message: "Remove Assert() call",
 		TextEdits: []analysis.TextEdit{{
 			Pos:     se.Sel.Pos(),
