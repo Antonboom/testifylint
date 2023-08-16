@@ -4,8 +4,6 @@ import (
 	"go/ast"
 
 	"golang.org/x/tools/go/analysis"
-
-	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
 // SuiteNoExtraAssertCall wants t.Helper() call in suite helpers:
@@ -21,10 +19,6 @@ func NewSuiteNoExtraAssertCall() SuiteNoExtraAssertCall { return SuiteNoExtraAss
 func (SuiteNoExtraAssertCall) Name() string             { return "suite-no-extra-assert-call" }
 
 func (checker SuiteNoExtraAssertCall) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	if !call.InsideSuiteMethod {
-		return nil
-	}
-
 	ce, ok := call.Selector.X.(*ast.CallExpr)
 	if !ok {
 		return nil
@@ -33,7 +27,7 @@ func (checker SuiteNoExtraAssertCall) Check(pass *analysis.Pass, call *CallMeta)
 	if !ok {
 		return nil
 	}
-	if se.X == nil || !analysisutil.IsTestifySuiteObj(pass, se.X) {
+	if se.X == nil || !implementsTestifySuiteIface(pass, se.X) {
 		return nil
 	}
 	if se.Sel == nil || se.Sel.Name != "Assert" {

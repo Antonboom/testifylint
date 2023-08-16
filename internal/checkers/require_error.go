@@ -15,7 +15,7 @@ type RequireError struct{}
 func NewRequireError() RequireError { return RequireError{} }
 func (RequireError) Name() string   { return "require-error" }
 
-func (checker RequireError) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
+func (checker RequireError) Check(_ *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	if !call.IsAssert {
 		return nil
 	}
@@ -23,7 +23,7 @@ func (checker RequireError) Check(pass *analysis.Pass, call *CallMeta) *analysis
 	switch call.Fn.Name {
 	case "Error", "ErrorIs", "ErrorAs", "EqualError", "ErrorContains", "NoError", "NotErrorIs",
 		"Errorf", "ErrorIsf", "ErrorAsf", "EqualErrorf", "ErrorContainsf", "NoErrorf", "NotErrorIsf":
-		return newDiagnostic(checker.Name(), call, "for error assertions use the `require` package", nil)
+		return newDiagnostic(checker.Name(), call, "for error assertions use the `require` package", nil) // TODO для suite s.Require() другой текст
 	}
 	return nil
 }

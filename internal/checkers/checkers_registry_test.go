@@ -1,9 +1,10 @@
 package checkers_test
 
 import (
-	"slices"
 	"sort"
 	"testing"
+
+	"slices"
 
 	"github.com/Antonboom/testifylint/internal/checkers"
 )

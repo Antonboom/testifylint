@@ -2,7 +2,6 @@ package checkers
 
 import (
 	"fmt"
-	util "github.com/Antonboom/testifylint/internal/analysisutil"
 
 	"golang.org/x/tools/go/analysis"
 )
@@ -28,14 +27,14 @@ func (checker ErrorIs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diag
 
 	switch call.Fn.Name {
 	case "Error", "Errorf":
-		if util.IsError(pass, errArg) {
+		if isError(pass, errArg) {
 			proposed := "ErrorIs"
 			msg := fmt.Sprintf("invalid usage of %[1]s.Error, use %[1]s.%[2]s instead", call.SelectorXStr, proposed)
 			return newDiagnostic(checker.Name(), call, msg, newSuggestedFuncReplacement(call, proposed))
 		}
 
 	case "NoError", "NoErrorf":
-		if util.IsError(pass, errArg) {
+		if isError(pass, errArg) {
 			proposed := "NotErrorIs"
 			msg := fmt.Sprintf("invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead", call.SelectorXStr, proposed)
 			return newDiagnostic(checker.Name(), call, msg, newSuggestedFuncReplacement(call, proposed))

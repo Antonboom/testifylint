@@ -8,8 +8,6 @@ import (
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/ast/inspector"
-
-	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
 // SuiteTHelper checks situation like
@@ -23,6 +21,8 @@ import (
 //	func (s *MySuite) TestSomething() {
 //		s.Equal(42, value)
 //	}
+//
+// TODO: fix example + описать, что толку мало, больше как пример advanced linter и документация.
 type SuiteTHelper struct{}
 
 // NewSuiteTHelper constructs SuiteTHelper checker.
@@ -32,7 +32,7 @@ func (SuiteTHelper) Name() string   { return "suite-thelper" }
 func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Inspector) (diagnostics []analysis.Diagnostic) {
 	inspector.Preorder([]ast.Node{(*ast.FuncDecl)(nil)}, func(node ast.Node) {
 		fd := node.(*ast.FuncDecl)
-		if !analysisutil.IsTestifySuiteMethod(pass, fd) {
+		if !isTestifySuiteMethod(pass, fd) {
 			return
 		}
 
@@ -62,6 +62,15 @@ func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Insp
 		}
 	})
 	return nil
+}
+
+func isTestifySuiteMethod(pass *analysis.Pass, fDecl *ast.FuncDecl) bool {
+	if fDecl.Recv == nil || len(fDecl.Recv.List) != 1 {
+		return false
+	}
+
+	rcv := fDecl.Recv.List[0]
+	return implementsTestifySuiteIface(pass, rcv.Type)
 }
 
 func isServiceSuiteMethod(name string) bool {

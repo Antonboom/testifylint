@@ -1,40 +1,14 @@
 package analysisutil_test
 
 import (
-	"github.com/Antonboom/testifylint/internal/analysisutil"
-	"go/ast"
-	"go/parser"
 	"go/token"
 	"go/types"
-	"golang.org/x/tools/go/analysis"
 	"testing"
+
+	"golang.org/x/tools/go/analysis"
+
+	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
-
-func TestIsTestFile(t *testing.T) {
-	fset := token.NewFileSet()
-
-	svcFile, err := parser.ParseFile(fset, "service.go", `package service`, parser.PackageClauseOnly)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	svcTestFile, err := parser.ParseFile(fset, "service_test.go", `package servicetest`, parser.PackageClauseOnly)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	pass := &analysis.Pass{
-		Fset:  fset,
-		Files: []*ast.File{svcFile, svcTestFile},
-	}
-
-	if v := analysisutil.IsTestFile(pass, svcFile); v {
-		t.Errorf("expected IsTestFile == false")
-	}
-	if v := analysisutil.IsTestFile(pass, svcTestFile); !v {
-		t.Errorf("expected IsTestFile == true")
-	}
-}
 
 func TestObjectOf(t *testing.T) {
 	testingPkg := types.NewPackage("testing", "testing")

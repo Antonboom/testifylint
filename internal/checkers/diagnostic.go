@@ -2,10 +2,16 @@ package checkers
 
 import (
 	"fmt"
+
 	"golang.org/x/tools/go/analysis"
 )
 
-func newUseFunctionDiagnostic(checker string, call *CallMeta, proposedFn string, fix *analysis.SuggestedFix) *analysis.Diagnostic {
+func newUseFunctionDiagnostic(
+	checker string,
+	call *CallMeta,
+	proposedFn string,
+	fix *analysis.SuggestedFix,
+) *analysis.Diagnostic {
 	f := proposedFn
 	if call.Fn.IsFmt {
 		f += "f"
@@ -15,7 +21,12 @@ func newUseFunctionDiagnostic(checker string, call *CallMeta, proposedFn string,
 	return newDiagnostic(checker, call, msg, fix)
 }
 
-func newDiagnostic(checker string, rng analysis.Range, msg string, fix *analysis.SuggestedFix) *analysis.Diagnostic {
+func newDiagnostic(
+	checker string,
+	rng analysis.Range,
+	msg string,
+	fix *analysis.SuggestedFix,
+) *analysis.Diagnostic {
 	if !rng.Pos().IsValid() || !rng.End().IsValid() {
 		panic("invalid report position")
 	}
@@ -32,7 +43,11 @@ func newDiagnostic(checker string, rng analysis.Range, msg string, fix *analysis
 	return &d
 }
 
-func newSuggestedFuncReplacement(call *CallMeta, proposedFn string, additionalEdits ...analysis.TextEdit) *analysis.SuggestedFix {
+func newSuggestedFuncReplacement(
+	call *CallMeta,
+	proposedFn string,
+	additionalEdits ...analysis.TextEdit,
+) *analysis.SuggestedFix {
 	if call.Fn.IsFmt {
 		proposedFn += "f"
 	}

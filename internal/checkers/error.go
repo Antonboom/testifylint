@@ -1,7 +1,9 @@
 package checkers
 
 import (
-	util "github.com/Antonboom/testifylint/internal/analysisutil"
+	"go/ast"
+	"go/types"
+
 	"golang.org/x/tools/go/analysis"
 )
 
@@ -26,16 +28,28 @@ func (checker Error) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagno
 
 	switch call.Fn.Name {
 	case "NotNil", "NotNilf":
-		if util.IsError(pass, errArg) {
+		if isError(pass, errArg) {
 			return newUseFunctionDiagnostic(checker.Name(), call, "Error",
 				newSuggestedFuncReplacement(call, "Error"))
 		}
 
 	case "Nil", "Nilf":
-		if util.IsError(pass, errArg) {
+		if isError(pass, errArg) {
 			return newUseFunctionDiagnostic(checker.Name(), call, "NoError",
 				newSuggestedFuncReplacement(call, "NoError"))
 		}
 	}
 	return nil
+}
+
+var errIface = types.Universe.Lookup("error").Type().Underlying().(*types.Interface)
+
+func isError(pass *analysis.Pass, expr ast.Expr) bool {
+	t := pass.TypesInfo.TypeOf(expr)
+	if t == nil {
+		return false
+	}
+
+	_, ok := t.Underlying().(*types.Interface)
+	return ok && types.Implements(t, errIface)
 }

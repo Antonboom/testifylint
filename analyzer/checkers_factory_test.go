@@ -69,7 +69,7 @@ func Test_newCheckers(t *testing.T) {
 			cfg: config.Config{
 				EnabledCheckers: []string{checkers.NewExpectedActual().Name()},
 				ExpectedActual: config.ExpectedActualConfig{
-					Pattern: config.Regexp{pattern},
+					Pattern: config.Regexp{Regexp: pattern},
 				},
 			},
 			expRegular: []checkers.RegularChecker{

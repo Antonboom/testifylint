@@ -1,7 +1,6 @@
 package checkers
 
 import (
-	util "github.com/Antonboom/testifylint/internal/analysisutil"
 	"go/ast"
 	"go/token"
 	"go/types"
@@ -60,8 +59,8 @@ func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnost
 }
 
 func xorLenCall(pass *analysis.Pass, a, b ast.Expr) (lenArg ast.Expr, targetVal ast.Expr, ok bool) {
-	arg1, ok1 := util.IsBuiltinLenCall(pass, a)
-	arg2, ok2 := util.IsBuiltinLenCall(pass, b)
+	arg1, ok1 := isBuiltinLenCall(pass, a)
+	arg2, ok2 := isBuiltinLenCall(pass, b)
 
 	if xor(ok1, ok2) {
 		if ok1 {

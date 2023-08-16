@@ -1,8 +1,6 @@
 package analysisutil_test
 
 import (
-	"go/parser"
-	"go/token"
 	"go/types"
 	"testing"
 
@@ -75,55 +73,4 @@ func TestIsPkg(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestImports(t *testing.T) {
-	fset := token.NewFileSet()
-
-	src := `package simple
-
-import (
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-)
-
-func TestSimple(t *testing.T) {
-	assert.Equal(t, 4, 2*2)
-}`
-
-	f, err := parser.ParseFile(fset, "", src, parser.ImportsOnly)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	t.Run("import", func(t *testing.T) {
-		for _, imp := range []string{
-			"testing",
-			"github.com/stretchr/testify/assert",
-		} {
-			t.Run(imp, func(t *testing.T) {
-				if !analysisutil.Imports(f, imp) {
-					t.FailNow()
-				}
-			})
-		}
-	})
-
-	t.Run("do not import", func(t *testing.T) {
-		for _, imp := range []string{
-			"",
-			"net/http",
-			"net/http/httptest",
-			"github.com/stretchr/testify/suite",
-			"github.com/stretchr/testify/require",
-			"vendor/github.com/stretchr/testify/require",
-		} {
-			t.Run(imp, func(t *testing.T) {
-				if analysisutil.Imports(f, imp) {
-					t.FailNow()
-				}
-			})
-		}
-	})
 }

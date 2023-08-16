@@ -78,7 +78,6 @@ linters:
     - govet
     - importas
     - ineffassign
-    - ireturn
     - lll
     - makezero
     - mirror

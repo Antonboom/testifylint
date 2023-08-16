@@ -1,11 +1,13 @@
 package checkers
 
 import (
-	util "github.com/Antonboom/testifylint/internal/analysisutil"
+	"go/ast"
 	"go/token"
 	"go/types"
 
 	"golang.org/x/tools/go/analysis"
+
+	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
 // BoolCompare checks situation like
@@ -34,8 +36,8 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 		}
 
 		arg1, arg2 := call.Args[0], call.Args[1]
-		t1, t2 := util.IsUntypedTrue(pass, arg1), util.IsUntypedTrue(pass, arg2)
-		f1, f2 := util.IsUntypedFalse(pass, arg1), util.IsUntypedFalse(pass, arg2)
+		t1, t2 := isUntypedTrue(pass, arg1), isUntypedTrue(pass, arg2)
+		f1, f2 := isUntypedFalse(pass, arg1), isUntypedFalse(pass, arg2)
 
 		switch {
 		case xor(t1, t2):
@@ -73,8 +75,8 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 		}
 
 		arg1, arg2 := call.Args[0], call.Args[1]
-		t1, t2 := util.IsUntypedTrue(pass, arg1), util.IsUntypedTrue(pass, arg2)
-		f1, f2 := util.IsUntypedFalse(pass, arg1), util.IsUntypedFalse(pass, arg2)
+		t1, t2 := isUntypedTrue(pass, arg1), isUntypedTrue(pass, arg2)
+		f1, f2 := isUntypedFalse(pass, arg1), isUntypedFalse(pass, arg2)
 
 		switch {
 		case xor(t1, t2):
@@ -114,8 +116,8 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 		expr := call.Args[0]
 
 		{
-			arg1, ok1 := util.IsComparisonWithTrue(pass, expr, token.EQL)
-			arg2, ok2 := util.IsComparisonWithFalse(pass, expr, token.NEQ)
+			arg1, ok1 := isComparisonWithTrue(pass, expr, token.EQL)
+			arg2, ok2 := isComparisonWithFalse(pass, expr, token.NEQ)
 
 			if survivingArg, ok := anyVal([]bool{ok1, ok2}, arg1, arg2); ok {
 				return newDiagnostic(checker.Name(), call, needSimplifyMsg,
@@ -132,9 +134,9 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 		}
 
 		{
-			arg1, ok1 := util.IsComparisonWithTrue(pass, expr, token.NEQ)
-			arg2, ok2 := util.IsComparisonWithFalse(pass, expr, token.EQL)
-			arg3, ok3 := util.IsNegation(expr)
+			arg1, ok1 := isComparisonWithTrue(pass, expr, token.NEQ)
+			arg2, ok2 := isComparisonWithFalse(pass, expr, token.EQL)
+			arg3, ok3 := isNegation(expr)
 
 			if survivingArg, ok := anyVal([]bool{ok1, ok2, ok3}, arg1, arg2, arg3); ok {
 				return newUseFunctionDiagnostic(checker.Name(), call, "False",
@@ -155,8 +157,8 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 		expr := call.Args[0]
 
 		{
-			arg1, ok1 := util.IsComparisonWithTrue(pass, expr, token.EQL)
-			arg2, ok2 := util.IsComparisonWithFalse(pass, expr, token.NEQ)
+			arg1, ok1 := isComparisonWithTrue(pass, expr, token.EQL)
+			arg2, ok2 := isComparisonWithFalse(pass, expr, token.NEQ)
 
 			if survivingArg, ok := anyVal([]bool{ok1, ok2}, arg1, arg2); ok {
 				return newDiagnostic(checker.Name(), call, needSimplifyMsg,
@@ -173,9 +175,9 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 		}
 
 		{
-			arg1, ok1 := util.IsComparisonWithTrue(pass, expr, token.NEQ)
-			arg2, ok2 := util.IsComparisonWithFalse(pass, expr, token.EQL)
-			arg3, ok3 := util.IsNegation(expr)
+			arg1, ok1 := isComparisonWithTrue(pass, expr, token.NEQ)
+			arg2, ok2 := isComparisonWithFalse(pass, expr, token.EQL)
+			arg3, ok3 := isNegation(expr)
 
 			if survivingArg, ok := anyVal([]bool{ok1, ok2, ok3}, arg1, arg2, arg3); ok {
 				return newUseFunctionDiagnostic(checker.Name(), call, "True",
@@ -189,6 +191,59 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 		}
 	}
 	return nil
+}
+
+var (
+	falseObj = types.Universe.Lookup("false")
+	trueObj  = types.Universe.Lookup("true")
+)
+
+func isUntypedTrue(pass *analysis.Pass, e ast.Expr) bool {
+	return analysisutil.IsObj(pass, e, trueObj)
+}
+
+func isUntypedFalse(pass *analysis.Pass, e ast.Expr) bool {
+	return analysisutil.IsObj(pass, e, falseObj)
+}
+
+func isComparisonWithTrue(pass *analysis.Pass, e ast.Expr, op token.Token) (ast.Expr, bool) {
+	return isComparisonWith(pass, e, isUntypedTrue, op)
+}
+
+func isComparisonWithFalse(pass *analysis.Pass, e ast.Expr, op token.Token) (ast.Expr, bool) {
+	return isComparisonWith(pass, e, isUntypedFalse, op)
+}
+
+func isComparisonWith(
+	pass *analysis.Pass,
+	e ast.Expr,
+	predicate func(pass *analysis.Pass, e ast.Expr) bool,
+	op token.Token,
+) (ast.Expr, bool) {
+	be, ok := e.(*ast.BinaryExpr)
+	if !ok {
+		return nil, false
+	}
+	if be.Op != op {
+		return nil, false
+	}
+
+	t1, t2 := predicate(pass, be.X), predicate(pass, be.Y)
+	if xor(t1, t2) {
+		if t1 {
+			return be.Y, true
+		}
+		return be.X, true
+	}
+	return nil, false
+}
+
+func isNegation(e ast.Expr) (ast.Expr, bool) {
+	ue, ok := e.(*ast.UnaryExpr)
+	if !ok {
+		return nil, false
+	}
+	return ue.X, ue.Op == token.NOT
 }
 
 func xor(a, b bool) bool {

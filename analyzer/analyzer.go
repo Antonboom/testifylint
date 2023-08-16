@@ -13,11 +13,12 @@ import (
 	"github.com/Antonboom/testifylint/config"
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 	"github.com/Antonboom/testifylint/internal/checkers"
+	"github.com/Antonboom/testifylint/internal/testify"
 )
 
 const (
 	name = "testifylint"
-	doc  = "Checks usage of " + testifyPath + "."
+	doc  = "Checks usage of " + testify.ModulePath + "."
 )
 
 // New accepts config.Config and returns testifylint analyzer.
@@ -45,18 +46,6 @@ func New(cfg config.Config) *analysis.Analyzer {
 	}
 }
 
-const (
-	testifyPath = "github.com/stretchr/testify"
-
-	assertPkgName  = "assert"
-	requirePkgName = "require"
-	suitePkgName   = "suite"
-
-	testifyAssertPath  = testifyPath + "/" + assertPkgName
-	testifyRequirePath = testifyPath + "/" + requirePkgName
-	testifySuitePath   = testifyPath + "/" + suitePkgName
-)
-
 type testifyLint struct {
 	regularCheckers  []checkers.RegularChecker
 	advancedCheckers []checkers.AdvancedChecker
@@ -69,48 +58,26 @@ func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
 		if !analysisutil.IsTestFile(pass, f) {
 			continue
 		}
+		if !analysisutil.Imports(f, testify.AssertPkgPath, testify.RequirePkgPath, testify.SuitePkgPath) {
+			continue
+		}
 
-		if analysisutil.Imports(f, testifyAssertPath, testifyRequirePath, testifySuitePath) {
-			insp.Nodes([]ast.Node{
-				(*ast.CallExpr)(nil),
-				(*ast.FuncDecl)(nil),
-			}, tl.newRegularCheckersRunner(pass))
+		// Regular checkers.
+		insp.Preorder([]ast.Node{(*ast.CallExpr)(nil)}, func(node ast.Node) {
+			tl.regularCheck(pass, node.(*ast.CallExpr))
+		})
 
-			for _, ch := range tl.advancedCheckers {
-				for _, d := range ch.Check(pass, insp) {
-					pass.Report(d)
-				}
+		// Advanced checkers.
+		for _, ch := range tl.advancedCheckers {
+			for _, d := range ch.Check(pass, insp) {
+				pass.Report(d)
 			}
 		}
 	}
 	return nil, nil
 }
 
-func (tl *testifyLint) newRegularCheckersRunner(pass *analysis.Pass) func(ast.Node, bool) bool {
-	var insideSuiteMethod bool
-
-	return func(node ast.Node, push bool) (proceed bool) {
-		switch v := node.(type) {
-		case *ast.FuncDecl:
-			if analysisutil.IsTestifySuiteMethod(pass, v) {
-				if push {
-					insideSuiteMethod = true
-				} else {
-					insideSuiteMethod = false
-				}
-			}
-
-		case *ast.CallExpr:
-			// NOTE(a.telyshev): Process call expressions once.
-			if push {
-				tl.checkCall(v, pass, insideSuiteMethod)
-			}
-		}
-		return true
-	}
-}
-
-func (tl *testifyLint) checkCall(ce *ast.CallExpr, pass *analysis.Pass, insideSuiteMethod bool) {
+func (tl *testifyLint) regularCheck(pass *analysis.Pass, ce *ast.CallExpr) {
 	se, ok := ce.Fun.(*ast.SelectorExpr)
 	if !ok {
 		return
@@ -121,10 +88,17 @@ func (tl *testifyLint) checkCall(ce *ast.CallExpr, pass *analysis.Pass, insideSu
 	fn := se.Sel.Name
 
 	pkg := func() *types.Package {
+		// Examples:
+		// s.Assert         -> *suite.Suite        -> package suite ("vendor/github.com/stretchr/testify/suite")
+		// s.Assert().Equal -> *assert.Assertions  -> package assert ("vendor/github.com/stretchr/testify/assert")
+		// reqObj.Falsef    -> *require.Assertions -> package require ("vendor/github.com/stretchr/testify/require")
 		if sel, ok := pass.TypesInfo.Selections[se]; ok {
 			return sel.Obj().Pkg()
 		}
 
+		// Examples:
+		// assert.False      -> assert  -> package assert ("vendor/github.com/stretchr/testify/assert")
+		// require.NotEqualf -> require -> package require ("vendor/github.com/stretchr/testify/require")
 		if id, ok := se.X.(*ast.Ident); ok {
 			if selObj := pass.TypesInfo.ObjectOf(id); selObj != nil {
 				if pkg, ok := selObj.(*types.PkgName); ok {
@@ -138,19 +112,18 @@ func (tl *testifyLint) checkCall(ce *ast.CallExpr, pass *analysis.Pass, insideSu
 		return
 	}
 
-	isAssert := analysisutil.IsPkg(pkg, assertPkgName, testifyAssertPath)
-	isRequire := analysisutil.IsPkg(pkg, requirePkgName, testifyRequirePath)
+	isAssert := analysisutil.IsPkg(pkg, testify.AssertPkgName, testify.AssertPkgPath)
+	isRequire := analysisutil.IsPkg(pkg, testify.RequirePkgName, testify.RequirePkgPath)
 	if !(isAssert || isRequire) {
 		return
 	}
 
 	call := &checkers.CallMeta{
-		Range:             ce,
-		IsAssert:          isAssert,
-		IsRequire:         isRequire,
-		InsideSuiteMethod: insideSuiteMethod,
-		Selector:          se,
-		SelectorXStr:      types.ExprString(se.X),
+		Range:        ce,
+		IsAssert:     isAssert,
+		IsRequire:    isRequire,
+		Selector:     se,
+		SelectorXStr: types.ExprString(se.X),
 		Fn: checkers.FnMeta{
 			Range: se.Sel,
 			Name:  fn,
@@ -174,8 +147,22 @@ func trimTArg(pass *analysis.Pass, args []ast.Expr) []ast.Expr {
 		return args
 	}
 
-	if analysisutil.IsTestingTPtr(pass, args[0]) {
+	if isTestingTPtr(pass, args[0]) {
 		return args[1:]
 	}
 	return args
+}
+
+func isTestingTPtr(pass *analysis.Pass, arg ast.Expr) bool {
+	ttObj := analysisutil.ObjectOf(pass, "testing", "T")
+	if ttObj == nil {
+		return false
+	}
+
+	argType := pass.TypesInfo.TypeOf(arg)
+	if argType == nil {
+		return false
+	}
+
+	return types.Identical(argType, types.NewPointer(ttObj.Type()))
 }

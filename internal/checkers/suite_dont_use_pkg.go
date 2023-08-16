@@ -3,10 +3,12 @@ package checkers
 import (
 	"fmt"
 	"go/ast"
+	"go/types"
 
 	"golang.org/x/tools/go/analysis"
 
 	"github.com/Antonboom/testifylint/internal/analysisutil"
+	"github.com/Antonboom/testifylint/internal/testify"
 )
 
 // SuiteDontUsePkg checks situation like
@@ -27,10 +29,7 @@ func NewSuiteDontUsePkg() SuiteDontUsePkg { return SuiteDontUsePkg{} }
 func (SuiteDontUsePkg) Name() string      { return "suite-dont-use-pkg" }
 
 func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	if !call.InsideSuiteMethod {
-		return nil
-	}
-	if s := call.SelectorXStr; !(s == "assert" || s == "require") {
+	if s := call.SelectorXStr; !(s == testify.AssertPkgName || s == testify.RequirePkgName) {
 		return nil
 	}
 
@@ -48,7 +47,7 @@ func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analy
 	if !ok {
 		return nil
 	}
-	if se.X == nil || !analysisutil.IsTestifySuiteObj(pass, se.X) {
+	if se.X == nil || !implementsTestifySuiteIface(pass, se.X) {
 		return nil
 	}
 	if se.Sel == nil || se.Sel.Name != "T" {
@@ -83,4 +82,16 @@ func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analy
 			},
 		},
 	})
+}
+
+func implementsTestifySuiteIface(pass *analysis.Pass, rcv ast.Expr) bool {
+	suiteIface := analysisutil.ObjectOf(pass, testify.SuitePkgPath, "TestingSuite")
+	if suiteIface == nil {
+		return false
+	}
+
+	return types.Implements(
+		pass.TypesInfo.TypeOf(rcv),
+		suiteIface.Type().Underlying().(*types.Interface),
+	)
 }
