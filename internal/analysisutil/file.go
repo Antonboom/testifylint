@@ -2,20 +2,21 @@ package analysisutil
 
 import (
 	"go/ast"
-	"golang.org/x/tools/go/analysis"
+	"go/token"
+	"slices"
 	"strconv"
 	"strings"
-
-	"slices"
 )
 
-// IsTestFile returns true if file is test.
-func IsTestFile(pass *analysis.Pass, file *ast.File) bool {
-	fname := pass.Fset.Position(file.Pos()).Filename
+// IsTestFile returns true if the file from the file set has the `_test.go` suffix.
+// If the file does not belong to the set, then the function will return false.
+func IsTestFile(fset *token.FileSet, file *ast.File) bool {
+	fname := fset.Position(file.Pos()).Filename
 	return strings.HasSuffix(fname, "_test.go")
 }
 
-// Imports tells if the file imports at least one of the pkgs.
+// Imports tells if the file imports at least one of the packages.
+// If no packages provided then function returns false.
 func Imports(file *ast.File, pkgs ...string) bool {
 	for _, i := range file.Imports {
 		if i.Path == nil {
@@ -26,7 +27,7 @@ func Imports(file *ast.File, pkgs ...string) bool {
 		if err != nil {
 			continue
 		}
-		if slices.Contains(pkgs, path) {
+		if slices.Contains(pkgs, path) { // Small O(n).
 			return true
 		}
 	}

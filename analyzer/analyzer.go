@@ -55,7 +55,7 @@ func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
 	insp := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 
 	for _, f := range pass.Files {
-		if !analysisutil.IsTestFile(pass, f) {
+		if !analysisutil.IsTestFile(pass.Fset, f) {
 			continue
 		}
 		if !analysisutil.Imports(f, testify.AssertPkgPath, testify.RequirePkgPath, testify.SuitePkgPath) {
@@ -154,7 +154,7 @@ func trimTArg(pass *analysis.Pass, args []ast.Expr) []ast.Expr {
 }
 
 func isTestingTPtr(pass *analysis.Pass, arg ast.Expr) bool {
-	ttObj := analysisutil.ObjectOf(pass, "testing", "T")
+	ttObj := analysisutil.ObjectOf(pass.Pkg, "testing", "T")
 	if ttObj == nil {
 		return false
 	}

@@ -23,6 +23,14 @@ issues:
       linters: [ "lll" ]
 
 linters-settings:
+  depguard:
+    rules:
+      analysisutil:
+        files: [ "**/internal/analysisutil/*.go" ]
+        deny:
+          - pkg: golang.org/x/tools/go/analysis
+            desc: Please, implement helpers without usage of x/tools
+
   gocritic:
     disabled-checks:
       - singleCaseSwitch
@@ -52,6 +60,7 @@ linters:
     - asciicheck
     - bidichk
     - bodyclose
+    - depguard
     - durationcheck
     - errcheck
     - errchkjson

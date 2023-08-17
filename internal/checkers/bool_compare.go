@@ -199,11 +199,11 @@ var (
 )
 
 func isUntypedTrue(pass *analysis.Pass, e ast.Expr) bool {
-	return analysisutil.IsObj(pass, e, trueObj)
+	return analysisutil.IsObj(pass.TypesInfo, e, trueObj)
 }
 
 func isUntypedFalse(pass *analysis.Pass, e ast.Expr) bool {
-	return analysisutil.IsObj(pass, e, falseObj)
+	return analysisutil.IsObj(pass.TypesInfo, e, falseObj)
 }
 
 func isComparisonWithTrue(pass *analysis.Pass, e ast.Expr, op token.Token) (ast.Expr, bool) {

@@ -85,7 +85,7 @@ func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analy
 }
 
 func implementsTestifySuiteIface(pass *analysis.Pass, rcv ast.Expr) bool {
-	suiteIface := analysisutil.ObjectOf(pass, testify.SuitePkgPath, "TestingSuite")
+	suiteIface := analysisutil.ObjectOf(pass.Pkg, testify.SuitePkgPath, "TestingSuite")
 	if suiteIface == nil {
 		return false
 	}

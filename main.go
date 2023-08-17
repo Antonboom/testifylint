@@ -43,7 +43,6 @@ func mustNil(err error) {
 
 /*
 - Flags Issue: https://github.com/golang/go/issues/53336
-- ругаться, если ни одного чекера не включено
 - expected-actual config test
 - бейдж доки, в доке чекеров пример ассерта и текста
 - TODO: https://github.com/ghetzel/hydra/blob/master/gen_test.go -> в тест
@@ -82,4 +81,7 @@ readme – tests is code too
 - снять профили
 - уменьшить количество тестов?
 - негативные ветки в анализаторе (импорты, файлы и тд)
+
+- посмотреть на тесты и что мы тестируем, нельзя ли вынести общее?
+- финальное ревью каждого файла и тестового файла
 */

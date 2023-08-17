@@ -3,35 +3,32 @@ package analysisutil
 import (
 	"go/ast"
 	"go/types"
-
-	"golang.org/x/tools/go/analysis"
 )
 
-// ObjectOf returns types.Object for the given package and name
-// and nil if the object is not found.
-func ObjectOf(pass *analysis.Pass, pkg, name string) types.Object {
-	if pass.Pkg.Path() == pkg {
-		return pass.Pkg.Scope().Lookup(name)
+// ObjectOf works in context of Golang package and returns types.Object for the given object package and objName.
+// The search is based on the current package and its dependencies (imports).
+// Returns nil if the object is not found.
+func ObjectOf(pkg *types.Package, objPkg, objName string) types.Object {
+	if pkg.Path() == objPkg {
+		return pkg.Scope().Lookup(objName)
 	}
 
-	for _, i := range pass.Pkg.Imports() {
-		if trimVendor(i.Path()) == pkg {
-			return i.Scope().Lookup(name)
+	for _, i := range pkg.Imports() {
+		if trimVendor(i.Path()) == objPkg {
+			return i.Scope().Lookup(objName)
 		}
 	}
 	return nil
 }
 
-func IsObj(pass *analysis.Pass, e ast.Expr, expected types.Object) bool {
-	if expected == nil {
-		panic("expected obj must be defined")
-	}
-
-	id, ok := e.(*ast.Ident)
+// IsObj returns true if expression is identifier which notes to given types.Object.
+// Useful in combination with types.Universe objects.
+func IsObj(typesInfo *types.Info, expr ast.Expr, expected types.Object) bool {
+	id, ok := expr.(*ast.Ident)
 	if !ok {
 		return false
 	}
 
-	obj := pass.TypesInfo.ObjectOf(id)
-	return obj == expected
+	obj := typesInfo.ObjectOf(id)
+	return obj.Id() == expected.Id()
 }

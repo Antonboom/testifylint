@@ -13,6 +13,7 @@ func TestIsPkg(t *testing.T) {
 		name, path string
 		expected   bool
 	}{
+		// Positive.
 		{
 			pkg:      types.NewPackage("testing", "testing"),
 			name:     "testing",
@@ -60,7 +61,7 @@ func TestIsPkg(t *testing.T) {
 		{
 			pkg:      types.NewPackage("vendor/github.com/stretchr/testify/require", "require"),
 			name:     "require",
-			path:     "vendor/github.com/stretchr/testify/require",
+			path:     "vendor/github.com/stretchr/testify/require", // Invalid import path.
 			expected: false,
 		},
 	}
@@ -69,7 +70,7 @@ func TestIsPkg(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			isPkg := analysisutil.IsPkg(tt.pkg, tt.name, tt.path)
 			if isPkg != tt.expected {
-				t.Fatalf("unexpected result for case: %v", tt.pkg.String())
+				t.FailNow()
 			}
 		})
 	}

@@ -270,7 +270,7 @@ func isBuiltinLenCall(pass *analysis.Pass, e ast.Expr) (ast.Expr, bool) {
 		return nil, false
 	}
 
-	if analysisutil.IsObj(pass, ce.Fun, lenObj) && len(ce.Args) == 1 {
+	if analysisutil.IsObj(pass.TypesInfo, ce.Fun, lenObj) && len(ce.Args) == 1 {
 		return ce.Args[0], true
 	}
 	return nil, false

@@ -1,11 +1,10 @@
 package analysisutil_test
 
 import (
+	"go/ast"
 	"go/token"
 	"go/types"
 	"testing"
-
-	"golang.org/x/tools/go/analysis"
 
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
@@ -28,7 +27,7 @@ func TestObjectOf(t *testing.T) {
 	)
 	vendoredSuitePkg.Scope().Insert(testingSuiteIface)
 
-	pkg := types.NewPackage("mycoolapp/service", "servicetest")
+	pkg := types.NewPackage("mycoolapp/service", "service_test")
 	pkg.SetImports([]*types.Package{testingPkg, assertPkg, vendoredSuitePkg})
 	timeoutIface := types.NewTypeName(
 		token.NoPos,
@@ -38,28 +37,79 @@ func TestObjectOf(t *testing.T) {
 	)
 	pkg.Scope().Insert(timeoutIface)
 
-	pass := &analysis.Pass{Pkg: pkg}
-
 	cases := []struct {
-		pkg, name string
-		expObj    types.Object
+		objPkg, objName string
+		expObj          types.Object
 	}{
-		{pkg: "mycoolapp/service", name: "Timeout", expObj: timeoutIface},
-		{pkg: "testing", name: "T", expObj: testingT},
-		{pkg: "github.com/stretchr/testify/assert", name: "Equal", expObj: assertEqual},
-		{pkg: "github.com/stretchr/testify/suite", name: "TestingSuite", expObj: testingSuiteIface},
+		// Positive.
+		{objPkg: "mycoolapp/service", objName: "Timeout", expObj: timeoutIface},
+		{objPkg: "testing", objName: "T", expObj: testingT},
+		{objPkg: "github.com/stretchr/testify/assert", objName: "Equal", expObj: assertEqual},
+		{objPkg: "github.com/stretchr/testify/suite", objName: "TestingSuite", expObj: testingSuiteIface},
 
 		// Negative.
-		{pkg: "net/http", name: "Timeout", expObj: nil},
-		{pkg: "testing", name: "TT", expObj: nil},
-		{pkg: "github.com/stretchr/testify/assert", name: "NotEqual", expObj: nil},
-		{pkg: "vendor/github.com/stretchr/testify/assert", name: "Equal", expObj: nil},
+		{objPkg: "net/http", objName: "Timeout", expObj: nil},
+		{objPkg: "testing", objName: "TT", expObj: nil},
+		{objPkg: "github.com/stretchr/testify/assert", objName: "NotEqual", expObj: nil},
+		{objPkg: "vendor/github.com/stretchr/testify/assert", objName: "Equal", expObj: nil},
 	}
 	for _, tt := range cases {
-		t.Run(tt.pkg+"."+tt.name, func(t *testing.T) {
-			obj := analysisutil.ObjectOf(pass, tt.pkg, tt.name)
+		t.Run(tt.objPkg+"."+tt.objName, func(t *testing.T) {
+			obj := analysisutil.ObjectOf(pkg, tt.objPkg, tt.objName)
 			if obj != tt.expObj {
 				t.Fatalf("unexpected: %v", obj)
+			}
+		})
+	}
+}
+
+func TestIsObj(t *testing.T) {
+	lenIdent, lenObj := ast.NewIdent("len"), types.Universe.Lookup("len")
+	falseIdent, falseObj := ast.NewIdent("false"), types.Universe.Lookup("false")
+
+	typesInfo := &types.Info{
+		Defs: map[*ast.Ident]types.Object{
+			lenIdent:   lenObj,
+			falseIdent: falseObj,
+		},
+	}
+
+	cases := []struct {
+		expr        ast.Expr
+		expectedObj types.Object
+		isObj       bool
+	}{
+		{
+			expr:        lenIdent,
+			expectedObj: lenObj,
+			isObj:       true,
+		},
+		{
+			expr:        falseIdent,
+			expectedObj: falseObj,
+			isObj:       true,
+		},
+		{
+			expr:        lenIdent,
+			expectedObj: falseObj,
+			isObj:       false,
+		},
+		{
+			expr:        falseIdent,
+			expectedObj: lenObj,
+			isObj:       false,
+		},
+		{
+			expr:        &ast.BasicLit{Value: "42"},
+			expectedObj: lenObj,
+			isObj:       false,
+		},
+	}
+	for _, tt := range cases {
+		t.Run("", func(t *testing.T) {
+			v := analysisutil.IsObj(typesInfo, tt.expr, tt.expectedObj)
+			if v != tt.isObj {
+				t.FailNow()
 			}
 		})
 	}
