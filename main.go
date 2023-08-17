@@ -26,10 +26,14 @@ func main() {
 
 	var cfg config.Config
 	if *configPath != "" {
-		var err error
-		cfg, err = config.ParseFromFile(*configPath)
-		mustNil(err)
-		mustNil(config.Validate(cfg))
+		if _, err := os.Stat(*configPath); err != nil {
+			cfg = config.Default
+		} else {
+			var err error
+			cfg, err = config.ParseFromFile(*configPath)
+			mustNil(err)
+			mustNil(config.Validate(cfg))
+		}
 	}
 
 	singlechecker.Main(analyzer.New(cfg))
@@ -84,4 +88,10 @@ readme – tests is code too
 
 - посмотреть на тесты и что мы тестируем, нельзя ли вынести общее?
 - финальное ревью каждого файла и тестового файла
+
+suite.T() vs suite.Run
+
+CheckerExpander -> AssertionExpander
+
+применение ChatGPT
 */

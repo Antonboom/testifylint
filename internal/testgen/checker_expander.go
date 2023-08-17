@@ -6,23 +6,20 @@ import (
 	"strings"
 )
 
+// TODO -> comments to types and methods
+
 type CheckerExpander struct {
-	withTArg   bool
+	toMultiple bool
 	withFFuncs bool
 	asGolden   bool
 }
 
 func NewCheckerExpander() *CheckerExpander {
 	return &CheckerExpander{
-		withTArg:   true,
+		toMultiple: false,
 		withFFuncs: true,
 		asGolden:   false,
 	}
-}
-
-func (e *CheckerExpander) WithoutTArg() *CheckerExpander {
-	e.withTArg = false
-	return e
 }
 
 func (e *CheckerExpander) WithoutFFuncs() *CheckerExpander {
@@ -35,7 +32,12 @@ func (e *CheckerExpander) AsGolden() *CheckerExpander {
 	return e
 }
 
-func (e *CheckerExpander) Expand(check Check, selector string, argValues []string) string {
+func (e *CheckerExpander) ToMultiple() *CheckerExpander {
+	e.toMultiple = true
+	return e
+}
+
+func (e *CheckerExpander) Expand(check Check, selector, testingTParam string, argValues []string) string {
 	fn, args := check.Fn, check.Argsf
 
 	if e.asGolden {
@@ -50,8 +52,8 @@ func (e *CheckerExpander) Expand(check Check, selector string, argValues []strin
 		}
 	}
 
-	if e.withTArg {
-		args = "t, " + args
+	if testingTParam != "" {
+		args = testingTParam + ", " + args
 	}
 	if len(argValues) > 0 {
 		args = fmt.Sprintf(args, toSliceOfAny(argValues)...)
@@ -59,16 +61,21 @@ func (e *CheckerExpander) Expand(check Check, selector string, argValues []strin
 
 	checks := []string{
 		buildCheck(selector, fn, args, check.ReportMsgf, check.ProposedFn, false),
-		buildCheck(selector, fn, args+`, "msg"`, check.ReportMsgf, check.ProposedFn, false),
-		buildCheck(selector, fn, args+`, "msg with arg %d", 42`, check.ReportMsgf, check.ProposedFn, false),
-	}
-	if e.withFFuncs {
-		checks = append(checks, []string{
-			buildCheck(selector, fn, args+`, "msg"`, check.ReportMsgf, check.ProposedFn, true),
-			buildCheck(selector, fn, args+`, "msg with arg %d", 42`, check.ReportMsgf, check.ProposedFn, true),
-		}...)
 	}
 
+	if e.toMultiple {
+		checks = append(checks,
+			buildCheck(selector, fn, args+`, "msg"`, check.ReportMsgf, check.ProposedFn, false),
+			buildCheck(selector, fn, args+`, "msg with arg %d", 42`, check.ReportMsgf, check.ProposedFn, false),
+		)
+
+		if e.withFFuncs {
+			checks = append(checks, []string{
+				buildCheck(selector, fn, args+`, "msg"`, check.ReportMsgf, check.ProposedFn, true),
+				buildCheck(selector, fn, args+`, "msg with arg %d", 42`, check.ReportMsgf, check.ProposedFn, true),
+			}...)
+		}
+	}
 	return strings.Join(checks, "\n")
 }
 

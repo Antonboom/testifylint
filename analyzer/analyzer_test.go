@@ -11,7 +11,12 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-func TestTestifyLint(t *testing.T) {
+func TestTestifyLint_Base(t *testing.T) {
+	cfg := config.Config{EnabledCheckers: []string{checkers.NewBoolCompare().Name()}}
+	analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), analyzer.New(cfg), "base-tests")
+}
+
+func TestTestifyLint_Checkers(t *testing.T) {
 	for _, checker := range checkers.All() {
 		checker := checker // https://go.dev/wiki/LoopvarExperiment
 

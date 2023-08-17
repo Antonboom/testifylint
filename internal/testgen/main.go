@@ -13,17 +13,22 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-var generators = []TestsGenerator{
+var (
+	baseTestsGenerator = BaseTestsGenerator{}
+	baseTestsPath      = filepath.Join("analyzer", "testdata", "src", "base-tests", "base_test.go") // TODO: common code with checkers
+)
+
+var generators = []CheckerTestsGenerator{
 	BoolCompareCasesGenerator{},
-	ComparesCasesGenerator{},
-	EmptyCasesGenerator{},
-	ErrorCasesGenerator{},
-	ErrorIsCasesGenerator{},
-	ExpectedActualCasesGenerator{},
-	FloatCompareCasesGenerator{},
-	LenCasesGenerator{},
-	RequireErrorCasesGenerator{},
-	SuiteNoExtraAssertCallCasesGenerator{},
+	// ComparesCasesGenerator{},
+	// EmptyCasesGenerator{},
+	// ErrorCasesGenerator{},
+	// ErrorIsCasesGenerator{},
+	// ExpectedActualCasesGenerator{},
+	// FloatCompareCasesGenerator{},
+	// LenCasesGenerator{},
+	// RequireErrorCasesGenerator{},
+	// SuiteNoExtraAssertCallCasesGenerator{},
 }
 
 func init() {
@@ -47,12 +52,20 @@ func init() {
 }
 
 func main() {
-	if err := mainImpl(); err != nil {
+	if err := generateBaseTests(); err != nil {
+		log.Panic(err)
+	}
+
+	if err := generateCheckersTests(); err != nil {
 		log.Panic(err)
 	}
 }
 
-func mainImpl() error {
+func generateBaseTests() error {
+	return genTestFilesPair(baseTestsGenerator, baseTestsPath)
+}
+
+func generateCheckersTests() error { // TODO: use genTestFilesPair
 	for _, g := range generators {
 		output := toCheckersPath(g.CheckerName(), strings.ReplaceAll(g.CheckerName(), "-", "_")+"_test.go")
 
@@ -64,12 +77,14 @@ func mainImpl() error {
 			return fmt.Errorf("mkdir tests dir: %v", err)
 		}
 
-		if err := genGoFileFromTmpl(output, g.ErroredTemplate(), g.Data()); err != nil {
+		tmplData := g.Data()
+
+		if err := genGoFileFromTmpl(output, g.ErroredTemplate(), tmplData); err != nil {
 			return fmt.Errorf("generate test file: %v", err)
 		}
 
-		if goldenTmpl := g.GoldenTemplate(); goldenTmpl != nil {
-			if err := genGoFileFromTmpl(output+".golden", goldenTmpl, g.Data()); err != nil {
+		if goldenTmpl := g.GoldenTemplate(); goldenTmpl != nil { // TODO: in such case?
+			if err := genGoFileFromTmpl(output+".golden", goldenTmpl, tmplData); err != nil {
 				return fmt.Errorf("generate golden file: %v", err)
 			}
 		}
@@ -79,6 +94,19 @@ func mainImpl() error {
 
 func toCheckersPath(dirsFile ...string) string {
 	return filepath.Join(append([]string{"analyzer", "testdata", "src", "checkers"}, dirsFile...)...)
+}
+
+func genTestFilesPair(g TestsGenerator, path string) error {
+	tmplData := g.Data()
+
+	if err := genGoFileFromTmpl(path, g.ErroredTemplate(), tmplData); err != nil {
+		return fmt.Errorf("generate test file: %v", err)
+	}
+
+	if err := genGoFileFromTmpl(path+".golden", g.GoldenTemplate(), tmplData); err != nil {
+		return fmt.Errorf("generate golden file: %v", err)
+	}
+	return nil
 }
 
 func genGoFileFromTmpl(output string, tmpl *template.Template, data any) error {

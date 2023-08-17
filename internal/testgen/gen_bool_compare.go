@@ -26,58 +26,51 @@ func (g BoolCompareCasesGenerator) Data() any {
 	}
 
 	return struct {
-		Pkgs, Objs     []string
-		SuiteSelectors []string
-		VarSets        [][]string
-		Tests          []test
+		CheckerName CheckerName
+		Tests       []test
 	}{
-		Pkgs:           []string{"assert", "require"},
-		Objs:           []string{"assObj", "reqObj"},
-		SuiteSelectors: []string{"s", "s.Assert()", "assObj", "s.Require()", "reqObj"},
-		VarSets: [][]string{
-			{"a"}, {"b.b"}, {"c"}, {"d"}, {"*e"}, {"*f"}, {"g.TheyKilledKenny()"}, {"boolOp()"},
-		},
+		CheckerName: CheckerName(g.CheckerName()),
 		Tests: []test{
 			{
-				Name: "True",
+				Name: "assert.True cases",
 				InvalidChecks: []Check{
-					{Fn: "Equal", Argsf: "%s, true", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "%s"},
-					{Fn: "Equal", Argsf: "true, %s", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "%s"},
-					{Fn: "NotEqual", Argsf: "%s, false", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "%s"},
-					{Fn: "NotEqual", Argsf: "false, %s", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "%s == true", ReportMsgf: reportSimplify, ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "true == %s", ReportMsgf: reportSimplify, ProposedArgsf: "%s"},
-					{Fn: "False", Argsf: "%s == false", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "%s"},
-					{Fn: "False", Argsf: "false == %s", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "%s"},
-					{Fn: "False", Argsf: "%s != true", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "%s"},
-					{Fn: "False", Argsf: "true != %s", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "%s != false", ReportMsgf: reportSimplify, ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "false != %s", ReportMsgf: reportSimplify, ProposedArgsf: "%s"},
-					{Fn: "False", Argsf: "!%s", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "%s"},
+					{Fn: "Equal", Argsf: "predicate, true", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+					{Fn: "Equal", Argsf: "true, predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+					{Fn: "NotEqual", Argsf: "predicate, false", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+					{Fn: "NotEqual", Argsf: "false, predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+					{Fn: "True", Argsf: "predicate == true", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
+					{Fn: "True", Argsf: "true == predicate", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
+					{Fn: "False", Argsf: "predicate == false", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+					{Fn: "False", Argsf: "false == predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+					{Fn: "False", Argsf: "predicate != true", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+					{Fn: "False", Argsf: "true != predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+					{Fn: "True", Argsf: "predicate != false", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
+					{Fn: "True", Argsf: "false != predicate", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
+					{Fn: "False", Argsf: "!predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
 				},
 				ValidChecks: []Check{
-					{Fn: "True", Argsf: "%s"},
+					{Fn: "True", Argsf: "predicate"},
 				},
 			},
 			{
-				Name: "False",
+				Name: "assert.False cases",
 				InvalidChecks: []Check{
-					{Fn: "Equal", Argsf: "%s, false", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "%s"},
-					{Fn: "Equal", Argsf: "false, %s", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "%s"},
-					{Fn: "NotEqual", Argsf: "%s, true", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "%s"},
-					{Fn: "NotEqual", Argsf: "true, %s", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "%s"},
-					{Fn: "False", Argsf: "%s == true", ReportMsgf: reportSimplify, ProposedArgsf: "%s"},
-					{Fn: "False", Argsf: "true == %s", ReportMsgf: reportSimplify, ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "%s == false", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "false == %s", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "%s != true", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "true != %s", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "%s"},
-					{Fn: "False", Argsf: "%s != false", ReportMsgf: reportSimplify, ProposedArgsf: "%s"},
-					{Fn: "False", Argsf: "false != %s", ReportMsgf: reportSimplify, ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "!%s", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "%s"},
+					{Fn: "Equal", Argsf: "predicate, false", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
+					{Fn: "Equal", Argsf: "false, predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
+					{Fn: "NotEqual", Argsf: "predicate, true", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
+					{Fn: "NotEqual", Argsf: "true, predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
+					{Fn: "False", Argsf: "predicate == true", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
+					{Fn: "False", Argsf: "true == predicate", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
+					{Fn: "True", Argsf: "predicate == false", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
+					{Fn: "True", Argsf: "false == predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
+					{Fn: "True", Argsf: "predicate != true", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
+					{Fn: "True", Argsf: "true != predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
+					{Fn: "False", Argsf: "predicate != false", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
+					{Fn: "False", Argsf: "false != predicate", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
+					{Fn: "True", Argsf: "!predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
 				},
 				ValidChecks: []Check{
-					{Fn: "False", Argsf: "%s"},
+					{Fn: "False", Argsf: "predicate"},
 				},
 			},
 		},
@@ -98,123 +91,29 @@ func (BoolCompareCasesGenerator) GoldenTemplate() *template.Template {
 
 const boolCompareCasesTmplText = header + `
 
-package {{ .CheckerName }}
+package {{ .CheckerName.AsPkgName }}
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 )
 
-func TestBoolCompare(t *testing.T) {
-	{{- block "vars" . }}
-	type withBool struct{ b bool }
-	boolOp := func() bool { return true }
-
-	var a bool
-	var b withBool
-	c := true
-	const d = false
-	e := new(bool)
-	var f *bool
-	var g withBoolMethod
-	{{- end }}
-
-	{{ range $pi, $pkg := $.Pkgs }}
-	t.Run("{{ $pkg }}", func(t *testing.T) {
-		{{- range $ti, $test := $.Tests }}
+func {{ .CheckerName.AsTestName }}(t *testing.T) {
+	var predicate bool
+	{{ range $ti, $test := $.Tests }}
 		// {{ $test.Name }}.
 		{
-			{{- range $vi, $vars := $.VarSets }}
-			{
-				{{- range $ci, $check := $test.InvalidChecks }}
-				{{ NewCheckerExpander.Expand $check $pkg $vars }}
-				{{ end -}}
-			}
-			{{ end }}
+			// Invalid.
+			{{- range $ci, $check := $test.InvalidChecks }}
+				{{ NewCheckerExpander.Expand $check "assert" "t" nil }}
+			{{- end }}
+	
 			// Valid.
-			{{ range $vi, $vars := $.VarSets }}
-			{
-				{{- range $ci, $check := $test.ValidChecks }}
-				{{ NewCheckerExpander.Expand $check $pkg $vars }}
-				{{ end -}}
-			}
-			{{ end -}}
+			{{- range $ci, $check := $test.ValidChecks }}
+				{{ NewCheckerExpander.Expand $check "assert" "t" nil }}
+			{{- end }}
 		}
-		{{ end -}}
-	})
-	{{ end }}
-
-	assObj, reqObj := assert.New(t), require.New(t)
-
-	{{ range $pi, $obj := $.Objs }}
-	t.Run("{{ $obj }}", func(t *testing.T) {
-		{{- range $ti, $test := $.Tests }}
-		// {{ $test.Name }}.
-		{
-			{{- range $vi, $vars := $.VarSets }}
-			{
-				{{- range $ci, $check := $test.InvalidChecks }}
-				{{ NewCheckerExpander.WithoutTArg.Expand $check $obj $vars }}
-				{{ end -}}
-			}
-			{{ end }}
-			// Valid.
-			{{ range $vi, $vars := $.VarSets }}
-			{
-				{{- range $ci, $check := $test.ValidChecks }}
-				{{ NewCheckerExpander.WithoutTArg.Expand $check $obj $vars }}
-				{{ end -}}
-			}
-			{{ end -}}
-		}
-		{{ end -}}
-	})
 	{{ end -}}
 }
-
-type BoolCompareSuite struct {
-	suite.Suite
-}
-
-func TestBoolCompareSuite(t *testing.T) {
-	suite.Run(t, new(BoolCompareSuite))
-}
-
-func (s *BoolCompareSuite) TestAll() {
-	{{- template "vars" .}}
-
-	assObj, reqObj := s.Assert(), s.Require()
-
-	{{- range $ti, $test := $.Tests }}
-	// {{ $test.Name }}.
-	{
-		{{- range $si, $sel := $.SuiteSelectors }}
-		{
-			{{- range $vi, $vars := $.VarSets }}
-			{
-				{{- range $ci, $check := $test.InvalidChecks }}
-				{{ NewCheckerExpander.WithoutTArg.Expand $check $sel $vars }}
-				{{ end -}}
-			}
-			{{ end }}
-			// Valid.
-			{{ range $vi, $vars := $.VarSets }}
-			{
-				{{- range $ci, $check := $test.ValidChecks }}
-				{{ NewCheckerExpander.WithoutTArg.Expand $check $sel $vars }}
-				{{ end -}}
-			}
-			{{ end -}}
-		}
-		{{ end -}}
-	}
-	{{ end -}}
-}
-
-type withBoolMethod struct{}
-
-func (withBoolMethod) TheyKilledKenny() bool { return false }
 `
