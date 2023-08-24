@@ -7,112 +7,113 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-type EmptyCasesGenerator struct{}
+type EmptyTestsGenerator struct{}
 
-func (EmptyCasesGenerator) CheckerName() string {
-	return checkers.NewEmpty().Name()
+func (EmptyTestsGenerator) Checker() checkers.Checker {
+	return checkers.NewEmpty()
 }
 
-func (EmptyCasesGenerator) Data() any {
-	const (
-		report = "empty: use %s.%s"
+func (g EmptyTestsGenerator) TemplateData() any {
+	var (
+		checker = g.Checker().Name()
+		report  = checker + ": use %s.%s"
 	)
 
 	type test struct {
-		Name          string
-		InvalidChecks []Check
-		ValidChecks   []Check
+		Name              string
+		InvalidAssertions []Assertion
+		ValidAssertions   []Assertion
+	}
+
+	type lenTest struct {
+		Vars  []string
+		Assrn Assertion
 	}
 
 	return struct {
-		Pkgs, Objs     []string
-		SuiteSelectors []string
-		VarSets        [][]string
-		Tests          []test
+		CheckerName CheckerName
+		LenTest     lenTest
+		Tests       []test
 	}{
-		Pkgs:           []string{"assert", "require"},
-		Objs:           []string{"assObj", "reqObj"},
-		SuiteSelectors: []string{"s", "s.Assert()", "assObj", "s.Require()", "reqObj"},
-		VarSets: [][]string{
-			{"arr"}, {"arrPtr"}, {"sl"}, {"mp"}, {"str"}, {"ch"},
+		CheckerName: CheckerName(checker),
+		LenTest: lenTest{
+			Vars:  []string{"arr", "arrPtr", "sl", "mp", "str", "ch"},
+			Assrn: Assertion{Fn: "Equal", Argsf: "0, len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
 		},
 		Tests: []test{
 			{
-				Name: "Empty",
-				InvalidChecks: []Check{
-					{Fn: "Len", Argsf: "%s, 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+				Name: "assert.Empty cases",
+				InvalidAssertions: []Assertion{
+					{Fn: "Len", Argsf: "elems, 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 
-					{Fn: "Equal", Argsf: "len(%s), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
-					{Fn: "Equal", Argsf: "0, len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+					{Fn: "Equal", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Equal", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 
-					{Fn: "Less", Argsf: "len(%s), 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
-					{Fn: "Greater", Argsf: "1, len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+					{Fn: "Less", Argsf: "len(elems), 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Greater", Argsf: "1, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 
-					{Fn: "True", Argsf: "len(%s) == 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "0 == len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "len(%s) < 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "1 > len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+					{Fn: "True", Argsf: "len(elems) == 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "True", Argsf: "0 == len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "True", Argsf: "len(elems) < 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "True", Argsf: "1 > len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 
-					{Fn: "False", Argsf: "len(%s) != 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
-					{Fn: "False", Argsf: "0 != len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
-					{Fn: "False", Argsf: "len(%s) >= 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
-					{Fn: "False", Argsf: "1 <= len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+					{Fn: "False", Argsf: "len(elems) != 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "False", Argsf: "0 != len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "False", Argsf: "len(elems) >= 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "False", Argsf: "1 <= len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 				},
-				ValidChecks: []Check{
-					{Fn: "Empty", Argsf: "%s"},
+				ValidAssertions: []Assertion{
+					{Fn: "Empty", Argsf: "elems"},
 				},
 			},
 			{
-				Name: "NotEmpty",
-				InvalidChecks: []Check{
-					{Fn: "NotEqual", Argsf: "len(%s), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
-					{Fn: "NotEqual", Argsf: "0, len(%s)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
+				Name: "assert.NotEmpty cases",
+				InvalidAssertions: []Assertion{
+					{Fn: "NotEqual", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotEqual", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 
-					{Fn: "Greater", Argsf: "len(%s), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
-					{Fn: "Less", Argsf: "0, len(%s)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
+					{Fn: "Greater", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "Less", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 
-					{Fn: "True", Argsf: "len(%s) != 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "0 != len(%s)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "len(%s) > 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
-					{Fn: "True", Argsf: "0 < len(%s)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
+					{Fn: "True", Argsf: "len(elems) != 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "True", Argsf: "0 != len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "True", Argsf: "len(elems) > 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "True", Argsf: "0 < len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 
-					{Fn: "False", Argsf: "len(%s) == 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
-					{Fn: "False", Argsf: "0 == len(%s)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
+					{Fn: "False", Argsf: "len(elems) == 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "False", Argsf: "0 == len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 				},
-				ValidChecks: []Check{
-					{Fn: "NotEmpty", Argsf: "%s"},
+				ValidAssertions: []Assertion{
+					{Fn: "NotEmpty", Argsf: "elems"},
 				},
 			},
 		},
 	}
 }
 
-func (EmptyCasesGenerator) ErroredTemplate() *template.Template {
-	return template.Must(template.New("EmptyCasesGenerator.ErroredTemplate").
+func (EmptyTestsGenerator) ErroredTemplate() Executor {
+	return template.Must(template.New("EmptyTestsGenerator.ErroredTemplate").
 		Funcs(fm).
-		Parse(emptyCasesTmplText))
+		Parse(emptyTestTmpl))
 }
 
-func (EmptyCasesGenerator) GoldenTemplate() *template.Template {
-	return template.Must(template.New("EmptyCasesGenerator.GoldenTemplate").
+func (EmptyTestsGenerator) GoldenTemplate() Executor {
+	return template.Must(template.New("EmptyTestsGenerator.GoldenTemplate").
 		Funcs(fm).
-		Parse(strings.ReplaceAll(emptyCasesTmplText, "NewCheckerExpander", "NewCheckerExpander.AsGolden")))
+		Parse(strings.ReplaceAll(emptyTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")))
 }
 
-const emptyCasesTmplText = header + `
+const emptyTestTmpl = header + `
 
-package {{ .CheckerName }}
+package {{ .CheckerName.AsPkgName }}
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 )
 
-func TestEmptyAsserts(t *testing.T) {
-	{{- block "vars" . }}
+func {{ .CheckerName.AsTestName }}_LenVarIndependence(t *testing.T) {
 	var (
 		arr    [0]int
 		arrPtr *[0]int
@@ -121,97 +122,26 @@ func TestEmptyAsserts(t *testing.T) {
 		str    string
 		ch     chan int
 	)
+	{{ range $vi, $var := $.LenTest.Vars }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $.LenTest.Assrn "assert" "t" (arr $var) }}
 	{{- end }}
+}
 
-	{{ range $pi, $pkg := $.Pkgs }}
-	t.Run("{{ $pkg }}", func(t *testing.T) {
-		{{- range $ti, $test := $.Tests }}
+func {{ .CheckerName.AsTestName }}(t *testing.T) {
+	var elems []string
+	{{ range $ti, $test := $.Tests }}
 		// {{ $test.Name }}.
 		{
-			{{- range $vi, $vars := $.VarSets }}
-			{
-				{{- range $ci, $check := $test.InvalidChecks }}
-				{{ NewCheckerExpander.Expand $check $pkg $vars }}
-				{{ end -}}
-			}
-			{{ end }}
+			// Invalid.
+			{{- range $ai, $assrn := $test.InvalidAssertions }}
+				{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+			{{- end }}
+	
 			// Valid.
-			{{ range $vi, $vars := $.VarSets }}
-			{
-				{{- range $ci, $check := $test.ValidChecks }}
-				{{ NewCheckerExpander.Expand $check $pkg $vars }}
-				{{ end -}}
-			}
-			{{ end -}}
+			{{- range $ai, $assrn := $test.ValidAssertions }}
+				{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+			{{- end }}
 		}
-		{{ end -}}
-	})
-	{{ end }}
-
-	assObj, reqObj := assert.New(t), require.New(t)
-
-	{{ range $pi, $obj := $.Objs }}
-	t.Run("{{ $obj }}", func(t *testing.T) {
-		{{- range $ti, $test := $.Tests }}
-		// {{ $test.Name }}.
-		{
-			{{- range $vi, $vars := $.VarSets }}
-			{
-				{{- range $ci, $check := $test.InvalidChecks }}
-				{{ NewCheckerExpander.WithoutTArg.Expand $check $obj $vars }}
-				{{ end -}}
-			}
-			{{ end }}
-			// Valid.
-			{{ range $vi, $vars := $.VarSets }}
-			{
-				{{- range $ci, $check := $test.ValidChecks }}
-				{{ NewCheckerExpander.WithoutTArg.Expand $check $obj $vars }}
-				{{ end -}}
-			}
-			{{ end -}}
-		}
-		{{ end -}}
-	})
-	{{ end -}}
-}
-
-type EmptySuite struct {
-	suite.Suite
-}
-
-func TestEmptySuite(t *testing.T) {
-	suite.Run(t, new(EmptySuite))
-}
-
-func (s *EmptySuite) TestAll() {
-	{{- template "vars" .}}
-
-	assObj, reqObj := s.Assert(), s.Require()
-
-	{{- range $ti, $test := $.Tests }}
-	// {{ $test.Name }}.
-	{
-		{{- range $si, $sel := $.SuiteSelectors }}
-		{
-			{{- range $vi, $vars := $.VarSets }}
-			{
-				{{- range $ci, $check := $test.InvalidChecks }}
-				{{ NewCheckerExpander.WithoutTArg.Expand $check $sel $vars }}
-				{{ end -}}
-			}
-			{{ end }}
-			// Valid.
-			{{ range $vi, $vars := $.VarSets }}
-			{
-				{{- range $ci, $check := $test.ValidChecks }}
-				{{ NewCheckerExpander.WithoutTArg.Expand $check $sel $vars }}
-				{{ end -}}
-			}
-			{{ end -}}
-		}
-		{{ end -}}
-	}
 	{{ end -}}
 }
 `

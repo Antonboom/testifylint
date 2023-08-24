@@ -6,18 +6,33 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-func TestCheckerName_AsPkgName(t *testing.T) {
-	name := checkers.NewSuiteNoExtraAssertCall().Name()
-	testName := CheckerName(name).AsPkgName()
-	if testName != "suitenoextraassertcall" {
-		t.Fatal(testName)
+func TestCheckerName(t *testing.T) {
+	cases := []struct {
+		name        string
+		transformer func(CheckerName) string
+		expected    string
+	}{
+		{
+			name:        checkers.NewSuiteNoExtraAssertCall().Name(),
+			transformer: CheckerName.AsPkgName,
+			expected:    "suitenoextraassertcall",
+		},
+		{
+			name:        checkers.NewSuiteDontUsePkg().Name(),
+			transformer: CheckerName.AsTestName,
+			expected:    "TestSuiteDontUsePkgChecker",
+		},
+		{
+			name:        checkers.NewFloatCompare().Name(),
+			transformer: CheckerName.AsSuiteName,
+			expected:    "FloatCompareCheckerSuite",
+		},
 	}
-}
-
-func TestCheckerName_AsTestName(t *testing.T) {
-	name := checkers.NewSuiteNoExtraAssertCall().Name()
-	testName := CheckerName(name).AsTestName()
-	if testName != "TestSuiteNoExtraAssertCallChecker" {
-		t.Fatal(testName)
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			if n := tt.transformer(CheckerName(tt.name)); n != tt.expected {
+				t.Fatal(n)
+			}
+		})
 	}
 }

@@ -60,9 +60,9 @@ func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analy
 
 	var newSelector string
 	switch call.SelectorXStr {
-	case "assert":
+	case testify.AssertPkgName:
 		newSelector = rcv.Name
-	case "require":
+	case testify.RequirePkgName:
 		newSelector = rcv.Name + "." + "Require()"
 	}
 

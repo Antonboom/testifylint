@@ -6,77 +6,48 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-type RequireErrorCasesGenerator struct{}
+type RequireErrorTestsGenerator struct{}
 
-func (RequireErrorCasesGenerator) CheckerName() string {
-	return checkers.NewRequireError().Name()
+func (RequireErrorTestsGenerator) Checker() checkers.Checker {
+	return checkers.NewRequireError()
 }
 
-func (RequireErrorCasesGenerator) Data() any {
-	const (
-		report = "require-error: for error assertions use the `require` package"
+func (g RequireErrorTestsGenerator) TemplateData() any {
+	var (
+		checker = g.Checker().Name()
+		report  = checker + ": for error assertions use the `require` API"
 	)
 
-	type test struct {
-		Name           string
-		Pkg, Obj       string
-		SuiteSelectors []string
-		Checks         []Check
-	}
-
 	return struct {
-		Tests []test
+		CheckerName CheckerName
+		Assertions  []Assertion
 	}{
-		Tests: []test{
-			{
-				Name:           "Asserts",
-				Pkg:            "assert",
-				Obj:            "assObj",
-				SuiteSelectors: []string{"s", "s.Assert()", "assObj"},
-				Checks: []Check{
-					{Fn: "Error", Argsf: "err", ReportMsgf: report},
-					{Fn: "ErrorIs", Argsf: "err, io.EOF", ReportMsgf: report},
-					{Fn: "ErrorAs", Argsf: "err, new(os.PathError)", ReportMsgf: report},
-					{Fn: "EqualError", Argsf: `err, "end of file"`, ReportMsgf: report},
-					{Fn: "ErrorContains", Argsf: `err, "end of file"`, ReportMsgf: report},
-
-					{Fn: "NoError", Argsf: "err", ReportMsgf: report},
-					{Fn: "NotErrorIs", Argsf: "err, io.EOF", ReportMsgf: report},
-				},
-			},
-			{
-				Name:           "Requires",
-				Pkg:            "require",
-				Obj:            "reqObj",
-				SuiteSelectors: []string{"s.Require()", "reqObj"},
-				Checks: []Check{
-					{Fn: "Error", Argsf: "err"},
-					{Fn: "ErrorIs", Argsf: "err, io.EOF"},
-					{Fn: "ErrorAs", Argsf: "err, new(os.PathError)"},
-					{Fn: "EqualError", Argsf: `err, "end of file"`},
-					{Fn: "ErrorContains", Argsf: `err, "end of file"`},
-
-					{Fn: "NoError", Argsf: "err"},
-					{Fn: "NotErrorIs", Argsf: "err, io.EOF"},
-				},
-			},
+		CheckerName: CheckerName(checker),
+		Assertions: []Assertion{
+			{Fn: "Error", Argsf: "err", ReportMsgf: report},
+			{Fn: "ErrorIs", Argsf: "err, io.EOF", ReportMsgf: report},
+			{Fn: "ErrorAs", Argsf: "err, new(os.PathError)", ReportMsgf: report},
+			{Fn: "EqualError", Argsf: `err, "end of file"`, ReportMsgf: report},
+			{Fn: "ErrorContains", Argsf: `err, "end of file"`, ReportMsgf: report},
+			{Fn: "NoError", Argsf: "err", ReportMsgf: report},
+			{Fn: "NotErrorIs", Argsf: "err, io.EOF", ReportMsgf: report},
 		},
 	}
 }
 
-func (RequireErrorCasesGenerator) ErroredTemplate() *template.Template {
-	return template.Must(template.New("RequireErrorCasesGenerator.ErroredTemplate").
+func (RequireErrorTestsGenerator) ErroredTemplate() Executor {
+	return template.Must(template.New("RequireErrorTestsGenerator.ErroredTemplate").
 		Funcs(fm).
-		Parse(requireErrorCasesTmplText))
+		Parse(requireErrorTestTmpl))
 }
 
-func (RequireErrorCasesGenerator) GoldenTemplate() *template.Template {
+func (RequireErrorTestsGenerator) GoldenTemplate() Executor {
 	return nil
 }
 
-const requireErrorCasesTmplText = header + `
+const requireErrorTestTmpl = header + `
 
-package {{ .CheckerName }}
+package {{ .CheckerName.AsPkgName }}
 
 import (
 	"io"
@@ -88,50 +59,55 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func TestRequireError(t *testing.T) {
+func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var err error
 
 	assObj, reqObj := assert.New(t), require.New(t)
-	{{ range $ti, $test := $.Tests }}
-		// {{ $test.Name }}.
 
-		{
-			{{- range $ci, $check := $test.Checks }}
-				{{ NewCheckerExpander.Expand $check $test.Pkg nil }}
-			{{ end -}}
-		}
+	// Invalid.
+	{{ range $si, $sel := arr "assert" "assObj" }}
+		{{- range $ai, $assrn := $.Assertions }}
+			{{- $t := "t" }}{{ if eq $sel "assObj"}}{{ $t = "" }}{{ end }}
+			{{- NewAssertionExpander.Expand $assrn $sel $t nil }}
+		{{ end -}}
+	{{- end }}
 
-		{
-			{{- range $ci, $check := $test.Checks }}
-				{{ NewCheckerExpander.WithoutTArg.Expand $check $test.Obj nil }}
-			{{ end -}}
-		}
+	// Valid.
+	{{ range $si, $sel := arr "require" "reqObj" }}
+		{{- range $ai, $assrn := $.Assertions }}
+			{{- $t := "t" }}{{ if eq $sel "reqObj"}}{{ $t = "" }}{{ end }}
+			{{- NewAssertionExpander.Expand $assrn.WithoutReport $sel $t nil }}
+		{{ end -}}
 	{{ end -}}
 }
 
-type RequireErrorSuite struct {
+{{ $suiteName := .CheckerName.AsSuiteName }}
+
+type {{ $suiteName }} struct {
 	suite.Suite
 }
 
-func TestRequireErrorSuite(t *testing.T) {
-	suite.Run(t, new(RequireErrorSuite))
+func Test{{ $suiteName }}(t *testing.T) {
+	suite.Run(t, new({{ $suiteName }}))
 }
 
-func (s *RequireErrorSuite) TestAll() {
+func (s *{{ $suiteName }}) TestAll() {
 	var err error
 
 	assObj, reqObj := s.Assert(), s.Require()
 
-	{{ range $ti, $test := $.Tests }}
-		// {{ $test.Name }}.
+	// Invalid.
+	{{ range $si, $sel := arr "s" "s.Assert()" "assObj" }}
+		{{- range $ai, $assrn := $.Assertions }}
+			{{- NewAssertionExpander.Expand $assrn $sel "" nil }}
+		{{ end -}}
+	{{- end }}
 
-		{
-			{{- range $si, $sel := $test.SuiteSelectors }}
-				{{- range $ci, $check := $test.Checks }}
-					{{ NewCheckerExpander.WithoutTArg.Expand $check $sel nil }}
-				{{ end -}}
-			{{ end -}}
-		}
+	// Valid.
+	{{ range $si, $sel := arr "s.Require()" "reqObj" }}
+		{{- range $ai, $assrn := $.Assertions }}
+			{{- NewAssertionExpander.Expand $assrn.WithoutReport $sel "" nil }}
+		{{ end -}}
 	{{ end -}}
 }
 `

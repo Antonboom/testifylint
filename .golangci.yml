@@ -31,6 +31,11 @@ linters-settings:
           - pkg: golang.org/x/tools/go/analysis
             desc: Please, implement helpers without usage of x/tools
 
+  forbidigo:
+    forbid:
+      - p: types.ExprString
+        pkg: internal/checkers
+
   gocritic:
     disabled-checks:
       - singleCaseSwitch

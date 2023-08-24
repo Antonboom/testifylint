@@ -13,8 +13,8 @@ func Test_newCheckers(t *testing.T) {
 	pattern := regexp.MustCompile(`^expected[A-Z0-9].*`)
 
 	enabledByDefaultRegularCheckers := []checkers.RegularChecker{
-		checkers.NewBoolCompare(),
 		checkers.NewFloatCompare(),
+		checkers.NewBoolCompare(),
 		checkers.NewEmpty(),
 		checkers.NewLen(),
 		checkers.NewCompares(),
@@ -69,11 +69,11 @@ func Test_newCheckers(t *testing.T) {
 			cfg: config.Config{
 				EnabledCheckers: []string{checkers.NewExpectedActual().Name()},
 				ExpectedActual: config.ExpectedActualConfig{
-					Pattern: config.Regexp{Regexp: pattern},
+					ExpVarPattern: config.Regexp{Regexp: pattern},
 				},
 			},
 			expRegular: []checkers.RegularChecker{
-				checkers.NewExpectedActual().SetExpPattern(pattern),
+				checkers.NewExpectedActual().SetExpVarPattern(pattern),
 			},
 			expAdvanced: []checkers.AdvancedChecker{},
 		},

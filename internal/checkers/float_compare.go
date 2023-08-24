@@ -2,7 +2,6 @@ package checkers
 
 import (
 	"go/ast"
-	"go/token"
 	"go/types"
 
 	"golang.org/x/tools/go/analysis"
@@ -14,7 +13,7 @@ import (
 //
 // and requires e.g.
 //
-//	assert.InDelta(t, 42.42, a, 0.0001)
+//	assert.InEpsilon(t, 42.42, a, 0.0001)
 type FloatCompare struct{}
 
 // NewFloatCompare constructs FloatCompare checker.
@@ -24,20 +23,22 @@ func (FloatCompare) Name() string   { return "float-compare" }
 func (checker FloatCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	invalid := func() bool {
 		switch call.Fn.Name {
-		case "Equal", "Equalf":
+		case "Equal", "Equalf", "NotEqual", "NotEqualf",
+			"Greater", "Greaterf", "GreaterOrEqual", "GreaterOrEqualf",
+			"Less", "Lessf", "LessOrEqual", "LessOrEqualf":
 			return len(call.Args) > 1 && isFloat(pass, call.Args[0]) && isFloat(pass, call.Args[1])
 
 		case "True", "Truef":
-			return len(call.Args) > 0 && isFloatCompare(pass, call.Args[0], token.EQL)
+			return len(call.Args) > 0 && isFloatCompare(pass, call.Args[0])
 
 		case "False", "Falsef":
-			return len(call.Args) > 0 && isFloatCompare(pass, call.Args[0], token.NEQ)
+			return len(call.Args) > 0 && isFloatCompare(pass, call.Args[0])
 		}
 		return false
 	}()
 
 	if invalid {
-		return newUseFunctionDiagnostic(checker.Name(), call, "InDelta (or InEpsilon)", nil)
+		return newUseFunctionDiagnostic(checker.Name(), call, "InEpsilon (or InDelta)", nil)
 	}
 	return nil
 }
@@ -52,10 +53,10 @@ func isFloat(pass *analysis.Pass, expr ast.Expr) bool {
 	return ok && (bt.Info()&types.IsFloat > 0)
 }
 
-func isFloatCompare(p *analysis.Pass, e ast.Expr, op token.Token) bool {
+func isFloatCompare(p *analysis.Pass, e ast.Expr) bool {
 	be, ok := e.(*ast.BinaryExpr)
 	if !ok {
 		return false
 	}
-	return be.Op == op && (isFloat(p, be.X) || isFloat(p, be.Y))
+	return isFloat(p, be.X) && isFloat(p, be.Y)
 }

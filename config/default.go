@@ -13,8 +13,12 @@ import (
 var Default = Config{
 	EnabledCheckers: checkers.EnabledByDefault(),
 	ExpectedActual: ExpectedActualConfig{
-		Pattern: Regexp{checkers.DefaultExpectedVarPattern},
+		ExpVarPattern: Regexp{checkers.DefaultExpectedVarPattern},
 	},
+}
+
+func init() {
+	sort.Strings(Default.EnabledCheckers)
 }
 
 // DumpDefault dumps more complex YML than just marshalled Default:
@@ -33,7 +37,7 @@ var defaultConfTmpl = template.Must(template.New(".testifylint.yml").Parse(`enab
 {{ .Checkers }}
 expected-actual:
   # Pattern for expected variable name.
-  pattern: {{ .Default.ExpectedActual.Pattern }}
+  exp-var-pattern: {{ .Default.ExpectedActual.ExpVarPattern }}
 `))
 
 func buildCheckersYML() string {

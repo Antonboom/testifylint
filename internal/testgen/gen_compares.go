@@ -7,27 +7,25 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-type ComparesCasesGenerator struct{}
+type ComparesTestsGenerator struct{}
 
-func (ComparesCasesGenerator) CheckerName() string {
-	return checkers.NewCompares().Name()
+func (ComparesTestsGenerator) Checker() checkers.Checker {
+	return checkers.NewCompares()
 }
 
-func (ComparesCasesGenerator) Data() any {
-	const (
-		report = "compares: use %s.%s"
+func (g ComparesTestsGenerator) TemplateData() any {
+	var (
+		checker = g.Checker().Name()
+		report  = checker + ": use %s.%s"
 	)
 
 	return struct {
-		Pkgs, Objs     []string
-		SuiteSelectors []string
-		InvalidChecks  []Check
-		ValidChecks    []Check
+		CheckerName       CheckerName
+		InvalidAssertions []Assertion
+		ValidAssertions   []Assertion
 	}{
-		Pkgs:           []string{"assert", "require"},
-		Objs:           []string{"assObj", "reqObj"},
-		SuiteSelectors: []string{"s", "s.Assert()", "assObj", "s.Require()", "reqObj"},
-		InvalidChecks: []Check{
+		CheckerName: CheckerName(checker),
+		InvalidAssertions: []Assertion{
 			{Fn: "True", Argsf: "a == b", ReportMsgf: report, ProposedFn: "Equal", ProposedArgsf: "a, b"},
 			{Fn: "True", Argsf: "a != b", ReportMsgf: report, ProposedFn: "NotEqual", ProposedArgsf: "a, b"},
 			{Fn: "True", Argsf: "a > b", ReportMsgf: report, ProposedFn: "Greater", ProposedArgsf: "a, b"},
@@ -42,7 +40,7 @@ func (ComparesCasesGenerator) Data() any {
 			{Fn: "False", Argsf: "a < b", ReportMsgf: report, ProposedFn: "GreaterOrEqual", ProposedArgsf: "a, b"},
 			{Fn: "False", Argsf: "a <= b", ReportMsgf: report, ProposedFn: "Greater", ProposedArgsf: "a, b"},
 		},
-		ValidChecks: []Check{
+		ValidAssertions: []Assertion{
 			{Fn: "Equal", Argsf: "a, b"},
 			{Fn: "NotEqual", Argsf: "a, b"},
 			{Fn: "Greater", Argsf: "a, b"},
@@ -53,103 +51,43 @@ func (ComparesCasesGenerator) Data() any {
 	}
 }
 
-func (ComparesCasesGenerator) ErroredTemplate() *template.Template {
-	return template.Must(template.New("ComparesCasesGenerator.ErroredTemplate").
+func (ComparesTestsGenerator) ErroredTemplate() Executor {
+	return template.Must(template.New("ComparesTestsGenerator.ErroredTemplate").
 		Funcs(fm).
-		Parse(comparesCasesTmplText))
+		Parse(comparesTestTmpl))
 }
 
-func (ComparesCasesGenerator) GoldenTemplate() *template.Template {
-	return template.Must(template.New("ComparesCasesGenerator.GoldenTemplate").
+func (ComparesTestsGenerator) GoldenTemplate() Executor {
+	return template.Must(template.New("ComparesTestsGenerator.GoldenTemplate").
 		Funcs(fm).
-		Parse(strings.ReplaceAll(comparesCasesTmplText, "NewCheckerExpander", "NewCheckerExpander.AsGolden")))
+		Parse(strings.ReplaceAll(comparesTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")))
 }
 
-const comparesCasesTmplText = header + `
+const comparesTestTmpl = header + `
 
-package {{ .CheckerName }}
+package {{ .CheckerName.AsPkgName }}
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 )
 
-func TestCompares(t *testing.T) {
-	{{- block "vars" . }}
+func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var a, b int
-	{{- end }}
 
-	{{ range $pi, $pkg := $.Pkgs }}
-	t.Run("{{ $pkg }}", func(t *testing.T) {
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.Expand $check $pkg nil }}
-			{{ end -}}
-		}
-
-		// Valid.
-
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.Expand $check $pkg nil }}
-			{{ end -}}
-		}
-	})
-	{{ end }}
-
-	assObj, reqObj := assert.New(t), require.New(t)
-
-	{{ range $pi, $obj := $.Objs }}
-	t.Run("{{ $obj }}", func(t *testing.T) {
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check $obj nil }}
-			{{ end -}}
-		}
-
-		// Valid.
-
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check $obj nil }}
-			{{ end -}}
-		}
-	})
-	{{ end -}}
-}
-
-type ComparesSuite struct {
-	suite.Suite
-}
-
-func TestComparesSuite(t *testing.T) {
-	suite.Run(t, new(ComparesSuite))
-}
-
-func (s *ComparesSuite) TestAll() {
-	{{- template "vars" .}}
-
-	assObj, reqObj := s.Assert(), s.Require()
-
-	{{- range $si, $sel := $.SuiteSelectors }}
+	// Invalid.
 	{
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check $sel nil }}
-			{{ end -}}
-		}
-
-		// Valid.
-
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check $sel nil }}
-			{{ end -}}
-		}
+		{{- range $ai, $assrn := $.InvalidAssertions }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+		{{- end }}
 	}
-	{{ end -}}
+
+	// Valid.
+	{
+		{{- range $ai, $assrn := $.ValidAssertions }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+		{{- end }}
+	}
 }
 `

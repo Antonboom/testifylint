@@ -24,12 +24,12 @@ enabled-checkers:
   - expected-actual
   - another-yet-checker
 expected-actual:
-  pattern: ^want$
+  exp-var-pattern: ^want$
 `,
 			expCfg: config.Config{
 				EnabledCheckers: []string{"error-is", "expected-actual", "another-yet-checker"},
 				ExpectedActual: config.ExpectedActualConfig{
-					Pattern: config.Regexp{regexp.MustCompile(`^want$`)},
+					ExpVarPattern: config.Regexp{regexp.MustCompile(`^want$`)},
 				},
 			},
 		},
@@ -54,7 +54,7 @@ enabled-checkers:
 			name: "invalid expected-actual config",
 			cfg: `
 expected-actual:
-  pattern: ^want($
+  exp-var-pattern: ^want($
 `,
 			wantErr: true,
 		},

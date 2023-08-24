@@ -8,38 +8,37 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"text/template"
 
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-var (
-	baseTestsGenerator = BaseTestsGenerator{}
-	baseTestsPath      = filepath.Join("analyzer", "testdata", "src", "base-tests", "base_test.go") // TODO: common code with checkers
-)
+var analyserTestdataPath = filepath.Join("analyzer", "testdata", "src")
 
-var generators = []CheckerTestsGenerator{
-	BoolCompareCasesGenerator{},
-	// ComparesCasesGenerator{},
-	// EmptyCasesGenerator{},
-	// ErrorCasesGenerator{},
-	// ErrorIsCasesGenerator{},
-	// ExpectedActualCasesGenerator{},
-	// FloatCompareCasesGenerator{},
-	// LenCasesGenerator{},
-	// RequireErrorCasesGenerator{},
-	// SuiteNoExtraAssertCallCasesGenerator{},
+var freeTestsGenerators = map[string]TestsGenerator{ // by sub-directory.
+	"base-test": BaseTestsGenerator{},
+}
+
+var checkerTestsGenerators = []CheckerTestsGenerator{
+	BoolCompareTestsGenerator{},
+	ComparesTestsGenerator{},
+	EmptyTestsGenerator{},
+	ErrorTestsGenerator{},
+	ErrorIsTestsGenerator{},
+	ExpectedActualTestsGenerator{},
+	FloatCompareTestsGenerator{},
+	LenTestsGenerator{},
+	RequireErrorTestsGenerator{},
+	SuiteDontUsePkg{},
+	SuiteNoExtraAssertCallTestsGenerator{},
+	SuiteTHelperTestsGenerator{},
 }
 
 func init() {
-	genForChecker := make(map[string]struct{}, len(generators))
-	for _, g := range generators {
-		name := g.CheckerName()
-		if name == "" {
-			panic(fmt.Sprintf("%T: checker name not defined", g))
-		}
+	genForChecker := make(map[string]struct{}, len(checkerTestsGenerators))
+	for _, g := range checkerTestsGenerators {
+		name := g.Checker().Name()
 		if _, ok := genForChecker[name]; ok {
-			panic(fmt.Sprintf("several generators for checker %q", name))
+			panic(fmt.Sprintf("multiple test generators for checker %q", name))
 		}
 		genForChecker[name] = struct{}{}
 	}
@@ -52,7 +51,7 @@ func init() {
 }
 
 func main() {
-	if err := generateBaseTests(); err != nil {
+	if err := generateFreeTests(); err != nil {
 		log.Panic(err)
 	}
 
@@ -61,57 +60,55 @@ func main() {
 	}
 }
 
-func generateBaseTests() error {
-	return genTestFilesPair(baseTestsGenerator, baseTestsPath)
-}
-
-func generateCheckersTests() error { // TODO: use genTestFilesPair
-	for _, g := range generators {
-		output := toCheckersPath(g.CheckerName(), strings.ReplaceAll(g.CheckerName(), "-", "_")+"_test.go")
-
-		dir := filepath.Dir(output)
-		if err := os.RemoveAll(dir); err != nil {
-			return fmt.Errorf("rm tests dir: %v", err)
-		}
-		if err := os.MkdirAll(dir, 0o755); err != nil {
-			return fmt.Errorf("mkdir tests dir: %v", err)
-		}
-
-		tmplData := g.Data()
-
-		if err := genGoFileFromTmpl(output, g.ErroredTemplate(), tmplData); err != nil {
-			return fmt.Errorf("generate test file: %v", err)
-		}
-
-		if goldenTmpl := g.GoldenTemplate(); goldenTmpl != nil { // TODO: in such case?
-			if err := genGoFileFromTmpl(output+".golden", goldenTmpl, tmplData); err != nil {
-				return fmt.Errorf("generate golden file: %v", err)
-			}
+func generateFreeTests() error {
+	for dir, g := range freeTestsGenerators {
+		testFile := strings.ReplaceAll(dir, "-", "_") + "_test.go"
+		output := filepath.Join(analyserTestdataPath, dir, testFile)
+		if err := genTestFilesPair(g, output); err != nil {
+			return fmt.Errorf("%s: %v", dir, err)
 		}
 	}
 	return nil
 }
 
-func toCheckersPath(dirsFile ...string) string {
-	return filepath.Join(append([]string{"analyzer", "testdata", "src", "checkers"}, dirsFile...)...)
+func generateCheckersTests() error {
+	for _, g := range checkerTestsGenerators {
+		checker := g.Checker().Name()
+		testFile := strings.ReplaceAll(checker, "-", "_") + "_test.go"
+		output := filepath.Join(analyserTestdataPath, "checkers", checker, testFile)
+		if err := genTestFilesPair(g, output); err != nil {
+			return fmt.Errorf("%s: %v", checker, err)
+		}
+	}
+	return nil
 }
 
 func genTestFilesPair(g TestsGenerator, path string) error {
-	tmplData := g.Data()
+	dir := filepath.Dir(path)
+	if err := os.RemoveAll(dir); err != nil {
+		return fmt.Errorf("rm tests dir: %v", err)
+	}
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return fmt.Errorf("mkdir tests dir: %v", err)
+	}
+
+	tmplData := g.TemplateData()
 
 	if err := genGoFileFromTmpl(path, g.ErroredTemplate(), tmplData); err != nil {
 		return fmt.Errorf("generate test file: %v", err)
 	}
 
-	if err := genGoFileFromTmpl(path+".golden", g.GoldenTemplate(), tmplData); err != nil {
-		return fmt.Errorf("generate golden file: %v", err)
+	if goldenTmpl := g.GoldenTemplate(); goldenTmpl != nil {
+		if err := genGoFileFromTmpl(path+".golden", goldenTmpl, tmplData); err != nil {
+			return fmt.Errorf("generate golden file: %v", err)
+		}
 	}
 	return nil
 }
 
-func genGoFileFromTmpl(output string, tmpl *template.Template, data any) error {
+func genGoFileFromTmpl(output string, exec Executor, data any) error {
 	b := bytes.NewBuffer(nil)
-	if err := tmpl.Execute(b, data); err != nil {
+	if err := exec.Execute(b, data); err != nil {
 		return fmt.Errorf("execute cases tmpl: %v", err)
 	}
 

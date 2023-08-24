@@ -12,14 +12,19 @@ func TestDefaultExpectedVarPattern(t *testing.T) {
 		matched bool
 	}{
 		{ident: "exp", matched: true},
+		{ident: "Exp", matched: true},
 		{ident: "expected", matched: true},
+		{ident: "Expected", matched: true},
 		{ident: "expResult", matched: true},
 		{ident: "expectedResult", matched: true},
 		{ident: "resultExp", matched: true},
 		{ident: "resultExpected", matched: true},
+		{ident: "clientBalanceExpected", matched: true},
 
 		{ident: "want", matched: true},
+		{ident: "Want", matched: true},
 		{ident: "wanted", matched: true},
+		{ident: "Wanted", matched: true},
 		{ident: "wantError", matched: true},
 		{ident: "wantedError", matched: true},
 		{ident: "errWant", matched: true},
@@ -48,7 +53,7 @@ func TestDefaultExpectedVarPattern(t *testing.T) {
 	for _, tt := range cases {
 		t.Run(tt.ident, func(t *testing.T) {
 			if b := checkers.DefaultExpectedVarPattern.MatchString(tt.ident); b != tt.matched {
-				t.Errorf("%q: incorrect regexp", tt.ident)
+				t.Errorf("matching failed for %q (expected %t got %t)", tt.ident, tt.matched, b)
 			}
 		})
 	}

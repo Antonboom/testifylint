@@ -90,8 +90,49 @@ readme – tests is code too
 - финальное ревью каждого файла и тестового файла
 
 suite.T() vs suite.Run
+- no-f-assertions no-fmt-mess
+	проверить, как go vet ведёт себя на примерах
+	как вариант – с форматированием только f, без форматирования только Equal
+	https://github.com/stretchr/testify/issues/339
+	https://github.com/stretchr/testify/issues/471
+	https://go.googlesource.com/tools/+/refs/heads/release-branch.go1.12/go/analysis/passes/printf/printf.go?pli=1#
 
 CheckerExpander -> AssertionExpander
 
 применение ChatGPT
+
+- про testify v1 и ожидание v2
+ https://github.com/stretchr/testify/issues/1089
+ https://github.com/stretchr/testify/milestone/4
+или он не произойдёт?
+https://github.com/stretchr/testify/pull/1109#issuecomment-1650619745
+
+todo -> readme старайтесь поддерживать тесты маленькими, выделяя общий код
+100-200 строк достаточно обычно (взять среднее по тому, что получилось)
+
+e2e тесты на cli (config issues)?
+
+в README к каждому чекеру добавить причину
+
+грепнуть FIXME TODO без маски *.go
+
+
+- уйти от `types.ExprString`, чекнуть, что forbidigo работает
+
+https://floating-point-gui.de/
+https://floating-point-gui.de/errors/comparison/
+https://www.exploringbinary.com/why-0-point-1-does-not-exist-in-floating-point/
+
+require-len – по аналогии с require-error
+error-compare - запрет на EqualError, ErrorContains
+
+suggested edit + golden file + more granular message for require-error
+
+вынести contribution в отдельный md
+
+не заменить ли конфиг полностью на флаги? или и то и то? погрумить.
+
+readme – таблица с череками и включен/выключен по умолчанию
+
+TODO: -race significantly decrease test speed
 */

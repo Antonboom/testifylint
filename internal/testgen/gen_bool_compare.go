@@ -7,33 +7,34 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-type BoolCompareCasesGenerator struct{}
+type BoolCompareTestsGenerator struct{}
 
-func (BoolCompareCasesGenerator) CheckerName() string {
-	return checkers.NewBoolCompare().Name()
+func (BoolCompareTestsGenerator) Checker() checkers.Checker {
+	return checkers.NewBoolCompare()
 }
 
-func (g BoolCompareCasesGenerator) Data() any {
+func (g BoolCompareTestsGenerator) TemplateData() any {
 	var (
-		reportUse      = g.CheckerName() + ": use %s.%s"
-		reportSimplify = g.CheckerName() + ": need to simplify the check"
+		checker        = g.Checker().Name()
+		reportUse      = checker + ": use %s.%s"
+		reportSimplify = checker + ": need to simplify the check"
 	)
 
 	type test struct {
-		Name          string
-		InvalidChecks []Check
-		ValidChecks   []Check
+		Name              string
+		InvalidAssertions []Assertion
+		ValidAssertions   []Assertion
 	}
 
 	return struct {
 		CheckerName CheckerName
 		Tests       []test
 	}{
-		CheckerName: CheckerName(g.CheckerName()),
+		CheckerName: CheckerName(checker),
 		Tests: []test{
 			{
 				Name: "assert.True cases",
-				InvalidChecks: []Check{
+				InvalidAssertions: []Assertion{
 					{Fn: "Equal", Argsf: "predicate, true", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
 					{Fn: "Equal", Argsf: "true, predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
 					{Fn: "NotEqual", Argsf: "predicate, false", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
@@ -48,13 +49,13 @@ func (g BoolCompareCasesGenerator) Data() any {
 					{Fn: "True", Argsf: "false != predicate", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
 					{Fn: "False", Argsf: "!predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
 				},
-				ValidChecks: []Check{
+				ValidAssertions: []Assertion{
 					{Fn: "True", Argsf: "predicate"},
 				},
 			},
 			{
 				Name: "assert.False cases",
-				InvalidChecks: []Check{
+				InvalidAssertions: []Assertion{
 					{Fn: "Equal", Argsf: "predicate, false", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
 					{Fn: "Equal", Argsf: "false, predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
 					{Fn: "NotEqual", Argsf: "predicate, true", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
@@ -69,7 +70,7 @@ func (g BoolCompareCasesGenerator) Data() any {
 					{Fn: "False", Argsf: "false != predicate", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
 					{Fn: "True", Argsf: "!predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
 				},
-				ValidChecks: []Check{
+				ValidAssertions: []Assertion{
 					{Fn: "False", Argsf: "predicate"},
 				},
 			},
@@ -77,19 +78,19 @@ func (g BoolCompareCasesGenerator) Data() any {
 	}
 }
 
-func (BoolCompareCasesGenerator) ErroredTemplate() *template.Template {
-	return template.Must(template.New("BoolCompareCasesGenerator.ErroredTemplate").
+func (BoolCompareTestsGenerator) ErroredTemplate() Executor {
+	return template.Must(template.New("BoolCompareTestsGenerator.ErroredTemplate").
 		Funcs(fm).
-		Parse(boolCompareCasesTmplText))
+		Parse(boolCompareTestTmpl))
 }
 
-func (BoolCompareCasesGenerator) GoldenTemplate() *template.Template {
-	return template.Must(template.New("BoolCompareCasesGenerator.GoldenTemplate").
+func (BoolCompareTestsGenerator) GoldenTemplate() Executor {
+	return template.Must(template.New("BoolCompareTestsGenerator.GoldenTemplate").
 		Funcs(fm).
-		Parse(strings.ReplaceAll(boolCompareCasesTmplText, "NewCheckerExpander", "NewCheckerExpander.AsGolden")))
+		Parse(strings.ReplaceAll(boolCompareTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")))
 }
 
-const boolCompareCasesTmplText = header + `
+const boolCompareTestTmpl = header + `
 
 package {{ .CheckerName.AsPkgName }}
 
@@ -105,13 +106,13 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 		// {{ $test.Name }}.
 		{
 			// Invalid.
-			{{- range $ci, $check := $test.InvalidChecks }}
-				{{ NewCheckerExpander.Expand $check "assert" "t" nil }}
+			{{- range $ai, $assrn := $test.InvalidAssertions }}
+				{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 			{{- end }}
 	
 			// Valid.
-			{{- range $ci, $check := $test.ValidChecks }}
-				{{ NewCheckerExpander.Expand $check "assert" "t" nil }}
+			{{- range $ai, $assrn := $test.ValidAssertions }}
+				{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 			{{- end }}
 		}
 	{{ end -}}

@@ -27,7 +27,7 @@ func newCheckers(cfg config.Config) ([]checkers.RegularChecker, []checkers.Advan
 
 		switch c := ch.(type) {
 		case *checkers.ExpectedActual:
-			c.SetExpPattern(cfg.ExpectedActual.Pattern.Regexp)
+			c.SetExpVarPattern(cfg.ExpectedActual.ExpVarPattern.Regexp)
 		}
 
 		switch casted := ch.(type) {

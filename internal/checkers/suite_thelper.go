@@ -8,21 +8,16 @@ import (
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/ast/inspector"
+
+	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-// SuiteTHelper checks situation like
+// SuiteTHelper wants t.Helper() call in suite helpers:
 //
-//	func (s *MySuite) TestSomething() {
-//		s.Assert().Equal(42, value)
+//	func (s *RoomSuite) assertRoomRound(roundID RoundID) {
+//		s.T().Helper()
+//		s.Equal(roundID, s.getRoom().CurrentRound.ID)
 //	}
-//
-// and requires e.g.
-//
-//	func (s *MySuite) TestSomething() {
-//		s.Equal(42, value)
-//	}
-//
-// TODO: fix example + описать, что толку мало, больше как пример advanced linter и документация.
 type SuiteTHelper struct{}
 
 // NewSuiteTHelper constructs SuiteTHelper checker.
@@ -52,16 +47,34 @@ func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Insp
 			return
 		}
 
-		if !containsSuiteCalls(pass, fd, rcvName, rcvType) {
+		if !containsSuiteCalls(pass, fd, rcvType) {
 			return
 		}
 
-		if !firstStmtIsTHelperCall(pass, fd, rcvName, rcvType) {
-			msg := fmt.Sprintf("suite helper method should start with %s.T().Helper()", rcvName)
-			diagnostics = append(diagnostics, *newDiagnostic(checker.Name(), fd, msg, nil))
+		firstStmt := getFirstStatement(fd)
+		if firstStmt == nil {
+			panic("containsSuiteCalls works incorrectly")
 		}
+
+		if isTHelperCall(pass, firstStmt, rcvType) {
+			return
+		}
+
+		helper := fmt.Sprintf("%s.T().Helper()", rcvName)
+		msg := fmt.Sprintf("suite helper method should start with " + helper)
+		d := newDiagnostic(checker.Name(), fd, msg, &analysis.SuggestedFix{
+			Message: "Insert " + helper,
+			TextEdits: []analysis.TextEdit{
+				{
+					Pos:     firstStmt.Pos(),
+					End:     firstStmt.Pos(),
+					NewText: []byte(helper + "\n\n"),
+				},
+			},
+		})
+		diagnostics = append(diagnostics, *d)
 	})
-	return nil
+	return diagnostics
 }
 
 func isTestifySuiteMethod(pass *analysis.Pass, fDecl *ast.FuncDecl) bool {
@@ -74,47 +87,46 @@ func isTestifySuiteMethod(pass *analysis.Pass, fDecl *ast.FuncDecl) bool {
 }
 
 func isServiceSuiteMethod(name string) bool {
-	// github.com/stretchr/testify/suite/interfaces.go
+	// https://github.com/stretchr/testify/blob/master/suite/interfaces.go
 	switch name {
-	case "SetupSuite", "SetupTest", "TearDownSuite", "TearDownTest", "BeforeTest", "AfterTest", "HandleStats":
+	case "SetupSuite", "SetupTest", "TearDownSuite", "TearDownTest",
+		"BeforeTest", "AfterTest", "HandleStats", "SetupSubTest", "TearDownSubTest":
 		return true
 	}
 	return false
 }
 
-func containsSuiteCalls(pass *analysis.Pass, fn *ast.FuncDecl, rcvName string, rcvType types.Type) bool {
+func containsSuiteCalls(pass *analysis.Pass, fn *ast.FuncDecl, rcvType types.Type) bool {
 	if fn.Body == nil {
 		return false
 	}
 
 	for _, s := range fn.Body.List {
-		if isSuiteCall(pass, rcvName, rcvType, s) {
+		if isSuiteCall(pass, s, rcvType) {
 			return true
 		}
 	}
 	return false
 }
 
-func firstStmtIsTHelperCall(pass *analysis.Pass, fn *ast.FuncDecl, rcvName string, rcvType types.Type) bool {
+func getFirstStatement(fn *ast.FuncDecl) ast.Stmt {
 	if fn.Body == nil {
-		return false
+		return nil
 	}
 
 	if len(fn.Body.List) == 0 {
-		return false
+		return nil
 	}
-	s := fn.Body.List[0]
-
-	expr, ok := s.(*ast.ExprStmt)
-	if !ok {
-		return false
-	}
-	return isSuiteCall(pass, rcvName, rcvType, s) &&
-		types.ExprString(expr.X) == fmt.Sprintf("%s.T().Helper()", rcvName)
+	return fn.Body.List[0]
 }
 
-func isSuiteCall(pass *analysis.Pass, rcvName string, rcvType types.Type, s ast.Stmt) bool {
-	expr, ok := s.(*ast.ExprStmt)
+func isTHelperCall(pass *analysis.Pass, stmt ast.Stmt, rcvType types.Type) bool {
+	return isSuiteCall(pass, stmt, rcvType) &&
+		(strings.HasSuffix(analysisutil.NodeString(pass.Fset, stmt), "T().Helper()"))
+}
+
+func isSuiteCall(pass *analysis.Pass, stmt ast.Stmt, rcvType types.Type) bool {
+	expr, ok := stmt.(*ast.ExprStmt)
 	if !ok {
 		return false
 	}
@@ -128,7 +140,7 @@ func isSuiteCall(pass *analysis.Pass, rcvName string, rcvType types.Type, s ast.
 	if t == nil {
 		return false
 	}
-	return x.Name == rcvName && types.Identical(t, rcvType)
+	return types.Identical(t, rcvType)
 }
 
 // unwrapSelector supports

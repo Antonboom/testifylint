@@ -1,12 +1,19 @@
 package main
 
-type Check struct { // TODO -> Assertion
+// Assertion is a generic view of testify assertion.
+// Designed to expand to multiple lines of assertions using AssertionExpander.
+type Assertion struct {
 	Fn    string // "Equal"
 	Argsf string // "%s, %s"
 
 	ReportMsgf string //  "use %s.%s"
 
-	ProposedSelector string
+	ProposedSelector string // s.Require()
 	ProposedFn       string // "InDelta"
-	ProposedArgsf    string // %s, %s, 0.0001" // TODO -> может не понадобится, как задание со *? точнее не понадобятся argValues в Expand
+	ProposedArgsf    string // %s, %s, 0.0001"
+}
+
+// WithoutReport strips Assertion expected warning.
+func (a Assertion) WithoutReport() Assertion {
+	return Assertion{Fn: a.Fn, Argsf: a.Argsf}
 }

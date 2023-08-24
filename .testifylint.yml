@@ -14,4 +14,4 @@ enabled-checkers:
 
 expected-actual:
   # Pattern for expected variable name.
-  pattern: (^exp$|^expected$|^exp[A-Z0-9].*|^expected[A-Z0-9].*|.*[a-z0-9]Exp$|.*[a-z0-9]Expected$|^want$|^wanted$|^want[A-Z0-9].*|^wanted[A-Z0-9].*|.*[a-z0-9]Want$|.*[a-z0-9]Wanted$)
+  exp-var-pattern: (^(exp(ected)?|want(ed)?)([A-Z]\w*)?$)|(^(\w*[a-z])?(Exp(ected)?|Want(ed)?)$)

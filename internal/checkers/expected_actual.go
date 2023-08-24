@@ -4,47 +4,37 @@ import (
 	"go/ast"
 	"go/types"
 	"regexp"
-	"strings"
 
 	"golang.org/x/tools/go/analysis"
+
+	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-// TODO: упростить регулярку + тесты.
-var DefaultExpectedVarPattern = regexp.MustCompile(strings.ReplaceAll(`(
-	^exp$|
-	^expected$|
-	^exp[A-Z0-9].*|
-	^expected[A-Z0-9].*|
-	.*[a-z0-9]Exp$|
-	.*[a-z0-9]Expected$|
-	^want$|
-	^wanted$|
-	^want[A-Z0-9].*|
-	^wanted[A-Z0-9].*|
-	.*[a-z0-9]Want$|
-	.*[a-z0-9]Wanted$)`, "\n\t", ""))
+// DefaultExpectedVarPattern matches variables with "expected" or "wanted" part in the name.
+var DefaultExpectedVarPattern = regexp.MustCompile(
+	`(^(exp(ected)?|want(ed)?)([A-Z]\w*)?$)|(^(\w*[a-z])?(Exp(ected)?|Want(ed)?)$)`)
 
 // ExpectedActual checks situation like
 //
-//	assert.NotEqual(t, result, "expected")
+//	assert.NotEqual(t, result, "expected value")
 //
 // and requires e.g.
 //
-//	assert.NotEqual(t, "expected", result)
+//	assert.NotEqual(t, "expected value", result)
 type ExpectedActual struct {
-	expPattern *regexp.Regexp
+	expVarPattern *regexp.Regexp
 }
 
 // NewExpectedActual constructs ExpectedActual checker using DefaultExpectedVarPattern.
 func NewExpectedActual() *ExpectedActual {
-	return &ExpectedActual{expPattern: DefaultExpectedVarPattern}
+	return &ExpectedActual{expVarPattern: DefaultExpectedVarPattern}
 }
 
 func (ExpectedActual) Name() string { return "expected-actual" }
 
-func (checker *ExpectedActual) SetExpPattern(p *regexp.Regexp) *ExpectedActual {
+func (checker *ExpectedActual) SetExpVarPattern(p *regexp.Regexp) *ExpectedActual {
 	if p != nil {
-		checker.expPattern = p
+		checker.expVarPattern = p
 	}
 	return checker
 }
@@ -62,14 +52,14 @@ func (checker ExpectedActual) Check(pass *analysis.Pass, call *CallMeta) *analys
 	}
 	first, second := call.Args[0], call.Args[1]
 
-	if isWrongExpectedActualOrder(pass, checker.expPattern, first, second) {
+	if checker.isWrongExpectedActualOrder(pass, first, second) {
 		return newDiagnostic(checker.Name(), call, "need to reverse actual and expected values", &analysis.SuggestedFix{
 			Message: "Reverse actual and expected values",
 			TextEdits: []analysis.TextEdit{
 				{
 					Pos:     first.Pos(),
 					End:     second.End(),
-					NewText: []byte(types.ExprString(second) + ", " + types.ExprString(first)),
+					NewText: []byte(analysisutil.NodeString(pass.Fset, second) + ", " + analysisutil.NodeString(pass.Fset, first)),
 				},
 			},
 		})
@@ -77,18 +67,26 @@ func (checker ExpectedActual) Check(pass *analysis.Pass, call *CallMeta) *analys
 	return nil
 }
 
-func isWrongExpectedActualOrder(pass *analysis.Pass, expectedVarPattern *regexp.Regexp, _, second ast.Expr) bool {
-	// Protection from compile-known constants –
-	// results of builtin functions, for example, len().
-	if ce, ok := second.(*ast.CallExpr); ok {
-		return isCastedBasicLit(ce)
+func (checker ExpectedActual) isWrongExpectedActualOrder(pass *analysis.Pass, first, second ast.Expr) bool {
+	leftIsCandidate := checker.isExpectedValueCandidate(pass, first)
+	rightIsCandidate := checker.isExpectedValueCandidate(pass, second)
+	return rightIsCandidate && !leftIsCandidate
+}
+
+func (checker ExpectedActual) isExpectedValueCandidate(pass *analysis.Pass, expr ast.Expr) bool {
+	switch v := expr.(type) {
+	case *ast.CompositeLit:
+		return true
+
+	case *ast.CallExpr:
+		return isCastedBasicLit(v) || isExpectedValueFactory(v, checker.expVarPattern)
 	}
 
-	return isBasicLit(second) ||
-		isUntypedConst(pass, second) ||
-		isTypedConst(pass, second) ||
-		isIdentNamedAsExpected(expectedVarPattern, second) ||
-		isStructFieldNamedAsExpected(expectedVarPattern, second)
+	return isBasicLit(expr) ||
+		isUntypedConst(pass, expr) ||
+		isTypedConst(pass, expr) ||
+		isIdentNamedAsExpected(checker.expVarPattern, expr) ||
+		isStructFieldNamedAsExpected(checker.expVarPattern, expr)
 }
 
 func isCastedBasicLit(ce *ast.CallExpr) bool {
@@ -100,29 +98,36 @@ func isCastedBasicLit(ce *ast.CallExpr) bool {
 	if !ok {
 		return false
 	}
+
 	switch fn.Name {
+	case "complex64", "complex128":
+		return true
+
 	case "uint", "uint8", "uint16", "uint32", "uint64",
 		"int", "int8", "int16", "int32", "int64",
 		"float32", "float64",
-		"rune":
+		"rune", "string":
 		return isBasicLit(ce.Args[0])
+	}
+	return false
+}
 
-	case "string":
-		return isBasicLit(ce.Args[0]) || isIdent(ce.Args[0])
+func isExpectedValueFactory(ce *ast.CallExpr, pattern *regexp.Regexp) bool {
+	if len(ce.Args) != 0 {
+		return false
+	}
 
-	case "complex64", "complex128":
-		return isBasicLit(ce.Args[0]) || isAnyBinaryExpr(ce.Args[0])
+	switch fn := ce.Fun.(type) {
+	case *ast.Ident:
+		return pattern.MatchString(fn.Name)
+	case *ast.SelectorExpr:
+		return pattern.MatchString(fn.Sel.Name)
 	}
 	return false
 }
 
 func isBasicLit(e ast.Expr) bool {
 	_, ok := e.(*ast.BasicLit)
-	return ok
-}
-
-func isAnyBinaryExpr(e ast.Expr) bool {
-	_, ok := e.(*ast.BinaryExpr)
 	return ok
 }
 
@@ -144,11 +149,6 @@ func isTypedConst(p *analysis.Pass, e ast.Expr) bool {
 func isIdentNamedAsExpected(pattern *regexp.Regexp, e ast.Expr) bool {
 	id, ok := e.(*ast.Ident)
 	return ok && pattern.MatchString(id.Name)
-}
-
-func isIdent(e ast.Expr) bool {
-	_, ok := e.(*ast.Ident)
-	return ok
 }
 
 func isStructFieldNamedAsExpected(pattern *regexp.Regexp, e ast.Expr) bool {

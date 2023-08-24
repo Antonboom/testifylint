@@ -10,11 +10,11 @@ import (
 
 // Len checks situation like
 //
-//	assert.Equal(t, 42.42, a)
+//	assert.Equal(t, 0, len(arr))
 //
 // and requires e.g.
 //
-//	assert.InDelta(t, 42.42, a, 0.0001)
+//	assert.Len(t, arr, 0)
 type Len struct{}
 
 // NewLen constructs Len checker.

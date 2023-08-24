@@ -20,10 +20,12 @@ func (checker RequireError) Check(_ *analysis.Pass, call *CallMeta) *analysis.Di
 		return nil
 	}
 
+	const msg = "for error assertions use the `require` API"
+
 	switch call.Fn.Name {
 	case "Error", "ErrorIs", "ErrorAs", "EqualError", "ErrorContains", "NoError", "NotErrorIs",
 		"Errorf", "ErrorIsf", "ErrorAsf", "EqualErrorf", "ErrorContainsf", "NoErrorf", "NotErrorIsf":
-		return newDiagnostic(checker.Name(), call, "for error assertions use the `require` package", nil) // TODO для suite s.Require() другой текст
+		return newDiagnostic(checker.Name(), call, msg, nil)
 	}
 	return nil
 }

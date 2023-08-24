@@ -7,46 +7,41 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-type SuiteNoExtraAssertCallCasesGenerator struct{}
+type SuiteNoExtraAssertCallTestsGenerator struct{}
 
-func (SuiteNoExtraAssertCallCasesGenerator) CheckerName() string {
-	return checkers.NewSuiteNoExtraAssertCall().Name()
+func (SuiteNoExtraAssertCallTestsGenerator) Checker() checkers.Checker {
+	return checkers.NewSuiteNoExtraAssertCall()
 }
 
-func (SuiteNoExtraAssertCallCasesGenerator) Data() any {
-	const (
-		report = "suite-no-extra-assert-call: need to simplify the check"
+func (g SuiteNoExtraAssertCallTestsGenerator) TemplateData() any {
+	var (
+		checker = g.Checker().Name()
+		report  = checker + ": need to simplify the check%.s%.s"
 	)
 
 	return struct {
-		IgnoredSelectors         []string
-		IgnoredWithoutTSelectors []string
-		IgnoredCheck             Check
-		ExtraCall                string
-		ExtraCheck               Check
+		CheckerName CheckerName
+		Assrn       Assertion
 	}{
-		IgnoredSelectors:         []string{"assert", "require"},
-		IgnoredWithoutTSelectors: []string{"assObj", "reqObj", "assObjS", "reqObjS", "s", "s.Require()"},
-		IgnoredCheck:             Check{Fn: "True", Argsf: "b"},
-		ExtraCall:                "s.Assert()",
-		ExtraCheck:               Check{Fn: "True", Argsf: "b", ReportMsgf: report, ProposedSelector: "s"},
+		CheckerName: CheckerName(checker),
+		Assrn:       Assertion{Fn: "True", Argsf: "b", ReportMsgf: report, ProposedSelector: "s"},
 	}
 }
 
-func (SuiteNoExtraAssertCallCasesGenerator) ErroredTemplate() *template.Template {
-	return template.Must(template.New("SuiteNoExtraAssertCallCasesGenerator.ErroredTemplate").
+func (SuiteNoExtraAssertCallTestsGenerator) ErroredTemplate() Executor {
+	return template.Must(template.New("SuiteNoExtraAssertCallTestsGenerator.ErroredTemplate").
 		Funcs(fm).
-		Parse(suiteNoExtraAssertCallCasesTmplText))
+		Parse(suiteNoExtraAssertCallTestTmpl))
 }
 
-func (SuiteNoExtraAssertCallCasesGenerator) GoldenTemplate() *template.Template {
-	return template.Must(template.New("SuiteNoExtraAssertCallCasesGenerator.GoldenTemplate").
+func (SuiteNoExtraAssertCallTestsGenerator) GoldenTemplate() Executor {
+	return template.Must(template.New("SuiteNoExtraAssertCallTestsGenerator.GoldenTemplate").
 		Funcs(fm).
-		Parse(strings.ReplaceAll(suiteNoExtraAssertCallCasesTmplText, "NewCheckerExpander", "NewCheckerExpander.AsGolden")))
+		Parse(strings.ReplaceAll(suiteNoExtraAssertCallTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")))
 }
 
-const suiteNoExtraAssertCallCasesTmplText = header + `
-package {{ .CheckerName }}
+const suiteNoExtraAssertCallTestTmpl = header + `
+package {{ .CheckerName.AsPkgName }}
 
 import (
 	"testing"
@@ -56,33 +51,32 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type SuiteNoExtraAssertCallSuite struct {
+{{ $suiteName := .CheckerName.AsSuiteName }}
+
+type {{ $suiteName }} struct {
 	suite.Suite
 }
 
-func TestSuiteNoExtraAssertCallSuite(t *testing.T) {
-	suite.Run(t, new(SuiteNoExtraAssertCallSuite))
+func Test{{ $suiteName }}(t *testing.T) {
+	suite.Run(t, new({{ $suiteName }}))
 }
 
-func (s *SuiteNoExtraAssertCallSuite) TestAll() {
+func (s *{{ $suiteName }}) TestAll() {
+	var b bool
+	{{ NewAssertionExpander.Expand $.Assrn "s.Assert()" "" nil }}
+}
+
+func (s *{{ $suiteName }}) TestIgnored() {
 	var b bool
 
 	t := s.T()
 	assObj, reqObj := assert.New(t), require.New(t)
 	assObjS, reqObjS := s.Assert(), s.Require()
 
-	{{ NewCheckerExpander.WithoutTArg.Expand $.ExtraCheck $.ExtraCall nil }}
-
-	// Valid.
-	{{ range $si, $sel := $.IgnoredSelectors }}
-	{
-		{{ NewCheckerExpander.Expand $.IgnoredCheck $sel nil }}
-	}
-	{{- end }}
-	{{ range $si, $sel := $.IgnoredWithoutTSelectors }}
-	{
-		{{ NewCheckerExpander.WithoutTArg.Expand $.IgnoredCheck $sel nil }}
-	}
+	{{ $selectors := arr "assert" "require" "assObj" "reqObj" "assObjS" "reqObjS" "s" "s.Require()" }}
+	{{ range $si, $sel := $selectors }}
+		{{- $t := "" }}{{ if or (eq $sel "assert") (eq $sel "require") }}{{ $t = "t" }}{{ end }}
+		{{ NewAssertionExpander.Expand $.Assrn.WithoutReport $sel $t nil }}
 	{{- end }}
 }
 `

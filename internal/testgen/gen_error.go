@@ -7,71 +7,73 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-type ErrorCasesGenerator struct{}
+type ErrorTestsGenerator struct{}
 
-func (ErrorCasesGenerator) CheckerName() string {
-	return checkers.NewError().Name()
+func (ErrorTestsGenerator) Checker() checkers.Checker {
+	return checkers.NewError()
 }
 
-func (ErrorCasesGenerator) Data() any {
-	return struct {
-		Pkgs, Objs     []string
-		SuiteSelectors []string
-		VarSets        [][]string
-		InvalidChecks  []Check
-		ValidChecks    []Check
-		ValidNilChecks []Check
-	}{
-		Pkgs:           []string{"assert", "require"},
-		Objs:           []string{"assObj", "reqObj"},
-		SuiteSelectors: []string{"s", "s.Assert()", "assObj", "s.Require()", "reqObj"},
-		VarSets: [][]string{
-			{"a"}, {"b.Get1()"}, {"c"}, {"errOp()"},
-		},
-		InvalidChecks: []Check{
-			{Fn: "Nil", Argsf: "%s", ReportMsgf: "error: use %s.%s", ProposedFn: "NoError"},
-			{Fn: "NotNil", Argsf: "%s", ReportMsgf: "error: use %s.%s", ProposedFn: "Error"},
-		},
-		ValidChecks: []Check{
-			{Fn: "NoError", Argsf: "%s"},
-			{Fn: "Error", Argsf: "%s"},
-		},
-		ValidNilChecks: []Check{
-			{Fn: "Nil", Argsf: "ptr"},
-			{Fn: "Nil", Argsf: "iface"},
-			{Fn: "Nil", Argsf: "ch"},
-			{Fn: "Nil", Argsf: "sl"},
-			{Fn: "Nil", Argsf: "fn"},
-			{Fn: "Nil", Argsf: "m"},
-			{Fn: "Nil", Argsf: "uPtr"},
+func (g ErrorTestsGenerator) TemplateData() any {
+	var (
+		checker = g.Checker().Name()
+		report  = checker + ": use %s.%s"
+	)
 
-			{Fn: "NotNil", Argsf: "ptr"},
-			{Fn: "NotNil", Argsf: "iface"},
-			{Fn: "NotNil", Argsf: "ch"},
-			{Fn: "NotNil", Argsf: "sl"},
-			{Fn: "NotNil", Argsf: "fn"},
-			{Fn: "NotNil", Argsf: "m"},
-			{Fn: "NotNil", Argsf: "uPtr"},
+	type errorDetectionTest struct {
+		Vars  []string
+		Assrn Assertion
+	}
+
+	type validNilsTest struct {
+		Vars       []string
+		Assertions []Assertion
+	}
+
+	return struct {
+		CheckerName       CheckerName
+		ErrDetection      errorDetectionTest
+		ValidNils         validNilsTest
+		InvalidAssertions []Assertion
+		ValidAssertions   []Assertion
+	}{
+		CheckerName: CheckerName(checker),
+		ErrDetection: errorDetectionTest{
+			Vars:  []string{"a", "b.Get1()", "c", "errOp()"},
+			Assrn: Assertion{Fn: "Nil", Argsf: "%s", ReportMsgf: report, ProposedFn: "NoError"},
+		},
+		ValidNils: validNilsTest{
+			Vars: []string{"ptr", "iface", "ch", "sl", "fn", "m", "uPtr"},
+			Assertions: []Assertion{
+				{Fn: "Nil", Argsf: "%s"},
+				{Fn: "NotNil", Argsf: "%s"},
+			},
+		},
+		InvalidAssertions: []Assertion{
+			{Fn: "Nil", Argsf: "err", ReportMsgf: report, ProposedFn: "NoError"},
+			{Fn: "NotNil", Argsf: "err", ReportMsgf: report, ProposedFn: "Error"},
+		},
+		ValidAssertions: []Assertion{
+			{Fn: "NoError", Argsf: "err"},
+			{Fn: "Error", Argsf: "err"},
 		},
 	}
 }
 
-func (ErrorCasesGenerator) ErroredTemplate() *template.Template {
-	return template.Must(template.New("ErrorCasesGenerator.ErroredTemplate").
+func (ErrorTestsGenerator) ErroredTemplate() Executor {
+	return template.Must(template.New("ErrorTestsGenerator.ErroredTemplate").
 		Funcs(fm).
-		Parse(errorCasesTmplText))
+		Parse(errorTestTmpl))
 }
 
-func (ErrorCasesGenerator) GoldenTemplate() *template.Template {
-	return template.Must(template.New("ErrorCasesGenerator.GoldenTemplate").
+func (ErrorTestsGenerator) GoldenTemplate() Executor {
+	return template.Must(template.New("ErrorTestsGenerator.GoldenTemplate").
 		Funcs(fm).
-		Parse(strings.ReplaceAll(errorCasesTmplText, "NewCheckerExpander", "NewCheckerExpander.AsGolden")))
+		Parse(strings.ReplaceAll(errorTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")))
 }
 
-// todo: исправить шаблон
-const errorCasesTmplText = header + `
+const errorTestTmpl = header + `
 
-package {{ .CheckerName }}
+package {{ .CheckerName.AsPkgName }}
 
 import (
 	"io"
@@ -79,14 +81,19 @@ import (
 	"unsafe"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 )
 
-func TestErrorAsserts(t *testing.T) {
-	{{- block "vars" . }}
+func {{ .CheckerName.AsTestName }}_ErrorDetection(t *testing.T) {
 	errOp := func() error { return io.EOF }
-	
+	var a error
+	var b withErroredMethod
+	_, c := b.Get2()
+	{{ range $vi, $var := $.ErrDetection.Vars }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $.ErrDetection.Assrn "assert" "t" (arr $var) }}
+	{{- end }}
+}
+
+func {{ .CheckerName.AsTestName }}_ValidNils(t *testing.T) {
 	var (
 		ptr   *int
 		iface any
@@ -96,108 +103,29 @@ func TestErrorAsserts(t *testing.T) {
 		m     map[int]int
 		uPtr unsafe.Pointer
 	)
-	
-	var a error
-	var b withErroredMethod
-	_, c := b.Get2()
-	{{- end }}
-
-	{{ range $pi, $pkg := $.Pkgs }}
-	t.Run("{{ $pkg }}", func(t *testing.T) {
-		{{- range $vi, $vars := $.VarSets }}
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.Expand $check $pkg $vars }}
-			{{ end -}}
-		}
-		{{ end }}
-		// Valid.
-		{{ range $vi, $vars := $.VarSets }}
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.Expand $check $pkg $vars }}
-			{{ end -}}
-		}
-		{{ end }}
-		// Valid nils.
-
-		{
-			{{- range $ci, $check := $.ValidNilChecks }}
-				{{ NewCheckerExpander.Expand $check $pkg nil }}
-			{{ end -}}
-		}
-	})
-	{{ end }}
-
-	assObj, reqObj := assert.New(t), require.New(t)
-
-	{{ range $oi, $obj := $.Objs }}
-	t.Run("{{ $obj }}", func(t *testing.T) {
-		{{- range $vi, $vars := $.VarSets }}
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check $obj $vars }}
-			{{ end -}}
-		}
-		{{ end }}
-		// Valid.
-		{{ range $vi, $vars := $.VarSets }}
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check $obj $vars }}
-			{{ end -}}
-		}
-		{{ end }}
-		// Valid nils.
-
-		{
-			{{- range $ci, $check := $.ValidNilChecks }}
-				{{ NewCheckerExpander.WithoutTArg.Expand $check $obj nil }}
-			{{ end -}}
-		}
-	})
-	{{ end -}}
+	{{ range $vi, $var := $.ValidNils.Vars }}
+		{{- range $ai, $assrn := $.ValidNils.Assertions }}
+			{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" (arr $var) }}
+		{{- end }}
+	{{- end }}	
 }
 
-type ErrorSuite struct {
-	suite.Suite
-}
+func {{ .CheckerName.AsTestName }}(t *testing.T) {
+	var err error
 
-func TestErrorSuite(t *testing.T) {
-	suite.Run(t, new(ErrorSuite))
-}
-
-func (s *ErrorSuite) TestAll() {
-	{{- template "vars" .}}
-
-	assObj, reqObj := s.Assert(), s.Require()
-
-	{{ range $si, $sel := $.SuiteSelectors }}
+	// Invalid.
 	{
-		{{- range $vi, $vars := $.VarSets }}
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check $sel $vars }}
-			{{ end -}}
-		}
-		{{ end }}
-		// Valid.
-		{{ range $vi, $vars := $.VarSets }}
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check $sel $vars }}
-			{{ end -}}
-		}
-		{{ end }}
-		// Valid nils.
-
-		{
-			{{- range $ci, $check := $.ValidNilChecks }}
-				{{ NewCheckerExpander.WithoutTArg.Expand $check $sel nil }}
-			{{ end -}}
-		}
+		{{- range $ai, $assrn := $.InvalidAssertions }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+		{{- end }}
 	}
-	{{ end -}}
+
+	// Valid.
+	{
+		{{- range $ai, $assrn := $.ValidAssertions }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+		{{- end }}
+	}
 }
 
 type withErroredMethod struct{}

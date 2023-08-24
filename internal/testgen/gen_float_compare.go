@@ -6,188 +6,146 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-type FloatCompareCasesGenerator struct{}
+type FloatCompareTestsGenerator struct{}
 
-func (FloatCompareCasesGenerator) CheckerName() string {
-	return checkers.NewFloatCompare().Name()
+func (FloatCompareTestsGenerator) Checker() checkers.Checker {
+	return checkers.NewFloatCompare()
 }
 
-func (FloatCompareCasesGenerator) Data() any {
-	const (
-		report     = "float-compare: use %s.%s"
-		proposedFn = "InDelta (or InEpsilon)"
+func (g FloatCompareTestsGenerator) TemplateData() any {
+	var (
+		name       = g.Checker().Name()
+		report     = name + ": use %s.%s"
+		proposedFn = "InEpsilon (or InDelta)"
 	)
 
+	type floatDetectionTest struct {
+		Vars  []string
+		Assrn Assertion
+	}
+
 	return struct {
-		Bits           []string
-		Pkgs, Objs     []string
-		SuiteSelectors []string
-		InvalidChecks  []Check
-		ValidChecks    []Check
+		CheckerName       CheckerName
+		FloatDetection    floatDetectionTest
+		InvalidAssertions []Assertion
+		ValidAssertions   []Assertion
 	}{
-		Bits:           []string{"32", "64"},
-		Pkgs:           []string{"assert", "require"},
-		Objs:           []string{"assObj", "reqObj"},
-		SuiteSelectors: []string{"s", "s.Assert()", "assObj", "s.Require()", "reqObj"},
-		InvalidChecks: []Check{
-			{Fn: "Equal", Argsf: "42.42, b", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "True", Argsf: "cc.c == a", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "False", Argsf: "h.Calculate() != floatOp()", ReportMsgf: report, ProposedFn: proposedFn},
+		CheckerName: CheckerName(name),
+		FloatDetection: floatDetectionTest{
+			Vars: []string{
+				"a",
+				"b",
+				"cc.value",
+				"d",
+				"e",
+				"(*f).value",
+				"*g",
+				"h.Calculate()",
+				"floatOp()",
+				"number(a) + b",
+				"cc.value - (*f).value",
+				"d * e / a",
+				"math.Round(float64(floatOp()))",
+			},
+			Assrn: Assertion{Fn: "Equal", Argsf: "42.42, %s", ReportMsgf: report, ProposedFn: proposedFn},
 		},
-		ValidChecks: []Check{
-			{Fn: "NotEqual", Argsf: "b, cc.c"},
-			{Fn: "Greater", Argsf: "d, e"},
-			{Fn: "GreaterOrEqual", Argsf: "(*f).c, *g"},
-			{Fn: "Less", Argsf: "h.Calculate(), floatOp()"},
-			{Fn: "LessOrEqual", Argsf: "42.42, a"},
+		InvalidAssertions: []Assertion{
+			{Fn: "Equal", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "NotEqual", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "Greater", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "GreaterOrEqual", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "Less", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "LessOrEqual", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
 
-			{Fn: "True", Argsf: "a != d"},
-			{Fn: "True", Argsf: "a > d"},
-			{Fn: "True", Argsf: "a >= d"},
-			{Fn: "True", Argsf: "a < d"},
-			{Fn: "True", Argsf: "a <= d"},
+			{Fn: "True", Argsf: "%s == result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "True", Argsf: "%s != result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "True", Argsf: "%s > result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "True", Argsf: "%s >= result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "True", Argsf: "%s < result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "True", Argsf: "%s <= result", ReportMsgf: report, ProposedFn: proposedFn},
 
-			{Fn: "False", Argsf: "a == d"},
-			{Fn: "False", Argsf: "a > d"},
-			{Fn: "False", Argsf: "a >= d"},
-			{Fn: "False", Argsf: "a < d"},
-			{Fn: "False", Argsf: "a <= d"},
-
-			{Fn: "InDelta", Argsf: "42.42, a, 0.0001"},
-			{Fn: "InDelta", Argsf: "b, cc.c, 0.0001"},
-			{Fn: "InDelta", Argsf: "(*f).c, *g, 0.0001"},
-			{Fn: "InDelta", Argsf: "h.Calculate(), floatOp(), 0.0001"},
-			{Fn: "InDelta", Argsf: "42.42, a, 0.0001"},
-
-			{Fn: "InEpsilon", Argsf: "42.42, a, 0.01"},
-			{Fn: "InEpsilon", Argsf: "b, cc.c, 0.02"},
-			{Fn: "InEpsilon", Argsf: "(*f).c, *g, 0.03"},
-			{Fn: "InEpsilon", Argsf: "h.Calculate(), floatOp(), 0.04"},
-			{Fn: "InEpsilon", Argsf: "42.42, a, 0.05"},
+			{Fn: "False", Argsf: "%s == result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "False", Argsf: "%s != result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "False", Argsf: "%s > result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "False", Argsf: "%s >= result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "False", Argsf: "%s < result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "False", Argsf: "%s <= result", ReportMsgf: report, ProposedFn: proposedFn},
+		},
+		ValidAssertions: []Assertion{
+			{Fn: "InDelta", Argsf: "42.42, result, 0.0001"},
+			{Fn: "InEpsilon", Argsf: "42.42, result, 0.0002"},
 		},
 	}
 }
 
-func (FloatCompareCasesGenerator) ErroredTemplate() *template.Template {
-	return template.Must(template.New("FloatCompareCasesGenerator.ErroredTemplate").
+func (FloatCompareTestsGenerator) ErroredTemplate() Executor {
+	return template.Must(template.New("FloatCompareTestsGenerator.ErroredTemplate").
 		Funcs(fm).
-		Parse(floatCompareCasesTmplText))
+		Parse(floatCompareTestTmpl))
 }
 
-func (FloatCompareCasesGenerator) GoldenTemplate() *template.Template {
+func (FloatCompareTestsGenerator) GoldenTemplate() Executor {
 	return nil
 }
 
-const floatCompareCasesTmplText = header + `
+const floatCompareTestTmpl = header + `
 
-package {{ .CheckerName }}
+package {{ .CheckerName.AsPkgName }}
 
 import (
+	"math"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 )
-{{ range $bi, $bits := .Bits }}
-func TestFloat{{ $bits }}Compare(t *testing.T) {
-	type number float{{ $bits }}
-	type withFloat{{ $bits }} struct{ c float{{ $bits }} }
-	floatOp := func() float{{ $bits }} { return 0. }
 
-	var a float{{ $bits }}
-	var b number
-	var cc withFloat{{ $bits }}
-	d := float{{ $bits }}(1.01)
-	const e = float{{ $bits }}(2.02)
-	f := new(withFloat{{ $bits }})
-	var g *float{{ $bits }}
-	var h withFloat{{ $bits }}Method
+func {{ .CheckerName.AsTestName }}(t *testing.T) {
+	var result float64
 
-	{{ range $pi, $pkg := $.Pkgs }}
-	t.Run("{{ $pkg }}", func(t *testing.T) {
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.Expand $check $pkg nil }}
-			{{ end -}}
-		}
-
-		// Valid.
-
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.Expand $check $pkg nil }}
-			{{ end -}}
-		}
-	})
-	{{ end }}
-
-	assObj, reqObj := assert.New(t), require.New(t)
-
-	{{ range $oi, $obj := $.Objs }}
-	t.Run("{{ $obj }}", func(t *testing.T) {
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check $obj nil }}
-			{{ end -}}
-		}
-
-		// Valid.
-
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check $obj nil }}
-			{{ end -}}
-		}
-	})
-	{{ end -}}
-}
-
-type Float{{ $bits }}CompareSuite struct {
-	suite.Suite
-}
-
-func TestFloat{{ $bits }}CompareSuite(t *testing.T) {
-	suite.Run(t, new(Float{{ $bits }}CompareSuite))
-}
-
-func (s *Float{{ $bits }}CompareSuite) TestAll() {
-	type number float{{ $bits }}
-	type withFloat{{ $bits }} struct{ c float{{ $bits }} }
-	floatOp := func() float{{ $bits }} { return 0. }
-
-	var a float{{ $bits }}
-	var b number
-	var cc withFloat{{ $bits }}
-	d := float{{ $bits }}(1.01)
-	const e = float{{ $bits }}(2.02)
-	f := new(withFloat{{ $bits }})
-	var g *float{{ $bits }}
-	var h withFloat{{ $bits }}Method
-
-	assObj, reqObj := s.Assert(), s.Require()
-
-	{{ range $si, $sel := $.SuiteSelectors }}
+	// Invalid.
 	{
-		{
-			{{- range $ci, $check := $.InvalidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check $sel nil }}
-			{{ end -}}
-		}
-
-		// Valid.
-
-		{
-			{{- range $ci, $check := $.ValidChecks }}
-			{{ NewCheckerExpander.WithoutTArg.Expand $check $sel nil }}
-			{{ end -}}
-		}
+		{{- range $ai, $assrn := $.InvalidAssertions }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" (arr "42.42") }}
+		{{- end }}
 	}
+
+	// Valid.
+	{
+		{{- range $ai, $assrn := $.ValidAssertions }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+		{{- end }}
+	}
+}
+
+func {{ .CheckerName.AsTestName }}_NoFloatNoWorries(t *testing.T) {
+	var result int64
+
+	{{ range $ai, $assrn := $.InvalidAssertions }}
+		{{ NewAssertionExpander.Expand $assrn.WithoutReport "assert" "t" (arr "42") }}
+	{{- end }}
+}
+
+{{ range $bi, $bits := arr "32" "64" }}
+func {{ $.CheckerName.AsTestName }}_Float{{ $bits }}Detection(t *testing.T) {
+	type number float{{ $bits }}
+	type withFloat{{ $bits }} struct{ value float{{ $bits }} }
+	floatOp := func() float{{ $bits }} { return 0. }
+
+	var a float{{ $bits }}
+	var b number
+	var cc withFloat{{ $bits }}
+	d := float{{ $bits }}(1.01)
+	const e = float{{ $bits }}(2.02)
+	f := new(withFloat{{ $bits }})
+	var g *float{{ $bits }}
+	var h withFloat{{ $bits }}Method
+
+	{{ range $vi, $var := $.FloatDetection.Vars }}
+		{{- NewAssertionExpander.NotFmtSingleMode.Expand $.FloatDetection.Assrn "assert" "t" (arr $var) }}
 	{{ end -}}
 }
 
-type withFloat{{ $bits }}Method struct{}
-
+type withFloat{{ $bits }}Method struct{} //
 func (withFloat{{ $bits }}Method) Calculate() float{{ $bits }} { return 0. }
 {{ end }}
 `

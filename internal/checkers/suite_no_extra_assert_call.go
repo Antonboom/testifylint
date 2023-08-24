@@ -6,11 +6,16 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-// SuiteNoExtraAssertCall wants t.Helper() call in suite helpers:
+// SuiteNoExtraAssertCall checks situation like
 //
-//	func (s *RoomSuite) assertRoomRound(roundID RoundID) {
-//		s.T().Helper()
-//		s.Equal(roundID, s.getRoom().CurrentRound.ID)
+//	func (s *MySuite) TestSomething() {
+//		s.Assert().Equal(42, value)
+//	}
+//
+// and requires e.g.
+//
+//	func (s *MySuite) TestSomething() {
+//		s.Equal(42, value)
 //	}
 type SuiteNoExtraAssertCall struct{}
 

@@ -229,8 +229,6 @@ Dump config...
   <summary>Open for contribution</summary>
 
 ### Global
-- find a way to opt out of the `types.ExprString`.
-- TODO: исследовать переход на perpass reporter
 
 ### empty (existent checker)
 Add config like

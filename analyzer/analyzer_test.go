@@ -13,7 +13,7 @@ import (
 
 func TestTestifyLint_Base(t *testing.T) {
 	cfg := config.Config{EnabledCheckers: []string{checkers.NewBoolCompare().Name()}}
-	analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), analyzer.New(cfg), "base-tests")
+	analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), analyzer.New(cfg), "base-test")
 }
 
 func TestTestifyLint_Checkers(t *testing.T) {

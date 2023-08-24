@@ -46,6 +46,11 @@ tasks:
       - echo "Tests with coverage..."
       - go test -coverpkg ./analyzer,./config,./internal/analysisutil,./internal/checkers -coverprofile=coverage.out ./...
 
+  tests:gen:
+    cmds:
+      - echo "Generate analyzer tests..."
+      - go run ./internal/testgen
+
   install:
     cmds:
       - echo "Install..."

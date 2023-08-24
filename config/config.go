@@ -15,7 +15,7 @@ type Config struct {
 
 // ExpectedActualConfig implements configuration of checkers.ExpectedActual.
 type ExpectedActualConfig struct {
-	Pattern Regexp `yaml:"pattern"`
+	ExpVarPattern Regexp `yaml:"exp-var-pattern"`
 }
 
 // ParseFromFile parses Config from filepath. YAML format is expected.

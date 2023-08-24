@@ -14,7 +14,7 @@ import (
 // this code should be duplicated in the tests of each checker.
 type BaseTestsGenerator struct{}
 
-func (g BaseTestsGenerator) Data() any {
+func (g BaseTestsGenerator) TemplateData() any {
 	reportUse := checkers.NewBoolCompare().Name() + ": use %s.%s"
 
 	return struct {
@@ -22,7 +22,7 @@ func (g BaseTestsGenerator) Data() any {
 		Objs                  []string
 		SuiteSelectors        []string
 		SuiteDynamicSelectors []string
-		Checks                []Check
+		Assertions            []Assertion
 	}{
 		Pkgs: []string{"assert", "require"},
 		Objs: []string{"assert.New(t)", "assertObj", "require.New(t)", "requireObj"},
@@ -31,26 +31,26 @@ func (g BaseTestsGenerator) Data() any {
 			"s.Require()", "requireObj", "suiteRequireObj",
 		},
 		SuiteDynamicSelectors: []string{"assert.New(%s)", "require.New(%s)"},
-		Checks: []Check{
+		Assertions: []Assertion{
 			{Fn: "Equal", Argsf: "true, predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
 			{Fn: "True", Argsf: "predicate"}, // Valid assertion.
 		},
 	}
 }
 
-func (BaseTestsGenerator) ErroredTemplate() *template.Template {
+func (BaseTestsGenerator) ErroredTemplate() Executor {
 	return template.Must(template.New("BaseTestsGenerator.ErroredTemplate").
 		Funcs(fm).
-		Parse(baseCasesTmplText))
+		Parse(baseTestTmpl))
 }
 
-func (BaseTestsGenerator) GoldenTemplate() *template.Template {
+func (BaseTestsGenerator) GoldenTemplate() Executor {
 	return template.Must(template.New("BaseTestsGenerator.GoldenTemplate").
 		Funcs(fm).
-		Parse(strings.ReplaceAll(baseCasesTmplText, "NewCheckerExpander", "NewCheckerExpander.ToMultiple.AsGolden")))
+		Parse(strings.ReplaceAll(baseTestTmpl, "NewAssertionExpander", "NewAssertionExpander.FullMode.AsGolden")))
 }
 
-const baseCasesTmplText = header + `
+const baseTestTmpl = header + `
 
 package basetests
 
@@ -66,16 +66,16 @@ func TestBase(t *testing.T) {
 	var predicate bool
 	{{ block "assertions" . }}
 		{{- range $si, $sel := $.Pkgs }}
-				{{- range $ci, $check := $.Checks }}
-					{{ NewCheckerExpander.ToMultiple.Expand $check $sel "t" nil }}
-				{{ end -}}
+			{{- range $ai, $assrn := $.Assertions }}
+				{{ NewAssertionExpander.FullMode.Expand $assrn $sel "t" nil }}
+			{{ end -}}
 		{{- end }}
 
 		assertObj, requireObj := assert.New(t), require.New(t)
 		{{ range $si, $sel := $.Objs }}
-				{{- range $ci, $check := $.Checks }}
-					{{ NewCheckerExpander.ToMultiple.Expand $check $sel "" nil }}
-				{{ end -}}
+			{{- range $ai, $assrn := $.Assertions }}
+				{{ NewAssertionExpander.FullMode.Expand $assrn $sel "" nil }}
+			{{ end -}}
 		{{- end }}
 	{{- end }}
 
@@ -107,23 +107,25 @@ func TestBaseTestsSuite(t *testing.T) {
 	{{- $tParam := index . 1 }}
 
 	{{- range $si, $sel := $.Pkgs }}
-			{{- range $ci, $check := $.Checks }}
-				{{ NewCheckerExpander.ToMultiple.Expand $check $sel $tParam nil }}
-			{{ end -}}
+		{{- range $ai, $assrn := $.Assertions }}
+			{{ NewAssertionExpander.FullMode.Expand $assrn $sel $tParam nil }}
+		{{ end -}}
 	{{- end }}
 
 	assertObj, requireObj := assert.New({{ $tParam }}), require.New({{ $tParam }})
 	suiteAssertObj, suiteRequireObj := s.Assert(), s.Require()
-	{{ range $si, $sel := $.SuiteSelectors }}
-			{{- range $ci, $check := $.Checks }}
-				{{ NewCheckerExpander.ToMultiple.Expand $check $sel "" nil }}
-			{{ end -}}
+	
+	{{- range $si, $sel := $.SuiteSelectors }}
+		{{- range $ai, $assrn := $.Assertions }}
+			{{ NewAssertionExpander.FullMode.Expand $assrn $sel "" nil }}
+		{{ end -}}
 	{{- end }}
+
 	{{- range $si, $sel := $.SuiteDynamicSelectors }}
-			{{- range $ci, $check := $.Checks }}
-				{{ $sel := printf $sel $tParam }}
-				{{ NewCheckerExpander.ToMultiple.Expand $check $sel "" nil }}
-			{{ end -}}
+		{{- range $ai, $assrn := $.Assertions }}
+			{{ $sel := printf $sel $tParam }}
+			{{ NewAssertionExpander.FullMode.Expand $assrn $sel "" nil }}
+		{{ end -}}
 	{{- end }}
 {{- end }}
 
