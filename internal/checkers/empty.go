@@ -37,7 +37,7 @@ func (checker Empty) checkEmpty(pass *analysis.Pass, call *CallMeta) *analysis.D
 			newSuggestedFuncReplacement(call, "Empty", analysis.TextEdit{
 				Pos:     replaceStart,
 				End:     replaceEnd,
-				NewText: []byte(types.ExprString(replaceWith)),
+				NewText: analysisutil.NodeBytes(pass.Fset, replaceWith),
 			}),
 		)
 	}
@@ -159,7 +159,7 @@ func (checker Empty) checkNotEmpty(pass *analysis.Pass, call *CallMeta) *analysi
 			newSuggestedFuncReplacement(call, "NotEmpty", analysis.TextEdit{
 				Pos:     replaceStart,
 				End:     replaceEnd,
-				NewText: []byte(types.ExprString(replaceWith)),
+				NewText: analysisutil.NodeBytes(pass.Fset, replaceWith),
 			}),
 		)
 	}

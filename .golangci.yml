@@ -33,8 +33,8 @@ linters-settings:
 
   forbidigo:
     forbid:
-      - p: types.ExprString
-        pkg: internal/checkers
+      - p: types\.ExprString
+        msg: Please, use analysisutil.NodeBytes/NodeString instead
 
   gocritic:
     disabled-checks:

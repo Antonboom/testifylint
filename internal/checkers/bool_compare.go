@@ -50,7 +50,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 				newSuggestedFuncReplacement(call, "True", analysis.TextEdit{
 					Pos:     arg1.Pos(),
 					End:     arg2.End(),
-					NewText: []byte(types.ExprString(survivingArg)),
+					NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
 				}),
 			)
 
@@ -64,7 +64,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 				newSuggestedFuncReplacement(call, "False", analysis.TextEdit{
 					Pos:     arg1.Pos(),
 					End:     arg2.End(),
-					NewText: []byte(types.ExprString(survivingArg)),
+					NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
 				}),
 			)
 		}
@@ -89,7 +89,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 				newSuggestedFuncReplacement(call, "False", analysis.TextEdit{
 					Pos:     arg1.Pos(),
 					End:     arg2.End(),
-					NewText: []byte(types.ExprString(survivingArg)),
+					NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
 				}),
 			)
 
@@ -103,7 +103,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 				newSuggestedFuncReplacement(call, "True", analysis.TextEdit{
 					Pos:     arg1.Pos(),
 					End:     arg2.End(),
-					NewText: []byte(types.ExprString(survivingArg)),
+					NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
 				}),
 			)
 		}
@@ -126,7 +126,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 						TextEdits: []analysis.TextEdit{{
 							Pos:     expr.Pos(),
 							End:     expr.End(),
-							NewText: []byte(types.ExprString(survivingArg)),
+							NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
 						}},
 					},
 				)
@@ -143,7 +143,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 					newSuggestedFuncReplacement(call, "False", analysis.TextEdit{
 						Pos:     expr.Pos(),
 						End:     expr.End(),
-						NewText: []byte(types.ExprString(survivingArg)),
+						NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
 					}),
 				)
 			}
@@ -167,7 +167,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 						TextEdits: []analysis.TextEdit{{
 							Pos:     expr.Pos(),
 							End:     expr.End(),
-							NewText: []byte(types.ExprString(survivingArg)),
+							NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
 						}},
 					},
 				)
@@ -184,7 +184,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 					newSuggestedFuncReplacement(call, "True", analysis.TextEdit{
 						Pos:     expr.Pos(),
 						End:     expr.End(),
-						NewText: []byte(types.ExprString(survivingArg)),
+						NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
 					}),
 				)
 			}

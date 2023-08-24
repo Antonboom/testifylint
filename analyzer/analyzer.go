@@ -123,7 +123,7 @@ func (tl *testifyLint) regularCheck(pass *analysis.Pass, ce *ast.CallExpr) {
 		IsAssert:     isAssert,
 		IsRequire:    isRequire,
 		Selector:     se,
-		SelectorXStr: types.ExprString(se.X),
+		SelectorXStr: analysisutil.NodeString(pass.Fset, se.X),
 		Fn: checkers.FnMeta{
 			Range: se.Sel,
 			Name:  fn,

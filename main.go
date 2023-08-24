@@ -107,7 +107,7 @@ CheckerExpander -> AssertionExpander
 или он не произойдёт?
 https://github.com/stretchr/testify/pull/1109#issuecomment-1650619745
 
-todo -> readme старайтесь поддерживать тесты маленькими, выделяя общий код
+readme старайтесь поддерживать тесты маленькими, выделяя общий код
 100-200 строк достаточно обычно (взять среднее по тому, что получилось)
 
 e2e тесты на cli (config issues)?
@@ -116,8 +116,6 @@ e2e тесты на cli (config issues)?
 
 грепнуть FIXME TODO без маски *.go
 
-
-- уйти от `types.ExprString`, чекнуть, что forbidigo работает
 
 https://floating-point-gui.de/
 https://floating-point-gui.de/errors/comparison/
@@ -134,5 +132,8 @@ suggested edit + golden file + more granular message for require-error
 
 readme – таблица с череками и включен/выключен по умолчанию
 
-TODO: -race significantly decrease test speed
+-race significantly decrease test speed
+
+опубликовать testifylint в Slack testify
+
 */

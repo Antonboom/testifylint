@@ -1,11 +1,13 @@
 package checkers
 
 import (
+	"bytes"
 	"go/ast"
 	"go/token"
-	"go/types"
 
 	"golang.org/x/tools/go/analysis"
+
+	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
 // Compares checks situation like
@@ -21,7 +23,7 @@ type Compares struct{}
 func NewCompares() Compares   { return Compares{} }
 func (Compares) Name() string { return "compares" }
 
-func (checker Compares) Check(_ *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
+func (checker Compares) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	if len(call.Args) < 1 {
 		return nil
 	}
@@ -48,7 +50,7 @@ func (checker Compares) Check(_ *analysis.Pass, call *CallMeta) *analysis.Diagno
 			newSuggestedFuncReplacement(call, proposedFn, analysis.TextEdit{
 				Pos:     be.X.Pos(),
 				End:     be.Y.End(),
-				NewText: []byte(types.ExprString(a) + ", " + types.ExprString(b)),
+				NewText: asCallArguments(pass, a, b),
 			}),
 		)
 	}
@@ -71,4 +73,11 @@ var tokenToProposedFnInsteadOfFalse = map[token.Token]string{
 	token.GEQ: "Less",
 	token.LSS: "GreaterOrEqual",
 	token.LEQ: "Greater",
+}
+
+func asCallArguments(pass *analysis.Pass, a, b ast.Node) []byte {
+	return bytes.Join([][]byte{
+		analysisutil.NodeBytes(pass.Fset, a),
+		analysisutil.NodeBytes(pass.Fset, b),
+	}, []byte(", "))
 }

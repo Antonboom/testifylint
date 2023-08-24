@@ -3,7 +3,6 @@ package checkers
 import (
 	"go/ast"
 	"go/token"
-	"go/types"
 
 	"golang.org/x/tools/go/analysis"
 )
@@ -34,7 +33,7 @@ func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnost
 				newSuggestedFuncReplacement(call, "Len", analysis.TextEdit{
 					Pos:     a.Pos(),
 					End:     b.End(),
-					NewText: []byte(types.ExprString(lenArg) + ", " + types.ExprString(targetVal)),
+					NewText: asCallArguments(pass, lenArg, targetVal),
 				}),
 			)
 		}
@@ -50,7 +49,7 @@ func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnost
 				newSuggestedFuncReplacement(call, "Len", analysis.TextEdit{
 					Pos:     expr.Pos(),
 					End:     expr.End(),
-					NewText: []byte(types.ExprString(lenArg) + ", " + types.ExprString(targetVal)),
+					NewText: asCallArguments(pass, lenArg, targetVal),
 				}),
 			)
 		}
