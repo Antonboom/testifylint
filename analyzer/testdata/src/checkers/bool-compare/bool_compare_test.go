@@ -14,42 +14,70 @@ func TestBoolCompareChecker(t *testing.T) {
 	// assert.True cases.
 	{
 		// Invalid.
-		assert.Equal(t, predicate, true)     // want "bool-compare: use assert\\.True"
-		assert.Equal(t, true, predicate)     // want "bool-compare: use assert\\.True"
-		assert.NotEqual(t, predicate, false) // want "bool-compare: use assert\\.True"
-		assert.NotEqual(t, false, predicate) // want "bool-compare: use assert\\.True"
-		assert.True(t, predicate == true)    // want "bool-compare: need to simplify the check"
-		assert.True(t, true == predicate)    // want "bool-compare: need to simplify the check"
-		assert.False(t, predicate == false)  // want "bool-compare: use assert\\.True"
-		assert.False(t, false == predicate)  // want "bool-compare: use assert\\.True"
-		assert.False(t, predicate != true)   // want "bool-compare: use assert\\.True"
-		assert.False(t, true != predicate)   // want "bool-compare: use assert\\.True"
-		assert.True(t, predicate != false)   // want "bool-compare: need to simplify the check"
-		assert.True(t, false != predicate)   // want "bool-compare: need to simplify the check"
-		assert.False(t, !predicate)          // want "bool-compare: use assert\\.True"
+		assert.Equal(t, predicate, true)                                       // want "bool-compare: use assert\\.True"
+		assert.Equalf(t, predicate, true, "msg with args %d %s", 42, "42")     // want "bool-compare: use assert\\.Truef"
+		assert.Equal(t, true, predicate)                                       // want "bool-compare: use assert\\.True"
+		assert.Equalf(t, true, predicate, "msg with args %d %s", 42, "42")     // want "bool-compare: use assert\\.Truef"
+		assert.NotEqual(t, predicate, false)                                   // want "bool-compare: use assert\\.True"
+		assert.NotEqualf(t, predicate, false, "msg with args %d %s", 42, "42") // want "bool-compare: use assert\\.Truef"
+		assert.NotEqual(t, false, predicate)                                   // want "bool-compare: use assert\\.True"
+		assert.NotEqualf(t, false, predicate, "msg with args %d %s", 42, "42") // want "bool-compare: use assert\\.Truef"
+		assert.True(t, predicate == true)                                      // want "bool-compare: need to simplify the check"
+		assert.Truef(t, predicate == true, "msg with args %d %s", 42, "42")    // want "bool-compare: need to simplify the check"
+		assert.True(t, true == predicate)                                      // want "bool-compare: need to simplify the check"
+		assert.Truef(t, true == predicate, "msg with args %d %s", 42, "42")    // want "bool-compare: need to simplify the check"
+		assert.False(t, predicate == false)                                    // want "bool-compare: use assert\\.True"
+		assert.Falsef(t, predicate == false, "msg with args %d %s", 42, "42")  // want "bool-compare: use assert\\.Truef"
+		assert.False(t, false == predicate)                                    // want "bool-compare: use assert\\.True"
+		assert.Falsef(t, false == predicate, "msg with args %d %s", 42, "42")  // want "bool-compare: use assert\\.Truef"
+		assert.False(t, predicate != true)                                     // want "bool-compare: use assert\\.True"
+		assert.Falsef(t, predicate != true, "msg with args %d %s", 42, "42")   // want "bool-compare: use assert\\.Truef"
+		assert.False(t, true != predicate)                                     // want "bool-compare: use assert\\.True"
+		assert.Falsef(t, true != predicate, "msg with args %d %s", 42, "42")   // want "bool-compare: use assert\\.Truef"
+		assert.True(t, predicate != false)                                     // want "bool-compare: need to simplify the check"
+		assert.Truef(t, predicate != false, "msg with args %d %s", 42, "42")   // want "bool-compare: need to simplify the check"
+		assert.True(t, false != predicate)                                     // want "bool-compare: need to simplify the check"
+		assert.Truef(t, false != predicate, "msg with args %d %s", 42, "42")   // want "bool-compare: need to simplify the check"
+		assert.False(t, !predicate)                                            // want "bool-compare: use assert\\.True"
+		assert.Falsef(t, !predicate, "msg with args %d %s", 42, "42")          // want "bool-compare: use assert\\.Truef"
 
 		// Valid.
 		assert.True(t, predicate)
+		assert.Truef(t, predicate, "msg with args %d %s", 42, "42")
 	}
 
 	// assert.False cases.
 	{
 		// Invalid.
-		assert.Equal(t, predicate, false)   // want "bool-compare: use assert\\.False"
-		assert.Equal(t, false, predicate)   // want "bool-compare: use assert\\.False"
-		assert.NotEqual(t, predicate, true) // want "bool-compare: use assert\\.False"
-		assert.NotEqual(t, true, predicate) // want "bool-compare: use assert\\.False"
-		assert.False(t, predicate == true)  // want "bool-compare: need to simplify the check"
-		assert.False(t, true == predicate)  // want "bool-compare: need to simplify the check"
-		assert.True(t, predicate == false)  // want "bool-compare: use assert\\.False"
-		assert.True(t, false == predicate)  // want "bool-compare: use assert\\.False"
-		assert.True(t, predicate != true)   // want "bool-compare: use assert\\.False"
-		assert.True(t, true != predicate)   // want "bool-compare: use assert\\.False"
-		assert.False(t, predicate != false) // want "bool-compare: need to simplify the check"
-		assert.False(t, false != predicate) // want "bool-compare: need to simplify the check"
-		assert.True(t, !predicate)          // want "bool-compare: use assert\\.False"
+		assert.Equal(t, predicate, false)                                     // want "bool-compare: use assert\\.False"
+		assert.Equalf(t, predicate, false, "msg with args %d %s", 42, "42")   // want "bool-compare: use assert\\.Falsef"
+		assert.Equal(t, false, predicate)                                     // want "bool-compare: use assert\\.False"
+		assert.Equalf(t, false, predicate, "msg with args %d %s", 42, "42")   // want "bool-compare: use assert\\.Falsef"
+		assert.NotEqual(t, predicate, true)                                   // want "bool-compare: use assert\\.False"
+		assert.NotEqualf(t, predicate, true, "msg with args %d %s", 42, "42") // want "bool-compare: use assert\\.Falsef"
+		assert.NotEqual(t, true, predicate)                                   // want "bool-compare: use assert\\.False"
+		assert.NotEqualf(t, true, predicate, "msg with args %d %s", 42, "42") // want "bool-compare: use assert\\.Falsef"
+		assert.False(t, predicate == true)                                    // want "bool-compare: need to simplify the check"
+		assert.Falsef(t, predicate == true, "msg with args %d %s", 42, "42")  // want "bool-compare: need to simplify the check"
+		assert.False(t, true == predicate)                                    // want "bool-compare: need to simplify the check"
+		assert.Falsef(t, true == predicate, "msg with args %d %s", 42, "42")  // want "bool-compare: need to simplify the check"
+		assert.True(t, predicate == false)                                    // want "bool-compare: use assert\\.False"
+		assert.Truef(t, predicate == false, "msg with args %d %s", 42, "42")  // want "bool-compare: use assert\\.Falsef"
+		assert.True(t, false == predicate)                                    // want "bool-compare: use assert\\.False"
+		assert.Truef(t, false == predicate, "msg with args %d %s", 42, "42")  // want "bool-compare: use assert\\.Falsef"
+		assert.True(t, predicate != true)                                     // want "bool-compare: use assert\\.False"
+		assert.Truef(t, predicate != true, "msg with args %d %s", 42, "42")   // want "bool-compare: use assert\\.Falsef"
+		assert.True(t, true != predicate)                                     // want "bool-compare: use assert\\.False"
+		assert.Truef(t, true != predicate, "msg with args %d %s", 42, "42")   // want "bool-compare: use assert\\.Falsef"
+		assert.False(t, predicate != false)                                   // want "bool-compare: need to simplify the check"
+		assert.Falsef(t, predicate != false, "msg with args %d %s", 42, "42") // want "bool-compare: need to simplify the check"
+		assert.False(t, false != predicate)                                   // want "bool-compare: need to simplify the check"
+		assert.Falsef(t, false != predicate, "msg with args %d %s", 42, "42") // want "bool-compare: need to simplify the check"
+		assert.True(t, !predicate)                                            // want "bool-compare: use assert\\.False"
+		assert.Truef(t, !predicate, "msg with args %d %s", 42, "42")          // want "bool-compare: use assert\\.Falsef"
 
 		// Valid.
 		assert.False(t, predicate)
+		assert.Falsef(t, predicate, "msg with args %d %s", 42, "42")
 	}
 }

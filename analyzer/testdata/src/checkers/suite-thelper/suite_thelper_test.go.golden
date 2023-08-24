@@ -41,6 +41,8 @@ func (s *GameRoomSuite) newRoom(id int) *Room {
 }
 
 func (s *GameRoomSuite) joinRoom(playerID, roomID int) { // want "suite-thelper: suite helper method should start with s\\.T\\(\\)\\.Helper\\(\\)"
+	s.T().Helper()
+
 	room, ok := s.rooms[roomID]
 	s.Require().True(ok)
 
