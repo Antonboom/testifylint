@@ -10,13 +10,17 @@ import (
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-// Compares checks situation like
+// Compares detects situations like
 //
 //	assert.True(t, a >= b)
+//	assert.False(t, a != b)
+//	...
 //
-// and requires e.g.
+// and requires
 //
 //	assert.GreaterOrEqual(t, a, b)
+//	assert.Equal(t, a, b)
+//	...
 type Compares struct{}
 
 // NewCompares constructs Compares checker.

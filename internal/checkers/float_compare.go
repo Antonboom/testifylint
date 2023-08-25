@@ -7,13 +7,13 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-// FloatCompare checks situation like
+// FloatCompare detects situation like
 //
 //	assert.Equal(t, 42.42, a)
 //
-// and requires e.g.
+// and requires
 //
-//	assert.InEpsilon(t, 42.42, a, 0.0001)
+//	assert.InEpsilon(t, 42.42, a, 0.0001) // Or assert.InDelta
 type FloatCompare struct{}
 
 // NewFloatCompare constructs FloatCompare checker.

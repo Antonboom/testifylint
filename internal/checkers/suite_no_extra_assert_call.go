@@ -6,13 +6,13 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-// SuiteNoExtraAssertCall checks situation like
+// SuiteNoExtraAssertCall detects situation like
 //
 //	func (s *MySuite) TestSomething() {
 //		s.Assert().Equal(42, value)
 //	}
 //
-// and requires e.g.
+// and requires
 //
 //	func (s *MySuite) TestSomething() {
 //		s.Equal(42, value)

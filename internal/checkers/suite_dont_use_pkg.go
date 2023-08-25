@@ -11,13 +11,13 @@ import (
 	"github.com/Antonboom/testifylint/internal/testify"
 )
 
-// SuiteDontUsePkg checks situation like
+// SuiteDontUsePkg detects situation like
 //
 //	func (s *MySuite) TestSomething() {
 //		assert.Equal(s.T(), 42, value)
 //	}
 //
-// and requires e.g.
+// and requires
 //
 //	func (s *MySuite) TestSomething() {
 //		s.Equal(42, value)

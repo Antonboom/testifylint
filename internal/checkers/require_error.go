@@ -2,13 +2,17 @@ package checkers
 
 import "golang.org/x/tools/go/analysis"
 
-// RequireError checks situation like
+// RequireError detects situations like
 //
 //	assert.NoError(t, err)
+//	s.ErrorIs(err, io.EOF)
+//	s.Assert().Error(err)
 //
-// and requires e.g.
+// and requires
 //
 //	require.NoError(t, err)
+//	s.Require().ErrorIs(err, io.EOF)
+//	s.Require().Error(err)
 type RequireError struct{}
 
 // NewRequireError constructs RequireError checker.

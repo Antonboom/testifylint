@@ -10,13 +10,17 @@ import (
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-// BoolCompare checks situation like
+// BoolCompare detects situations like
 //
 //	assert.Equal(t, false, result)
+//	assert.False(t, !result)
+//	...
 //
-// and requires e.g.
+// and requires
 //
 //	assert.False(t, result)
+//	assert.True(t, result)
+//	...
 type BoolCompare struct{} //
 
 // NewBoolCompare constructs BoolCompare checker.

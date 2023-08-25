@@ -12,7 +12,7 @@ import (
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-// SuiteTHelper wants t.Helper() call in suite helpers:
+// SuiteTHelper requires t.Helper() call in suite helpers:
 //
 //	func (s *RoomSuite) assertRoomRound(roundID RoundID) {
 //		s.T().Helper()

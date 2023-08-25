@@ -6,13 +6,15 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-// ErrorIs checks situation like
+// ErrorIs detects situations like
 //
-//	assert.Equal(t, len(arr), 3)
+//	assert.Error(t, err, errSentinel)
+//	assert.NoError(t, err, errSentinel)
 //
-// and requires e.g.
+// and requires
 //
-//	assert.Len(t, arr, 3)
+//	assert.ErrorIs(t, err, errSentinel)
+//	assert.NotErrorIs(t, err, errSentinel)
 type ErrorIs struct{}
 
 // NewErrorIs constructs ErrorIs checker.
@@ -28,14 +30,14 @@ func (checker ErrorIs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diag
 	switch call.Fn.Name {
 	case "Error", "Errorf":
 		if isError(pass, errArg) {
-			proposed := "ErrorIs"
+			const proposed = "ErrorIs"
 			msg := fmt.Sprintf("invalid usage of %[1]s.Error, use %[1]s.%[2]s instead", call.SelectorXStr, proposed)
 			return newDiagnostic(checker.Name(), call, msg, newSuggestedFuncReplacement(call, proposed))
 		}
 
 	case "NoError", "NoErrorf":
 		if isError(pass, errArg) {
-			proposed := "NotErrorIs"
+			const proposed = "NotErrorIs"
 			msg := fmt.Sprintf("invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead", call.SelectorXStr, proposed)
 			return newDiagnostic(checker.Name(), call, msg, newSuggestedFuncReplacement(call, proposed))
 		}

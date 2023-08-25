@@ -11,11 +11,12 @@ import (
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-// Empty checks situation like
+// Empty detects situations like
 //
-//	assert.Equal(t, len(arr), 0)
+//	assert.Equal(t, 0, len(arr))
+//	assert.Len(t, arr, 0)
 //
-// and requires e.g.
+// and requires
 //
 //	assert.Empty(t, arr)
 type Empty struct{}

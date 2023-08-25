@@ -7,13 +7,15 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-// Len checks situation like
+// Len detects situations like
 //
-//	assert.Equal(t, 0, len(arr))
+//	assert.Equal(t, 3, len(arr))
+//	assert.True(t, len(arr) == 5)
 //
-// and requires e.g.
+// and requires
 //
-//	assert.Len(t, arr, 0)
+//	assert.Len(t, arr, 3)
+//	assert.Len(t, arr, 5)
 type Len struct{}
 
 // NewLen constructs Len checker.

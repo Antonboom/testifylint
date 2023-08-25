@@ -14,11 +14,11 @@ import (
 var DefaultExpectedVarPattern = regexp.MustCompile(
 	`(^(exp(ected)?|want(ed)?)([A-Z]\w*)?$)|(^(\w*[a-z])?(Exp(ected)?|Want(ed)?)$)`)
 
-// ExpectedActual checks situation like
+// ExpectedActual detects situation like
 //
 //	assert.NotEqual(t, result, "expected value")
 //
-// and requires e.g.
+// and requires
 //
 //	assert.NotEqual(t, "expected value", result)
 type ExpectedActual struct {

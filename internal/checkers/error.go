@@ -7,13 +7,15 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-// Error checks situation like
+// Error detects situations like
 //
 //	assert.Nil(t, err)
+//	assert.NotNil(t, err)
 //
-// and requires e.g.
+// and requires
 //
 //	assert.NoError(t, err)
+//	assert.Error(t, err)
 type Error struct{}
 
 // NewError constructs Error checker.

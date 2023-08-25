@@ -1,10 +1,34 @@
 # testifylint
+
+[![CI](https://github.com/Antonboom/testifylint/actions/workflows/ci.yml/badge.svg)](https://github.com/Antonboom/testifylint/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Antonboom/testifylint)](https://goreportcard.com/report/github.com/Antonboom/testifylint)
+[![Coverage](https://coveralls.io/repos/github/Antonboom/testifylint/badge.svg?branch=master)](https://coveralls.io/github/Antonboom/testifylint?branch=master)
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+
 Checks usage of [github.com/stretchr/testify](https://github.com/stretchr/testify).
+
+## Problem statement
+
+Tests are also program code and the requirements for them should not differ much from the requirements
+for the code under tests 🙂
+
+We should try to maintain the consistency of tests, increase their readability, reduce the chance of bugs
+and speed up the search for a problem.
+
+[testify](https://github.com/stretchr/testify) is the most popular Golang testing framework* in recent years.
+But it has a terrible ambiguous API in places, and **the purpose of this linter is to protect you from annoying mistakes**.
+
+Most checkers are stylistic, but checkers like [error-is](#error-is), [require-error](#require-error),
+[expected-actual](#expected-actual), [float-compare](#float-compare) are really helpful.
+
+_* JetBrains "The State of Go Ecosystem" reports [2021](https://www.jetbrains.com/lp/devecosystem-2021/go/#Go_which-testing-frameworks-do-you-use-regularly-if-any)
+and [2022](https://www.jetbrains.com/lp/devecosystem-2022/go/#which-testing-frameworks-do-you-use-regularly-if-any-)._
 
 ## Installation & usage
 
 ```
 $ go install github.com/Antonboom/testifylint@latest
+$ testifylint -h
 $ testifylint ./...
 ```
 
@@ -33,13 +57,15 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
 | [suite-no-extra-assert-call](#suite-no-extra-assert-call) | ❌                  | ✅       |
 | [suite-thelper](#suite-thelper)                           | ❌                  | ✅       |
 
+---
+
 ### bool-compare
 ```go
 ❌   assert.Equal(t, true, result)
      assert.Equal(t, false, result)
      assert.NotEqual(t, true, result)
      assert.False(t, !result)
-    // And other variations...
+     // And other variations...
 
 ✅   assert.True(t, result)
      assert.False(t, result)
@@ -47,7 +73,10 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
      assert.True(t, result)
 ```
 **Autofix**: true. <br>
-**Enabled by default**: true.
+**Enabled by default**: true. <br>
+**Reason**: Code simplification.
+
+---
 
 ### compares
 ```go
@@ -57,7 +86,7 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
      assert.True(t, a >= b)
      assert.True(t, a < b)
      assert.True(t, a <= b)
-     // And other variations (assert.False including)...
+     // And other variations (with assert.False too)...
 
 ✅   assert.Equal(t, a, b)
      assert.NotEqual(t, a, b)
@@ -67,19 +96,25 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
      assert.LessOrEqual(t, a, b)
 ```
 **Autofix**: true. <br>
-**Enabled by default**: true.
+**Enabled by default**: true. <br>
+**Reason**: More appropriate `testify` API with clearer failure message.
+
+---
 
 ### empty
 ```go
 ❌   assert.Len(t, arr, 0)
-     assert.Equal(t, len(arr), 0)
+     assert.Equal(t, 0, len(arr))
      // And other variations around len(arr)...
 
 ✅   assert.Empty(t, arr)
      assert.Empty(t, arr)
 ```
 **Autofix**: true. <br>
-**Enabled by default**: true.
+**Enabled by default**: true. <br>
+**Reason**: More appropriate `testify` API with clearer failure message.
+
+---
 
 ### error
 ```go
@@ -90,7 +125,10 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
      assert.Error(t, err)
 ```
 **Autofix**: true. <br>
-**Enabled by default**: true.
+**Enabled by default**: true. <br>
+**Reason**: More appropriate `testify` API with clearer failure message.
+
+---
 
 ### error-is
 ```go
@@ -101,7 +139,10 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
      assert.NotErrorIs(t, err, errSentinel)
 ```
 **Autofix**: true. <br>
-**Enabled by default**: true.
+**Enabled by default**: true. <br>
+**Reason**: A common mistake that leads to hiding the incorrect wrapping of sentinel errors.
+
+---
 
 ### expected-actual
 ```go
@@ -116,7 +157,16 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
      assert.YAMLEq(t, "version: '3'", result)
 ```
 **Autofix**: true. <br>
-**Enabled by default**: true.
+**Enabled by default**: true. <br>
+**Reason**: A common mistake that makes it harder to understand the reason of failed test.
+
+The checker considers the expected value to be a basic literal, constant, or variable whose name matches the pattern
+(`-expected-actual.pattern` flag).
+
+It is planned [to change the order of assertion arguments](https://github.com/stretchr/testify/issues/1089#Argument_order) to more natural
+(actual, expected) in `v2`.
+
+---
 
 ### float-compare
 ```go
@@ -124,80 +174,97 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
      assert.True(t, a == 42.42)
      assert.False(t, a != 42.42)
 	
-✅   assert.InDelta(t, 42.42, a, 0.0001)
+✅   assert.InEpsilon(t, 42.42, a, 0.0001) // Or assert.InDelta
      assert.InEpsilon(t, 42.42, a, 0.01)
-     assert.InDelta(t, 42.42, a, 0.001)
+     assert.InEpsilon(t, 42.42, a, 0.001)
 ```
 **Autofix**: false. <br>
-**Enabled by default**: true.
+**Enabled by default**: true. <br>
+**Reason**: Do not forget about [floating point rounding issues](https://floating-point-gui.de/errors/comparison/).
+
+This checker is similar to the [floatcompare](https://github.com/golangci/golangci-lint/pull/2608) linter.
+
+---
 
 ### len
 ```go
-❌   assert.Equal(t, len(arr), 3)
+❌   assert.Equal(t, 3, len(arr))
      assert.True(t, len(arr) == 5)
 
 ✅   assert.Len(t, arr, 3)
      assert.Len(t, arr, 5)
 ```
 **Autofix**: true. <br>
-**Enabled by default**: true.
+**Enabled by default**: true. <br>
+**Reason**: More appropriate `testify` API with clearer failure message.
+
+---
 
 ### require-error
 ```go
-❌   assert.Error(t, err)
-     assert.ErrorIs(t, err, io.EOF)
-     assert.ErrorAs(t, err, new(os.PathError))
-     assert.NoError(t, err)
-     assert.NotErrorIs(t, err, io.EOF)
-     s.Error(err)
-     s.Assert().ErrorIs(err, io.EOF)
-     // etc.
+❌   assert.NoError(t, err)
+     s.ErrorIs(err, io.EOF)
+     s.Assert().Error(err)
+     // And other error assertions...
 
-✅   require.Error(t, err)
-     require.ErrorIs(t, err, io.EOF)
-     require.ErrorAs(t, err, new(os.PathError))
-     require.NoError(t, err)
-     require.NotErrorIs(t, err, io.EOF)
-     s.Require().Error(err)
+✅   require.NoError(t, err)
      s.Require().ErrorIs(err, io.EOF)
+     s.Require().Error(err)
 ```
 **Autofix**: false. <br>
-**Enabled by default**: true.
+**Enabled by default**: true. <br>
+**Reason**: "Ignoring" errors is not the "Go way" and leads to further panics in the test, making it harder to debug.
+
+`tesitfy/require` allows to stop test execution when a test fails.
+
+---
 
 ### suite-dont-use-pkg
 ```go
 import "github.com/stretchr/testify/assert"
 
 func (s *MySuite) TestSomething() {
-    ❌ assert.Equal(s.T(), 42, value)
-    ✅ s.Equal(42, value)
+❌ assert.Equal(s.T(), 42, value)
+✅ s.Equal(42, value)
 }
 ```
 **Autofix**: true. <br>
-**Enabled by default**: true.
+**Enabled by default**: true. <br>
+**Reason**: More simple and uniform code.
+
+---
 
 ### suite-no-extra-assert-call
 ```go
 func (s *MySuite) TestSomething() {
-    ❌ s.Assert().Equal(42, value)
-    ✅ s.Equal(42, value)
+❌ s.Assert().Equal(42, value)
+✅ s.Equal(42, value)
 }
 ```
 **Autofix**: true. <br>
-**Enabled by default**: false.
+**Enabled by default**: false. <br>
+**Reason**: More simple code.
+
+---
 
 ### suite-thelper
 ```go
 ❌
 func (s *RoomSuite) assertRoomRound(roundID RoundID) {
-    s.Equal(roundID, s.getRoom().CurrentRound.ID)
+s.Equal(roundID, s.getRoom().CurrentRound.ID)
 }
 
 ✅
 func (s *RoomSuite) assertRoomRound(roundID RoundID) {
-    s.T().Helper()
-    s.Equal(roundID, s.getRoom().CurrentRound.ID)
+s.T().Helper()
+s.Equal(roundID, s.getRoom().CurrentRound.ID)
 }
 ```
 **Autofix**: true. <br>
-**Enabled by default**: false.
+**Enabled by default**: false. <br>
+**Reason**: Consistency to non-suite test helpers. Explicit markup of helper methods.
+
+`s.T().Helper()` call is not important technically because `testify` prints full `Error Trace`
+[anyway](https://github.com/stretchr/testify/blob/882382d845cd9780bd93c1acc8e1fa2ffe266ca1/assert/assertions.go#L317).
+
+The checker rather acts as an example of a [checkers.AdvancedChecker](https://github.com/Antonboom/testifylint/blob/676324836555445fded4e9afc004101ec6f597fe/internal/checkers/checker.go#L56).
