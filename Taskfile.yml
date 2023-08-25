@@ -13,7 +13,6 @@ tasks:
       - task: fmt
       - task: lint
       - task: tests
-      - task: config:dump
 
   tools:install:
     - echo "Install local tools..."
@@ -54,10 +53,4 @@ tasks:
   install:
     cmds:
       - echo "Install..."
-      - go install ./... && testifylint -h 2> /dev/null
-
-  config:dump:
-    deps: [ task: install ]
-    cmds:
-      - echo "Dump config..."
-      - testifylint -dump-config > {{.CONFIG_EXAMPLE_PATH}}
+      - go install ./...

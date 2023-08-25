@@ -3,8 +3,8 @@ package analyzer
 import (
 	"fmt"
 
-	"github.com/Antonboom/testifylint/config"
 	"github.com/Antonboom/testifylint/internal/checkers"
+	"github.com/Antonboom/testifylint/internal/config"
 )
 
 // newCheckers accepts linter config and returns slices of enabled checkers.
@@ -12,6 +12,9 @@ func newCheckers(cfg config.Config) ([]checkers.RegularChecker, []checkers.Advan
 	enabledCheckers := cfg.EnabledCheckers
 	if len(enabledCheckers) == 0 {
 		enabledCheckers = checkers.EnabledByDefault()
+	}
+	if cfg.EnableAll {
+		enabledCheckers = checkers.All()
 	}
 
 	checkers.SortByPriority(enabledCheckers)

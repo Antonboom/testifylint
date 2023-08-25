@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/Antonboom/testifylint/config"
 	"github.com/Antonboom/testifylint/internal/checkers"
+	"github.com/Antonboom/testifylint/internal/config"
 )
 
 func Test_newCheckers(t *testing.T) {
@@ -48,7 +48,7 @@ func Test_newCheckers(t *testing.T) {
 		{
 			name: "enabled checkers defined",
 			cfg: config.Config{
-				EnabledCheckers: []string{
+				EnabledCheckers: config.KnownCheckersValue{
 					checkers.NewSuiteTHelper().Name(),
 					checkers.NewRequireError().Name(),
 					checkers.NewSuiteNoExtraAssertCall().Name(),
@@ -67,9 +67,9 @@ func Test_newCheckers(t *testing.T) {
 		{
 			name: "expected-actual pattern defined",
 			cfg: config.Config{
-				EnabledCheckers: []string{checkers.NewExpectedActual().Name()},
+				EnabledCheckers: config.KnownCheckersValue{checkers.NewExpectedActual().Name()},
 				ExpectedActual: config.ExpectedActualConfig{
-					ExpVarPattern: config.Regexp{Regexp: pattern},
+					ExpVarPattern: config.RegexpValue{Regexp: pattern},
 				},
 			},
 			expRegular: []checkers.RegularChecker{
@@ -97,7 +97,7 @@ func Test_newCheckers(t *testing.T) {
 }
 
 func Test_newCheckers_unknownChecker(t *testing.T) {
-	_, _, err := newCheckers(config.Config{EnabledCheckers: []string{"unknown"}})
+	_, _, err := newCheckers(config.Config{EnabledCheckers: config.KnownCheckersValue{"unknown"}})
 	if nil == err {
 		t.Fatal("no error but expected")
 	}

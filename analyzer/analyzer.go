@@ -10,27 +10,28 @@ import (
 	"golang.org/x/tools/go/analysis/passes/inspect"
 	"golang.org/x/tools/go/ast/inspector"
 
-	"github.com/Antonboom/testifylint/config"
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 	"github.com/Antonboom/testifylint/internal/checkers"
+	"github.com/Antonboom/testifylint/internal/config"
 	"github.com/Antonboom/testifylint/internal/testify"
 )
 
 const (
 	name = "testifylint"
 	doc  = "Checks usage of " + testify.ModulePath + "."
+	url  = "https://github.com/antonboom/" + name
 )
 
-// New accepts config.Config and returns testifylint analyzer.
-func New(cfg config.Config) *analysis.Analyzer {
-	return &analysis.Analyzer{
-		Name: name,
-		Doc:  doc,
-		Run: func(pass *analysis.Pass) (any, error) {
-			if err := config.Validate(cfg); err != nil {
-				return nil, fmt.Errorf("invalid config: %v", err)
-			}
+// New returns new instance of testifylint analyzer.
+func New() *analysis.Analyzer {
+	cfg := config.NewDefault()
 
+	analyzer := &analysis.Analyzer{
+		Name:     name,
+		Doc:      doc,
+		URL:      url,
+		Requires: []*analysis.Analyzer{inspect.Analyzer},
+		Run: func(pass *analysis.Pass) (any, error) {
 			regularCheckers, advancedCheckers, err := newCheckers(cfg)
 			if err != nil {
 				return nil, fmt.Errorf("build checkers: %v", err)
@@ -42,8 +43,10 @@ func New(cfg config.Config) *analysis.Analyzer {
 			}
 			return tl.run(pass)
 		},
-		Requires: []*analysis.Analyzer{inspect.Analyzer},
 	}
+	config.BindToFlags(&cfg, &analyzer.Flags)
+
+	return analyzer
 }
 
 type testifyLint struct {

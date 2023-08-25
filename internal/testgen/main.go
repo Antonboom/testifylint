@@ -102,6 +102,8 @@ func genTestFilesPair(g TestsGenerator, path string) error {
 		if err := genGoFileFromTmpl(path+".golden", goldenTmpl, tmplData); err != nil {
 			return fmt.Errorf("generate golden file: %v", err)
 		}
+	} else {
+		log.Printf("[WARN] No golden files in %q\n", dir)
 	}
 	return nil
 }

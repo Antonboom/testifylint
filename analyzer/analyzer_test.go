@@ -7,13 +7,15 @@ import (
 	"golang.org/x/tools/go/analysis/analysistest"
 
 	"github.com/Antonboom/testifylint/analyzer"
-	"github.com/Antonboom/testifylint/config"
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 func TestTestifyLint_Base(t *testing.T) {
-	cfg := config.Config{EnabledCheckers: []string{checkers.NewBoolCompare().Name()}}
-	analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), analyzer.New(cfg), "base-test")
+	anlzr := analyzer.New()
+	if err := anlzr.Flags.Set("enable", checkers.NewBoolCompare().Name()); err != nil {
+		t.Fatal(err)
+	}
+	analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), anlzr, "base-test")
 }
 
 func TestTestifyLint_Checkers(t *testing.T) {
@@ -23,9 +25,12 @@ func TestTestifyLint_Checkers(t *testing.T) {
 		t.Run(checker, func(t *testing.T) {
 			t.Parallel()
 
-			cfg := config.Config{EnabledCheckers: []string{checker}}
+			anlzr := analyzer.New()
+			if err := anlzr.Flags.Set("enable", checker); err != nil {
+				t.Fatal(err)
+			}
 			pkg := filepath.Join("checkers", checker)
-			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), analyzer.New(cfg), pkg)
+			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), anlzr, pkg)
 		})
 	}
 }
