@@ -4,7 +4,11 @@ version: '3'
 silent: true
 
 vars:
-  CONFIG_EXAMPLE_PATH: .testifylint.yml
+  COVERED_PKGS: |
+    ./analyzer
+    ./internal/analysisutil
+    ./internal/checkers
+    ./internal/config
 
 tasks:
   default:
@@ -43,12 +47,17 @@ tasks:
   tests:coverage:
     cmds:
       - echo "Tests with coverage..."
-      - go test -coverpkg ./analyzer,./config,./internal/analysisutil,./internal/checkers -coverprofile=coverage.out ./...
+      - go test -coverpkg={{ .COVERED_PKGS | trim | splitLines | join "," }} -coverprofile=coverage.out ./...
 
   tests:gen:
     cmds:
       - echo "Generate analyzer tests..."
       - go run ./internal/testgen
+
+  profile:
+    cmds:
+      - echo "Do profiling..."
+      - go test -memprofile=mem.out -cpuprofile=cpu.out ./analyzer
 
   install:
     cmds:

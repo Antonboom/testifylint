@@ -11,6 +11,8 @@ import (
 )
 
 func TestTestifyLint_Base(t *testing.T) {
+	t.Parallel()
+
 	anlzr := analyzer.New()
 	if err := anlzr.Flags.Set("enable", checkers.NewBoolCompare().Name()); err != nil {
 		t.Fatal(err)
@@ -19,6 +21,8 @@ func TestTestifyLint_Base(t *testing.T) {
 }
 
 func TestTestifyLint_Checkers(t *testing.T) {
+	t.Parallel()
+
 	for _, checker := range checkers.All() {
 		checker := checker // https://go.dev/wiki/LoopvarExperiment
 
