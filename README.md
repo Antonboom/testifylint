@@ -224,8 +224,8 @@ This checker is similar to the [floatcompare](https://github.com/golangci/golang
 import "github.com/stretchr/testify/assert"
 
 func (s *MySuite) TestSomething() {
-❌ assert.Equal(s.T(), 42, value)
-✅ s.Equal(42, value)
+     ❌ assert.Equal(s.T(), 42, value)
+     ✅ s.Equal(42, value)
 }
 ```
 **Autofix**: true. <br>
@@ -237,8 +237,8 @@ func (s *MySuite) TestSomething() {
 ### suite-no-extra-assert-call
 ```go
 func (s *MySuite) TestSomething() {
-❌ s.Assert().Equal(42, value)
-✅ s.Equal(42, value)
+     ❌ s.Assert().Equal(42, value)
+     ✅ s.Equal(42, value)
 }
 ```
 **Autofix**: true. <br>
@@ -251,13 +251,13 @@ func (s *MySuite) TestSomething() {
 ```go
 ❌
 func (s *RoomSuite) assertRoomRound(roundID RoundID) {
-s.Equal(roundID, s.getRoom().CurrentRound.ID)
+     s.Equal(roundID, s.getRoom().CurrentRound.ID)
 }
 
 ✅
 func (s *RoomSuite) assertRoomRound(roundID RoundID) {
-s.T().Helper()
-s.Equal(roundID, s.getRoom().CurrentRound.ID)
+     s.T().Helper()
+     s.Equal(roundID, s.getRoom().CurrentRound.ID)
 }
 ```
 **Autofix**: true. <br>
