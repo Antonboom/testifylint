@@ -4,6 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/Antonboom/testifylint)](https://goreportcard.com/report/github.com/Antonboom/testifylint)
 [![Coverage](https://coveralls.io/repos/github/Antonboom/testifylint/badge.svg?branch=master)](https://coveralls.io/github/Antonboom/testifylint?branch=master)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Antonboom/testifylint/blob/master/CONTRIBUTING.md)
 
 Checks usage of [github.com/stretchr/testify](https://github.com/stretchr/testify).
 
@@ -268,3 +269,15 @@ func (s *RoomSuite) assertRoomRound(roundID RoundID) {
 [anyway](https://github.com/stretchr/testify/blob/882382d845cd9780bd93c1acc8e1fa2ffe266ca1/assert/assertions.go#L317).
 
 The checker rather acts as an example of a [checkers.AdvancedChecker](https://github.com/Antonboom/testifylint/blob/676324836555445fded4e9afc004101ec6f597fe/internal/checkers/checker.go#L56).
+
+---
+
+## testify V2
+
+The second version of `testify` [promises](https://github.com/stretchr/testify/issues/1089) more "pleasant" API and
+makes some above checkers irrelevant.
+
+It will not be difficult to add `v2` support in the linter in the future.
+
+But at the moment it looks like we are [extremely far](https://github.com/stretchr/testify/pull/1109#issuecomment-1650619745)
+from `v2`. Related milestone [here](https://github.com/stretchr/testify/milestone/4).
