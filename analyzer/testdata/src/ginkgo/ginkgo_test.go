@@ -1,4 +1,4 @@
-// Test is inspired by
+// Test inspired by
 // https://github.com/kubernetes/ingress-nginx/blob/300a60f7244cb056701177989a1a09135626f930/test/e2e/loadbalance/ewma.go#L52
 package ginkgo
 
