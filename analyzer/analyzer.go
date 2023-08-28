@@ -132,7 +132,7 @@ func (tl *testifyLint) regularCheck(pass *analysis.Pass, ce *ast.CallExpr) {
 			Name:  fn,
 			IsFmt: strings.HasSuffix(fn, "f"),
 		},
-		Args:    trimTArg(pass, ce.Args),
+		Args:    trimTArg(pass, isAssert, ce.Args),
 		ArgsRaw: ce.Args,
 	}
 	for _, ch := range tl.regularCheckers {
@@ -145,20 +145,25 @@ func (tl *testifyLint) regularCheck(pass *analysis.Pass, ce *ast.CallExpr) {
 	}
 }
 
-func trimTArg(pass *analysis.Pass, args []ast.Expr) []ast.Expr {
+func trimTArg(pass *analysis.Pass, isAssert bool, args []ast.Expr) []ast.Expr {
 	if len(args) == 0 {
 		return args
 	}
 
-	if isTestingTPtr(pass, args[0]) {
+	if isTestingTPtr(pass, isAssert, args[0]) {
 		return args[1:]
 	}
 	return args
 }
 
-func isTestingTPtr(pass *analysis.Pass, arg ast.Expr) bool {
-	ttObj := analysisutil.ObjectOf(pass.Pkg, "testing", "T")
-	if ttObj == nil {
+func isTestingTPtr(pass *analysis.Pass, isAssert bool, arg ast.Expr) bool {
+	pkgPath := testify.RequirePkgPath
+	if isAssert {
+		pkgPath = testify.AssertPkgPath
+	}
+
+	testingInterfaceObj := analysisutil.ObjectOf(pass.Pkg, pkgPath, "TestingT")
+	if testingInterfaceObj == nil {
 		return false
 	}
 
@@ -167,5 +172,8 @@ func isTestingTPtr(pass *analysis.Pass, arg ast.Expr) bool {
 		return false
 	}
 
-	return types.Identical(argType, types.NewPointer(ttObj.Type()))
+	return types.Implements(
+		argType,
+		testingInterfaceObj.Type().Underlying().(*types.Interface),
+	)
 }

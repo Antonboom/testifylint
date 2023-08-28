@@ -38,3 +38,10 @@ func TestTestifyLint_Checkers(t *testing.T) {
 		})
 	}
 }
+
+func TestTestifyLint_Ginkgo(t *testing.T) {
+	t.Parallel()
+
+	anlzr := analyzer.New()
+	analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), anlzr, "ginkgo")
+}
