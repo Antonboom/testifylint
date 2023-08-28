@@ -51,29 +51,32 @@ func (g FloatCompareTestsGenerator) TemplateData() any {
 		},
 		InvalidAssertions: []Assertion{
 			{Fn: "Equal", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "NotEqual", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "Greater", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "GreaterOrEqual", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "Less", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "LessOrEqual", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
-
 			{Fn: "True", Argsf: "%s == result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "True", Argsf: "%s != result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "True", Argsf: "%s > result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "True", Argsf: "%s >= result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "True", Argsf: "%s < result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "True", Argsf: "%s <= result", ReportMsgf: report, ProposedFn: proposedFn},
-
-			{Fn: "False", Argsf: "%s == result", ReportMsgf: report, ProposedFn: proposedFn},
 			{Fn: "False", Argsf: "%s != result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "False", Argsf: "%s > result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "False", Argsf: "%s >= result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "False", Argsf: "%s < result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "False", Argsf: "%s <= result", ReportMsgf: report, ProposedFn: proposedFn},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "InDelta", Argsf: "42.42, result, 0.0001"},
 			{Fn: "InEpsilon", Argsf: "42.42, result, 0.0002"},
+
+			// Waiting for contribution.
+
+			{Fn: "NotEqual", Argsf: "42.42, result"},
+			{Fn: "Greater", Argsf: "42.42, result"},
+			{Fn: "GreaterOrEqual", Argsf: "42.42, result"},
+			{Fn: "Less", Argsf: "42.42, result"},
+			{Fn: "LessOrEqual", Argsf: "42.42, result"},
+
+			{Fn: "True", Argsf: "42.42 != result"},
+			{Fn: "True", Argsf: "42.42 > result"},
+			{Fn: "True", Argsf: "42.42 >= result"},
+			{Fn: "True", Argsf: "42.42 < result"},
+			{Fn: "True", Argsf: "42.42 <= result"},
+
+			{Fn: "False", Argsf: "42.42 == result"},
+			{Fn: "False", Argsf: "42.42 <= result"},
+			{Fn: "False", Argsf: "42.42 < result"},
+			{Fn: "False", Argsf: "42.42 <= result"},
+			{Fn: "False", Argsf: "42.42 > result"},
 		},
 	}
 }
@@ -85,6 +88,7 @@ func (FloatCompareTestsGenerator) ErroredTemplate() Executor {
 }
 
 func (FloatCompareTestsGenerator) GoldenTemplate() Executor {
+	// NOTE(a.telyshev): Only the developer knows the needed epsilon / delta.
 	return nil
 }
 

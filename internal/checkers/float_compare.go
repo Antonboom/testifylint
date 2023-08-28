@@ -2,6 +2,7 @@ package checkers
 
 import (
 	"go/ast"
+	"go/token"
 	"go/types"
 
 	"golang.org/x/tools/go/analysis"
@@ -23,16 +24,14 @@ func (FloatCompare) Name() string   { return "float-compare" }
 func (checker FloatCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	invalid := func() bool {
 		switch call.Fn.Name {
-		case "Equal", "Equalf", "NotEqual", "NotEqualf",
-			"Greater", "Greaterf", "GreaterOrEqual", "GreaterOrEqualf",
-			"Less", "Lessf", "LessOrEqual", "LessOrEqualf":
+		case "Equal", "Equalf":
 			return len(call.Args) > 1 && isFloat(pass, call.Args[0]) && isFloat(pass, call.Args[1])
 
 		case "True", "Truef":
-			return len(call.Args) > 0 && isFloatCompare(pass, call.Args[0])
+			return len(call.Args) > 0 && isFloatCompare(pass, call.Args[0], token.EQL)
 
 		case "False", "Falsef":
-			return len(call.Args) > 0 && isFloatCompare(pass, call.Args[0])
+			return len(call.Args) > 0 && isFloatCompare(pass, call.Args[0], token.NEQ)
 		}
 		return false
 	}()
@@ -53,10 +52,10 @@ func isFloat(pass *analysis.Pass, expr ast.Expr) bool {
 	return ok && (bt.Info()&types.IsFloat > 0)
 }
 
-func isFloatCompare(p *analysis.Pass, e ast.Expr) bool {
+func isFloatCompare(p *analysis.Pass, e ast.Expr, op token.Token) bool {
 	be, ok := e.(*ast.BinaryExpr)
 	if !ok {
 		return false
 	}
-	return isFloat(p, be.X) && isFloat(p, be.Y)
+	return be.Op == op && (isFloat(p, be.X) || isFloat(p, be.Y))
 }

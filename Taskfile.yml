@@ -19,7 +19,7 @@ tasks:
       - task: tests
 
   tools:install:
-    - echo "Install local tools..."
+    - echo "Install dev tools..."
     - go install github.com/daixiang0/gci@latest
     - go install mvdan.cc/gofumpt@latest
 
@@ -40,8 +40,9 @@ tasks:
       - golangci-lint run --fix ./...
 
   tests:
+    deps: [ tests:gen ]
     cmds:
-      - echo "Tests..."
+      - echo "Test..."
       - go test ./...
 
   tests:coverage:

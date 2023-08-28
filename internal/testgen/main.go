@@ -103,7 +103,7 @@ func genTestFilesPair(g TestsGenerator, path string) error {
 			return fmt.Errorf("generate golden file: %v", err)
 		}
 	} else {
-		log.Printf("[WARN] No golden files in %q\n", dir)
+		log.Printf("[WARN] No golden file in %q\n", dir)
 	}
 	return nil
 }

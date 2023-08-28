@@ -14,42 +14,12 @@ func TestFloatCompareChecker(t *testing.T) {
 
 	// Invalid.
 	{
-		assert.Equal(t, 42.42, result)                                            // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Equalf(t, 42.42, result, "msg with args %d %s", 42, "42")          // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.NotEqual(t, 42.42, result)                                         // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.NotEqualf(t, 42.42, result, "msg with args %d %s", 42, "42")       // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.Greater(t, 42.42, result)                                          // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Greaterf(t, 42.42, result, "msg with args %d %s", 42, "42")        // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.GreaterOrEqual(t, 42.42, result)                                   // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.GreaterOrEqualf(t, 42.42, result, "msg with args %d %s", 42, "42") // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.Less(t, 42.42, result)                                             // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Lessf(t, 42.42, result, "msg with args %d %s", 42, "42")           // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.LessOrEqual(t, 42.42, result)                                      // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.LessOrEqualf(t, 42.42, result, "msg with args %d %s", 42, "42")    // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.True(t, 42.42 == result)                                           // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Truef(t, 42.42 == result, "msg with args %d %s", 42, "42")         // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.True(t, 42.42 != result)                                           // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Truef(t, 42.42 != result, "msg with args %d %s", 42, "42")         // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.True(t, 42.42 > result)                                            // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Truef(t, 42.42 > result, "msg with args %d %s", 42, "42")          // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.True(t, 42.42 >= result)                                           // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Truef(t, 42.42 >= result, "msg with args %d %s", 42, "42")         // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.True(t, 42.42 < result)                                            // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Truef(t, 42.42 < result, "msg with args %d %s", 42, "42")          // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.True(t, 42.42 <= result)                                           // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Truef(t, 42.42 <= result, "msg with args %d %s", 42, "42")         // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.False(t, 42.42 == result)                                          // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Falsef(t, 42.42 == result, "msg with args %d %s", 42, "42")        // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.False(t, 42.42 != result)                                          // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Falsef(t, 42.42 != result, "msg with args %d %s", 42, "42")        // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.False(t, 42.42 > result)                                           // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Falsef(t, 42.42 > result, "msg with args %d %s", 42, "42")         // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.False(t, 42.42 >= result)                                          // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Falsef(t, 42.42 >= result, "msg with args %d %s", 42, "42")        // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.False(t, 42.42 < result)                                           // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Falsef(t, 42.42 < result, "msg with args %d %s", 42, "42")         // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
-		assert.False(t, 42.42 <= result)                                          // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
-		assert.Falsef(t, 42.42 <= result, "msg with args %d %s", 42, "42")        // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
+		assert.Equal(t, 42.42, result)                                     // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
+		assert.Equalf(t, 42.42, result, "msg with args %d %s", 42, "42")   // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
+		assert.True(t, 42.42 == result)                                    // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
+		assert.Truef(t, 42.42 == result, "msg with args %d %s", 42, "42")  // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
+		assert.False(t, 42.42 != result)                                   // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)"
+		assert.Falsef(t, 42.42 != result, "msg with args %d %s", 42, "42") // want "float-compare: use assert\\.InEpsilon \\(or InDelta\\)f"
 	}
 
 	// Valid.
@@ -58,6 +28,36 @@ func TestFloatCompareChecker(t *testing.T) {
 		assert.InDeltaf(t, 42.42, result, 0.0001, "msg with args %d %s", 42, "42")
 		assert.InEpsilon(t, 42.42, result, 0.0002)
 		assert.InEpsilonf(t, 42.42, result, 0.0002, "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, 42.42, result)
+		assert.NotEqualf(t, 42.42, result, "msg with args %d %s", 42, "42")
+		assert.Greater(t, 42.42, result)
+		assert.Greaterf(t, 42.42, result, "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, 42.42, result)
+		assert.GreaterOrEqualf(t, 42.42, result, "msg with args %d %s", 42, "42")
+		assert.Less(t, 42.42, result)
+		assert.Lessf(t, 42.42, result, "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, 42.42, result)
+		assert.LessOrEqualf(t, 42.42, result, "msg with args %d %s", 42, "42")
+		assert.True(t, 42.42 != result)
+		assert.Truef(t, 42.42 != result, "msg with args %d %s", 42, "42")
+		assert.True(t, 42.42 > result)
+		assert.Truef(t, 42.42 > result, "msg with args %d %s", 42, "42")
+		assert.True(t, 42.42 >= result)
+		assert.Truef(t, 42.42 >= result, "msg with args %d %s", 42, "42")
+		assert.True(t, 42.42 < result)
+		assert.Truef(t, 42.42 < result, "msg with args %d %s", 42, "42")
+		assert.True(t, 42.42 <= result)
+		assert.Truef(t, 42.42 <= result, "msg with args %d %s", 42, "42")
+		assert.False(t, 42.42 == result)
+		assert.Falsef(t, 42.42 == result, "msg with args %d %s", 42, "42")
+		assert.False(t, 42.42 <= result)
+		assert.Falsef(t, 42.42 <= result, "msg with args %d %s", 42, "42")
+		assert.False(t, 42.42 < result)
+		assert.Falsef(t, 42.42 < result, "msg with args %d %s", 42, "42")
+		assert.False(t, 42.42 <= result)
+		assert.Falsef(t, 42.42 <= result, "msg with args %d %s", 42, "42")
+		assert.False(t, 42.42 > result)
+		assert.Falsef(t, 42.42 > result, "msg with args %d %s", 42, "42")
 	}
 }
 
@@ -66,40 +66,10 @@ func TestFloatCompareChecker_NoFloatNoWorries(t *testing.T) {
 
 	assert.Equal(t, 42, result)
 	assert.Equalf(t, 42, result, "msg with args %d %s", 42, "42")
-	assert.NotEqual(t, 42, result)
-	assert.NotEqualf(t, 42, result, "msg with args %d %s", 42, "42")
-	assert.Greater(t, 42, result)
-	assert.Greaterf(t, 42, result, "msg with args %d %s", 42, "42")
-	assert.GreaterOrEqual(t, 42, result)
-	assert.GreaterOrEqualf(t, 42, result, "msg with args %d %s", 42, "42")
-	assert.Less(t, 42, result)
-	assert.Lessf(t, 42, result, "msg with args %d %s", 42, "42")
-	assert.LessOrEqual(t, 42, result)
-	assert.LessOrEqualf(t, 42, result, "msg with args %d %s", 42, "42")
 	assert.True(t, 42 == result)
 	assert.Truef(t, 42 == result, "msg with args %d %s", 42, "42")
-	assert.True(t, 42 != result)
-	assert.Truef(t, 42 != result, "msg with args %d %s", 42, "42")
-	assert.True(t, 42 > result)
-	assert.Truef(t, 42 > result, "msg with args %d %s", 42, "42")
-	assert.True(t, 42 >= result)
-	assert.Truef(t, 42 >= result, "msg with args %d %s", 42, "42")
-	assert.True(t, 42 < result)
-	assert.Truef(t, 42 < result, "msg with args %d %s", 42, "42")
-	assert.True(t, 42 <= result)
-	assert.Truef(t, 42 <= result, "msg with args %d %s", 42, "42")
-	assert.False(t, 42 == result)
-	assert.Falsef(t, 42 == result, "msg with args %d %s", 42, "42")
 	assert.False(t, 42 != result)
 	assert.Falsef(t, 42 != result, "msg with args %d %s", 42, "42")
-	assert.False(t, 42 > result)
-	assert.Falsef(t, 42 > result, "msg with args %d %s", 42, "42")
-	assert.False(t, 42 >= result)
-	assert.Falsef(t, 42 >= result, "msg with args %d %s", 42, "42")
-	assert.False(t, 42 < result)
-	assert.Falsef(t, 42 < result, "msg with args %d %s", 42, "42")
-	assert.False(t, 42 <= result)
-	assert.Falsef(t, 42 <= result, "msg with args %d %s", 42, "42")
 }
 
 func TestFloatCompareChecker_Float32Detection(t *testing.T) {

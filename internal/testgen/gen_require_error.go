@@ -42,6 +42,7 @@ func (RequireErrorTestsGenerator) ErroredTemplate() Executor {
 }
 
 func (RequireErrorTestsGenerator) GoldenTemplate() Executor {
+	// NOTE(a.telyshev): Impossible to cover the "assert object" case (to suggest the non-existent "require object" instead).
 	return nil
 }
 
