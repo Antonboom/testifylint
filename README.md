@@ -48,8 +48,8 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
 | [bool-compare](#bool-compare)                             | ✅                  | ✅       |
 | [compares](#compares)                                     | ✅                  | ✅       |
 | [empty](#empty)                                           | ✅                  | ✅       |
-| [error](#error)                                           | ✅                  | ✅       |
 | [error-is](#error-is)                                     | ✅                  | ✅       |
+| [error-nil](#error-nil)                                   | ✅                  | ✅       |
 | [expected-actual](#expected-actual)                       | ✅                  | ✅       |
 | [float-compare](#float-compare)                           | ✅                  | ❌       |
 | [len](#len)                                               | ✅                  | ✅       |
@@ -123,22 +123,6 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
 
 ---
 
-### error
-
-```go
-❌   assert.Nil(t, err)
-     assert.NotNil(t, err)
-
-✅   assert.NoError(t, err)
-     assert.Error(t, err)
-```
-
-**Autofix**: true. <br>
-**Enabled by default**: true. <br>
-**Reason**: More appropriate `testify` API with clearer failure message.
-
----
-
 ### error-is
 
 ```go
@@ -152,6 +136,22 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
 **Reason**: A common mistake that leads to hiding the incorrect wrapping of sentinel errors.
+
+---
+
+### error-nil
+
+```go
+❌   assert.Nil(t, err)
+     assert.NotNil(t, err)
+
+✅   assert.NoError(t, err)
+     assert.Error(t, err)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: More appropriate `testify` API with clearer failure message.
 
 ---
 

@@ -12,7 +12,7 @@ import (
 var _ = ginkgo.Describe("[Load Balancer] EWMA", func() {
 
 	ginkgo.BeforeEach(func() {
-		// Some stuff..
+		// Some stuff...
 	})
 
 	ginkgo.It("does not fail requests", func() {
@@ -24,7 +24,7 @@ var _ = ginkgo.Describe("[Load Balancer] EWMA", func() {
 			})
 
 		algorithm, err := GetLbAlgorithm(EchoService, 80)
-		assert.NoError(ginkgo.GinkgoT(), err)             // want "error: use assert.NoError"
+		assert.NoError(ginkgo.GinkgoT(), err)             // want "error-nil: use assert.NoError"
 		assert.Equal(ginkgo.GinkgoT(), "ewma", algorithm) // want "expected-actual: need to reverse actual and expected values"
 	})
 })

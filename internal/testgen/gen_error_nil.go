@@ -10,7 +10,7 @@ import (
 type ErrorTestsGenerator struct{}
 
 func (ErrorTestsGenerator) Checker() checkers.Checker {
-	return checkers.NewError()
+	return checkers.NewErrorNil()
 }
 
 func (g ErrorTestsGenerator) TemplateData() any {

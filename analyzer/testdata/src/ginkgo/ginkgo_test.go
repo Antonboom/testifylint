@@ -24,7 +24,7 @@ var _ = ginkgo.Describe("[Load Balancer] EWMA", func() {
 			})
 
 		algorithm, err := GetLbAlgorithm(EchoService, 80)
-		assert.Nil(ginkgo.GinkgoT(), err)                 // want "error: use assert.NoError"
+		assert.Nil(ginkgo.GinkgoT(), err)                 // want "error-nil: use assert.NoError"
 		assert.Equal(ginkgo.GinkgoT(), algorithm, "ewma") // want "expected-actual: need to reverse actual and expected values"
 	})
 })

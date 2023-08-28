@@ -18,7 +18,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewEmpty(),
 		checkers.NewLen(),
 		checkers.NewCompares(),
-		checkers.NewError(),
+		checkers.NewErrorNil(),
 		checkers.NewErrorIs(),
 		checkers.NewRequireError(),
 		checkers.NewExpectedActual(),

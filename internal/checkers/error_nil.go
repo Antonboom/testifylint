@@ -7,7 +7,7 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-// Error detects situations like
+// ErrorNil detects situations like
 //
 //	assert.Nil(t, err)
 //	assert.NotNil(t, err)
@@ -15,14 +15,14 @@ import (
 // and requires
 //
 //	assert.NoError(t, err)
-//	assert.Error(t, err)
-type Error struct{}
+//	assert.ErrorNil(t, err)
+type ErrorNil struct{}
 
-// NewError constructs Error checker.
-func NewError() Error      { return Error{} }
-func (Error) Name() string { return "error" }
+// NewErrorNil constructs ErrorNil checker.
+func NewErrorNil() ErrorNil   { return ErrorNil{} }
+func (ErrorNil) Name() string { return "error-nil" }
 
-func (checker Error) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
+func (checker ErrorNil) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	if len(call.Args) < 1 {
 		return nil
 	}
