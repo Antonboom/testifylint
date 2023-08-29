@@ -16,6 +16,7 @@ var analyserTestdataPath = filepath.Join("analyzer", "testdata", "src")
 
 var freeTestsGenerators = map[string]TestsGenerator{ // by sub-directory.
 	"base-test":                       BaseTestsGenerator{},
+	"expected-var-custom-pattern":     ExpectedVarCustomPatternTestsGenerator{},
 	"suite-require-extra-assert-call": SuiteRequireExtraAssertCallTestsGenerator{},
 }
 

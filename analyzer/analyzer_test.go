@@ -27,6 +27,13 @@ func TestTestifyLint(t *testing.T) {
 				"suite-extra-assert-call.mode": "require",
 			},
 		},
+		{
+			dir: "expected-var-custom-pattern",
+			flags: map[string]string{
+				"enable":                  checkers.NewExpectedActual().Name(),
+				"expected-actual.pattern": "goldenValue",
+			},
+		},
 	}
 
 	for _, tt := range cases {
