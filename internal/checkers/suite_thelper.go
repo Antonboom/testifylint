@@ -67,7 +67,7 @@ func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Insp
 			TextEdits: []analysis.TextEdit{
 				{
 					Pos:     firstStmt.Pos(),
-					End:     firstStmt.Pos(),
+					End:     firstStmt.Pos(), // Pure insertion.
 					NewText: []byte(helper + "\n\n"),
 				},
 			},

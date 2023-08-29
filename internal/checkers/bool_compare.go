@@ -29,8 +29,8 @@ func (BoolCompare) Name() string  { return "bool-compare" }
 
 func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	const (
-		needSimplifyMsg  = "need to simplify the check"
-		simplifyCheckMsg = "Simplify the check"
+		needSimplifyMsg  = "need to simplify the assertion"
+		simplifyCheckMsg = "Simplify the assertion"
 	)
 
 	switch call.Fn.Name {

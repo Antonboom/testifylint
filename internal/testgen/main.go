@@ -15,7 +15,8 @@ import (
 var analyserTestdataPath = filepath.Join("analyzer", "testdata", "src")
 
 var freeTestsGenerators = map[string]TestsGenerator{ // by sub-directory.
-	"base-test": BaseTestsGenerator{},
+	"base-test":                       BaseTestsGenerator{},
+	"suite-require-extra-assert-call": SuiteRequireExtraAssertCallTestsGenerator{},
 }
 
 var checkerTestsGenerators = []CheckerTestsGenerator{
@@ -29,7 +30,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	LenTestsGenerator{},
 	RequireErrorTestsGenerator{},
 	SuiteDontUsePkg{},
-	SuiteNoExtraAssertCallTestsGenerator{},
+	SuiteExtraAssertCallTestsGenerator{},
 	SuiteTHelperTestsGenerator{},
 }
 
@@ -55,7 +56,7 @@ func main() {
 		log.Panic(err)
 	}
 
-	if err := generateCheckersTests(); err != nil {
+	if err := generateCheckersDefaultTests(); err != nil {
 		log.Panic(err)
 	}
 }
@@ -71,11 +72,11 @@ func generateFreeTests() error {
 	return nil
 }
 
-func generateCheckersTests() error {
+func generateCheckersDefaultTests() error {
 	for _, g := range checkerTestsGenerators {
 		checker := g.Checker().Name()
 		testFile := strings.ReplaceAll(checker, "-", "_") + "_test.go"
-		output := filepath.Join(analyserTestdataPath, "checkers", checker, testFile)
+		output := filepath.Join(analyserTestdataPath, "checkers-default", checker, testFile)
 		if err := genTestFilesPair(g, output); err != nil {
 			return fmt.Errorf("%s: %v", checker, err)
 		}

@@ -17,6 +17,7 @@ tasks:
       - task: fmt
       - task: lint
       - task: tests
+      - task: install
 
   tools:install:
     - echo "Install dev tools..."
@@ -63,4 +64,4 @@ tasks:
   install:
     cmds:
       - echo "Install..."
-      - go install ./...
+      - go install .

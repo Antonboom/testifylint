@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"regexp"
 	"slices"
+	"strings"
 	"testing"
 
 	"github.com/Antonboom/testifylint/internal/config"
@@ -91,5 +92,56 @@ func TestRegexp_Set(t *testing.T) {
 				t.Fatal(v)
 			}
 		})
+	}
+}
+
+func TestEnumValue(t *testing.T) {
+	type workMode int
+	const (
+		workModeManual workMode = iota
+		workModeSemiAutomatic
+		workModeAutomatic
+	)
+
+	mode := workModeManual
+	v := config.NewEnumValue(map[string]workMode{
+		"manual":    workModeManual,
+		"semi-auto": workModeSemiAutomatic,
+		"auto":      workModeAutomatic,
+	}, &mode)
+
+	t.Run("no value", func(t *testing.T) {
+		if v.String() != "manual" {
+			t.Fatal()
+		}
+	})
+
+	t.Run("set valid value", func(t *testing.T) {
+		if err := v.Set("auto"); err != nil {
+			t.Fatal(err)
+		}
+		if v.String() != "auto" {
+			t.Fatal()
+		}
+		if mode != workModeAutomatic {
+			t.Fatal()
+		}
+	})
+
+	t.Run("set invalid value", func(t *testing.T) {
+		err := v.Set("super-auto")
+		if nil == err {
+			t.Fatal(err)
+		}
+		if !strings.Contains(err.Error(), "auto | manual | semi-auto") {
+			t.Fatal(err)
+		}
+	})
+}
+
+func Test_EnumValue_String_ZeroValue(t *testing.T) {
+	var ev config.EnumValue[int]
+	if ev.String() != "" {
+		t.Fatal()
 	}
 }

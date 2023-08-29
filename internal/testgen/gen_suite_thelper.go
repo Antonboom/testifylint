@@ -16,7 +16,7 @@ func (SuiteTHelperTestsGenerator) Checker() checkers.Checker {
 func (g SuiteTHelperTestsGenerator) TemplateData() any {
 	var (
 		name   = g.Checker().Name()
-		report = quoteReport(name + ": suite helper method should start with s.T().Helper()")
+		report = quoteReport(name + ": suite helper method should start with suite.T().Helper()")
 	)
 
 	return struct {
@@ -36,8 +36,8 @@ func (SuiteTHelperTestsGenerator) ErroredTemplate() Executor {
 
 func (SuiteTHelperTestsGenerator) GoldenTemplate() Executor {
 	golden := strings.ReplaceAll(suiteTHelperTestTmpl,
-		"\troom, ok := s.rooms[roomID]",
-		"\ts.T().Helper()\n\n\troom, ok := s.rooms[roomID]",
+		"\troom, ok := suite.rooms[roomID]",
+		"\tsuite.T().Helper()\n\n\troom, ok := suite.rooms[roomID]",
 	)
 	return template.Must(template.New("SuiteTHelperTestsGenerator.GoldenTemplate").Funcs(fm).Parse(golden))
 }
@@ -84,15 +84,15 @@ func (s *GameRoomSuite) newRoom(id int) *Room {
 	return r
 }
 
-func (s *GameRoomSuite) joinRoom(playerID, roomID int) { // want {{ $.Report }}
-	room, ok := s.rooms[roomID]
-	s.Require().True(ok)
+func (suite *GameRoomSuite) joinRoom(playerID, roomID int) { // want {{ $.Report }}
+	room, ok := suite.rooms[roomID]
+	suite.Require().True(ok)
 
-	player, ok := s.players[playerID]
-	s.Require().True(ok)
+	player, ok := suite.players[playerID]
+	suite.Require().True(ok)
 
 	err := room.AddPlayer(player)
-	s.Require().NoError(err)
+	suite.Require().NoError(err)
 }
 
 func (s *GameRoomSuite) assertPlayerNickName(playerID int, expectedNickname string) {

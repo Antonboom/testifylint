@@ -2,7 +2,6 @@ package analyzer_test
 
 import (
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"golang.org/x/tools/go/analysis/analysistest"
@@ -15,12 +14,19 @@ func TestTestifyLint(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
-		dir             string
-		enabledCheckers []string
+		dir   string
+		flags map[string]string
 	}{
-		{dir: "base-test", enabledCheckers: []string{checkers.NewBoolCompare().Name()}},
+		{dir: "base-test", flags: map[string]string{"enable": checkers.NewBoolCompare().Name()}},
 		{dir: "ginkgo"},
 		{dir: "pkg-alias"},
+		{
+			dir: "suite-require-extra-assert-call",
+			flags: map[string]string{
+				"enable":                       checkers.NewSuiteExtraAssertCall().Name(),
+				"suite-extra-assert-call.mode": "require",
+			},
+		},
 	}
 
 	for _, tt := range cases {
@@ -30,8 +36,8 @@ func TestTestifyLint(t *testing.T) {
 			t.Parallel()
 
 			anlzr := analyzer.New()
-			if len(tt.enabledCheckers) > 0 {
-				if err := anlzr.Flags.Set("enable", strings.Join(tt.enabledCheckers, ",")); err != nil {
+			for k, v := range tt.flags {
+				if err := anlzr.Flags.Set(k, v); err != nil {
 					t.Fatal(err)
 				}
 			}
@@ -40,7 +46,7 @@ func TestTestifyLint(t *testing.T) {
 	}
 }
 
-func TestTestifyLint_Checkers(t *testing.T) {
+func TestTestifyLint_CheckersDefault(t *testing.T) {
 	t.Parallel()
 
 	for _, checker := range checkers.All() {
@@ -53,7 +59,7 @@ func TestTestifyLint_Checkers(t *testing.T) {
 			if err := anlzr.Flags.Set("enable", checker); err != nil {
 				t.Fatal(err)
 			}
-			pkg := filepath.Join("checkers", checker)
+			pkg := filepath.Join("checkers-default", checker)
 			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), anlzr, pkg)
 		})
 	}

@@ -7,16 +7,16 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-type SuiteNoExtraAssertCallTestsGenerator struct{}
+type SuiteExtraAssertCallTestsGenerator struct{}
 
-func (SuiteNoExtraAssertCallTestsGenerator) Checker() checkers.Checker {
-	return checkers.NewSuiteNoExtraAssertCall()
+func (SuiteExtraAssertCallTestsGenerator) Checker() checkers.Checker {
+	return checkers.NewSuiteExtraAssertCall()
 }
 
-func (g SuiteNoExtraAssertCallTestsGenerator) TemplateData() any {
+func (g SuiteExtraAssertCallTestsGenerator) TemplateData() any {
 	var (
 		checker = g.Checker().Name()
-		report  = checker + ": need to simplify the check%.s%.s"
+		report  = checker + ": need to simplify the assertion to %s.%s"
 	)
 
 	return struct {
@@ -24,23 +24,23 @@ func (g SuiteNoExtraAssertCallTestsGenerator) TemplateData() any {
 		Assrn       Assertion
 	}{
 		CheckerName: CheckerName(checker),
-		Assrn:       Assertion{Fn: "True", Argsf: "b", ReportMsgf: report, ProposedSelector: "s"},
+		Assrn:       Assertion{Fn: "True", Argsf: "b", ReportMsgf: report, ProposedSelector: "suite"},
 	}
 }
 
-func (SuiteNoExtraAssertCallTestsGenerator) ErroredTemplate() Executor {
-	return template.Must(template.New("SuiteNoExtraAssertCallTestsGenerator.ErroredTemplate").
+func (SuiteExtraAssertCallTestsGenerator) ErroredTemplate() Executor {
+	return template.Must(template.New("SuiteExtraAssertCallTestsGenerator.ErroredTemplate").
 		Funcs(fm).
-		Parse(suiteNoExtraAssertCallTestTmpl))
+		Parse(suiteExtraAssertCallTestTmpl))
 }
 
-func (SuiteNoExtraAssertCallTestsGenerator) GoldenTemplate() Executor {
-	return template.Must(template.New("SuiteNoExtraAssertCallTestsGenerator.GoldenTemplate").
+func (SuiteExtraAssertCallTestsGenerator) GoldenTemplate() Executor {
+	return template.Must(template.New("SuiteExtraAssertCallTestsGenerator.GoldenTemplate").
 		Funcs(fm).
-		Parse(strings.ReplaceAll(suiteNoExtraAssertCallTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")))
+		Parse(strings.ReplaceAll(suiteExtraAssertCallTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")))
 }
 
-const suiteNoExtraAssertCallTestTmpl = header + `
+const suiteExtraAssertCallTestTmpl = header + `
 package {{ .CheckerName.AsPkgName }}
 
 import (
@@ -61,9 +61,9 @@ func Test{{ $suiteName }}(t *testing.T) {
 	suite.Run(t, new({{ $suiteName }}))
 }
 
-func (s *{{ $suiteName }}) TestAll() {
+func (suite *{{ $suiteName }}) TestAll() {
 	var b bool
-	{{ NewAssertionExpander.Expand $.Assrn "s.Assert()" "" nil }}
+	{{ NewAssertionExpander.FullMode.Expand $.Assrn "suite.Assert()" "" nil }}
 }
 
 func (s *{{ $suiteName }}) TestIgnored() {

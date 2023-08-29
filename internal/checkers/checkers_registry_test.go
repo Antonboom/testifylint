@@ -25,7 +25,7 @@ func TestAll(t *testing.T) {
 		"error-is",
 		"require-error",
 		"expected-actual",
-		"suite-no-extra-assert-call",
+		"suite-extra-assert-call",
 		"suite-dont-use-pkg",
 		"suite-thelper",
 	}
@@ -51,6 +51,7 @@ func TestEnabledByDefault(t *testing.T) {
 		"error-is",
 		"require-error",
 		"expected-actual",
+		"suite-extra-assert-call",
 		"suite-dont-use-pkg",
 	}
 	if !slices.Equal(expected, checkerList) {

@@ -43,20 +43,20 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
 
 ## Checkers
 
-| Name                                                      | Enabled By Default | Autofix |
-|-----------------------------------------------------------|--------------------|---------|
-| [bool-compare](#bool-compare)                             | ✅                  | ✅       |
-| [compares](#compares)                                     | ✅                  | ✅       |
-| [empty](#empty)                                           | ✅                  | ✅       |
-| [error-is](#error-is)                                     | ✅                  | ✅       |
-| [error-nil](#error-nil)                                   | ✅                  | ✅       |
-| [expected-actual](#expected-actual)                       | ✅                  | ✅       |
-| [float-compare](#float-compare)                           | ✅                  | ❌       |
-| [len](#len)                                               | ✅                  | ✅       |
-| [require-error](#require-error)                           | ✅                  | ❌       |
-| [suite-dont-use-pkg](#suite-dont-use-pkg)                 | ✅                  | ✅       |
-| [suite-no-extra-assert-call](#suite-no-extra-assert-call) | ❌                  | ✅       |
-| [suite-thelper](#suite-thelper)                           | ❌                  | ✅       |
+| Name                                                | Enabled By Default | Autofix |
+|-----------------------------------------------------|--------------------|---------|
+| [bool-compare](#bool-compare)                       | ✅                  | ✅       |
+| [compares](#compares)                               | ✅                  | ✅       |
+| [empty](#empty)                                     | ✅                  | ✅       |
+| [error-is](#error-is)                               | ✅                  | ✅       |
+| [error-nil](#error-nil)                             | ✅                  | ✅       |
+| [expected-actual](#expected-actual)                 | ✅                  | ✅       |
+| [float-compare](#float-compare)                     | ✅                  | ❌       |
+| [len](#len)                                         | ✅                  | ✅       |
+| [require-error](#require-error)                     | ✅                  | ❌       |
+| [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
+| [suite-extra-assert-call](#suite-extra-assert-call) | ❌                  | ✅       |
+| [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
 
 ---
 
@@ -255,7 +255,9 @@ func (s *MySuite) TestSomething() {
 
 ---
 
-### suite-no-extra-assert-call
+### suite-extra-assert-call
+
+By default, the checker wants you to remove unnecessary `Assert()` calls:
 
 ```go
 func (s *MySuite) TestSomething() {
@@ -264,9 +266,27 @@ func (s *MySuite) TestSomething() {
 }
 ```
 
+But sometimes, on the contrary, people want consistency with `s.Assert()` and `s.Require()`:
+
+```go
+func (s *MySuite) TestSomething() {
+     // ...
+ 
+     ❌
+     s.Require().NoError(err)
+     s.Equal(42, value)
+
+     ✅
+     s.Require().NoError(err)
+     s.Assert().Equal(42, value)
+}
+```
+
+You can enable such behaviaor through `--suite-extra-assert-call.mode=require`.
+
 **Autofix**: true. <br>
-**Enabled by default**: false. <br>
-**Reason**: More simple code.
+**Enabled by default**: true, in `remove` mode. <br>
+**Reason**: More simple or uniform code.
 
 ---
 

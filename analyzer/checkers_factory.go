@@ -31,6 +31,9 @@ func newCheckers(cfg config.Config) ([]checkers.RegularChecker, []checkers.Advan
 		switch c := ch.(type) {
 		case *checkers.ExpectedActual:
 			c.SetExpVarPattern(cfg.ExpectedActual.ExpVarPattern.Regexp)
+
+		case *checkers.SuiteExtraAssertCall:
+			c.SetMode(cfg.SuiteExtraAssertCall.Mode)
 		}
 
 		switch casted := ch.(type) {

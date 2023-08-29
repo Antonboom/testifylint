@@ -13,9 +13,9 @@ func TestCheckerName(t *testing.T) {
 		expected    string
 	}{
 		{
-			name:        checkers.NewSuiteNoExtraAssertCall().Name(),
+			name:        checkers.NewSuiteExtraAssertCall().Name(),
 			transformer: CheckerName.AsPkgName,
-			expected:    "suitenoextraassertcall",
+			expected:    "suiteextraassertcall",
 		},
 		{
 			name:        checkers.NewSuiteDontUsePkg().Name(),

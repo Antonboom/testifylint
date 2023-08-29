@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/Antonboom/testifylint/internal/checkers"
@@ -12,6 +13,7 @@ import (
 var (
 	_ flag.Value = (*KnownCheckersValue)(nil)
 	_ flag.Value = (*RegexpValue)(nil)
+	_ flag.Value = (*EnumValue[checkers.SuiteExtraAssertCallMode])(nil)
 )
 
 // KnownCheckersValue implements comma separated list of testify checkers.
@@ -53,5 +55,51 @@ func (rv *RegexpValue) Set(v string) error {
 	}
 
 	rv.Regexp = compiled
+	return nil
+}
+
+// EnumValue is a special type for support of flag.FlagSet over user-defined constants.
+type EnumValue[EnumT comparable] struct {
+	mapping map[string]EnumT
+	keys    []string
+	dst     *EnumT
+}
+
+// NewEnumValue takes the "enum-value-name to enum-value" mapping and a destination for the value passed through the CLI.
+// Returns an EnumValue instance suitable for flag.FlagSet.Var.
+func NewEnumValue[EnumT comparable](mapping map[string]EnumT, dst *EnumT) *EnumValue[EnumT] {
+	keys := make([]string, 0, len(mapping))
+	for k := range mapping {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	return &EnumValue[EnumT]{
+		mapping: mapping,
+		keys:    keys,
+		dst:     dst,
+	}
+}
+
+func (e EnumValue[EnumT]) String() string {
+	if e.dst == nil {
+		return ""
+	}
+
+	for k, v := range e.mapping {
+		if v == *e.dst {
+			return k
+		}
+	}
+	return ""
+}
+
+func (e *EnumValue[EnumT]) Set(s string) error {
+	v, ok := e.mapping[s]
+	if !ok {
+		return fmt.Errorf("use one of (%v)", strings.Join(e.keys, " | "))
+	}
+
+	*e.dst = v
 	return nil
 }

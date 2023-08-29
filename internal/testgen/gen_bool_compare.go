@@ -17,7 +17,7 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 	var (
 		checker        = g.Checker().Name()
 		reportUse      = checker + ": use %s.%s"
-		reportSimplify = checker + ": need to simplify the check"
+		reportSimplify = checker + ": need to simplify the assertion"
 	)
 
 	type test struct {

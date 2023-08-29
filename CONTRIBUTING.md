@@ -97,6 +97,7 @@ Fmt...
 Lint...
 Generate analyzer tests...
 Test...
+Install...
 ```
 
 Fix linter issues and broken tests (probably related to the checkers registry).
@@ -116,7 +117,6 @@ Fix linter issues and broken tests (probably related to the checkers registry).
 - [negative-positive](#negative-positive)
 - [no-fmt-mess](#no-fmt-mess)
 - [require-len](#require-len)
-- [suite-extra-assert-call](#suite-extra-assert-call)
 - [suite-run](#suite-run)
 - [suite-test-name](#suite-test-name)
 - [zero](#zero)
@@ -323,35 +323,6 @@ then before that there must be a length constraint through `require`.
 **Reason**: Similar to [require-error](README.md#require-error). Save you from annoying panics.
 
 Or maybe do something similar for maps? And come up with better name for the checker.
-
----
-
-### suite-extra-assert-call
-
-Sometimes in opposite of [suite-no-extra-assert-call](README.md#suite-no-extra-assert-call) people want
-consistency with `s.Assert()` and `s.Require()`:
-
-```go
-func (s *MySuite) TestSomething() {
-     // ...
- 
-     ❌
-     s.Require().NoError(err)
-     s.Equal(42, value)
-
-     ✅
-     s.Require().NoError(err)
-     s.Assert().Equal(42, value)
-}
-```
-
-**Autofix**: true. <br>
-**Enabled by default**: false. <br>
-**Reason**: Unification of approach.
-
-Also, it might be better to leave only one of the checkers and just configure that behavior.
-
----
 
 ### suite-run
 

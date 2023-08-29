@@ -40,15 +40,15 @@ func (s *GameRoomSuite) newRoom(id int) *Room {
 	return r
 }
 
-func (s *GameRoomSuite) joinRoom(playerID, roomID int) { // want "suite-thelper: suite helper method should start with s\\.T\\(\\)\\.Helper\\(\\)"
-	room, ok := s.rooms[roomID]
-	s.Require().True(ok)
+func (suite *GameRoomSuite) joinRoom(playerID, roomID int) { // want "suite-thelper: suite helper method should start with suite\\.T\\(\\)\\.Helper\\(\\)"
+	room, ok := suite.rooms[roomID]
+	suite.Require().True(ok)
 
-	player, ok := s.players[playerID]
-	s.Require().True(ok)
+	player, ok := suite.players[playerID]
+	suite.Require().True(ok)
 
 	err := room.AddPlayer(player)
-	s.Require().NoError(err)
+	suite.Require().NoError(err)
 }
 
 func (s *GameRoomSuite) assertPlayerNickName(playerID int, expectedNickname string) {

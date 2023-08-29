@@ -22,6 +22,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewErrorIs(),
 		checkers.NewRequireError(),
 		checkers.NewExpectedActual(),
+		checkers.NewSuiteExtraAssertCall(),
 		checkers.NewSuiteDontUsePkg(),
 	}
 
@@ -51,14 +52,14 @@ func Test_newCheckers(t *testing.T) {
 				EnabledCheckers: config.KnownCheckersValue{
 					checkers.NewSuiteTHelper().Name(),
 					checkers.NewRequireError().Name(),
-					checkers.NewSuiteNoExtraAssertCall().Name(),
+					checkers.NewSuiteExtraAssertCall().Name(),
 					checkers.NewLen().Name(),
 				},
 			},
 			expRegular: []checkers.RegularChecker{
 				checkers.NewLen(),
 				checkers.NewRequireError(),
-				checkers.NewSuiteNoExtraAssertCall(),
+				checkers.NewSuiteExtraAssertCall(),
 			},
 			expAdvanced: []checkers.AdvancedChecker{
 				checkers.NewSuiteTHelper(),

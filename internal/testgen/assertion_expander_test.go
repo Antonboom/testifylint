@@ -50,11 +50,11 @@ func TestNewAssertionExpander(t *testing.T) {
 			assrn: Assertion{
 				Fn:            "True",
 				Argsf:         "%s == true",
-				ReportMsgf:    "need to simplify the check",
+				ReportMsgf:    "need to simplify the assertion",
 				ProposedArgsf: "%s",
 			},
-			expected:       `s.True(predicate == true) // want "need to simplify the check"`,
-			expectedGolden: `s.True(predicate) // want "need to simplify the check"`,
+			expected:       `s.True(predicate == true) // want "need to simplify the assertion"`,
+			expectedGolden: `s.True(predicate) // want "need to simplify the assertion"`,
 		},
 		{
 			name:     "report without formatting  proposed args only 2",
@@ -75,11 +75,11 @@ func TestNewAssertionExpander(t *testing.T) {
 			assrn: Assertion{
 				Fn:               "Equal",
 				Argsf:            "a, b",
-				ReportMsgf:       "need to simplify the check%.s%.s",
+				ReportMsgf:       "need to simplify the assertion%.s%.s",
 				ProposedSelector: "s",
 			},
-			expected:       `s.Assert().Equal(a, b) // want "need to simplify the check"`,
-			expectedGolden: `s.Equal(a, b) // want "need to simplify the check"`,
+			expected:       `s.Assert().Equal(a, b) // want "need to simplify the assertion"`,
+			expectedGolden: `s.Equal(a, b) // want "need to simplify the assertion"`,
 		},
 		{
 			name:     "report without formatting and without proposals",
