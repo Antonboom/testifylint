@@ -30,13 +30,14 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 	}
 
 	return struct {
-		CheckerName CheckerName
-		Typed       []literal
-		Untyped     []string
-		ExpVars     []string
-		Basic       test
-		Strings     test
-		NoDetection []Assertion
+		CheckerName    CheckerName
+		Typed          []literal
+		Untyped        []string
+		ExpVars        []string
+		Basic          test
+		Strings        test
+		NotDetected    []Assertion
+		RealLifeJSONEq Assertion
 	}{
 		CheckerName: CheckerName(checker),
 		Typed: []literal{
@@ -105,9 +106,15 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 				{Fn: "YAMLEq", Argsf: "%s, result"},
 			},
 		},
-		NoDetection: []Assertion{
+		NotDetected: []Assertion{
 			{Fn: "Equal", Argsf: "result, %s"},    // Invalid order, but no warning.
 			{Fn: "NotEqual", Argsf: "result, %s"}, // Invalid order, but no warning.
+		},
+		RealLifeJSONEq: Assertion{
+			Fn:            "JSONEq",
+			Argsf:         "string(body), string(expectedJSON)",
+			ReportMsgf:    report,
+			ProposedArgsf: "string(expectedJSON), string(body)",
 		},
 	}
 }
@@ -129,9 +136,13 @@ const expectedActualTestTmpl = header + `
 package {{ .CheckerName.AsPkgName }}
 
 import (
+	"encoding/json"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type testCase struct { expected string } //
@@ -233,6 +244,22 @@ func {{ .CheckerName.AsTestName }}_Strings(t *testing.T) {
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" (arr "data") }}
 		{{- end }}
 	}
+
+	// Real life case.
+	body, err := io.ReadAll(http.Response{}.Body)
+	require.NoError(t, err)
+
+	var expected = struct {
+		ID string
+		Name string
+	}{
+		ID: "1",
+		Name: "Anthony",
+	}
+	expectedJSON, err := json.Marshal(expected)
+	require.NoError(t, err)
+
+	{{ NewAssertionExpander.Expand $.RealLifeJSONEq "assert" "t" nil }}
 }
 
 func {{ .CheckerName.AsTestName }}_CannotDetectVariablesLookedLikeConsts(t *testing.T) {
@@ -253,7 +280,7 @@ func {{ .CheckerName.AsTestName }}_CannotDetectVariablesLookedLikeConsts(t *test
 	)
 
 	var result any
-	{{ range $ai, $assrn := $.NoDetection }}
+	{{ range $ai, $assrn := $.NotDetected }}
 		{{ range $vi, $var := $.Typed }}
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" (arr (printf "tc%d" $vi)) }}
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" (arr (printf "tc%dcasted" $vi)) }}

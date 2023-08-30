@@ -3,9 +3,13 @@
 package expectedactual
 
 import (
+	"encoding/json"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type testCase struct{ expected string } //
@@ -605,6 +609,23 @@ func TestExpectedActualChecker_Strings(t *testing.T) {
 		assert.YAMLEq(t, data, result)
 		assert.YAMLEqf(t, data, result, "msg with args %d %s", 42, "42")
 	}
+
+	// Real life case.
+	body, err := io.ReadAll(http.Response{}.Body)
+	require.NoError(t, err)
+
+	var expected = struct {
+		ID   string
+		Name string
+	}{
+		ID:   "1",
+		Name: "Anthony",
+	}
+	expectedJSON, err := json.Marshal(expected)
+	require.NoError(t, err)
+
+	assert.JSONEq(t, string(body), string(expectedJSON))                                   // want "expected-actual: need to reverse actual and expected values"
+	assert.JSONEqf(t, string(body), string(expectedJSON), "msg with args %d %s", 42, "42") // want "expected-actual: need to reverse actual and expected values"
 }
 
 func TestExpectedActualChecker_CannotDetectVariablesLookedLikeConsts(t *testing.T) {

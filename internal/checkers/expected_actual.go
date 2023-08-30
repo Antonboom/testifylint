@@ -79,7 +79,8 @@ func (checker ExpectedActual) isExpectedValueCandidate(pass *analysis.Pass, expr
 		return true
 
 	case *ast.CallExpr:
-		return isCastedBasicLit(v) || isExpectedValueFactory(v, checker.expVarPattern)
+		return isCastedBasicLitOrExpectedValue(v, checker.expVarPattern) ||
+			isExpectedValueFactory(v, checker.expVarPattern)
 	}
 
 	return isBasicLit(expr) ||
@@ -89,7 +90,7 @@ func (checker ExpectedActual) isExpectedValueCandidate(pass *analysis.Pass, expr
 		isStructFieldNamedAsExpected(checker.expVarPattern, expr)
 }
 
-func isCastedBasicLit(ce *ast.CallExpr) bool {
+func isCastedBasicLitOrExpectedValue(ce *ast.CallExpr, pattern *regexp.Regexp) bool {
 	if len(ce.Args) != 1 {
 		return false
 	}
@@ -107,7 +108,7 @@ func isCastedBasicLit(ce *ast.CallExpr) bool {
 		"int", "int8", "int16", "int32", "int64",
 		"float32", "float64",
 		"rune", "string":
-		return isBasicLit(ce.Args[0])
+		return isBasicLit(ce.Args[0]) || isIdentNamedAsExpected(pattern, ce.Args[0])
 	}
 	return false
 }
