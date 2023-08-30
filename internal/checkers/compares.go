@@ -54,7 +54,7 @@ func (checker Compares) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 			newSuggestedFuncReplacement(call, proposedFn, analysis.TextEdit{
 				Pos:     be.X.Pos(),
 				End:     be.Y.End(),
-				NewText: asCallArguments(pass, a, b),
+				NewText: formatAsCallArgs(pass, a, b),
 			}),
 		)
 	}
@@ -79,7 +79,8 @@ var tokenToProposedFnInsteadOfFalse = map[token.Token]string{
 	token.LEQ: "Greater",
 }
 
-func asCallArguments(pass *analysis.Pass, a, b ast.Node) []byte {
+// formatAsCallArgs joins a and b and return bytes like `a, b`.
+func formatAsCallArgs(pass *analysis.Pass, a, b ast.Node) []byte {
 	return bytes.Join([][]byte{
 		analysisutil.NodeBytes(pass.Fset, a),
 		analysisutil.NodeBytes(pass.Fset, b),

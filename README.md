@@ -71,8 +71,6 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
 
 ✅   assert.True(t, result)
      assert.False(t, result)
-     assert.False(t, result)
-     assert.True(t, result)
 ```
 
 **Autofix**: true. <br>
@@ -114,7 +112,6 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
      // And other variations around len(arr)...
 
 ✅   assert.Empty(t, arr)
-     assert.Empty(t, arr)
 ```
 
 **Autofix**: true. <br>
@@ -126,8 +123,10 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
 ### error-is
 
 ```go
-❌   assert.Error(t, err, errSentinel)
+❌   assert.Error(t, err, errSentinel) // Typo, errSentinel hits `msgAndArgs`.
      assert.NoError(t, err, errSentinel)
+     assert.True(t, errors.Is(err, errSentinel))
+     assert.False(t, errors.Is(err, errSentinel))
 
 ✅   assert.ErrorIs(t, err, errSentinel)
      assert.NotErrorIs(t, err, errSentinel)
@@ -135,7 +134,7 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
-**Reason**: A common mistake that leads to hiding the incorrect wrapping of sentinel errors.
+**Reason**: In the first two cases, a common mistake that leads to hiding the incorrect wrapping of sentinel errors.
 
 ---
 
@@ -144,6 +143,8 @@ $ testifylint --enable=expected-actual  -expected-actual.pattern=^wanted$ ./...
 ```go
 ❌   assert.Nil(t, err)
      assert.NotNil(t, err)
+     assert.Equal(t, err, nil)
+     assert.NotEqual(t, err, nil)
 
 ✅   assert.NoError(t, err)
      assert.Error(t, err)
@@ -188,9 +189,8 @@ It is planned [to change the order of assertion arguments](https://github.com/st
      assert.True(t, a == 42.42)
      assert.False(t, a != 42.42)
 	
-✅   assert.InEpsilon(t, 42.42, a, 0.0001) // Or assert.InDelta
-     assert.InEpsilon(t, 42.42, a, 0.01)
-     assert.InEpsilon(t, 42.42, a, 0.001)
+✅   assert.InEpsilon(t, 42.42, a, 0.0001)
+     assert.InDelta(t, 42.42, a, 0.01)
 ```
 
 **Autofix**: false. <br>

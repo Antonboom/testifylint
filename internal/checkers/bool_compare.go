@@ -218,12 +218,9 @@ func isComparisonWithFalse(pass *analysis.Pass, e ast.Expr, op token.Token) (ast
 	return isComparisonWith(pass, e, isUntypedFalse, op)
 }
 
-func isComparisonWith(
-	pass *analysis.Pass,
-	e ast.Expr,
-	predicate func(pass *analysis.Pass, e ast.Expr) bool,
-	op token.Token,
-) (ast.Expr, bool) {
+type predicate func(pass *analysis.Pass, e ast.Expr) bool
+
+func isComparisonWith(pass *analysis.Pass, e ast.Expr, predicate predicate, op token.Token) (ast.Expr, bool) {
 	be, ok := e.(*ast.BinaryExpr)
 	if !ok {
 		return nil, false

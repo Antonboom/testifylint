@@ -151,15 +151,19 @@ Fix linter issues and broken tests (probably related to the checkers registry).
 ```go
 ❌   assert.ErrorContains(t, err, "not found")
      assert.EqualError(t, err, "user not found")
+     assert.Equal(t, err.Error(), "user not found")
+     assert.Equal(t, err, errSentinel) // Through `reflect.DeepEqual` causes error strings to be compared.
+     assert.NotEqual(t, err, errSentinel)
      // etc.
 
-✅   assert.ErrorIs(t, err, ErrNotFound)
-     assert.ErrorIs(t, err, ErrUserNotFound)
+✅   assert.ErrorIs(t, err, ErrUserNotFound)
 ```
 
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
 **Reason**: The `Error()` method on the `error` interface exists for humans, not code.
+
+Maybe to merge with [error-is](README.md#error-is), but I am not sure.
 
 ---
 

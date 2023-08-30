@@ -51,6 +51,12 @@ func (g ErrorTestsGenerator) TemplateData() any {
 		InvalidAssertions: []Assertion{
 			{Fn: "Nil", Argsf: "err", ReportMsgf: report, ProposedFn: "NoError"},
 			{Fn: "NotNil", Argsf: "err", ReportMsgf: report, ProposedFn: "Error"},
+
+			{Fn: "Equal", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
+			{Fn: "Equal", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
+
+			{Fn: "NotEqual", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
+			{Fn: "NotEqual", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "NoError", Argsf: "err"},

@@ -35,7 +35,7 @@ func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnost
 				newSuggestedFuncReplacement(call, "Len", analysis.TextEdit{
 					Pos:     a.Pos(),
 					End:     b.End(),
-					NewText: asCallArguments(pass, lenArg, targetVal),
+					NewText: formatAsCallArgs(pass, lenArg, targetVal),
 				}),
 			)
 		}
@@ -51,7 +51,7 @@ func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnost
 				newSuggestedFuncReplacement(call, "Len", analysis.TextEdit{
 					Pos:     expr.Pos(),
 					End:     expr.End(),
-					NewText: asCallArguments(pass, lenArg, targetVal),
+					NewText: formatAsCallArgs(pass, lenArg, targetVal),
 				}),
 			)
 		}

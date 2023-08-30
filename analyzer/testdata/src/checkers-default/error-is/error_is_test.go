@@ -15,14 +15,20 @@ func TestErrorIsChecker(t *testing.T) {
 
 	// Invalid.
 	{
-		assert.Error(t, err, errSentinel)                                    // want "error-is: invalid usage of assert\\.Error, use assert\\.ErrorIs instead"
-		assert.Error(t, err, errSentinel, "msg")                             // want "error-is: invalid usage of assert\\.Error, use assert\\.ErrorIs instead"
-		assert.Error(t, err, errSentinel, "msg with arg %d", 42)             // want "error-is: invalid usage of assert\\.Error, use assert\\.ErrorIs instead"
-		assert.Error(t, err, errSentinel, "msg with args %d %s", 42, "42")   // want "error-is: invalid usage of assert\\.Error, use assert\\.ErrorIs instead"
+		assert.Error(t, err, errSentinel)                                  // want "error-is: invalid usage of assert\\.Error, use assert\\.ErrorIs instead"
+		assert.Error(t, err, errSentinel, "msg")                           // want "error-is: invalid usage of assert\\.Error, use assert\\.ErrorIs instead"
+		assert.Error(t, err, errSentinel, "msg with arg %d", 42)           // want "error-is: invalid usage of assert\\.Error, use assert\\.ErrorIs instead"
+		assert.Error(t, err, errSentinel, "msg with args %d %s", 42, "42") // want "error-is: invalid usage of assert\\.Error, use assert\\.ErrorIs instead"
+
 		assert.NoError(t, err, errSentinel)                                  // want "error-is: invalid usage of assert\\.NoError, use assert\\.NotErrorIs instead"
 		assert.NoError(t, err, errSentinel, "msg")                           // want "error-is: invalid usage of assert\\.NoError, use assert\\.NotErrorIs instead"
 		assert.NoError(t, err, errSentinel, "msg with arg %d", 42)           // want "error-is: invalid usage of assert\\.NoError, use assert\\.NotErrorIs instead"
 		assert.NoError(t, err, errSentinel, "msg with args %d %s", 42, "42") // want "error-is: invalid usage of assert\\.NoError, use assert\\.NotErrorIs instead"
+
+		assert.True(t, errors.Is(err, errSentinel))                                    // want "error-is: use assert\\.ErrorIs"
+		assert.Truef(t, errors.Is(err, errSentinel), "msg with args %d %s", 42, "42")  // want "error-is: use assert\\.ErrorIsf"
+		assert.False(t, errors.Is(err, errSentinel))                                   // want "error-is: use assert\\.NotErrorIs"
+		assert.Falsef(t, errors.Is(err, errSentinel), "msg with args %d %s", 42, "42") // want "error-is: use assert\\.NotErrorIsf"
 	}
 
 	// Valid.
@@ -34,6 +40,7 @@ func TestErrorIsChecker(t *testing.T) {
 		assert.Errorf(t, err, "msg")
 		assert.Errorf(t, err, "msg with arg %d", 42)
 		assert.Errorf(t, err, "msg with args %d %s", 42, "42")
+
 		assert.ErrorIs(t, err, errSentinel)
 		assert.ErrorIs(t, err, errSentinel, "msg")
 		assert.ErrorIs(t, err, errSentinel, "msg with arg %d", 42)
@@ -41,6 +48,7 @@ func TestErrorIsChecker(t *testing.T) {
 		assert.ErrorIsf(t, err, errSentinel, "msg")
 		assert.ErrorIsf(t, err, errSentinel, "msg with arg %d", 42)
 		assert.ErrorIsf(t, err, errSentinel, "msg with args %d %s", 42, "42")
+
 		assert.NoError(t, err)
 		assert.NoError(t, err, "msg")
 		assert.NoError(t, err, "msg with arg %d", 42)
@@ -48,6 +56,7 @@ func TestErrorIsChecker(t *testing.T) {
 		assert.NoErrorf(t, err, "msg")
 		assert.NoErrorf(t, err, "msg with arg %d", 42)
 		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42")
+
 		assert.NotErrorIs(t, err, errSentinel)
 		assert.NotErrorIs(t, err, errSentinel, "msg")
 		assert.NotErrorIs(t, err, errSentinel, "msg with arg %d", 42)

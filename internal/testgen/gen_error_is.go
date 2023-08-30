@@ -35,6 +35,20 @@ func (g ErrorIsTestsGenerator) TemplateData() any {
 				ReportMsgf: checker + ": invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead",
 				ProposedFn: "NotErrorIs",
 			},
+			{
+				Fn:            "True",
+				Argsf:         "errors.Is(err, errSentinel)",
+				ReportMsgf:    checker + ": use %s.%s",
+				ProposedFn:    "ErrorIs",
+				ProposedArgsf: "err, errSentinel",
+			},
+			{
+				Fn:            "False",
+				Argsf:         "errors.Is(err, errSentinel)",
+				ReportMsgf:    checker + ": use %s.%s",
+				ProposedFn:    "NotErrorIs",
+				ProposedArgsf: "err, errSentinel",
+			},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "Error", Argsf: "err"},
@@ -76,7 +90,11 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	// Invalid.
 	{
 		{{- range $ai, $assrn := $.InvalidAssertions }}
-			{{ NewAssertionExpander.NotFmtSetMode.Expand $assrn "assert" "t" nil }}
+			{{- if or (eq $assrn.Fn "Error") (eq $assrn.Fn "NoError") }}
+				{{ NewAssertionExpander.NotFmtSetMode.Expand $assrn "assert" "t" nil }}
+			{{ else }}
+				{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+			{{- end }}
 		{{- end }}
 	}
 
@@ -84,7 +102,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	{
 		{{- range $ai, $assrn := $.ValidAssertions }}
 			{{ NewAssertionExpander.FullMode.Expand $assrn "assert" "t" nil }}
-		{{- end }}
+		{{ end -}}
 	}
 }
 `
