@@ -36,7 +36,7 @@ func (kcv *KnownCheckersValue) Set(v string) error {
 }
 
 // RegexpValue is a special wrapper for support of flag.FlagSet over regexp.Regexp.
-// Original regexp is available through Regexp.Regexp.
+// Original regexp is available through RegexpValue.Regexp.
 type RegexpValue struct {
 	*regexp.Regexp
 }

@@ -44,6 +44,11 @@ linters-settings:
     excludes:
       - "G306" # Expect WriteFile permissions to be 0600 or less
 
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
+
   gci:
     sections:
       - standard

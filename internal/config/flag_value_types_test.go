@@ -71,7 +71,7 @@ func TestRegexp_Set(t *testing.T) {
 		{
 			name:     "valid regexp",
 			input:    `^expected$`,
-			expected: config.RegexpValue{regexp.MustCompile(`^expected$`)},
+			expected: config.RegexpValue{Regexp: regexp.MustCompile(`^expected$`)},
 		},
 		{
 			name:    "invalid regexp",
@@ -142,6 +142,18 @@ func TestEnumValue(t *testing.T) {
 func Test_EnumValue_String_ZeroValue(t *testing.T) {
 	var ev config.EnumValue[int]
 	if ev.String() != "" {
+		t.Fatal()
+	}
+}
+
+func Test_EnumValue_String_UnknownDefault(t *testing.T) {
+	var business int
+	v := config.NewEnumValue(map[string]int{
+		"b2c": 1,
+		"b2b": 2,
+	}, &business)
+
+	if v.String() != "" {
 		t.Fatal()
 	}
 }

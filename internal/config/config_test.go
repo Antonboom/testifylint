@@ -22,17 +22,20 @@ func TestNewDefault(t *testing.T) {
 
 func TestBindToFlags(t *testing.T) {
 	cfg := config.NewDefault()
-	fs := flag.NewFlagSet("bind-to-flags-test", flag.PanicOnError)
+	fs := flag.NewFlagSet("TestBindToFlags", flag.PanicOnError)
 
 	config.BindToFlags(&cfg, fs)
 
-	if fs.Lookup("enable-all").DefValue != "false" {
-		t.Fatal()
-	}
-	if fs.Lookup("enable").DefValue != strings.Join(cfg.EnabledCheckers, ",") {
-		t.Fatal()
-	}
-	if fs.Lookup("expected-actual.pattern").DefValue != cfg.ExpectedActual.ExpVarPattern.String() {
-		t.Fatal()
+	for flagName, defaultVal := range map[string]string{
+		"enable-all":                   "false",
+		"enable":                       strings.Join(cfg.EnabledCheckers, ","),
+		"expected-actual.pattern":      cfg.ExpectedActual.ExpVarPattern.String(),
+		"suite-extra-assert-call.mode": "remove",
+	} {
+		t.Run(flagName, func(t *testing.T) {
+			if v := fs.Lookup(flagName).DefValue; v != defaultVal {
+				t.Fatal(v)
+			}
+		})
 	}
 }
