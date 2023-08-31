@@ -17,21 +17,30 @@ func TestTestifyLint(t *testing.T) {
 		dir   string
 		flags map[string]string
 	}{
-		{dir: "base-test", flags: map[string]string{"enable": checkers.NewBoolCompare().Name()}},
-		{dir: "ginkgo"},
-		{dir: "pkg-alias"},
 		{
-			dir: "suite-require-extra-assert-call",
-			flags: map[string]string{
-				"enable":                       checkers.NewSuiteExtraAssertCall().Name(),
-				"suite-extra-assert-call.mode": "require",
-			},
+			dir:   "base-test",
+			flags: map[string]string{"enable": checkers.NewBoolCompare().Name()},
+		},
+		{
+			dir:   "checkers-priority",
+			flags: map[string]string{"enable-all": "true"},
 		},
 		{
 			dir: "expected-var-custom-pattern",
 			flags: map[string]string{
 				"enable":                  checkers.NewExpectedActual().Name(),
 				"expected-actual.pattern": "goldenValue",
+			},
+		},
+		{dir: "ginkgo"},
+		{dir: "not-test-file"},    // We ignores regular files.
+		{dir: "not-true-testify"}, // We ignores stretchr/testify's forks.
+		{dir: "pkg-alias"},
+		{
+			dir: "suite-require-extra-assert-call",
+			flags: map[string]string{
+				"enable":                       checkers.NewSuiteExtraAssertCall().Name(),
+				"suite-extra-assert-call.mode": "require",
 			},
 		},
 	}

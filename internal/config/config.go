@@ -42,11 +42,11 @@ func BindToFlags(cfg *Config, fs *flag.FlagSet) {
 	fs.BoolVar(&cfg.EnableAll, "enable-all", false, "enable all checkers")
 	fs.Var(&cfg.EnabledCheckers, "enable", "comma separated list of enabled checkers")
 	fs.Var(&cfg.ExpectedActual.ExpVarPattern, "expected-actual.pattern", "regexp for expected variable name")
-	fs.Var(NewEnumValue(suiteExtraAssertCallAsString, &cfg.SuiteExtraAssertCall.Mode),
+	fs.Var(NewEnumValue(suiteExtraAssertCallModeAsString, &cfg.SuiteExtraAssertCall.Mode),
 		"suite-extra-assert-call.mode", "to require or remove extra Assert() call")
 }
 
-var suiteExtraAssertCallAsString = map[string]checkers.SuiteExtraAssertCallMode{
+var suiteExtraAssertCallModeAsString = map[string]checkers.SuiteExtraAssertCallMode{
 	"remove":  checkers.SuiteExtraAssertCallModeRemove,
 	"require": checkers.SuiteExtraAssertCallModeRequire,
 }

@@ -162,6 +162,7 @@ func isTestingTPtr(pass *analysis.Pass, isAssert bool, arg ast.Expr) bool {
 		pkgPath = testify.AssertPkgPath
 	}
 
+	//
 	testingInterfaceObj := analysisutil.ObjectOf(pass.Pkg, pkgPath, "TestingT")
 	if testingInterfaceObj == nil {
 		return false
