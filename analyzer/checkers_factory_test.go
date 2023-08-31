@@ -25,6 +25,19 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewSuiteExtraAssertCall(),
 		checkers.NewSuiteDontUsePkg(),
 	}
+	allRegularCheckers := []checkers.RegularChecker{
+		checkers.NewFloatCompare(),
+		checkers.NewBoolCompare(),
+		checkers.NewEmpty(),
+		checkers.NewLen(),
+		checkers.NewCompares(),
+		checkers.NewErrorNil(),
+		checkers.NewErrorIs(),
+		checkers.NewRequireError(),
+		checkers.NewExpectedActual(),
+		checkers.NewSuiteExtraAssertCall(),
+		checkers.NewSuiteDontUsePkg(),
+	}
 
 	cases := []struct {
 		name        string
@@ -47,6 +60,17 @@ func Test_newCheckers(t *testing.T) {
 			expAdvanced: []checkers.AdvancedChecker{},
 		},
 		{
+			name: "no enabled checkers but enable-all true",
+			cfg: config.Config{
+				EnabledCheckers: []string{},
+				EnableAll:       true,
+			},
+			expRegular: allRegularCheckers,
+			expAdvanced: []checkers.AdvancedChecker{
+				checkers.NewSuiteTHelper(),
+			},
+		},
+		{
 			name: "enabled checkers defined",
 			cfg: config.Config{
 				EnabledCheckers: config.KnownCheckersValue{
@@ -66,6 +90,22 @@ func Test_newCheckers(t *testing.T) {
 			},
 		},
 		{
+			name: "enabled checkers defined but enable-all true",
+			cfg: config.Config{
+				EnabledCheckers: config.KnownCheckersValue{
+					checkers.NewSuiteTHelper().Name(),
+					checkers.NewRequireError().Name(),
+					checkers.NewSuiteExtraAssertCall().Name(),
+					checkers.NewLen().Name(),
+				},
+				EnableAll: true,
+			},
+			expRegular: allRegularCheckers,
+			expAdvanced: []checkers.AdvancedChecker{
+				checkers.NewSuiteTHelper(),
+			},
+		},
+		{
 			name: "expected-actual pattern defined",
 			cfg: config.Config{
 				EnabledCheckers: config.KnownCheckersValue{checkers.NewExpectedActual().Name()},
@@ -75,6 +115,19 @@ func Test_newCheckers(t *testing.T) {
 			},
 			expRegular: []checkers.RegularChecker{
 				checkers.NewExpectedActual().SetExpVarPattern(pattern),
+			},
+			expAdvanced: []checkers.AdvancedChecker{},
+		},
+		{
+			name: "suite-extra-assert-call mode defined",
+			cfg: config.Config{
+				EnabledCheckers: config.KnownCheckersValue{checkers.NewSuiteExtraAssertCall().Name()},
+				SuiteExtraAssertCall: config.SuiteExtraAssertCallConfig{
+					Mode: checkers.SuiteExtraAssertCallModeRequire,
+				},
+			},
+			expRegular: []checkers.RegularChecker{
+				checkers.NewSuiteExtraAssertCall().SetMode(checkers.SuiteExtraAssertCallModeRequire),
 			},
 			expAdvanced: []checkers.AdvancedChecker{},
 		},

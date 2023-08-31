@@ -7,7 +7,7 @@ import (
 	"github.com/Antonboom/testifylint/internal/config"
 )
 
-// newCheckers accepts linter config and returns slices of enabled checkers.
+// newCheckers accepts linter config and returns slices of enabled checkers sorted by priority.
 func newCheckers(cfg config.Config) ([]checkers.RegularChecker, []checkers.AdvancedChecker, error) {
 	enabledCheckers := cfg.EnabledCheckers
 	if len(enabledCheckers) == 0 {
