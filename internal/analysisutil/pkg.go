@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// IsPkg checks that package has corresponding objName & path.
+// IsPkg checks that package has corresponding objName and path.
 // Supports vendored packages.
 func IsPkg(pkg *types.Package, name, path string) bool {
 	return pkg.Name() == name && trimVendor(pkg.Path()) == path

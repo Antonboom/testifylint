@@ -5,8 +5,8 @@ import (
 	"go/types"
 )
 
-// ObjectOf works in context of Golang package and returns types.Object for the given object package and objName.
-// The search is based on the current package and its dependencies (imports).
+// ObjectOf works in context of Golang package and returns types.Object for the given object's package and name.
+// The search is based on the provided package and its dependencies (imports).
 // Returns nil if the object is not found.
 func ObjectOf(pkg *types.Package, objPkg, objName string) types.Object {
 	if pkg.Path() == objPkg {

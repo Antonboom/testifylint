@@ -52,7 +52,7 @@ func TestIsTestFile(t *testing.T) {
 	}
 }
 
-func TestIsTestFile_AlienFileSet(t *testing.T) {
+func TestIsTestFile_FileIsNotInFileSet(t *testing.T) {
 	file, err := parser.ParseFile(token.NewFileSet(), "service_test.go", "package service_test", parser.PackageClauseOnly)
 	if err != nil {
 		t.Fatal(err)
