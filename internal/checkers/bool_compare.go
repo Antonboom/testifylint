@@ -13,14 +13,15 @@ import (
 // BoolCompare detects situations like
 //
 //	assert.Equal(t, false, result)
+//	assert.NotEqual(t, result, true)
 //	assert.False(t, !result)
+//	assert.True(t, result == true)
 //	...
 //
 // and requires
 //
 //	assert.False(t, result)
 //	assert.True(t, result)
-//	...
 type BoolCompare struct{} //
 
 // NewBoolCompare constructs BoolCompare checker.
@@ -28,10 +29,36 @@ func NewBoolCompare() BoolCompare { return BoolCompare{} }
 func (BoolCompare) Name() string  { return "bool-compare" }
 
 func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	const (
-		needSimplifyMsg  = "need to simplify the assertion"
-		simplifyCheckMsg = "Simplify the assertion"
-	)
+	newUseFnDiagnostic := func(proposed string, survivingArg ast.Node, replaceStart, replaceEnd token.Pos) *analysis.Diagnostic {
+		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
+			newSuggestedFuncReplacement(call, proposed, analysis.TextEdit{
+				Pos:     replaceStart,
+				End:     replaceEnd,
+				NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
+			}),
+		)
+	}
+
+	newUseTrueDiagnostic := func(survivingArg ast.Node, replaceStart, replaceEnd token.Pos) *analysis.Diagnostic {
+		return newUseFnDiagnostic("True", survivingArg, replaceStart, replaceEnd)
+	}
+
+	newUseFalseDiagnostic := func(survivingArg ast.Node, replaceStart, replaceEnd token.Pos) *analysis.Diagnostic {
+		return newUseFnDiagnostic("False", survivingArg, replaceStart, replaceEnd)
+	}
+
+	newNeedSimplifyDiagnostic := func(survivingArg ast.Node, replaceStart, replaceEnd token.Pos) *analysis.Diagnostic {
+		return newDiagnostic(checker.Name(), call, "need to simplify the assertion",
+			&analysis.SuggestedFix{
+				Message: "Simplify the assertion",
+				TextEdits: []analysis.TextEdit{{
+					Pos:     replaceStart,
+					End:     replaceEnd,
+					NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
+				}},
+			},
+		)
+	}
 
 	switch call.Fn.Name {
 	case "Equal", "Equalf":
@@ -45,32 +72,12 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 
 		switch {
 		case xor(t1, t2):
-			survivingArg := arg1
-			if t1 {
-				survivingArg = arg2
-			}
-
-			return newUseFunctionDiagnostic(checker.Name(), call, "True",
-				newSuggestedFuncReplacement(call, "True", analysis.TextEdit{
-					Pos:     arg1.Pos(),
-					End:     arg2.End(),
-					NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
-				}),
-			)
+			survivingArg, _ := anyVal([]bool{t1, t2}, arg2, arg1)
+			return newUseTrueDiagnostic(survivingArg, arg1.Pos(), arg2.End())
 
 		case xor(f1, f2):
-			survivingArg := arg1
-			if f1 {
-				survivingArg = arg2
-			}
-
-			return newUseFunctionDiagnostic(checker.Name(), call, "False",
-				newSuggestedFuncReplacement(call, "False", analysis.TextEdit{
-					Pos:     arg1.Pos(),
-					End:     arg2.End(),
-					NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
-				}),
-			)
+			survivingArg, _ := anyVal([]bool{f1, f2}, arg2, arg1)
+			return newUseFalseDiagnostic(survivingArg, arg1.Pos(), arg2.End())
 		}
 
 	case "NotEqual", "NotEqualf":
@@ -84,39 +91,18 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 
 		switch {
 		case xor(t1, t2):
-			survivingArg := arg1
-			if t1 {
-				survivingArg = arg2
-			}
-
-			return newUseFunctionDiagnostic(checker.Name(), call, "False",
-				newSuggestedFuncReplacement(call, "False", analysis.TextEdit{
-					Pos:     arg1.Pos(),
-					End:     arg2.End(),
-					NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
-				}),
-			)
+			survivingArg, _ := anyVal([]bool{t1, t2}, arg2, arg1)
+			return newUseFalseDiagnostic(survivingArg, arg1.Pos(), arg2.End())
 
 		case xor(f1, f2):
-			survivingArg := arg1
-			if f1 {
-				survivingArg = arg2
-			}
-
-			return newUseFunctionDiagnostic(checker.Name(), call, "True",
-				newSuggestedFuncReplacement(call, "True", analysis.TextEdit{
-					Pos:     arg1.Pos(),
-					End:     arg2.End(),
-					NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
-				}),
-			)
+			survivingArg, _ := anyVal([]bool{f1, f2}, arg2, arg1)
+			return newUseTrueDiagnostic(survivingArg, arg1.Pos(), arg2.End())
 		}
 
 	case "True", "Truef":
 		if len(call.Args) < 1 {
 			return nil
 		}
-
 		expr := call.Args[0]
 
 		{
@@ -124,16 +110,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			arg2, ok2 := isComparisonWithFalse(pass, expr, token.NEQ)
 
 			if survivingArg, ok := anyVal([]bool{ok1, ok2}, arg1, arg2); ok {
-				return newDiagnostic(checker.Name(), call, needSimplifyMsg,
-					&analysis.SuggestedFix{
-						Message: simplifyCheckMsg,
-						TextEdits: []analysis.TextEdit{{
-							Pos:     expr.Pos(),
-							End:     expr.End(),
-							NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
-						}},
-					},
-				)
+				return newNeedSimplifyDiagnostic(survivingArg, expr.Pos(), expr.End())
 			}
 		}
 
@@ -143,13 +120,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			arg3, ok3 := isNegation(expr)
 
 			if survivingArg, ok := anyVal([]bool{ok1, ok2, ok3}, arg1, arg2, arg3); ok {
-				return newUseFunctionDiagnostic(checker.Name(), call, "False",
-					newSuggestedFuncReplacement(call, "False", analysis.TextEdit{
-						Pos:     expr.Pos(),
-						End:     expr.End(),
-						NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
-					}),
-				)
+				return newUseFalseDiagnostic(survivingArg, expr.Pos(), expr.End())
 			}
 		}
 
@@ -157,7 +128,6 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 		if len(call.Args) < 1 {
 			return nil
 		}
-
 		expr := call.Args[0]
 
 		{
@@ -165,16 +135,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			arg2, ok2 := isComparisonWithFalse(pass, expr, token.NEQ)
 
 			if survivingArg, ok := anyVal([]bool{ok1, ok2}, arg1, arg2); ok {
-				return newDiagnostic(checker.Name(), call, needSimplifyMsg,
-					&analysis.SuggestedFix{
-						Message: simplifyCheckMsg,
-						TextEdits: []analysis.TextEdit{{
-							Pos:     expr.Pos(),
-							End:     expr.End(),
-							NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
-						}},
-					},
-				)
+				return newNeedSimplifyDiagnostic(survivingArg, expr.Pos(), expr.End())
 			}
 		}
 
@@ -184,13 +145,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			arg3, ok3 := isNegation(expr)
 
 			if survivingArg, ok := anyVal([]bool{ok1, ok2, ok3}, arg1, arg2, arg3); ok {
-				return newUseFunctionDiagnostic(checker.Name(), call, "True",
-					newSuggestedFuncReplacement(call, "True", analysis.TextEdit{
-						Pos:     expr.Pos(),
-						End:     expr.End(),
-						NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
-					}),
-				)
+				return newUseTrueDiagnostic(survivingArg, expr.Pos(), expr.End())
 			}
 		}
 	}
@@ -251,6 +206,7 @@ func xor(a, b bool) bool {
 	return a != b
 }
 
+// anyVal returns the first value[i] for which bools[i] is true.
 func anyVal[T any](bools []bool, vals ...T) (T, bool) {
 	if len(bools) != len(vals) {
 		panic("inconsistent usage of valOr")

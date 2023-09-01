@@ -81,3 +81,30 @@ func TestBoolCompareChecker(t *testing.T) {
 		assert.Falsef(t, predicate, "msg with args %d %s", 42, "42")
 	}
 }
+
+func TestBoolCompareChecker_IgnoresStrangeCases(t *testing.T) {
+	assert.Equal(t, true, true)
+	assert.Equalf(t, true, true, "msg with args %d %s", 42, "42")
+	assert.Equal(t, false, false)
+	assert.Equalf(t, false, false, "msg with args %d %s", 42, "42")
+	assert.NotEqual(t, true, true)
+	assert.NotEqualf(t, true, true, "msg with args %d %s", 42, "42")
+	assert.NotEqual(t, false, false)
+	assert.NotEqualf(t, false, false, "msg with args %d %s", 42, "42")
+	assert.True(t, true == true)
+	assert.Truef(t, true == true, "msg with args %d %s", 42, "42")
+	assert.True(t, false == false)
+	assert.Truef(t, false == false, "msg with args %d %s", 42, "42")
+	assert.False(t, true == true)
+	assert.Falsef(t, true == true, "msg with args %d %s", 42, "42")
+	assert.False(t, false == false)
+	assert.Falsef(t, false == false, "msg with args %d %s", 42, "42")
+	assert.True(t, true != true)
+	assert.Truef(t, true != true, "msg with args %d %s", 42, "42")
+	assert.True(t, false != false)
+	assert.Truef(t, false != false, "msg with args %d %s", 42, "42")
+	assert.False(t, true != true)
+	assert.Falsef(t, true != true, "msg with args %d %s", 42, "42")
+	assert.False(t, false != false)
+	assert.Falsef(t, false != false, "msg with args %d %s", 42, "42")
+}

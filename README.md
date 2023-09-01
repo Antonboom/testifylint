@@ -65,9 +65,9 @@ $ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=re
 
 ```go
 ❌   assert.Equal(t, true, result)
-     assert.Equal(t, false, result)
      assert.NotEqual(t, true, result)
      assert.False(t, !result)
+     assert.True(t, result == true)
      // And other variations...
 
 ✅   assert.True(t, result)
