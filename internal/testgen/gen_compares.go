@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"go/token"
 	"strings"
 	"text/template"
 
@@ -19,10 +21,20 @@ func (g ComparesTestsGenerator) TemplateData() any {
 		report  = checker + ": use %s.%s"
 	)
 
+	boolOps := []token.Token{token.LAND, token.LOR}
+	ignored := make([]Assertion, 0, len(boolOps)*2)
+	for _, tok := range boolOps {
+		ignored = append(ignored,
+			Assertion{Fn: "True", Argsf: fmt.Sprintf("a %s b", tok)},
+			Assertion{Fn: "False", Argsf: fmt.Sprintf("b %s a", tok)},
+		)
+	}
+
 	return struct {
 		CheckerName       CheckerName
 		InvalidAssertions []Assertion
 		ValidAssertions   []Assertion
+		Ignored           []Assertion
 	}{
 		CheckerName: CheckerName(checker),
 		InvalidAssertions: []Assertion{
@@ -48,6 +60,7 @@ func (g ComparesTestsGenerator) TemplateData() any {
 			{Fn: "Less", Argsf: "a, b"},
 			{Fn: "LessOrEqual", Argsf: "a, b"},
 		},
+		Ignored: ignored,
 	}
 }
 
@@ -89,5 +102,13 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 		{{- end }}
 	}
+}
+
+func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
+	var a, b bool
+
+	{{ range $ai, $assrn := $.Ignored }}
+		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+	{{- end }}
 }
 `

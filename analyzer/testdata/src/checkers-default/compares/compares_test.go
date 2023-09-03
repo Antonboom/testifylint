@@ -55,3 +55,16 @@ func TestComparesChecker(t *testing.T) {
 		assert.LessOrEqualf(t, a, b, "msg with args %d %s", 42, "42")
 	}
 }
+
+func TestComparesChecker_Ignored(t *testing.T) {
+	var a, b bool
+
+	assert.True(t, a && b)
+	assert.Truef(t, a && b, "msg with args %d %s", 42, "42")
+	assert.False(t, b && a)
+	assert.Falsef(t, b && a, "msg with args %d %s", 42, "42")
+	assert.True(t, a || b)
+	assert.Truef(t, a || b, "msg with args %d %s", 42, "42")
+	assert.False(t, b || a)
+	assert.Falsef(t, b || a, "msg with args %d %s", 42, "42")
+}

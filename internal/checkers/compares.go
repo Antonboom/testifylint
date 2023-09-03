@@ -12,15 +12,22 @@ import (
 
 // Compares detects situations like
 //
+//	assert.True(t, a == b)
+//	assert.True(t, a != b)
+//	assert.True(t, a > b)
 //	assert.True(t, a >= b)
-//	assert.False(t, a != b)
-//	...
+//	assert.True(t, a < b)
+//	assert.True(t, a <= b)
+//	 ...
 //
 // and requires
 //
-//	assert.GreaterOrEqual(t, a, b)
 //	assert.Equal(t, a, b)
-//	...
+//	assert.NotEqual(t, a, b)
+//	assert.Greater(t, a, b)
+//	assert.GreaterOrEqual(t, a, b)
+//	assert.Less(t, a, b)
+//	assert.LessOrEqual(t, a, b)
 type Compares struct{}
 
 // NewCompares constructs Compares checker.
