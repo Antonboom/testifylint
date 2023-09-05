@@ -7,13 +7,13 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-type ErrorIsTestsGenerator struct{}
+type ErrorIsAsTestsGenerator struct{}
 
-func (ErrorIsTestsGenerator) Checker() checkers.Checker {
-	return checkers.NewErrorIs()
+func (ErrorIsAsTestsGenerator) Checker() checkers.Checker {
+	return checkers.NewErrorIsAs()
 }
 
-func (g ErrorIsTestsGenerator) TemplateData() any {
+func (g ErrorIsAsTestsGenerator) TemplateData() any {
 	checker := g.Checker().Name()
 
 	return struct {
@@ -49,29 +49,48 @@ func (g ErrorIsTestsGenerator) TemplateData() any {
 				ProposedFn:    "NotErrorIs",
 				ProposedArgsf: "err, errSentinel",
 			},
+			{
+				Fn:            "True",
+				Argsf:         "errors.As(err, &target)",
+				ReportMsgf:    checker + ": use %s.%s",
+				ProposedFn:    "ErrorAs",
+				ProposedArgsf: "err, &target",
+			},
+			/*
+				https://github.com/stretchr/testify/issues/1066
+				{
+					Fn:            "False",
+					Argsf:         "errors.As(err, &target)",
+					ReportMsgf:    checker + ": use %s.%s",
+					ProposedFn:    "NotErrorAs",
+					ProposedArgsf: "err, &target",
+				},
+			*/
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "Error", Argsf: "err"},
 			{Fn: "ErrorIs", Argsf: "err, errSentinel"},
 			{Fn: "NoError", Argsf: "err"},
 			{Fn: "NotErrorIs", Argsf: "err, errSentinel"},
+			{Fn: "ErrorAs", Argsf: "err, &target"},
+			// {Fn: "NotErrorAs", Argsf: "err, &target"},
 		},
 	}
 }
 
-func (ErrorIsTestsGenerator) ErroredTemplate() Executor {
-	return template.Must(template.New("ErrorIsTestsGenerator.ErroredTemplate").
+func (ErrorIsAsTestsGenerator) ErroredTemplate() Executor {
+	return template.Must(template.New("ErrorIsAsTestsGenerator.ErroredTemplate").
 		Funcs(fm).
-		Parse(errorIsTestTmpl))
+		Parse(errorIsAsTestTmpl))
 }
 
-func (ErrorIsTestsGenerator) GoldenTemplate() Executor {
-	return template.Must(template.New("ErrorIsTestsGenerator.GoldenTemplate").
+func (ErrorIsAsTestsGenerator) GoldenTemplate() Executor {
+	return template.Must(template.New("ErrorIsAsTestsGenerator.GoldenTemplate").
 		Funcs(fm).
-		Parse(strings.ReplaceAll(errorIsTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")))
+		Parse(strings.ReplaceAll(errorIsAsTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")))
 }
 
-const errorIsTestTmpl = header + `
+const errorIsAsTestTmpl = header + `
 
 package {{ .CheckerName.AsPkgName }}
 
@@ -82,10 +101,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var errSentinel = errors.New("user not found")
-	var err error
+	var err, target error
 
 	// Invalid.
 	{

@@ -9,24 +9,26 @@ import (
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-// ErrorIs detects situations like
+// ErrorIsAs detects situations like
 //
 //	assert.Error(t, err, errSentinel)
 //	assert.NoError(t, err, errSentinel)
 //	assert.True(t, errors.Is(err, errSentinel))
 //	assert.False(t, errors.Is(err, errSentinel))
+//	assert.True(t, errors.As(err, &target))
 //
 // and requires
 //
 //	assert.ErrorIs(t, err, errSentinel)
 //	assert.NotErrorIs(t, err, errSentinel)
-type ErrorIs struct{}
+//	assert.ErrorAs(t, err, &target)
+type ErrorIsAs struct{}
 
-// NewErrorIs constructs ErrorIs checker.
-func NewErrorIs() ErrorIs    { return ErrorIs{} }
-func (ErrorIs) Name() string { return "error-is" }
+// NewErrorIsAs constructs ErrorIsAs checker.
+func NewErrorIsAs() ErrorIsAs  { return ErrorIsAs{} }
+func (ErrorIsAs) Name() string { return "error-is-as" }
 
-func (checker ErrorIs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
+func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	switch call.Fn.Name {
 	case "Error", "Errorf":
 		if len(call.Args) >= 2 && isError(pass, call.Args[1]) {
@@ -51,8 +53,18 @@ func (checker ErrorIs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diag
 		if !ok {
 			return nil
 		}
-		if isErrorsIsCall(pass, ce) && len(ce.Args) == 2 {
-			const proposed = "ErrorIs"
+		if len(ce.Args) != 2 {
+			return nil
+		}
+
+		var proposed string
+		switch {
+		case isErrorsIsCall(pass, ce):
+			proposed = "ErrorIs"
+		case isErrorsAsCall(pass, ce):
+			proposed = "ErrorAs"
+		}
+		if proposed != "" {
 			return newUseFunctionDiagnostic(checker.Name(), call, proposed,
 				newSuggestedFuncReplacement(call, proposed, analysis.TextEdit{
 					Pos:     ce.Pos(),
@@ -71,7 +83,11 @@ func (checker ErrorIs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diag
 		if !ok {
 			return nil
 		}
-		if isErrorsIsCall(pass, ce) && len(ce.Args) == 2 {
+		if len(ce.Args) != 2 {
+			return nil
+		}
+
+		if isErrorsIsCall(pass, ce) {
 			const proposed = "NotErrorIs"
 			return newUseFunctionDiagnostic(checker.Name(), call, proposed,
 				newSuggestedFuncReplacement(call, proposed, analysis.TextEdit{
@@ -86,12 +102,20 @@ func (checker ErrorIs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diag
 }
 
 func isErrorsIsCall(pass *analysis.Pass, ce *ast.CallExpr) bool {
+	return isErrorsPkgFnCall(pass, ce, "Is")
+}
+
+func isErrorsAsCall(pass *analysis.Pass, ce *ast.CallExpr) bool {
+	return isErrorsPkgFnCall(pass, ce, "As")
+}
+
+func isErrorsPkgFnCall(pass *analysis.Pass, ce *ast.CallExpr, fn string) bool {
 	se, ok := ce.Fun.(*ast.SelectorExpr)
 	if !ok {
 		return false
 	}
 
-	errorsIsObj := analysisutil.ObjectOf(pass.Pkg, "errors", "Is")
+	errorsIsObj := analysisutil.ObjectOf(pass.Pkg, "errors", fn)
 	if errorsIsObj == nil {
 		return false
 	}

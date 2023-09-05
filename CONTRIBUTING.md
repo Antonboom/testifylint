@@ -163,8 +163,6 @@ Fix linter issues and broken tests (probably related to the checkers registry).
 **Enabled by default**: true. <br>
 **Reason**: The `Error()` method on the `error` interface exists for humans, not code.
 
-Maybe to merge with [error-is](README.md#error-is), but I am not sure.
-
 ---
 
 ### equal-values
@@ -327,6 +325,8 @@ then before that there must be a length constraint through `require`.
 **Reason**: Similar to [require-error](README.md#require-error). Save you from annoying panics.
 
 Or maybe do something similar for maps? And come up with better name for the checker.
+
+TODO: + require.Empty
 
 ### suite-run
 

@@ -19,7 +19,7 @@ and speed up the search for a problem.
 [testify](https://github.com/stretchr/testify) is the most popular Golang testing framework* in recent years.
 But it has a terrible ambiguous API in places, and **the purpose of this linter is to protect you from annoying mistakes**.
 
-Most checkers are stylistic, but checkers like [error-is](#error-is), [require-error](#require-error),
+Most checkers are stylistic, but checkers like [error-is-as](#error-is-as), [require-error](#require-error),
 [expected-actual](#expected-actual), [float-compare](#float-compare) are really helpful.
 
 _* JetBrains "The State of Go Ecosystem" reports [2021](https://www.jetbrains.com/lp/devecosystem-2021/go/#Go_which-testing-frameworks-do-you-use-regularly-if-any)
@@ -37,7 +37,7 @@ $ testifylint ./...
 
 ```
 $ testifylint --enable-all ./...
-$ testifylint --enable=empty,error-is ./...
+$ testifylint --enable=empty,error-is-as ./...
 $ testifylint --enable=expected-actual --expected-actual.pattern=^wanted$ ./...
 $ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=require ./...
 ```
@@ -49,7 +49,7 @@ $ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=re
 | [bool-compare](#bool-compare)                       | ✅                  | ✅       |
 | [compares](#compares)                               | ✅                  | ✅       |
 | [empty](#empty)                                     | ✅                  | ✅       |
-| [error-is](#error-is)                               | ✅                  | ✅       |
+| [error-is-as](#error-is-as)                         | ✅                  | ✅       |
 | [error-nil](#error-nil)                             | ✅                  | ✅       |
 | [expected-actual](#expected-actual)                 | ✅                  | ✅       |
 | [float-compare](#float-compare)                     | ✅                  | ❌       |
@@ -124,21 +124,24 @@ $ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=re
 
 ---
 
-### error-is
+### error-is-as
 
 ```go
 ❌   assert.Error(t, err, errSentinel) // Typo, errSentinel hits `msgAndArgs`.
      assert.NoError(t, err, errSentinel)
      assert.True(t, errors.Is(err, errSentinel))
      assert.False(t, errors.Is(err, errSentinel))
+     assert.True(t, errors.As(err, &target))
 
 ✅   assert.ErrorIs(t, err, errSentinel)
      assert.NotErrorIs(t, err, errSentinel)
+     assert.ErrorAs(t, err, &target)
 ```
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
 **Reason**: In the first two cases, a common mistake that leads to hiding the incorrect wrapping of sentinel errors.
+In the rest cases – more appropriate `testify` API with clearer failure message.
 
 ---
 
