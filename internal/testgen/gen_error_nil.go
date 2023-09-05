@@ -35,6 +35,7 @@ func (g ErrorTestsGenerator) TemplateData() any {
 		ValidNils         validNilsTest
 		InvalidAssertions []Assertion
 		ValidAssertions   []Assertion
+		Ignored           []Assertion
 	}{
 		CheckerName: CheckerName(checker),
 		ErrDetection: errorDetectionTest{
@@ -61,6 +62,14 @@ func (g ErrorTestsGenerator) TemplateData() any {
 		ValidAssertions: []Assertion{
 			{Fn: "NoError", Argsf: "err"},
 			{Fn: "Error", Argsf: "err"},
+		},
+		Ignored: []Assertion{
+			{Fn: "Nil", Argsf: "nil"},
+			{Fn: "NotNil", Argsf: "nil"},
+			{Fn: "Equal", Argsf: "err, err"},
+			{Fn: "Equal", Argsf: "nil, nil"},
+			{Fn: "NotEqual", Argsf: "err, err"},
+			{Fn: "NotEqual", Argsf: "nil, nil"},
 		},
 	}
 }
@@ -132,6 +141,14 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 		{{- end }}
 	}
+}
+
+func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
+	var err error
+
+	{{ range $ai, $assrn := $.Ignored }}
+		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+	{{- end }}
 }
 
 type withErroredMethod struct{}

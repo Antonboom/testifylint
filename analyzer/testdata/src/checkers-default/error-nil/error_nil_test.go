@@ -77,6 +77,23 @@ func TestErrorNilChecker(t *testing.T) {
 	}
 }
 
+func TestErrorNilChecker_Ignored(t *testing.T) {
+	var err error
+
+	assert.Nil(t, nil)
+	assert.Nilf(t, nil, "msg with args %d %s", 42, "42")
+	assert.NotNil(t, nil)
+	assert.NotNilf(t, nil, "msg with args %d %s", 42, "42")
+	assert.Equal(t, err, err)
+	assert.Equalf(t, err, err, "msg with args %d %s", 42, "42")
+	assert.Equal(t, nil, nil)
+	assert.Equalf(t, nil, nil, "msg with args %d %s", 42, "42")
+	assert.NotEqual(t, err, err)
+	assert.NotEqualf(t, err, err, "msg with args %d %s", 42, "42")
+	assert.NotEqual(t, nil, nil)
+	assert.NotEqualf(t, nil, nil, "msg with args %d %s", 42, "42")
+}
+
 type withErroredMethod struct{}
 
 func (withErroredMethod) Get1() error        { return nil }
