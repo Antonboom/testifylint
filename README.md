@@ -110,9 +110,12 @@ $ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=re
 ```go
 ❌   assert.Len(t, arr, 0)
      assert.Equal(t, 0, len(arr))
+     assert.NotEqual(t, 0, len(arr))
+     assert.GreaterOrEqual(t, len(arr), 1)
      // And other variations around len(arr)...
 
 ✅   assert.Empty(t, arr)
+     assert.NotEmpty(t, err)
 ```
 
 **Autofix**: true. <br>

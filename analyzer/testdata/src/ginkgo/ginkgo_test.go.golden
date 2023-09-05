@@ -29,14 +29,14 @@ var _ = ginkgo.Describe("[Load Balancer] EWMA", func() {
 	})
 })
 
-// EchoService name of the deployment for the echo app
+// EchoService name of the deployment for the echo app.
 const EchoService = "echo"
 
 // WaitForNginxServer waits until the nginx configuration contains a particular server section.
 // `cfg` passed to matcher is normalized by replacing all tabs and spaces with single space.
 func WaitForNginxServer(name string, matcher func(cfg string) bool) {}
 
-// GetLbAlgorithm returns algorithm identifier for the given backend
+// GetLbAlgorithm returns algorithm identifier for the given backend.
 func GetLbAlgorithm(serviceName string, servicePort int) (string, error) {
 	return "", nil
 }

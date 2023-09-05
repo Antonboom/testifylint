@@ -18,7 +18,7 @@ import (
 //	assert.True(t, a >= b)
 //	assert.True(t, a < b)
 //	assert.True(t, a <= b)
-//	 ...
+//	...
 //
 // and requires
 //

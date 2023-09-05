@@ -34,6 +34,7 @@ func (g EmptyTestsGenerator) TemplateData() any {
 		CheckerName CheckerName
 		LenTest     lenTest
 		Tests       []test
+		Ignored     []Assertion
 	}{
 		CheckerName: CheckerName(checker),
 		LenTest: lenTest{
@@ -44,23 +45,16 @@ func (g EmptyTestsGenerator) TemplateData() any {
 			{
 				Name: "assert.Empty cases",
 				InvalidAssertions: []Assertion{
+					// n := len(elems)
+					// n == 0, n <= 0, n < 1
+					// 0 == n, 0 >= n, 1 > n
 					{Fn: "Len", Argsf: "elems, 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-
 					{Fn: "Equal", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 					{Fn: "Equal", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-
+					{Fn: "LessOrEqual", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "GreaterOrEqual", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 					{Fn: "Less", Argsf: "len(elems), 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 					{Fn: "Greater", Argsf: "1, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-
-					{Fn: "True", Argsf: "len(elems) == 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "True", Argsf: "0 == len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "True", Argsf: "len(elems) < 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "True", Argsf: "1 > len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-
-					{Fn: "False", Argsf: "len(elems) != 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "False", Argsf: "0 != len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "False", Argsf: "len(elems) >= 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "False", Argsf: "1 <= len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "Empty", Argsf: "elems"},
@@ -69,24 +63,53 @@ func (g EmptyTestsGenerator) TemplateData() any {
 			{
 				Name: "assert.NotEmpty cases",
 				InvalidAssertions: []Assertion{
+					// n := len(elems)
+					// n != 0, n > 0, n > 1, n >= 1
+					// 0 != n, 0 < n, 1 < n, 1 <= n
 					{Fn: "NotEqual", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "NotEqual", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-
 					{Fn: "Greater", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "Less", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-
-					{Fn: "True", Argsf: "len(elems) != 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "True", Argsf: "0 != len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "True", Argsf: "len(elems) > 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "True", Argsf: "0 < len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-
-					{Fn: "False", Argsf: "len(elems) == 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "False", Argsf: "0 == len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "Greater", Argsf: "len(elems), 1", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "Less", Argsf: "1, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "GreaterOrEqual", Argsf: "len(elems), 1", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "LessOrEqual", Argsf: "1, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "NotEmpty", Argsf: "elems"},
 				},
 			},
+		},
+		Ignored: []Assertion{
+			{Fn: "Len", Argsf: "elems, len(elems)"},
+			{Fn: "Len", Argsf: "elems, 1"},
+
+			{Fn: "Equal", Argsf: "len(elems), len(elems)"},
+			{Fn: "Equal", Argsf: "len(elems), 1"},
+			{Fn: "Equal", Argsf: "1, len(elems)"},
+
+			{Fn: "NotEqual", Argsf: "len(elems), len(elems)"},
+			{Fn: "NotEqual", Argsf: "len(elems), 1"},
+			{Fn: "NotEqual", Argsf: "1, len(elems)"},
+
+			{Fn: "Greater", Argsf: "len(elems), len(elems)"},
+			{Fn: "Greater", Argsf: "len(elems), 2"},
+			{Fn: "Greater", Argsf: "2, len(elems)"},
+
+			{Fn: "GreaterOrEqual", Argsf: "len(elems), len(elems)"},
+			{Fn: "GreaterOrEqual", Argsf: "len(elems), 0"},
+			{Fn: "GreaterOrEqual", Argsf: "len(elems), 2"},
+			{Fn: "GreaterOrEqual", Argsf: "2, len(elems)"},
+
+			{Fn: "Less", Argsf: "len(elems), len(elems)"},
+			{Fn: "Less", Argsf: "len(elems), 0"},
+			{Fn: "Less", Argsf: "len(elems), 2"},
+			{Fn: "Less", Argsf: "2, len(elems)"},
+
+			{Fn: "LessOrEqual", Argsf: "len(elems), len(elems)"},
+			{Fn: "LessOrEqual", Argsf: "0, len(elems)"},
+			{Fn: "LessOrEqual", Argsf: "len(elems), 2"},
+			{Fn: "LessOrEqual", Argsf: "2, len(elems)"},
 		},
 	}
 }
@@ -143,5 +166,13 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 			{{- end }}
 		}
 	{{ end -}}
+}
+
+func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
+	var elems []string
+
+	{{ range $ai, $assrn := $.Ignored }}
+		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+	{{- end }}
 }
 `
