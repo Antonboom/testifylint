@@ -15,15 +15,15 @@ func (RequireErrorTestsGenerator) Checker() checkers.Checker {
 func (g RequireErrorTestsGenerator) TemplateData() any {
 	var (
 		checker = g.Checker().Name()
-		report  = checker + ": for error assertions use the `require` API"
+		report  = checker + ": for error assertions use the `require`"
 	)
 
 	return struct {
-		CheckerName CheckerName
-		Assertions  []Assertion
+		CheckerName     CheckerName
+		ErrorAssertions []Assertion
 	}{
 		CheckerName: CheckerName(checker),
-		Assertions: []Assertion{
+		ErrorAssertions: []Assertion{
 			{Fn: "Error", Argsf: "err", ReportMsgf: report},
 			{Fn: "ErrorIs", Argsf: "err, io.EOF", ReportMsgf: report},
 			{Fn: "ErrorAs", Argsf: "err, new(os.PathError)", ReportMsgf: report},
@@ -67,7 +67,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 
 	// Invalid.
 	{{ range $si, $sel := arr "assert" "assObj" }}
-		{{- range $ai, $assrn := $.Assertions }}
+		{{- range $ai, $assrn := $.ErrorAssertions }}
 			{{- $t := "t" }}{{ if eq $sel "assObj"}}{{ $t = "" }}{{ end }}
 			{{- NewAssertionExpander.Expand $assrn $sel $t nil }}
 		{{ end -}}
@@ -75,7 +75,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 
 	// Valid.
 	{{ range $si, $sel := arr "require" "reqObj" }}
-		{{- range $ai, $assrn := $.Assertions }}
+		{{- range $ai, $assrn := $.ErrorAssertions }}
 			{{- $t := "t" }}{{ if eq $sel "reqObj"}}{{ $t = "" }}{{ end }}
 			{{- NewAssertionExpander.Expand $assrn.WithoutReport $sel $t nil }}
 		{{ end -}}
@@ -99,14 +99,14 @@ func (s *{{ $suiteName }}) TestAll() {
 
 	// Invalid.
 	{{ range $si, $sel := arr "s" "s.Assert()" "assObj" }}
-		{{- range $ai, $assrn := $.Assertions }}
+		{{- range $ai, $assrn := $.ErrorAssertions }}
 			{{- NewAssertionExpander.Expand $assrn $sel "" nil }}
 		{{ end -}}
 	{{- end }}
 
 	// Valid.
 	{{ range $si, $sel := arr "s.Require()" "reqObj" }}
-		{{- range $ai, $assrn := $.Assertions }}
+		{{- range $ai, $assrn := $.ErrorAssertions }}
 			{{- NewAssertionExpander.Expand $assrn.WithoutReport $sel "" nil }}
 		{{ end -}}
 	{{ end -}}

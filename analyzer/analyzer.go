@@ -124,7 +124,6 @@ func (tl *testifyLint) regularCheck(pass *analysis.Pass, ce *ast.CallExpr) {
 	call := &checkers.CallMeta{
 		Range:        ce,
 		IsAssert:     isAssert,
-		IsRequire:    isRequire,
 		Selector:     se,
 		SelectorXStr: analysisutil.NodeString(pass.Fset, se.X),
 		Fn: checkers.FnMeta{

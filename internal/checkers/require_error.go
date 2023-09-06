@@ -24,7 +24,7 @@ func (checker RequireError) Check(_ *analysis.Pass, call *CallMeta) *analysis.Di
 		return nil
 	}
 
-	const msg = "for error assertions use the `require` API"
+	const msg = "for error assertions use the `require`"
 
 	switch call.Fn.Name {
 	case "Error", "ErrorIs", "ErrorAs", "EqualError", "ErrorContains", "NoError", "NotErrorIs",

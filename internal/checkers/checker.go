@@ -15,8 +15,6 @@ type CallMeta struct {
 	analysis.Range
 	// IsAssert true if this is "testify/assert" package (or object) call.
 	IsAssert bool
-	// IsRequire true if this is "testify/require" package (or object) call.
-	IsRequire bool
 	// Selector is the AST expression of "assert.Equal".
 	Selector *ast.SelectorExpr
 	// SelectorXStr is a string representation of Selector's left part – value before point, e.g. "assert".
