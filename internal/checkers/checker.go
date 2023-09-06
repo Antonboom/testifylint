@@ -13,6 +13,8 @@ import (
 type CallMeta struct {
 	// Range contains start and end position of assertion call.
 	analysis.Range
+	// IsPkg true if this is package (not object) call.
+	IsPkg bool
 	// IsAssert true if this is "testify/assert" package (or object) call.
 	IsAssert bool
 	// Selector is the AST expression of "assert.Equal".

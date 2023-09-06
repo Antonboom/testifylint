@@ -60,7 +60,7 @@ func (checker SuiteExtraAssertCall) Check(pass *analysis.Pass, call *CallMeta) *
 
 		msg := fmt.Sprintf("use an explicit %s.Assert().%s", analysisutil.NodeString(pass.Fset, x), call.Fn.Name)
 		return newDiagnostic(checker.Name(), call, msg, &analysis.SuggestedFix{
-			Message: "Add Assert() call",
+			Message: "Add `Assert()` call",
 			TextEdits: []analysis.TextEdit{{
 				Pos:     x.End(),
 				End:     x.End(), // Pure insertion.
@@ -86,7 +86,7 @@ func (checker SuiteExtraAssertCall) Check(pass *analysis.Pass, call *CallMeta) *
 
 		msg := fmt.Sprintf("need to simplify the assertion to %s.%s", analysisutil.NodeString(pass.Fset, se.X), call.Fn.Name)
 		return newDiagnostic(checker.Name(), call, msg, &analysis.SuggestedFix{
-			Message: "Remove Assert() call",
+			Message: "Remove `Assert()` call",
 			TextEdits: []analysis.TextEdit{{
 				Pos:     se.Sel.Pos(),
 				End:     x.End() + 1, // +1 for dot.

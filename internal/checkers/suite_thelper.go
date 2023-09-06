@@ -63,7 +63,7 @@ func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Insp
 		helper := fmt.Sprintf("%s.T().Helper()", rcvName)
 		msg := fmt.Sprintf("suite helper method should start with " + helper)
 		d := newDiagnostic(checker.Name(), fd, msg, &analysis.SuggestedFix{
-			Message: "Insert " + helper,
+			Message: fmt.Sprintf("Insert `%s`", helper),
 			TextEdits: []analysis.TextEdit{
 				{
 					Pos:     firstStmt.Pos(),

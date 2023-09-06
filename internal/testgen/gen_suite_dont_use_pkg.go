@@ -38,7 +38,7 @@ func (SuiteDontUsePkg) ErroredTemplate() Executor {
 
 func (SuiteDontUsePkg) GoldenTemplate() Executor {
 	golden := strings.ReplaceAll(suiteDontUsePkgTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")
-	golden = strings.Replace(golden, "s.T()", "", 2)
+	golden = strings.Replace(golden, "s.T()", "", 4)
 	return template.Must(template.New("SuiteDontUsePkg.GoldenTemplate").Funcs(fm).Parse(golden))
 }
 
@@ -48,22 +48,13 @@ package {{ .CheckerName.AsPkgName }}
 import (
 	"testing"
 
+	a "github.com/stretchr/testify/assert"
+	r "github.com/stretchr/testify/require"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
-
-func {{ .CheckerName.AsTestName }}(t *testing.T) {
-	{{ block "pkg-assertions" . -}}
-		var result any
-		assObj, reqObj := assert.New(t), require.New(t)
-
-		{{ range $si, $sel := arr "assert" "assObj" "require" "reqObj" }}
-			{{- $t := "t" }}{{ if or (eq $sel "assObj") (eq $sel "reqObj") }}{{ $t = "" }}{{ end }}
-			{{ NewAssertionExpander.Expand $.AssertAssrn.WithoutReport $sel $t nil }}
-		{{- end }}
-	{{- end }}
-}
 
 {{ $suiteName := .CheckerName.AsSuiteName }}
 
@@ -84,10 +75,25 @@ func (s *{{ $suiteName }}) TestAll() {
 	{{- end }}
 
 	{{ NewAssertionExpander.Expand $.AssertAssrn "assert" "s.T()" nil }}
-	{{ NewAssertionExpander.Expand $.RequireAssrn "require" "s.T()" nil }}
+	{{ NewAssertionExpander.Expand $.AssertAssrn "a" "s.T()" nil }}
 
-	s.T().Run("subtest2", func(t *testing.T) {
+	{{ NewAssertionExpander.Expand $.RequireAssrn "require" "s.T()" nil }}
+	{{ NewAssertionExpander.Expand $.RequireAssrn "r" "s.T()" nil }}
+
+	s.T().Run("not detected", func(t *testing.T) {
 		{{ template "pkg-assertions" . }}
 	})
+}
+
+func {{ .CheckerName.AsTestName }}_NoSuiteNoProblem(t *testing.T) {
+	{{ block "pkg-assertions" . -}}
+		var result any
+		assObj, reqObj := assert.New(t), require.New(t)
+
+		{{ range $si, $sel := arr "assert" "assObj" "require" "reqObj" }}
+			{{- $t := "t" }}{{ if or (eq $sel "assObj") (eq $sel "reqObj") }}{{ $t = "" }}{{ end }}
+			{{ NewAssertionExpander.Expand $.AssertAssrn.WithoutReport $sel $t nil }}
+		{{- end }}
+	{{- end }}
 }
 `

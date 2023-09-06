@@ -52,7 +52,7 @@ func newSuggestedFuncReplacement(
 		proposedFn += "f"
 	}
 	return &analysis.SuggestedFix{
-		Message: fmt.Sprintf("Replace %s with %s", call.Fn.Name, proposedFn),
+		Message: fmt.Sprintf("Replace `%s` with `%s`", call.Fn.Name, proposedFn),
 		TextEdits: append([]analysis.TextEdit{
 			{
 				Pos:     call.Fn.Pos(),

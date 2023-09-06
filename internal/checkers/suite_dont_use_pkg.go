@@ -29,7 +29,7 @@ func NewSuiteDontUsePkg() SuiteDontUsePkg { return SuiteDontUsePkg{} }
 func (SuiteDontUsePkg) Name() string      { return "suite-dont-use-pkg" }
 
 func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	if s := call.SelectorXStr; !(s == testify.AssertPkgName || s == testify.RequirePkgName) {
+	if !call.IsPkg {
 		return nil
 	}
 
@@ -53,28 +53,27 @@ func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analy
 	if se.Sel == nil || se.Sel.Name != "T" {
 		return nil
 	}
-	rcv, ok := se.X.(*ast.Ident)
+	rcv, ok := se.X.(*ast.Ident) // At this point we ensure that `s.T()` is used as the first argument of assertion.
 	if !ok {
 		return nil
 	}
 
-	var newSelector string
-	switch call.SelectorXStr {
-	case testify.AssertPkgName:
-		newSelector = rcv.Name
-	case testify.RequirePkgName:
-		newSelector = rcv.Name + "." + "Require()"
+	newSelector := rcv.Name
+	if !call.IsAssert {
+		newSelector += "." + "Require()"
 	}
 
 	msg := fmt.Sprintf("use %s.%s", newSelector, call.Fn.Name)
 	return newDiagnostic(checker.Name(), call, msg, &analysis.SuggestedFix{
-		Message: fmt.Sprintf("Replace %s with %s", call.SelectorXStr, newSelector),
+		Message: fmt.Sprintf("Replace `%s` with `%s`", call.SelectorXStr, newSelector),
 		TextEdits: []analysis.TextEdit{
+			// Replace package function with suite method.
 			{
-				Pos:     call.Selector.Pos(),
-				End:     call.Selector.End(),
-				NewText: []byte(newSelector + "." + call.Fn.Name),
+				Pos:     call.Selector.X.Pos(),
+				End:     call.Selector.X.End(),
+				NewText: []byte(newSelector),
 			},
+			// Remove `s.T()`.
 			{
 				Pos:     t.Pos(),
 				End:     args[1].Pos(),

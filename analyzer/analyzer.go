@@ -90,13 +90,13 @@ func (tl *testifyLint) regularCheck(pass *analysis.Pass, ce *ast.CallExpr) {
 	}
 	fn := se.Sel.Name
 
-	pkg := func() *types.Package {
+	initiatorPkg, isPkgCall := func() (*types.Package, bool) {
 		// Examples:
 		// s.Assert         -> *suite.Suite        -> package suite ("vendor/github.com/stretchr/testify/suite")
 		// s.Assert().Equal -> *assert.Assertions  -> package assert ("vendor/github.com/stretchr/testify/assert")
 		// reqObj.Falsef    -> *require.Assertions -> package require ("vendor/github.com/stretchr/testify/require")
 		if sel, ok := pass.TypesInfo.Selections[se]; ok {
-			return sel.Obj().Pkg()
+			return sel.Obj().Pkg(), false
 		}
 
 		// Examples:
@@ -105,24 +105,25 @@ func (tl *testifyLint) regularCheck(pass *analysis.Pass, ce *ast.CallExpr) {
 		if id, ok := se.X.(*ast.Ident); ok {
 			if selObj := pass.TypesInfo.ObjectOf(id); selObj != nil {
 				if pkg, ok := selObj.(*types.PkgName); ok {
-					return pkg.Imported()
+					return pkg.Imported(), true
 				}
 			}
 		}
-		return nil
+		return nil, false
 	}()
-	if pkg == nil {
+	if initiatorPkg == nil {
 		return
 	}
 
-	isAssert := analysisutil.IsPkg(pkg, testify.AssertPkgName, testify.AssertPkgPath)
-	isRequire := analysisutil.IsPkg(pkg, testify.RequirePkgName, testify.RequirePkgPath)
+	isAssert := analysisutil.IsPkg(initiatorPkg, testify.AssertPkgName, testify.AssertPkgPath)
+	isRequire := analysisutil.IsPkg(initiatorPkg, testify.RequirePkgName, testify.RequirePkgPath)
 	if !(isAssert || isRequire) {
 		return
 	}
 
 	call := &checkers.CallMeta{
 		Range:        ce,
+		IsPkg:        isPkgCall,
 		IsAssert:     isAssert,
 		Selector:     se,
 		SelectorXStr: analysisutil.NodeString(pass.Fset, se.X),
