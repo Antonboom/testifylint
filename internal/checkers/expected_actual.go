@@ -6,11 +6,9 @@ import (
 	"regexp"
 
 	"golang.org/x/tools/go/analysis"
-
-	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-// DefaultExpectedVarPattern matches variables with "expected" or "wanted" part in the name.
+// DefaultExpectedVarPattern matches variables with "expected" or "wanted" prefix or suffix in the name.
 var DefaultExpectedVarPattern = regexp.MustCompile(
 	`(^(exp(ected)?|want(ed)?)([A-Z]\w*)?$)|(^(\w*[a-z])?(Exp(ected)?|Want(ed)?)$)`)
 
@@ -59,7 +57,7 @@ func (checker ExpectedActual) Check(pass *analysis.Pass, call *CallMeta) *analys
 				{
 					Pos:     first.Pos(),
 					End:     second.End(),
-					NewText: []byte(analysisutil.NodeString(pass.Fset, second) + ", " + analysisutil.NodeString(pass.Fset, first)),
+					NewText: formatAsCallArgs(pass, second, first),
 				},
 			},
 		})

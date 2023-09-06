@@ -185,7 +185,7 @@ The checker considers the expected value to be a basic literal, constant, or var
 (`-expected-actual.pattern` flag).
 
 It is planned [to change the order of assertion arguments](https://github.com/stretchr/testify/issues/1089#Argument_order) to more natural
-(actual, expected) in `v2`.
+(actual, expected) in `v2` of `testify`.
 
 ---
 

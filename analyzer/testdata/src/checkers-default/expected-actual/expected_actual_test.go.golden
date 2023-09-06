@@ -882,3 +882,16 @@ func TestExpectedActualChecker_CannotDetectVariablesLookedLikeConsts(t *testing.
 	assert.NotEqual(t, result, uc5)
 	assert.NotEqualf(t, result, uc5, "msg with args %d %s", 42, "42")
 }
+
+func TestExpectedActualChecker_Ignored(t *testing.T) {
+	var result, expected any
+
+	assert.Equal(t, "value", "value")
+	assert.Equalf(t, "value", "value", "msg with args %d %s", 42, "42")
+	assert.Equal(t, expected, expected)
+	assert.Equalf(t, expected, expected, "msg with args %d %s", 42, "42")
+	assert.Equal(t, []int{1, 2}, map[int]int{1: 2})
+	assert.Equalf(t, []int{1, 2}, map[int]int{1: 2}, "msg with args %d %s", 42, "42")
+	assert.NotEqual(t, result, result)
+	assert.NotEqualf(t, result, result, "msg with args %d %s", 42, "42")
+}

@@ -38,6 +38,7 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 		Strings        test
 		NotDetected    []Assertion
 		RealLifeJSONEq Assertion
+		Ignored        []Assertion
 	}{
 		CheckerName: CheckerName(checker),
 		Typed: []literal{
@@ -115,6 +116,12 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			Argsf:         "string(body), string(expectedJSON)",
 			ReportMsgf:    report,
 			ProposedArgsf: "string(expectedJSON), string(body)",
+		},
+		Ignored: []Assertion{
+			{Fn: "Equal", Argsf: `"value", "value"`},
+			{Fn: "Equal", Argsf: "expected, expected"},
+			{Fn: "Equal", Argsf: "[]int{1, 2}, map[int]int{1: 2}"},
+			{Fn: "NotEqual", Argsf: "result, result"},
 		},
 	}
 }
@@ -289,6 +296,14 @@ func {{ .CheckerName.AsTestName }}_CannotDetectVariablesLookedLikeConsts(t *test
 		{{- range $vi, $var := $.Untyped }}
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" (arr (printf "uc%d" $vi)) }}
 		{{- end }}
+	{{- end }}
+}
+
+func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
+	var result, expected any
+
+	{{ range $ai, $assrn := $.Ignored }}
+		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 	{{- end }}
 }
 `
