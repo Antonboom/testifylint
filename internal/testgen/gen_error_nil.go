@@ -35,7 +35,7 @@ func (g ErrorTestsGenerator) TemplateData() any {
 		ValidNils         validNilsTest
 		InvalidAssertions []Assertion
 		ValidAssertions   []Assertion
-		Ignored           []Assertion
+		IgnoredAssertions []Assertion
 	}{
 		CheckerName: CheckerName(checker),
 		ErrDetection: errorDetectionTest{
@@ -63,7 +63,7 @@ func (g ErrorTestsGenerator) TemplateData() any {
 			{Fn: "NoError", Argsf: "err"},
 			{Fn: "Error", Argsf: "err"},
 		},
-		Ignored: []Assertion{
+		IgnoredAssertions: []Assertion{
 			{Fn: "Nil", Argsf: "nil"},
 			{Fn: "NotNil", Argsf: "nil"},
 			{Fn: "Equal", Argsf: "err, err"},
@@ -98,6 +98,31 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func {{ .CheckerName.AsTestName }}(t *testing.T) {
+	var err error
+
+	// Invalid.
+	{
+		{{- range $ai, $assrn := $.InvalidAssertions }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+		{{- end }}
+	}
+
+	// Valid.
+	{
+		{{- range $ai, $assrn := $.ValidAssertions }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+		{{- end }}
+	}
+
+	// Ignored.
+	{
+		{{- range $ai, $assrn := $.IgnoredAssertions }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+		{{- end }}
+	}
+}
+
 func {{ .CheckerName.AsTestName }}_ErrorDetection(t *testing.T) {
 	errOp := func() error { return io.EOF }
 	var a error
@@ -123,32 +148,6 @@ func {{ .CheckerName.AsTestName }}_ValidNils(t *testing.T) {
 			{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" (arr $var) }}
 		{{- end }}
 	{{- end }}	
-}
-
-func {{ .CheckerName.AsTestName }}(t *testing.T) {
-	var err error
-
-	// Invalid.
-	{
-		{{- range $ai, $assrn := $.InvalidAssertions }}
-			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
-		{{- end }}
-	}
-
-	// Valid.
-	{
-		{{- range $ai, $assrn := $.ValidAssertions }}
-			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
-		{{- end }}
-	}
-}
-
-func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
-	var err error
-
-	{{ range $ai, $assrn := $.Ignored }}
-		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
-	{{- end }}
 }
 
 type withErroredMethod struct{}

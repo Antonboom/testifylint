@@ -27,9 +27,9 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 	}
 
 	return struct {
-		CheckerName CheckerName
-		Tests       []test
-		Ignored     []Assertion
+		CheckerName       CheckerName
+		Tests             []test
+		IgnoredAssertions []Assertion
 	}{
 		CheckerName: CheckerName(checker),
 		Tests: []test{
@@ -76,7 +76,7 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 				},
 			},
 		},
-		Ignored: []Assertion{
+		IgnoredAssertions: []Assertion{
 			{Fn: "Equal", Argsf: "true, true"},
 			{Fn: "Equal", Argsf: "false, false"},
 			{Fn: "NotEqual", Argsf: "true, true"},
@@ -133,8 +133,8 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	{{ end -}}
 }
 
-func {{ .CheckerName.AsTestName }}_IgnoresStrangeCases(t *testing.T) {
-	{{- range $ai, $assrn := $.Ignored }}
+func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
+	{{- range $ai, $assrn := $.IgnoredAssertions }}
 		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 	{{- end }}
 }

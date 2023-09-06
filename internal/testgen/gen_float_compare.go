@@ -25,11 +25,11 @@ func (g FloatCompareTestsGenerator) TemplateData() any {
 	}
 
 	return struct {
-		CheckerName       CheckerName
-		FloatDetection    floatDetectionTest
-		InvalidAssertions []Assertion
-		ValidAssertions   []Assertion
-		Unsupported       []Assertion
+		CheckerName           CheckerName
+		FloatDetection        floatDetectionTest
+		InvalidAssertions     []Assertion
+		ValidAssertions       []Assertion
+		UnsupportedAssertions []Assertion
 	}{
 		CheckerName: CheckerName(name),
 		FloatDetection: floatDetectionTest{
@@ -60,7 +60,7 @@ func (g FloatCompareTestsGenerator) TemplateData() any {
 			{Fn: "InEpsilon", Argsf: "42.42, result, 0.0002"},
 		},
 		// NOTE(a.telyshev): Waiting for contribution.
-		Unsupported: []Assertion{
+		UnsupportedAssertions: []Assertion{
 			{Fn: "NotEqual", Argsf: "42.42, result"},
 			{Fn: "Greater", Argsf: "42.42, result"},
 			{Fn: "GreaterOrEqual", Argsf: "42.42, result"},
@@ -123,7 +123,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 
 	// Unsupported.
 	{
-		{{- range $ai, $assrn := $.Unsupported }}
+		{{- range $ai, $assrn := $.UnsupportedAssertions }}
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 		{{- end }}
 	}

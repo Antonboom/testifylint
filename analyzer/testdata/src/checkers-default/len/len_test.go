@@ -27,6 +27,16 @@ func TestLenChecker(t *testing.T) {
 	{
 		assert.Len(t, arr, 42)
 		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")
+		assert.Len(t, arr, len(arr))
+		assert.Lenf(t, arr, len(arr), "msg with args %d %s", 42, "42")
+	}
+
+	// Ignored.
+	{
+		assert.Equal(t, len(arr), len(arr))
+		assert.Equalf(t, len(arr), len(arr), "msg with args %d %s", 42, "42")
+		assert.True(t, len(arr) == len(arr))
+		assert.Truef(t, len(arr) == len(arr), "msg with args %d %s", 42, "42")
 		assert.NotEqual(t, 42, len(arr))
 		assert.NotEqualf(t, 42, len(arr), "msg with args %d %s", 42, "42")
 		assert.NotEqual(t, len(arr), 42)

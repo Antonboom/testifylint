@@ -24,6 +24,7 @@ func (g LenTestsGenerator) TemplateData() any {
 		CheckerName       CheckerName
 		InvalidAssertions []Assertion
 		ValidAssertions   []Assertion
+		IgnoredAssertions []Assertion
 	}{
 		CheckerName: CheckerName(checker),
 		InvalidAssertions: []Assertion{
@@ -34,6 +35,11 @@ func (g LenTestsGenerator) TemplateData() any {
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "Len", Argsf: "arr, 42"},
+			{Fn: "Len", Argsf: "arr, len(arr)"},
+		},
+		IgnoredAssertions: []Assertion{
+			{Fn: "Equal", Argsf: "len(arr), len(arr)"},
+			{Fn: "True", Argsf: "len(arr) == len(arr)"},
 
 			{Fn: "NotEqual", Argsf: "42, len(arr)"},
 			{Fn: "NotEqual", Argsf: "len(arr), 42"},
@@ -108,6 +114,13 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	// Valid.
 	{
 		{{- range $ai, $assrn := $.ValidAssertions }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+		{{- end }}
+	}
+
+	// Ignored.
+	{
+		{{- range $ai, $assrn := $.IgnoredAssertions }}
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 		{{- end }}
 	}

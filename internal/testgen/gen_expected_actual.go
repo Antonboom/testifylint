@@ -30,15 +30,15 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 	}
 
 	return struct {
-		CheckerName    CheckerName
-		Typed          []literal
-		Untyped        []string
-		ExpVars        []string
-		Basic          test
-		Strings        test
-		NotDetected    []Assertion
-		RealLifeJSONEq Assertion
-		Ignored        []Assertion
+		CheckerName       CheckerName
+		Typed             []literal
+		Untyped           []string
+		ExpVars           []string
+		Basic             test
+		Strings           test
+		NotDetected       []Assertion
+		RealLifeJSONEq    Assertion
+		IgnoredAssertions []Assertion
 	}{
 		CheckerName: CheckerName(checker),
 		Typed: []literal{
@@ -117,7 +117,7 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			ReportMsgf:    report,
 			ProposedArgsf: "string(expectedJSON), string(body)",
 		},
-		Ignored: []Assertion{
+		IgnoredAssertions: []Assertion{
 			{Fn: "Equal", Argsf: `"value", "value"`},
 			{Fn: "Equal", Argsf: "expected, expected"},
 			{Fn: "Equal", Argsf: "[]int{1, 2}, map[int]int{1: 2}"},
@@ -302,7 +302,7 @@ func {{ .CheckerName.AsTestName }}_CannotDetectVariablesLookedLikeConsts(t *test
 func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
 	var result, expected any
 
-	{{ range $ai, $assrn := $.Ignored }}
+	{{ range $ai, $assrn := $.IgnoredAssertions }}
 		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 	{{- end }}
 }

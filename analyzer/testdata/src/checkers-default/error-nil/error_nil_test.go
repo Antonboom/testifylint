@@ -10,6 +10,50 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestErrorNilChecker(t *testing.T) {
+	var err error
+
+	// Invalid.
+	{
+		assert.Nil(t, err)                                             // want "error-nil: use assert\\.NoError"
+		assert.Nilf(t, err, "msg with args %d %s", 42, "42")           // want "error-nil: use assert\\.NoErrorf"
+		assert.NotNil(t, err)                                          // want "error-nil: use assert\\.Error"
+		assert.NotNilf(t, err, "msg with args %d %s", 42, "42")        // want "error-nil: use assert\\.Errorf"
+		assert.Equal(t, err, nil)                                      // want "error-nil: use assert\\.NoError"
+		assert.Equalf(t, err, nil, "msg with args %d %s", 42, "42")    // want "error-nil: use assert\\.NoErrorf"
+		assert.Equal(t, nil, err)                                      // want "error-nil: use assert\\.NoError"
+		assert.Equalf(t, nil, err, "msg with args %d %s", 42, "42")    // want "error-nil: use assert\\.NoErrorf"
+		assert.NotEqual(t, err, nil)                                   // want "error-nil: use assert\\.Error"
+		assert.NotEqualf(t, err, nil, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.Errorf"
+		assert.NotEqual(t, nil, err)                                   // want "error-nil: use assert\\.Error"
+		assert.NotEqualf(t, nil, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.Errorf"
+	}
+
+	// Valid.
+	{
+		assert.NoError(t, err)
+		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42")
+		assert.Error(t, err)
+		assert.Errorf(t, err, "msg with args %d %s", 42, "42")
+	}
+
+	// Ignored.
+	{
+		assert.Nil(t, nil)
+		assert.Nilf(t, nil, "msg with args %d %s", 42, "42")
+		assert.NotNil(t, nil)
+		assert.NotNilf(t, nil, "msg with args %d %s", 42, "42")
+		assert.Equal(t, err, err)
+		assert.Equalf(t, err, err, "msg with args %d %s", 42, "42")
+		assert.Equal(t, nil, nil)
+		assert.Equalf(t, nil, nil, "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, err, err)
+		assert.NotEqualf(t, err, err, "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, nil, nil)
+		assert.NotEqualf(t, nil, nil, "msg with args %d %s", 42, "42")
+	}
+}
+
 func TestErrorNilChecker_ErrorDetection(t *testing.T) {
 	errOp := func() error { return io.EOF }
 	var a error
@@ -47,51 +91,6 @@ func TestErrorNilChecker_ValidNils(t *testing.T) {
 	assert.NotNil(t, m)
 	assert.Nil(t, uPtr)
 	assert.NotNil(t, uPtr)
-}
-
-func TestErrorNilChecker(t *testing.T) {
-	var err error
-
-	// Invalid.
-	{
-		assert.Nil(t, err)                                             // want "error-nil: use assert\\.NoError"
-		assert.Nilf(t, err, "msg with args %d %s", 42, "42")           // want "error-nil: use assert\\.NoErrorf"
-		assert.NotNil(t, err)                                          // want "error-nil: use assert\\.Error"
-		assert.NotNilf(t, err, "msg with args %d %s", 42, "42")        // want "error-nil: use assert\\.Errorf"
-		assert.Equal(t, err, nil)                                      // want "error-nil: use assert\\.NoError"
-		assert.Equalf(t, err, nil, "msg with args %d %s", 42, "42")    // want "error-nil: use assert\\.NoErrorf"
-		assert.Equal(t, nil, err)                                      // want "error-nil: use assert\\.NoError"
-		assert.Equalf(t, nil, err, "msg with args %d %s", 42, "42")    // want "error-nil: use assert\\.NoErrorf"
-		assert.NotEqual(t, err, nil)                                   // want "error-nil: use assert\\.Error"
-		assert.NotEqualf(t, err, nil, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.Errorf"
-		assert.NotEqual(t, nil, err)                                   // want "error-nil: use assert\\.Error"
-		assert.NotEqualf(t, nil, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.Errorf"
-	}
-
-	// Valid.
-	{
-		assert.NoError(t, err)
-		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42")
-		assert.Error(t, err)
-		assert.Errorf(t, err, "msg with args %d %s", 42, "42")
-	}
-}
-
-func TestErrorNilChecker_Ignored(t *testing.T) {
-	var err error
-
-	assert.Nil(t, nil)
-	assert.Nilf(t, nil, "msg with args %d %s", 42, "42")
-	assert.NotNil(t, nil)
-	assert.NotNilf(t, nil, "msg with args %d %s", 42, "42")
-	assert.Equal(t, err, err)
-	assert.Equalf(t, err, err, "msg with args %d %s", 42, "42")
-	assert.Equal(t, nil, nil)
-	assert.Equalf(t, nil, nil, "msg with args %d %s", 42, "42")
-	assert.NotEqual(t, err, err)
-	assert.NotEqualf(t, err, err, "msg with args %d %s", 42, "42")
-	assert.NotEqual(t, nil, nil)
-	assert.NotEqualf(t, nil, nil, "msg with args %d %s", 42, "42")
 }
 
 type withErroredMethod struct{}

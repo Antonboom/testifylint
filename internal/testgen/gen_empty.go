@@ -31,10 +31,10 @@ func (g EmptyTestsGenerator) TemplateData() any {
 	}
 
 	return struct {
-		CheckerName CheckerName
-		LenTest     lenTest
-		Tests       []test
-		Ignored     []Assertion
+		CheckerName       CheckerName
+		LenTest           lenTest
+		Tests             []test
+		IgnoredAssertions []Assertion
 	}{
 		CheckerName: CheckerName(checker),
 		LenTest: lenTest{
@@ -80,7 +80,7 @@ func (g EmptyTestsGenerator) TemplateData() any {
 				},
 			},
 		},
-		Ignored: []Assertion{
+		IgnoredAssertions: []Assertion{
 			{Fn: "Len", Argsf: "elems, len(elems)"},
 			{Fn: "Len", Argsf: "elems, 1"},
 
@@ -136,20 +136,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func {{ .CheckerName.AsTestName }}_LenVarIndependence(t *testing.T) {
-	var (
-		arr    [0]int
-		arrPtr *[0]int
-		sl     []int
-		mp     map[int]int
-		str    string
-		ch     chan int
-	)
-	{{ range $vi, $var := $.LenTest.Vars }}
-		{{ NewAssertionExpander.NotFmtSingleMode.Expand $.LenTest.Assrn "assert" "t" (arr $var) }}
-	{{- end }}
-}
-
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var elems []string
 	{{ range $ti, $test := $.Tests }}
@@ -168,10 +154,24 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	{{ end -}}
 }
 
+func {{ .CheckerName.AsTestName }}_LenVarIndependence(t *testing.T) {
+	var (
+		arr    [0]int
+		arrPtr *[0]int
+		sl     []int
+		mp     map[int]int
+		str    string
+		ch     chan int
+	)
+	{{ range $vi, $var := $.LenTest.Vars }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $.LenTest.Assrn "assert" "t" (arr $var) }}
+	{{- end }}
+}
+
 func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
 	var elems []string
 
-	{{ range $ai, $assrn := $.Ignored }}
+	{{ range $ai, $assrn := $.IgnoredAssertions }}
 		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 	{{- end }}
 }

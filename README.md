@@ -212,10 +212,9 @@ This checker is similar to the [floatcompare](https://github.com/golangci/golang
 
 ```go
 ❌   assert.Equal(t, 3, len(arr))
-     assert.True(t, len(arr) == 5)
+     assert.True(t, len(arr) == 3)
 
 ✅   assert.Len(t, arr, 3)
-     assert.Len(t, arr, 5)
 ```
 
 **Autofix**: true. <br>

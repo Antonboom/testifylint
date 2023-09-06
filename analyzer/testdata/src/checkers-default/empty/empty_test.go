@@ -8,24 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEmptyChecker_LenVarIndependence(t *testing.T) {
-	var (
-		arr    [0]int
-		arrPtr *[0]int
-		sl     []int
-		mp     map[int]int
-		str    string
-		ch     chan int
-	)
-
-	assert.Equal(t, 0, len(arr))    // want "empty: use assert\\.Empty"
-	assert.Equal(t, 0, len(arrPtr)) // want "empty: use assert\\.Empty"
-	assert.Equal(t, 0, len(sl))     // want "empty: use assert\\.Empty"
-	assert.Equal(t, 0, len(mp))     // want "empty: use assert\\.Empty"
-	assert.Equal(t, 0, len(str))    // want "empty: use assert\\.Empty"
-	assert.Equal(t, 0, len(ch))     // want "empty: use assert\\.Empty"
-}
-
 func TestEmptyChecker(t *testing.T) {
 	var elems []string
 
@@ -76,6 +58,24 @@ func TestEmptyChecker(t *testing.T) {
 		assert.NotEmpty(t, elems)
 		assert.NotEmptyf(t, elems, "msg with args %d %s", 42, "42")
 	}
+}
+
+func TestEmptyChecker_LenVarIndependence(t *testing.T) {
+	var (
+		arr    [0]int
+		arrPtr *[0]int
+		sl     []int
+		mp     map[int]int
+		str    string
+		ch     chan int
+	)
+
+	assert.Equal(t, 0, len(arr))    // want "empty: use assert\\.Empty"
+	assert.Equal(t, 0, len(arrPtr)) // want "empty: use assert\\.Empty"
+	assert.Equal(t, 0, len(sl))     // want "empty: use assert\\.Empty"
+	assert.Equal(t, 0, len(mp))     // want "empty: use assert\\.Empty"
+	assert.Equal(t, 0, len(str))    // want "empty: use assert\\.Empty"
+	assert.Equal(t, 0, len(ch))     // want "empty: use assert\\.Empty"
 }
 
 func TestEmptyChecker_Ignored(t *testing.T) {

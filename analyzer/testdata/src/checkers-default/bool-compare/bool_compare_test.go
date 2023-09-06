@@ -82,7 +82,7 @@ func TestBoolCompareChecker(t *testing.T) {
 	}
 }
 
-func TestBoolCompareChecker_IgnoresStrangeCases(t *testing.T) {
+func TestBoolCompareChecker_Ignored(t *testing.T) {
 	assert.Equal(t, true, true)
 	assert.Equalf(t, true, true, "msg with args %d %s", 42, "42")
 	assert.Equal(t, false, false)
