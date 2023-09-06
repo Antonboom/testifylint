@@ -28,6 +28,10 @@ func TestFloatCompareChecker(t *testing.T) {
 		assert.InDeltaf(t, 42.42, result, 0.0001, "msg with args %d %s", 42, "42")
 		assert.InEpsilon(t, 42.42, result, 0.0002)
 		assert.InEpsilonf(t, 42.42, result, 0.0002, "msg with args %d %s", 42, "42")
+	}
+
+	// Unsupported.
+	{
 		assert.NotEqual(t, 42.42, result)
 		assert.NotEqualf(t, 42.42, result, "msg with args %d %s", 42, "42")
 		assert.Greater(t, 42.42, result)

@@ -29,6 +29,7 @@ func (g FloatCompareTestsGenerator) TemplateData() any {
 		FloatDetection    floatDetectionTest
 		InvalidAssertions []Assertion
 		ValidAssertions   []Assertion
+		Unsupported       []Assertion
 	}{
 		CheckerName: CheckerName(name),
 		FloatDetection: floatDetectionTest{
@@ -57,9 +58,9 @@ func (g FloatCompareTestsGenerator) TemplateData() any {
 		ValidAssertions: []Assertion{
 			{Fn: "InDelta", Argsf: "42.42, result, 0.0001"},
 			{Fn: "InEpsilon", Argsf: "42.42, result, 0.0002"},
-
-			// Waiting for contribution.
-
+		},
+		// NOTE(a.telyshev): Waiting for contribution.
+		Unsupported: []Assertion{
 			{Fn: "NotEqual", Argsf: "42.42, result"},
 			{Fn: "Greater", Argsf: "42.42, result"},
 			{Fn: "GreaterOrEqual", Argsf: "42.42, result"},
@@ -116,6 +117,13 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	// Valid.
 	{
 		{{- range $ai, $assrn := $.ValidAssertions }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+		{{- end }}
+	}
+
+	// Unsupported.
+	{
+		{{- range $ai, $assrn := $.Unsupported }}
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 		{{- end }}
 	}
