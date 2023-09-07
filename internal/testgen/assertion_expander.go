@@ -61,13 +61,13 @@ func (e *AssertionExpander) NotFmtSingleMode() *AssertionExpander {
 //     "assert" + "Len" + "t, arr, 0" = "assert.Len(t, arr, 0)"
 //
 //   - if Assertion.ReportMsgf defined then append analysistest.Run diagnostic comment, e.g.
-//     "assert.Len(t, arr, 0)" + "empty: use %s.%s" = `assert.Len(t, arr, 0) // want "use assert\\.Empty"`
+//     "assert.Len(t, arr, 0)" + "empty: use %s.%s" = `assert.Len(t, arr, 0) // want "empty: use assert\\.Empty"`
 //
 // For diagnostic comment formatting Expand uses Assertion.ProposedSelector and Assertion.ProposedFn
 // or selector and Assertion.Fn if one of them is not defined. If you do not need formatting use `%.s` (or `%.0s`).
 //
 // The final string is copied in several variants, depending on the current AssertionExpander mode.
-func (e *AssertionExpander) Expand(assrn Assertion, selector, testingTParam string, argValues []any) string { // -> FIXME []string
+func (e *AssertionExpander) Expand(assrn Assertion, selector, testingTParam string, argValues []any) string {
 	fn, args := assrn.Fn, assrn.Argsf
 
 	if e.asGolden {

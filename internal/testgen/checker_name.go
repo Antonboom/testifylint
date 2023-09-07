@@ -5,16 +5,17 @@ import "strings"
 // CheckerName is a simple helper type useful for checker name transformations.
 type CheckerName string
 
-// AsPkgName transforms "suite-no-extra-assert-call" into "suitenoextraassertcall".
+// AsPkgName transforms "suite-extra-assert-call" into "suiteextraassertcall".
 func (n CheckerName) AsPkgName() string {
 	return strings.ReplaceAll(string(n), "-", "")
 }
 
-// AsTestName transforms "suite-no-extra-assert-call" into "TestSuiteNoExtraAssertCallChecker".
+// AsTestName transforms "suite-extra-assert-call" into "TestSuiteExtraAssertCallChecker".
 func (n CheckerName) AsTestName() string {
 	return "Test" + n.toCamelCase() + "Checker"
 }
 
+// AsSuiteName transforms "suite-extra-assert-call" into "SuiteExtraAssertCallCheckerSuite".
 func (n CheckerName) AsSuiteName() string {
 	return n.toCamelCase() + "CheckerSuite"
 }

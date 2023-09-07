@@ -8,6 +8,15 @@
 
 Checks usage of [github.com/stretchr/testify](https://github.com/stretchr/testify).
 
+## Table of Contents
+
+* [Problem statement](#problem-statement)
+* [Installation & usage](#installation--usage)
+* [Configuring](#configuring)
+* [Checkers](#checkers)
+* [Chain of warnings](#chain-of-warnings)
+* [testify v2](#testify-v2)
+
 ## Problem statement
 
 Tests are also program code and the requirements for them should not differ much from the requirements
@@ -56,7 +65,7 @@ $ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=re
 | [len](#len)                                         | ✅                  | ✅       |
 | [require-error](#require-error)                     | ✅                  | ❌       |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
-| [suite-extra-assert-call](#suite-extra-assert-call) | ❌                  | ✅       |
+| [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
 
 ---
@@ -238,7 +247,7 @@ This checker is similar to the [floatcompare](https://github.com/golangci/golang
 
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
-**Reason**: "Ignoring" errors is not the "Go way" and leads to further panics in the test, making it harder to debug.
+**Reason**: Such "ignoring" of errors leads to further panics, making the test harder to debug.
 
 `tesitfy/require` allows to stop test execution when a test fails.
 
@@ -288,7 +297,7 @@ func (s *MySuite) TestSomething() {
 }
 ```
 
-You can enable such behaviaor through `--suite-extra-assert-call.mode=require`.
+You can enable such behavior through `--suite-extra-assert-call.mode=require`.
 
 **Autofix**: true. <br>
 **Enabled by default**: true, in the `remove` mode. <br>
@@ -313,21 +322,35 @@ func (s *RoomSuite) assertRoomRound(roundID RoundID) {
 
 **Autofix**: true. <br>
 **Enabled by default**: false. <br>
-**Reason**: Consistency to non-suite test helpers. Explicit markup of helper methods.
+**Reason**: Consistency with non-suite test helpers. Explicit markup of helper methods.
 
-`s.T().Helper()` call is not important technically because `testify` prints full `Error Trace`
+`s.T().Helper()` call is not important actually because `testify` prints full `Error Trace`
 [anyway](https://github.com/stretchr/testify/blob/882382d845cd9780bd93c1acc8e1fa2ffe266ca1/assert/assertions.go#L317).
 
 The checker rather acts as an example of a [checkers.AdvancedChecker](https://github.com/Antonboom/testifylint/blob/676324836555445fded4e9afc004101ec6f597fe/internal/checkers/checker.go#L56).
 
 ---
 
-## testify V2
+## Chain of warnings
+
+Linter does not automatically handle the "evolution" of changes.
+And in some cases may be dissatisfied with your code several times, for example:
+
+```go
+assert.True(err == nil)   // compares: use assert.Equal
+assert.Equal(t, err, nil) // error-nil: use assert.NoError
+assert.NoError(t, err)    // require-error: for error assertions use require
+require.NoError(t, err)
+```
+
+Please [contribute](./CONTRIBUTING.md) if you have ideas on how to make this better.
+
+## testify v2
 
 The second version of `testify` [promises](https://github.com/stretchr/testify/issues/1089) more "pleasant" API and
 makes some above checkers irrelevant.
 
-It will not be difficult to add `v2` support in the linter in the future.
+In this case, the possibility of supporting `v2` in the linter is not excluded.
 
 But at the moment it looks like we are [extremely far](https://github.com/stretchr/testify/pull/1109#issuecomment-1650619745)
 from `v2`. Related milestone [here](https://github.com/stretchr/testify/milestone/4).

@@ -16,7 +16,7 @@ tasks:
       - task: tidy
       - task: fmt
       - task: lint
-      - task: tests
+      - task: test
       - task: install
 
   tools:install:
@@ -40,18 +40,18 @@ tasks:
       - echo "Lint..."
       - golangci-lint run --fix ./...
 
-  tests:
-    deps: [ tests:gen ]
+  test:
+    deps: [ test:gen ]
     cmds:
       - echo "Test..."
       - go test ./...
 
-  tests:coverage:
+  test:coverage:
     cmds:
-      - echo "Tests with coverage..."
+      - echo "Test with coverage..."
       - go test -coverpkg={{ .COVERED_PKGS | trim | splitLines | join "," }} -coverprofile=coverage.out ./...
 
-  tests:gen:
+  test:gen:
     cmds:
       - echo "Generate analyzer tests..."
       - go run ./internal/testgen

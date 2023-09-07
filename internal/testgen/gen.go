@@ -33,7 +33,7 @@ type TestsGenerator interface {
 	GoldenTemplate() Executor
 }
 
-// CheckerTestsGenerator – a TestsGenerator for specific Checker.
+// CheckerTestsGenerator is a TestsGenerator for specific Checker.
 // One checker must be covered by one generator.
 type CheckerTestsGenerator interface {
 	TestsGenerator

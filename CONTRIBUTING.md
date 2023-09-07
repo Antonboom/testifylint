@@ -55,15 +55,15 @@ var registry = checkersRegistry{
 }
 ```
 
-By default, we disabled checker, because it's honestly a matter of taste.
+By default, we disable the checker if we doubt its 100% usefulness.
 
 ### 4) Create new tests generator in `internal/testgen/gen_{checker_name}.go`
 
-Create a new `ZeroTestsGenerator` in `internal/testgen/gen_zero.go`.
+Create new `ZeroTestsGenerator` in `internal/testgen/gen_zero.go`.
 
 See examples in adjacent files.
 
-In the first iteration, these can be a very simple tests for debugging and checker's proof of concept.
+In the first iteration, these can be a very simple tests for debugging checker's proof of concept.
 And after the implementation of the checker, you can add various cycles, variables, etc. to the template.
 
 `GoldenTemplate` is usually an `ErroredTemplate` with some strings replaced.
@@ -73,7 +73,7 @@ And after the implementation of the checker, you can add various cycles, variabl
 ### 6) Generate new tests
 
 ```bash
-$ task tests:gen     
+$ task test:gen     
 Generate analyzer tests...
 ```
 
@@ -81,6 +81,9 @@ Generate analyzer tests...
 
 `Zero` is an example of `checkers.RegularChecker` because it works with "general" assertion call.
 For more complex checkers, use the `checkers.AdvancedChecker` interface.
+
+If the checker turns out to be too “fat”, then you can omit some obviously rare combinations,
+especially if they are covered by other checkers. Usually these are expressions in `assert.True/False`.
 
 ### 8) Improve tests from p.4 if necessary
 
@@ -103,8 +106,6 @@ Install...
 Fix linter issues and broken tests (probably related to the checkers registry).
 
 ### 10) Update the `Checkers` section in `README.md`, commit the changes and submit a pull request 🔥
-
----
 
 # Open for contribution
 
@@ -173,7 +174,7 @@ Fix linter issues and broken tests (probably related to the checkers registry).
 ```
 
 **Autofix**: true. <br>
-**Enabled by default**: false. <br>
+**Enabled by default**: maybe? <br>
 **Reason**: Code simplification.
 
 ---
@@ -215,7 +216,7 @@ type Tx struct {
 And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 
 **Autofix**: false. <br>
-**Enabled by default**: true, but configurable. <br>
+**Enabled by default**: true. <br>
 **Reason**: Work with floating properly.
 
 ---
@@ -232,7 +233,7 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 ```
 
 **Autofix**: true. <br>
-**Enabled by default**: false. <br>
+**Enabled by default**: true. <br>
 **Reason**: Is similar to the [usestdlibvars](https://golangci-lint.run/usage/linters/#usestdlibvars) linter.
 
 ---
@@ -254,7 +255,7 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 ```
 
 **Autofix**: true. <br>
-**Enabled by default**: false. <br>
+**Enabled by default**: maybe? <br>
 **Reason**: Code simplification.
 
 ---
@@ -270,7 +271,7 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 ```
 
 **Autofix**: true. <br>
-**Enabled by default**: false. <br>
+**Enabled by default**: maybe? <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
 
 ---
@@ -278,7 +279,7 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 ### no-fmt-mess
 
 **Autofix**: true. <br>
-**Enabled by default**: maybe.
+**Enabled by default**: maybe?
 
 Those who are new to `testify` may be discouraged by the duplicative API:
 
@@ -321,12 +322,10 @@ then before that there must be a length constraint through `require`.
 ```
 
 **Autofix**: false? <br>
-**Enabled by default**: true. <br>
+**Enabled by default**: maybe? <br>
 **Reason**: Similar to [require-error](README.md#require-error). Save you from annoying panics.
 
 Or maybe do something similar for maps? And come up with better name for the checker.
-
-TODO: + require.Empty
 
 ### suite-run
 
@@ -347,7 +346,7 @@ func (s *Suite) TestSomething() {
 ```
 
 **Autofix**: true. <br>
-**Enabled by default**: probably true. <br>
+**Enabled by default**: probably yes. <br>
 **Reason**: Code simplification and consistency.
 
 But need to investigate the technical difference and the reasons for the appearance of `s.Run`.
@@ -405,7 +404,7 @@ func (s *HandlersSuite) Test_UsecaseSuccess()
 ```
 
 **Autofix**: true. <br>
-**Enabled by default**: false.
+**Enabled by default**: false. <br>
 **Reason**: Just for your reflection and suggestion.
 
 I'm not sure if anyone uses `assert.Zero` – it looks strange and conflicts with `assert.Empty`:
@@ -420,3 +419,8 @@ I'm not sure if anyone uses `assert.Zero` – it looks strange and conflicts wit
 
 Maybe it's better to make configurable support for other types in the `empty` checker and
 vice versa to prohibit the `Zero`?
+
+---
+
+Any other figments of your imagination are welcome 🙏<br>
+List of `testify` functions [here](https://pkg.go.dev/github.com/stretchr/testify@master/assert#pkg-functions).
