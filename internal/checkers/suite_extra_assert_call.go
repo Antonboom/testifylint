@@ -49,12 +49,14 @@ func (checker *SuiteExtraAssertCall) SetMode(m SuiteExtraAssertCallMode) *SuiteE
 }
 
 func (checker SuiteExtraAssertCall) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	switch x := call.Selector.X.(type) {
-	case *ast.Ident: // s.True
-		if checker.mode != SuiteExtraAssertCallModeRequire {
-			return nil
-		}
-		if x == nil || !implementsTestifySuiteIface(pass, x) {
+	if call.IsPkg {
+		return nil
+	}
+
+	switch checker.mode {
+	case SuiteExtraAssertCallModeRequire:
+		x, ok := call.Selector.X.(*ast.Ident) // s.True
+		if !ok || x == nil || !implementsTestifySuiteIface(pass, x) {
 			return nil
 		}
 
@@ -68,16 +70,14 @@ func (checker SuiteExtraAssertCall) Check(pass *analysis.Pass, call *CallMeta) *
 			}},
 		})
 
-	case *ast.CallExpr: // s.Assert().True
-		if checker.mode != SuiteExtraAssertCallModeRemove {
+	case SuiteExtraAssertCallModeRemove:
+		x, ok := call.Selector.X.(*ast.CallExpr) // s.Assert().True
+		if !ok {
 			return nil
 		}
 
 		se, ok := x.Fun.(*ast.SelectorExpr)
-		if !ok {
-			return nil
-		}
-		if se == nil || !implementsTestifySuiteIface(pass, se.X) {
+		if !ok || se == nil || !implementsTestifySuiteIface(pass, se.X) {
 			return nil
 		}
 		if se.Sel == nil || se.Sel.Name != "Assert" {
@@ -94,5 +94,6 @@ func (checker SuiteExtraAssertCall) Check(pass *analysis.Pass, call *CallMeta) *
 			}},
 		})
 	}
+
 	return nil
 }

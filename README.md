@@ -291,7 +291,7 @@ func (s *MySuite) TestSomething() {
 You can enable such behaviaor through `--suite-extra-assert-call.mode=require`.
 
 **Autofix**: true. <br>
-**Enabled by default**: true, in `remove` mode. <br>
+**Enabled by default**: true, in the `remove` mode. <br>
 **Reason**: More simple or uniform code.
 
 ---
