@@ -35,7 +35,7 @@ jobs:
         with:
           go-version: ^1.21
       - uses: actions/checkout@v3
-      - run: go test -coverprofile=coverage.out ./...
+      - run: go test -coverpkg=./analyzer,./internal/analysisutil,./internal/checkers,./internal/config -coverprofile=coverage.out ./...
       - uses: shogo82148/actions-goveralls@v1
         with:
           path-to-profile: coverage.out
