@@ -1,6 +1,6 @@
 module testdata
 
-go 1.21
+go 1.20
 
 require (
 	github.com/ghetzel/testify v1.4.1

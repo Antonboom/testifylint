@@ -10,10 +10,10 @@ jobs:
   go_install:
     runs-on: ubuntu-latest
     steps:
-      - uses: rlespinasse/github-slug-action@v4
+      - uses: rlespinasse/github-slug-action@v4.4.1
       - uses: actions/setup-go@v4
         with:
-          go-version: ^1.21
+          go-version: ^1.20
       - run: cd /tmp && go install github.com/Antonboom/testifylint@${{ env.GITHUB_REF_NAME }} && testifylint -h
 
   lint:
