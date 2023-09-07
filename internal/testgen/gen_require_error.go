@@ -15,7 +15,7 @@ func (RequireErrorTestsGenerator) Checker() checkers.Checker {
 func (g RequireErrorTestsGenerator) TemplateData() any {
 	var (
 		checker = g.Checker().Name()
-		report  = checker + ": for error assertions use the `require`"
+		report  = checker + ": for error assertions use require"
 	)
 
 	return struct {
