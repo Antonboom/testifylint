@@ -1,5 +1,7 @@
 # Contribution guideline
 
+> ⚠️ The module version is **1.20**, but for development you need Go >= **1.21**
+
 ### 1) Install developer tools
 
 ```bash
