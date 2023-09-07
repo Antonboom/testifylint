@@ -3,13 +3,13 @@ package checkers
 import (
 	"fmt"
 	"go/ast"
-	"go/types"
 	"strings"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/ast/inspector"
 
 	"github.com/Antonboom/testifylint/internal/analysisutil"
+	"github.com/Antonboom/testifylint/internal/testify"
 )
 
 // SuiteTHelper requires t.Helper() call in suite helpers:
@@ -31,8 +31,11 @@ func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Insp
 			return
 		}
 
-		if ident := fd.Name; ident == nil ||
-			strings.HasPrefix(ident.Name, "Test") || isServiceSuiteMethod(ident.Name) {
+		if ident := fd.Name; ident == nil || isTestMethod(ident.Name) || isServiceMethod(ident.Name) {
+			return
+		}
+
+		if !containsSuiteAssertions(pass, fd) {
 			return
 		}
 
@@ -42,33 +45,21 @@ func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Insp
 		}
 		rcvName := rcv.Names[0].Name
 
-		rcvType := pass.TypesInfo.TypeOf(rcv.Type)
-		if rcvType == nil {
+		helperCallStr := fmt.Sprintf("%s.T().Helper()", rcvName)
+
+		firstStmt := fd.Body.List[0]
+		if analysisutil.NodeString(pass.Fset, firstStmt) == helperCallStr {
 			return
 		}
 
-		if !containsSuiteCalls(pass, fd, rcvType) {
-			return
-		}
-
-		firstStmt := getFirstStatement(fd)
-		if firstStmt == nil {
-			panic("containsSuiteCalls works incorrectly")
-		}
-
-		if isTHelperCall(pass, firstStmt, rcvType) {
-			return
-		}
-
-		helper := fmt.Sprintf("%s.T().Helper()", rcvName)
-		msg := fmt.Sprintf("suite helper method should start with " + helper)
+		msg := fmt.Sprintf("suite helper method must start with " + helperCallStr)
 		d := newDiagnostic(checker.Name(), fd, msg, &analysis.SuggestedFix{
-			Message: fmt.Sprintf("Insert `%s`", helper),
+			Message: fmt.Sprintf("Insert `%s`", helperCallStr),
 			TextEdits: []analysis.TextEdit{
 				{
 					Pos:     firstStmt.Pos(),
 					End:     firstStmt.Pos(), // Pure insertion.
-					NewText: []byte(helper + "\n\n"),
+					NewText: []byte(helperCallStr + "\n\n"),
 				},
 			},
 		})
@@ -86,85 +77,54 @@ func isTestifySuiteMethod(pass *analysis.Pass, fDecl *ast.FuncDecl) bool {
 	return implementsTestifySuiteIface(pass, rcv.Type)
 }
 
-func isServiceSuiteMethod(name string) bool {
+func isTestMethod(name string) bool {
+	return strings.HasPrefix(name, "Test")
+}
+
+func isServiceMethod(name string) bool {
 	// https://github.com/stretchr/testify/blob/master/suite/interfaces.go
 	switch name {
-	case "SetupSuite", "SetupTest", "TearDownSuite", "TearDownTest",
+	case "T", "SetT", "SetS", "SetupSuite", "SetupTest", "TearDownSuite", "TearDownTest",
 		"BeforeTest", "AfterTest", "HandleStats", "SetupSubTest", "TearDownSubTest":
 		return true
 	}
 	return false
 }
 
-func containsSuiteCalls(pass *analysis.Pass, fn *ast.FuncDecl, rcvType types.Type) bool {
+func containsSuiteAssertions(pass *analysis.Pass, fn *ast.FuncDecl) bool {
 	if fn.Body == nil {
 		return false
 	}
 
 	for _, s := range fn.Body.List {
-		if isSuiteCall(pass, s, rcvType) {
+		if isSuiteAssertion(pass, s) {
 			return true
 		}
 	}
 	return false
 }
 
-func getFirstStatement(fn *ast.FuncDecl) ast.Stmt {
-	if fn.Body == nil {
-		return nil
-	}
-
-	if len(fn.Body.List) == 0 {
-		return nil
-	}
-	return fn.Body.List[0]
-}
-
-func isTHelperCall(pass *analysis.Pass, stmt ast.Stmt, rcvType types.Type) bool {
-	return isSuiteCall(pass, stmt, rcvType) &&
-		(strings.HasSuffix(analysisutil.NodeString(pass.Fset, stmt), "T().Helper()"))
-}
-
-func isSuiteCall(pass *analysis.Pass, stmt ast.Stmt, rcvType types.Type) bool {
+func isSuiteAssertion(pass *analysis.Pass, stmt ast.Stmt) bool {
 	expr, ok := stmt.(*ast.ExprStmt)
 	if !ok {
 		return false
 	}
 
-	x := unwrapSelector(expr.X)
-	if x == nil {
+	ce, ok := expr.X.(*ast.CallExpr)
+	if !ok {
 		return false
 	}
 
-	t := pass.TypesInfo.TypeOf(x)
-	if t == nil {
+	se, ok := ce.Fun.(*ast.SelectorExpr)
+	if !ok || se.Sel == nil {
 		return false
 	}
-	return types.Identical(t, rcvType)
-}
 
-// unwrapSelector supports
-//
-//	s.True(b)
-//	s.Assert().True(b)
-//	s.Require().True(b)
-//
-// and returns "s" identifier.
-func unwrapSelector(e ast.Expr) *ast.Ident {
-	for {
-		switch v := e.(type) {
-		case *ast.CallExpr:
-			e = v.Fun
-
-		case *ast.SelectorExpr:
-			e = v.X
-
-		case *ast.Ident:
-			return v
-
-		default:
-			// Protection against strange constructs that cause an infinite loop.
-			return nil
-		}
+	if sel, ok := pass.TypesInfo.Selections[se]; ok {
+		pkg := sel.Obj().Pkg()
+		isAssert := analysisutil.IsPkg(pkg, testify.AssertPkgName, testify.AssertPkgPath)
+		isRequire := analysisutil.IsPkg(pkg, testify.RequirePkgName, testify.RequirePkgPath)
+		return isAssert || isRequire
 	}
+	return false
 }

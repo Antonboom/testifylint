@@ -82,19 +82,17 @@ func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
 
 func (tl *testifyLint) regularCheck(pass *analysis.Pass, ce *ast.CallExpr) {
 	se, ok := ce.Fun.(*ast.SelectorExpr)
-	if !ok {
+	if !ok || se.Sel == nil {
 		return
 	}
-	if se.Sel == nil {
-		return
-	}
-	fn := se.Sel.Name
+	fnName := se.Sel.Name
 
 	initiatorPkg, isPkgCall := func() (*types.Package, bool) {
 		// Examples:
-		// s.Assert         -> *suite.Suite        -> package suite ("vendor/github.com/stretchr/testify/suite")
-		// s.Assert().Equal -> *assert.Assertions  -> package assert ("vendor/github.com/stretchr/testify/assert")
-		// reqObj.Falsef    -> *require.Assertions -> package require ("vendor/github.com/stretchr/testify/require")
+		// s.Assert         -> method of *suite.Suite        -> package suite ("vendor/github.com/stretchr/testify/suite")
+		// s.Assert().Equal -> method of *assert.Assertions  -> package assert ("vendor/github.com/stretchr/testify/assert")
+		// s.Equal          -> method of *assert.Assertions  -> package assert ("vendor/github.com/stretchr/testify/assert")
+		// reqObj.Falsef    -> method of *require.Assertions -> package require ("vendor/github.com/stretchr/testify/require")
 		if sel, ok := pass.TypesInfo.Selections[se]; ok {
 			return sel.Obj().Pkg(), false
 		}
@@ -129,8 +127,8 @@ func (tl *testifyLint) regularCheck(pass *analysis.Pass, ce *ast.CallExpr) {
 		SelectorXStr: analysisutil.NodeString(pass.Fset, se.X),
 		Fn: checkers.FnMeta{
 			Range: se.Sel,
-			Name:  fn,
-			IsFmt: strings.HasSuffix(fn, "f"),
+			Name:  fnName,
+			IsFmt: strings.HasSuffix(fnName, "f"),
 		},
 		Args:    trimTArg(pass, isAssert, ce.Args),
 		ArgsRaw: ce.Args,
@@ -162,7 +160,6 @@ func isTestingTPtr(pass *analysis.Pass, isAssert bool, arg ast.Expr) bool {
 		pkgPath = testify.AssertPkgPath
 	}
 
-	//
 	testingInterfaceObj := analysisutil.ObjectOf(pass.Pkg, pkgPath, "TestingT")
 	if testingInterfaceObj == nil {
 		return false

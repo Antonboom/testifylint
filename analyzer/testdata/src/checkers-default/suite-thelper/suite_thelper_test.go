@@ -21,11 +21,22 @@ func TestGameRoomSuite(t *testing.T) {
 	})
 }
 
+func (s *GameRoomSuite) SetupTest() {
+	s.Require().Empty(s.rooms)
+	s.Require().Empty(s.players)
+}
+
+func (s *GameRoomSuite) TearDownTest() {
+	s.rooms = map[int]*Room{}
+	s.players = map[int]*Player{}
+}
+
 func (s *GameRoomSuite) TestJoinRoom() {
 	p := s.newPlayer(100, "DoomGuy")
 	r := s.newRoom(200)
 	s.joinRoom(p.ID, r.ID)
 	s.assertPlayerNickName(100, "DoomGuy")
+	s.AssertPlayersNumber(200, 1)
 }
 
 func (s *GameRoomSuite) newPlayer(id int, nickname string) *Player {
@@ -40,7 +51,7 @@ func (s *GameRoomSuite) newRoom(id int) *Room {
 	return r
 }
 
-func (suite *GameRoomSuite) joinRoom(playerID, roomID int) { // want "suite-thelper: suite helper method should start with suite\\.T\\(\\)\\.Helper\\(\\)"
+func (suite *GameRoomSuite) joinRoom(playerID, roomID int) { // want "suite-thelper: suite helper method must start with suite\\.T\\(\\)\\.Helper\\(\\)"
 	room, ok := suite.rooms[roomID]
 	suite.Require().True(ok)
 
@@ -59,6 +70,12 @@ func (s *GameRoomSuite) assertPlayerNickName(playerID int, expectedNickname stri
 
 	s.Assert().Equal(playerID, player.ID)
 	s.Equal(expectedNickname, player.Nickname)
+}
+
+func (s *GameRoomSuite) AssertPlayersNumber(roomID int, playersNum int) { // want "suite-thelper: suite helper method must start with s\\.T\\(\\)\\.Helper\\(\\)"
+	room, ok := s.rooms[roomID]
+	s.Require().True(ok)
+	s.Len(room.Players, playersNum)
 }
 
 type Player struct {
