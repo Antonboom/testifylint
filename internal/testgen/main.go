@@ -35,7 +35,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	SuiteTHelperTestsGenerator{},
 }
 
-func init() {
+func init() { //nolint:gochecknoinits // Internal test generation tool.
 	genForChecker := make(map[string]struct{}, len(checkerTestsGenerators))
 	for _, g := range checkerTestsGenerators {
 		name := g.Checker().Name()
