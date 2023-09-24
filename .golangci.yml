@@ -72,6 +72,7 @@ linters:
     - forbidigo
     - gci
     - gocheckcompilerdirectives
+    - gochecknoinits
     - goconst
     - gocritic
     - godot

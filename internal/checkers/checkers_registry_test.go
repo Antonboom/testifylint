@@ -8,10 +8,29 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
+func TestRegistry(t *testing.T) {
+	checkerList := checkers.All()
+	if len(checkerList) == 0 {
+		t.Fatal("no known checkers: empty list")
+	}
+
+	checkerSet := make(map[string]struct{}, len(checkerList))
+	for _, name := range checkerList {
+		if name == "" {
+			t.Fatal("empty checker name")
+		}
+
+		if _, ok := checkerSet[name]; ok {
+			t.Fatalf("not uniq checker name: %v", name)
+		}
+		checkerSet[name] = struct{}{}
+	}
+}
+
 func TestAll(t *testing.T) {
 	checkerList := checkers.All()
 	if len(checkerList) == 0 {
-		t.Fatalf("no known checkers: empty list")
+		t.Fatal("no known checkers: empty list")
 	}
 
 	// NOTE(a.telyshev): I don't use constants or checker's Name() method on purpose.

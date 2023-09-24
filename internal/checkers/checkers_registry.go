@@ -1,7 +1,6 @@
 package checkers
 
 import (
-	"fmt"
 	"sort"
 )
 
@@ -23,19 +22,11 @@ var registry = checkersRegistry{
 	{factory: asCheckerFactory(NewSuiteTHelper), enabledByDefault: false},
 }
 
-func init() {
-	if err := registry.init(); err != nil {
-		panic(err)
-	}
-}
-
 type checkersRegistry []checkerMeta
 
 type checkerMeta struct {
 	factory          checkerFactory
 	enabledByDefault bool
-	priority         int
-	name             string
 }
 
 type checkerFactory func() Checker
@@ -46,38 +37,20 @@ func asCheckerFactory[T Checker](fn func() T) checkerFactory {
 	}
 }
 
-func (r checkersRegistry) init() error {
-	for i := range r {
-		checker := &r[i]
-
-		name := checker.factory().Name()
-		if name == "" {
-			return fmt.Errorf("checker with empty name: %T", checker)
-		}
-		if _, ok := r.get(name); ok {
-			return fmt.Errorf("not uniq checker name: %v", name)
-		}
-
-		checker.name = name
-		checker.priority = i
-	}
-	return nil
-}
-
-func (r checkersRegistry) get(name string) (checkerMeta, bool) {
-	for _, meta := range r {
-		if meta.name == name {
-			return meta, true
+func (r checkersRegistry) get(name string) (m checkerMeta, priority int, found bool) {
+	for i, meta := range r {
+		if meta.factory().Name() == name {
+			return meta, i, true
 		}
 	}
-	return checkerMeta{}, false
+	return checkerMeta{}, 0, false
 }
 
 // All returns all checkers names sorted by checker's priority.
 func All() []string {
 	result := make([]string, 0, len(registry))
 	for _, meta := range registry {
-		result = append(result, meta.name)
+		result = append(result, meta.factory().Name())
 	}
 	return result
 }
@@ -87,7 +60,7 @@ func EnabledByDefault() []string {
 	result := make([]string, 0, len(registry))
 	for _, meta := range registry {
 		if meta.enabledByDefault {
-			result = append(result, meta.name)
+			result = append(result, meta.factory().Name())
 		}
 	}
 	return result
@@ -95,7 +68,7 @@ func EnabledByDefault() []string {
 
 // Get returns new checker instance by checker's name.
 func Get(name string) (Checker, bool) {
-	meta, ok := registry.get(name)
+	meta, _, ok := registry.get(name)
 	if ok {
 		return meta.factory(), true
 	}
@@ -104,7 +77,7 @@ func Get(name string) (Checker, bool) {
 
 // IsKnown checks if there is a checker with that name.
 func IsKnown(name string) bool {
-	_, ok := registry.get(name)
+	_, _, ok := registry.get(name)
 	return ok
 }
 
@@ -112,7 +85,7 @@ func IsKnown(name string) bool {
 // Returns false if there is no such checker in the registry.
 // For pre-validation use Get or IsKnown.
 func IsEnabledByDefault(name string) bool {
-	meta, ok := registry.get(name)
+	meta, _, ok := registry.get(name)
 	return ok && meta.enabledByDefault
 }
 
@@ -121,8 +94,8 @@ func IsEnabledByDefault(name string) bool {
 func SortByPriority(checkers []string) {
 	sort.Slice(checkers, func(i, j int) bool {
 		lhs, rhs := checkers[i], checkers[j]
-		lhsMeta, _ := registry.get(lhs)
-		rhsMeta, _ := registry.get(rhs)
-		return lhsMeta.priority < rhsMeta.priority
+		_, lhsPriority, _ := registry.get(lhs)
+		_, rhsPriority, _ := registry.get(rhs)
+		return lhsPriority < rhsPriority
 	})
 }
