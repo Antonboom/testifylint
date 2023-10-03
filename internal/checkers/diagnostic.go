@@ -27,10 +27,6 @@ func newDiagnostic(
 	msg string,
 	fix *analysis.SuggestedFix,
 ) *analysis.Diagnostic {
-	if !rng.Pos().IsValid() || !rng.End().IsValid() {
-		panic("invalid report position")
-	}
-
 	d := analysis.Diagnostic{
 		Pos:      rng.Pos(),
 		End:      rng.End(),

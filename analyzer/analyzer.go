@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"golang.org/x/tools/go/analysis"
-	"golang.org/x/tools/go/analysis/passes/inspect"
 	"golang.org/x/tools/go/ast/inspector"
 
 	"github.com/Antonboom/testifylint/internal/analysisutil"
@@ -27,10 +26,9 @@ func New() *analysis.Analyzer {
 	cfg := config.NewDefault()
 
 	analyzer := &analysis.Analyzer{
-		Name:     name,
-		Doc:      doc,
-		URL:      url,
-		Requires: []*analysis.Analyzer{inspect.Analyzer},
+		Name: name,
+		Doc:  doc,
+		URL:  url,
 		Run: func(pass *analysis.Pass) (any, error) {
 			regularCheckers, advancedCheckers, err := newCheckers(cfg)
 			if err != nil {
@@ -55,8 +53,7 @@ type testifyLint struct {
 }
 
 func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
-	insp := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
-
+	filesToAnalysis := make([]*ast.File, 0, len(pass.Files))
 	for _, f := range pass.Files {
 		if !analysisutil.IsTestFile(pass.Fset, f) {
 			continue
@@ -64,19 +61,23 @@ func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
 		if !analysisutil.Imports(f, testify.AssertPkgPath, testify.RequirePkgPath, testify.SuitePkgPath) {
 			continue
 		}
+		filesToAnalysis = append(filesToAnalysis, f)
+	}
 
-		// Regular checkers.
-		insp.Preorder([]ast.Node{(*ast.CallExpr)(nil)}, func(node ast.Node) {
-			tl.regularCheck(pass, node.(*ast.CallExpr))
-		})
+	insp := inspector.New(filesToAnalysis)
 
-		// Advanced checkers.
-		for _, ch := range tl.advancedCheckers {
-			for _, d := range ch.Check(pass, insp) {
-				pass.Report(d)
-			}
+	// Regular checkers.
+	insp.Preorder([]ast.Node{(*ast.CallExpr)(nil)}, func(node ast.Node) {
+		tl.regularCheck(pass, node.(*ast.CallExpr))
+	})
+
+	// Advanced checkers.
+	for _, ch := range tl.advancedCheckers {
+		for _, d := range ch.Check(pass, insp) {
+			pass.Report(d)
 		}
 	}
+
 	return nil, nil
 }
 
