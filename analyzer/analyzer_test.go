@@ -33,8 +33,8 @@ func TestTestifyLint(t *testing.T) {
 			},
 		},
 		{dir: "ginkgo"},
-		{dir: "not-test-file"},    // We ignores regular files.
-		{dir: "not-true-testify"}, // We ignores stretchr/testify's forks.
+		{dir: "not-test-file"},    // By default, linter checks regular files too.
+		{dir: "not-true-testify"}, // Linter ignores stretchr/testify's forks.
 		{dir: "pkg-alias"},
 		{
 			dir: "suite-require-extra-assert-call",
