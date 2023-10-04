@@ -9,6 +9,7 @@ import (
 // NewDefault builds default testifylint config.
 func NewDefault() Config {
 	return Config{
+		EnableAll:       false,
 		EnabledCheckers: checkers.EnabledByDefault(),
 		ExpectedActual: ExpectedActualConfig{
 			ExpVarPattern: RegexpValue{checkers.DefaultExpectedVarPattern},

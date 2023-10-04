@@ -12,10 +12,17 @@ import (
 
 func TestNewDefault(t *testing.T) {
 	cfg := config.NewDefault()
+
+	if cfg.EnableAll {
+		t.Fatal()
+	}
 	if !slices.Equal(cfg.EnabledCheckers, checkers.EnabledByDefault()) {
 		t.Fatal()
 	}
 	if cfg.ExpectedActual.ExpVarPattern.String() != checkers.DefaultExpectedVarPattern.String() {
+		t.Fatal()
+	}
+	if cfg.SuiteExtraAssertCall.Mode != checkers.SuiteExtraAssertCallModeRemove {
 		t.Fatal()
 	}
 }
