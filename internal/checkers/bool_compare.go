@@ -209,7 +209,7 @@ func xor(a, b bool) bool {
 // anyVal returns the first value[i] for which bools[i] is true.
 func anyVal[T any](bools []bool, vals ...T) (T, bool) {
 	if len(bools) != len(vals) {
-		panic("inconsistent usage of valOr")
+		panic("inconsistent usage of valOr") //nolint:forbidigo // Does not depend on the code being analyzed.
 	}
 
 	for i, b := range bools {

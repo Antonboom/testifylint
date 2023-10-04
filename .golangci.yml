@@ -12,6 +12,9 @@ issues:
       linters: [ "revive" ]
       text: "exported"
 
+    - path: "internal/testgen"
+      linters: [ "forbidigo", "gochecknoinits" ] # Internal test generation tool.
+
     - path: "internal"
       linters: [ "revive" ]
       text: "exported (method|const)"
@@ -33,6 +36,9 @@ linters-settings:
 
   forbidigo:
     forbid:
+      - p: panic
+        msg: Please, don't panic
+
       - p: types\.ExprString
         msg: Please, use analysisutil.NodeBytes/NodeString instead
 
