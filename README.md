@@ -249,7 +249,7 @@ This checker is similar to the [floatcompare](https://github.com/golangci/golang
 **Enabled by default**: true. <br>
 **Reason**: Such "ignoring" of errors leads to further panics, making the test harder to debug.
 
-`tesitfy/require` allows to stop test execution when a test fails.
+`testify/require` allows to stop test execution when a test fails.
 
 ---
 
