@@ -64,16 +64,12 @@ func (g EmptyTestsGenerator) TemplateData() any {
 				Name: "assert.NotEmpty cases",
 				InvalidAssertions: []Assertion{
 					// n := len(elems)
-					// n != 0, n > 0, n > 1, n >= 1
-					// 0 != n, 0 < n, 1 < n, 1 <= n
+					// n != 0, n > 0
+					// 0 != n, 0 < n
 					{Fn: "NotEqual", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "NotEqual", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "Greater", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "Less", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "Greater", Argsf: "len(elems), 1", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "Less", Argsf: "1, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "GreaterOrEqual", Argsf: "len(elems), 1", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "LessOrEqual", Argsf: "1, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "NotEmpty", Argsf: "elems"},
@@ -110,6 +106,14 @@ func (g EmptyTestsGenerator) TemplateData() any {
 			{Fn: "LessOrEqual", Argsf: "0, len(elems)"},
 			{Fn: "LessOrEqual", Argsf: "len(elems), 2"},
 			{Fn: "LessOrEqual", Argsf: "2, len(elems)"},
+
+			// The linter ignores n > 1 and n >= 1 cases, because
+			//  - it is not exactly equivalent of NotEmpty;
+			//  - NotEmpty in such cases may impair the readability of the test.
+			{Fn: "Greater", Argsf: "len(elems), 1"},
+			{Fn: "Less", Argsf: "1, len(elems)"},
+			{Fn: "GreaterOrEqual", Argsf: "len(elems), 1"},
+			{Fn: "LessOrEqual", Argsf: "1, len(elems)"},
 		},
 	}
 }

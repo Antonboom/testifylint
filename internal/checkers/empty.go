@@ -117,22 +117,12 @@ func (checker Empty) checkNotEmpty(pass *analysis.Pass, call *CallMeta) *analysi
 		}
 
 	case "Greater", "Greaterf":
-		if lenArg, ok := isBuiltinLenCall(pass, a); ok && isZero(b) || isOne(b) {
+		if lenArg, ok := isBuiltinLenCall(pass, a); ok && isZero(b) {
 			return newUseNotEmptyDiagnostic(a.Pos(), b.End(), lenArg)
 		}
 
 	case "Less", "Lessf":
-		if lenArg, ok := isBuiltinLenCall(pass, b); ok && isZero(a) || isOne(a) {
-			return newUseNotEmptyDiagnostic(a.Pos(), b.End(), lenArg)
-		}
-
-	case "GreaterOrEqual", "GreaterOrEqualf":
-		if lenArg, ok := isBuiltinLenCall(pass, a); ok && isOne(b) {
-			return newUseNotEmptyDiagnostic(a.Pos(), b.End(), lenArg)
-		}
-
-	case "LessOrEqual", "LessOrEqualf":
-		if lenArg, ok := isBuiltinLenCall(pass, b); ok && isOne(a) {
+		if lenArg, ok := isBuiltinLenCall(pass, b); ok && isZero(a) {
 			return newUseNotEmptyDiagnostic(a.Pos(), b.End(), lenArg)
 		}
 	}

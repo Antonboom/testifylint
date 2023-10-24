@@ -37,22 +37,14 @@ func TestEmptyChecker(t *testing.T) {
 	// assert.NotEmpty cases.
 	{
 		// Invalid.
-		assert.NotEqual(t, len(elems), 0)                                         // want "empty: use assert\\.NotEmpty"
-		assert.NotEqualf(t, len(elems), 0, "msg with args %d %s", 42, "42")       // want "empty: use assert\\.NotEmptyf"
-		assert.NotEqual(t, 0, len(elems))                                         // want "empty: use assert\\.NotEmpty"
-		assert.NotEqualf(t, 0, len(elems), "msg with args %d %s", 42, "42")       // want "empty: use assert\\.NotEmptyf"
-		assert.Greater(t, len(elems), 0)                                          // want "empty: use assert\\.NotEmpty"
-		assert.Greaterf(t, len(elems), 0, "msg with args %d %s", 42, "42")        // want "empty: use assert\\.NotEmptyf"
-		assert.Less(t, 0, len(elems))                                             // want "empty: use assert\\.NotEmpty"
-		assert.Lessf(t, 0, len(elems), "msg with args %d %s", 42, "42")           // want "empty: use assert\\.NotEmptyf"
-		assert.Greater(t, len(elems), 1)                                          // want "empty: use assert\\.NotEmpty"
-		assert.Greaterf(t, len(elems), 1, "msg with args %d %s", 42, "42")        // want "empty: use assert\\.NotEmptyf"
-		assert.Less(t, 1, len(elems))                                             // want "empty: use assert\\.NotEmpty"
-		assert.Lessf(t, 1, len(elems), "msg with args %d %s", 42, "42")           // want "empty: use assert\\.NotEmptyf"
-		assert.GreaterOrEqual(t, len(elems), 1)                                   // want "empty: use assert\\.NotEmpty"
-		assert.GreaterOrEqualf(t, len(elems), 1, "msg with args %d %s", 42, "42") // want "empty: use assert\\.NotEmptyf"
-		assert.LessOrEqual(t, 1, len(elems))                                      // want "empty: use assert\\.NotEmpty"
-		assert.LessOrEqualf(t, 1, len(elems), "msg with args %d %s", 42, "42")    // want "empty: use assert\\.NotEmptyf"
+		assert.NotEqual(t, len(elems), 0)                                   // want "empty: use assert\\.NotEmpty"
+		assert.NotEqualf(t, len(elems), 0, "msg with args %d %s", 42, "42") // want "empty: use assert\\.NotEmptyf"
+		assert.NotEqual(t, 0, len(elems))                                   // want "empty: use assert\\.NotEmpty"
+		assert.NotEqualf(t, 0, len(elems), "msg with args %d %s", 42, "42") // want "empty: use assert\\.NotEmptyf"
+		assert.Greater(t, len(elems), 0)                                    // want "empty: use assert\\.NotEmpty"
+		assert.Greaterf(t, len(elems), 0, "msg with args %d %s", 42, "42")  // want "empty: use assert\\.NotEmptyf"
+		assert.Less(t, 0, len(elems))                                       // want "empty: use assert\\.NotEmpty"
+		assert.Lessf(t, 0, len(elems), "msg with args %d %s", 42, "42")     // want "empty: use assert\\.NotEmptyf"
 
 		// Valid.
 		assert.NotEmpty(t, elems)
@@ -127,4 +119,12 @@ func TestEmptyChecker_Ignored(t *testing.T) {
 	assert.LessOrEqualf(t, len(elems), 2, "msg with args %d %s", 42, "42")
 	assert.LessOrEqual(t, 2, len(elems))
 	assert.LessOrEqualf(t, 2, len(elems), "msg with args %d %s", 42, "42")
+	assert.Greater(t, len(elems), 1)
+	assert.Greaterf(t, len(elems), 1, "msg with args %d %s", 42, "42")
+	assert.Less(t, 1, len(elems))
+	assert.Lessf(t, 1, len(elems), "msg with args %d %s", 42, "42")
+	assert.GreaterOrEqual(t, len(elems), 1)
+	assert.GreaterOrEqualf(t, len(elems), 1, "msg with args %d %s", 42, "42")
+	assert.LessOrEqual(t, 1, len(elems))
+	assert.LessOrEqualf(t, 1, len(elems), "msg with args %d %s", 42, "42")
 }
