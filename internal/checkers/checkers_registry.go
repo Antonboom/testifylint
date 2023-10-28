@@ -13,6 +13,7 @@ var registry = checkersRegistry{
 	{factory: asCheckerFactory(NewLen), enabledByDefault: true},
 	{factory: asCheckerFactory(NewCompares), enabledByDefault: true},
 	{factory: asCheckerFactory(NewErrorNil), enabledByDefault: true},
+	{factory: asCheckerFactory(NewNilCompare), enabledByDefault: true},
 	{factory: asCheckerFactory(NewErrorIsAs), enabledByDefault: true},
 	{factory: asCheckerFactory(NewRequireError), enabledByDefault: true},
 	{factory: asCheckerFactory(NewExpectedActual), enabledByDefault: true},

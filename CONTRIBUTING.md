@@ -37,9 +37,9 @@ func (Zero) Name() string { return "zero" }
 
 The above code is enough to satisfy the `checkers.Checker` interface.
 
-### 3) Add the new checker to the `registry` in `internal/checkers/checkers_registry.go` in order of priority
+### 3) Add the new checker to the `registry` in order of priority
 
-The earlier the checker is in the registry, the more priority it is.
+The earlier the checker is in [the registry](internal/checkers/checkers_registry.go), the more priority it is.
 
 For example, the `zero` checker takes precedence over the `expected-actual` or `empty`, 
 because its check is more "narrow" and when you fix the warning from `zero`, 
@@ -70,19 +70,27 @@ And after the implementation of the checker, you can add various cycles, variabl
 
 `GoldenTemplate` is usually an `ErroredTemplate` with some strings replaced.
 
-### 5) Add generator into `checkerTestsGenerators` (`internal/testgen/main.go`)
- 
-### 6) Generate new tests
+### 5) Add generator into `checkerTestsGenerators`
+
+Look at [internal/testgen/main.go](./internal/testgen/main.go).
+
+### 6) Generate and run tests
+
+Tests should fail.
 
 ```bash
-$ task test:gen     
+$ task test
 Generate analyzer tests...
+Test...
+...
+--- FAIL: TestTestifyLint_CheckersDefault
+FAIL
 ```
 
 ### 7) Implement the checker
 
-`Zero` is an example of `checkers.RegularChecker` because it works with "general" assertion call.
-For more complex checkers, use the `checkers.AdvancedChecker` interface.
+`Zero` is an example of [checkers.RegularChecker](./internal/checkers/checker.go) because it works with "general" 
+assertion call. For more complex checkers, use the [checkers.AdvancedChecker](./internal/checkers/checker.go) interface.
 
 If the checker turns out to be too “fat”, then you can omit some obviously rare combinations,
 especially if they are covered by other checkers. Usually these are expressions in `assert.True/False`.
@@ -107,7 +115,9 @@ Install...
 
 Fix linter issues and broken tests (probably related to the checkers registry).
 
-### 10) Update the `Checkers` section in `README.md`, commit the changes and submit a pull request 🔥
+### 10) Update `README.md`, commit the changes and submit a pull request 🔥
+
+Describe a new checker in [checkers section](./README.md#checkers).
 
 # Open for contribution
 

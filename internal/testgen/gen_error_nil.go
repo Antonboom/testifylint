@@ -7,13 +7,13 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-type ErrorTestsGenerator struct{}
+type ErrorNilTestsGenerator struct{}
 
-func (ErrorTestsGenerator) Checker() checkers.Checker {
+func (ErrorNilTestsGenerator) Checker() checkers.Checker {
 	return checkers.NewErrorNil()
 }
 
-func (g ErrorTestsGenerator) TemplateData() any {
+func (g ErrorNilTestsGenerator) TemplateData() any {
 	var (
 		checker = g.Checker().Name()
 		report  = checker + ": use %s.%s"
@@ -77,19 +77,19 @@ func (g ErrorTestsGenerator) TemplateData() any {
 	}
 }
 
-func (ErrorTestsGenerator) ErroredTemplate() Executor {
-	return template.Must(template.New("ErrorTestsGenerator.ErroredTemplate").
+func (ErrorNilTestsGenerator) ErroredTemplate() Executor {
+	return template.Must(template.New("ErrorNilTestsGenerator.ErroredTemplate").
 		Funcs(fm).
-		Parse(errorTestTmpl))
+		Parse(errorNilTestTmpl))
 }
 
-func (ErrorTestsGenerator) GoldenTemplate() Executor {
-	return template.Must(template.New("ErrorTestsGenerator.GoldenTemplate").
+func (ErrorNilTestsGenerator) GoldenTemplate() Executor {
+	return template.Must(template.New("ErrorNilTestsGenerator.GoldenTemplate").
 		Funcs(fm).
-		Parse(strings.ReplaceAll(errorTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")))
+		Parse(strings.ReplaceAll(errorNilTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")))
 }
 
-const errorTestTmpl = header + `
+const errorNilTestTmpl = header + `
 
 package {{ .CheckerName.AsPkgName }}
 

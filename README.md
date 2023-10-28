@@ -63,10 +63,13 @@ $ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=re
 | [expected-actual](#expected-actual)                 | ✅                  | ✅       |
 | [float-compare](#float-compare)                     | ✅                  | ❌       |
 | [len](#len)                                         | ✅                  | ✅       |
+| [nil-compare](#nil-compare)                         | ✅                  | ✅       |
 | [require-error](#require-error)                     | ✅                  | ❌       |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
 | [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
+
+> ⚠️ Also look at open for contribution [checkers](CONTRIBUTING.md#open-for-contribution)
 
 ---
 
@@ -226,6 +229,22 @@ This checker is similar to the [floatcompare](https://github.com/golangci/golang
      assert.True(t, len(arr) == 3)
 
 ✅   assert.Len(t, arr, 3)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: More appropriate `testify` API with clearer failure message.
+
+---
+
+### nil-compare
+
+```go
+❌   assert.Equal(t, value, nil)
+     assert.NotEqual(t, value, nil)
+
+✅   assert.Nil(t, value)
+     assert.NotNil(t, value)
 ```
 
 **Autofix**: true. <br>
