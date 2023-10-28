@@ -28,7 +28,7 @@ func (checker NilCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.D
 		return nil
 	}
 
-	survivingArg, ok := xorNil(pass, call.Args[0], call.Args[1])
+	survivingArg, ok := xorNil(call.Args[0], call.Args[1])
 	if !ok {
 		return nil
 	}
@@ -53,8 +53,8 @@ func (checker NilCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.D
 	)
 }
 
-func xorNil(pass *analysis.Pass, first, second ast.Expr) (ast.Expr, bool) {
-	a, b := isNil(pass, first), isNil(pass, second)
+func xorNil(first, second ast.Expr) (ast.Expr, bool) {
+	a, b := isNil(first), isNil(second)
 	if xor(a, b) {
 		if a {
 			return second, true

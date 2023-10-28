@@ -29,8 +29,13 @@ func (g NilCompareTestsGenerator) TemplateData() any {
 		InvalidAssertions: []Assertion{
 			{Fn: "Equal", Argsf: "value, nil", ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: "value"},
 			{Fn: "Equal", Argsf: "nil, value", ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: "value"},
+			{Fn: "Equal", Argsf: `Row["col"], nil`, ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: `Row["col"]`},
+			{Fn: "Equal", Argsf: `nil, Row["col"]`, ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: `Row["col"]`},
+
 			{Fn: "NotEqual", Argsf: "value, nil", ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: "value"},
 			{Fn: "NotEqual", Argsf: "nil, value", ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: "value"},
+			{Fn: "NotEqual", Argsf: `Row["col"], nil`, ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: `Row["col"]`},
+			{Fn: "NotEqual", Argsf: `nil, Row["col"]`, ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: `Row["col"]`},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "Nil", Argsf: "value"},
@@ -39,8 +44,15 @@ func (g NilCompareTestsGenerator) TemplateData() any {
 		IgnoredAssertions: []Assertion{
 			{Fn: "Equal", Argsf: "value, value"},
 			{Fn: "Equal", Argsf: "nil, nil"},
+			{Fn: "Equal", Argsf: `Row["col"], "foo"`},
+			{Fn: "Equal", Argsf: `"foo", Row["col"]`},
+			{Fn: "Equal", Argsf: `Row["col"], Row["col"]`},
+
 			{Fn: "NotEqual", Argsf: "value, value"},
 			{Fn: "NotEqual", Argsf: "nil, nil"},
+			{Fn: "NotEqual", Argsf: `Row["col"], "foo"`},
+			{Fn: "NotEqual", Argsf: `"foo", Row["col"]`},
+			{Fn: "NotEqual", Argsf: `Row["col"], Row["col"]`},
 		},
 	}
 }
@@ -70,6 +82,7 @@ import (
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var value any
+	var Row map[string]any
 
 	// Invalid.
 	{

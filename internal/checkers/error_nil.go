@@ -54,9 +54,9 @@ func (checker ErrorNil) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 			a, b := call.Args[0], call.Args[1]
 
 			switch {
-			case isError(pass, a) && isNil(pass, b):
+			case isError(pass, a) && isNil(b):
 				return noErrorFn, a, b.End()
-			case isNil(pass, a) && isError(pass, b):
+			case isNil(a) && isError(pass, b):
 				return noErrorFn, b, b.End()
 			}
 
@@ -67,9 +67,9 @@ func (checker ErrorNil) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 			a, b := call.Args[0], call.Args[1]
 
 			switch {
-			case isError(pass, a) && isNil(pass, b):
+			case isError(pass, a) && isNil(b):
 				return errorFn, a, b.End()
-			case isNil(pass, a) && isError(pass, b):
+			case isNil(a) && isError(pass, b):
 				return errorFn, b, b.End()
 			}
 		}
@@ -100,12 +100,7 @@ func isError(pass *analysis.Pass, expr ast.Expr) bool {
 	return ok && types.Implements(t, errIface)
 }
 
-func isNil(pass *analysis.Pass, expr ast.Expr) bool {
-	t := pass.TypesInfo.TypeOf(expr)
-	if t == nil {
-		return false
-	}
-
-	b, ok := t.(*types.Basic)
-	return ok && b.Kind()&types.UntypedNil > 0
+func isNil(expr ast.Expr) bool {
+	ident, ok := expr.(*ast.Ident)
+	return ok && ident.Name == "nil"
 }
