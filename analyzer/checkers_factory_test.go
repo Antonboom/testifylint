@@ -20,7 +20,6 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewCompares(),
 		checkers.NewErrorNil(),
 		checkers.NewErrorIsAs(),
-		checkers.NewRequireError(),
 		checkers.NewExpectedActual(),
 		checkers.NewSuiteExtraAssertCall(),
 		checkers.NewSuiteDontUsePkg(),
@@ -33,10 +32,17 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewCompares(),
 		checkers.NewErrorNil(),
 		checkers.NewErrorIsAs(),
-		checkers.NewRequireError(),
 		checkers.NewExpectedActual(),
 		checkers.NewSuiteExtraAssertCall(),
 		checkers.NewSuiteDontUsePkg(),
+	}
+
+	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{
+		checkers.NewRequireError(),
+	}
+	allAdvancedCheckers := []checkers.AdvancedChecker{
+		checkers.NewRequireError(),
+		checkers.NewSuiteTHelper(),
 	}
 
 	cases := []struct {
@@ -49,7 +55,7 @@ func Test_newCheckers(t *testing.T) {
 			name:        "no config",
 			cfg:         config.Config{},
 			expRegular:  enabledByDefaultRegularCheckers,
-			expAdvanced: []checkers.AdvancedChecker{},
+			expAdvanced: enabledByDefaultAdvancedCheckers,
 		},
 		{
 			name: "no enabled checkers",
@@ -57,7 +63,7 @@ func Test_newCheckers(t *testing.T) {
 				EnabledCheckers: []string{},
 			},
 			expRegular:  enabledByDefaultRegularCheckers,
-			expAdvanced: []checkers.AdvancedChecker{},
+			expAdvanced: enabledByDefaultAdvancedCheckers,
 		},
 		{
 			name: "no enabled checkers but enable-all true",
@@ -65,10 +71,8 @@ func Test_newCheckers(t *testing.T) {
 				EnabledCheckers: []string{},
 				EnableAll:       true,
 			},
-			expRegular: allRegularCheckers,
-			expAdvanced: []checkers.AdvancedChecker{
-				checkers.NewSuiteTHelper(),
-			},
+			expRegular:  allRegularCheckers,
+			expAdvanced: allAdvancedCheckers,
 		},
 		{
 			name: "enabled checkers defined",
@@ -82,10 +86,10 @@ func Test_newCheckers(t *testing.T) {
 			},
 			expRegular: []checkers.RegularChecker{
 				checkers.NewLen(),
-				checkers.NewRequireError(),
 				checkers.NewSuiteExtraAssertCall(),
 			},
 			expAdvanced: []checkers.AdvancedChecker{
+				checkers.NewRequireError(),
 				checkers.NewSuiteTHelper(),
 			},
 		},
@@ -100,10 +104,8 @@ func Test_newCheckers(t *testing.T) {
 				},
 				EnableAll: true,
 			},
-			expRegular: allRegularCheckers,
-			expAdvanced: []checkers.AdvancedChecker{
-				checkers.NewSuiteTHelper(),
-			},
+			expRegular:  allRegularCheckers,
+			expAdvanced: allAdvancedCheckers,
 		},
 		{
 			name: "expected-actual pattern defined",

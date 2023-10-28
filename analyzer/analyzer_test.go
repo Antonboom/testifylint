@@ -37,6 +37,10 @@ func TestTestifyLint(t *testing.T) {
 		{dir: "not-true-testify"}, // Linter ignores stretchr/testify's forks.
 		{dir: "pkg-alias"},
 		{
+			dir:   "require-error-skip-logic",
+			flags: map[string]string{"enable": checkers.NewRequireError().Name()},
+		},
+		{
 			dir: "suite-require-extra-assert-call",
 			flags: map[string]string{
 				"enable":                       checkers.NewSuiteExtraAssertCall().Name(),

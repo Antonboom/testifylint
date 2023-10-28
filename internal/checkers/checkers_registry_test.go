@@ -42,10 +42,10 @@ func TestAll(t *testing.T) {
 		"compares",
 		"error-nil",
 		"error-is-as",
-		"require-error",
 		"expected-actual",
 		"suite-extra-assert-call",
 		"suite-dont-use-pkg",
+		"require-error",
 		"suite-thelper",
 	}
 	if !slices.Equal(expected, checkerList) {
@@ -68,10 +68,10 @@ func TestEnabledByDefault(t *testing.T) {
 		"compares",
 		"error-nil",
 		"error-is-as",
-		"require-error",
 		"expected-actual",
 		"suite-extra-assert-call",
 		"suite-dont-use-pkg",
+		"require-error",
 	}
 	if !slices.Equal(expected, checkerList) {
 		t.Fatalf("unexpected list: %#v", checkerList)

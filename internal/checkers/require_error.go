@@ -1,6 +1,15 @@
 package checkers
 
-import "golang.org/x/tools/go/analysis"
+import (
+	"fmt"
+	"go/ast"
+	"go/token"
+
+	"golang.org/x/tools/go/analysis"
+	"golang.org/x/tools/go/ast/inspector"
+)
+
+const requireErrorReport = "for error assertions use require"
 
 // RequireError detects situations like
 //
@@ -13,23 +22,220 @@ import "golang.org/x/tools/go/analysis"
 //	require.NoError(t, err)
 //	s.Require().ErrorIs(err, io.EOF)
 //	s.Require().Error(err)
+//
+// RequireError ignores:
+// - assertion in the `if` condition;
+// - the entire `if-else` block, if there is an assertion in the `if` condition;
+// - the last assertion in the block, if there are no methods/functions calls after it.
+// - assertions in an explicit goroutine;
+// - assertions in the testing cleanup function or suite teardown methods.
 type RequireError struct{}
 
 // NewRequireError constructs RequireError checker.
 func NewRequireError() RequireError { return RequireError{} }
 func (RequireError) Name() string   { return "require-error" }
 
-func (checker RequireError) Check(_ *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	if !call.IsAssert {
-		return nil
+func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Inspector) []analysis.Diagnostic {
+	callsByFunc := make(map[funcID][]callMeta)
+
+	// Stage 1. Collect meta information about any calls inside functions.
+
+	inspector.WithStack([]ast.Node{(*ast.CallExpr)(nil)}, func(node ast.Node, push bool, stack []ast.Node) bool {
+		if !push {
+			return false
+		}
+		if len(stack) < 3 {
+			return true
+		}
+
+		fID := findSurroundingFunc(pass, stack)
+		if fID == nil {
+			return true
+		}
+
+		_, prevIsIfStmt := stack[len(stack)-2].(*ast.IfStmt)
+		_, prevIsAssignStmt := stack[len(stack)-2].(*ast.AssignStmt)
+		_, prevPrevIsIfStmt := stack[len(stack)-3].(*ast.IfStmt)
+		inIfCond := prevIsIfStmt || (prevPrevIsIfStmt && prevIsAssignStmt)
+
+		callExpr := node.(*ast.CallExpr)
+		testifyCall := NewCallMeta(pass, callExpr)
+
+		call := callMeta{
+			call:        callExpr,
+			testifyCall: testifyCall,
+			parentIf:    findNearestNode[*ast.IfStmt](stack),
+			parentBlock: findNearestNode[*ast.BlockStmt](stack),
+			inIfCond:    inIfCond,
+		}
+
+		callsByFunc[*fID] = append(callsByFunc[*fID], call)
+		return testifyCall == nil // Do not support asserts in asserts.
+	})
+
+	// Stage 2. Analyze calls and block context.
+
+	var diagnostics []analysis.Diagnostic
+
+	callsByBlock := map[*ast.BlockStmt][]callMeta{}
+	for _, calls := range callsByFunc {
+		for _, c := range calls {
+			if b := c.parentBlock; b != nil {
+				callsByBlock[b] = append(callsByBlock[b], c)
+			}
+		}
 	}
 
-	const msg = "for error assertions use require"
+	for funcInfo, calls := range callsByFunc {
+		for i, c := range calls {
+			if funcInfo.isTestCleanup {
+				continue
+			}
+			if funcInfo.isGoroutine {
+				continue
+			}
 
-	switch call.Fn.Name {
-	case "Error", "ErrorIs", "ErrorAs", "EqualError", "ErrorContains", "NoError", "NotErrorIs",
-		"Errorf", "ErrorIsf", "ErrorAsf", "EqualErrorf", "ErrorContainsf", "NoErrorf", "NotErrorIsf":
-		return newDiagnostic(checker.Name(), call, msg, nil)
+			if c.testifyCall == nil {
+				continue
+			}
+			if !c.testifyCall.IsAssert {
+				continue
+			}
+			switch c.testifyCall.Fn.Name {
+			default:
+				continue
+			case "Error", "ErrorIs", "ErrorAs", "EqualError", "ErrorContains", "NoError", "NotErrorIs",
+				"Errorf", "ErrorIsf", "ErrorAsf", "EqualErrorf", "ErrorContainsf", "NoErrorf", "NotErrorIsf":
+			}
+
+			if needToSkipBasedOnContext(c, i, calls, callsByBlock) {
+				continue
+			}
+
+			diagnostics = append(diagnostics,
+				*newDiagnostic(checker.Name(), c.testifyCall, requireErrorReport, nil))
+		}
+	}
+
+	return diagnostics
+}
+
+func needToSkipBasedOnContext(
+	currCall callMeta,
+	currCallIndex int,
+	otherCalls []callMeta,
+	callsByBlock map[*ast.BlockStmt][]callMeta,
+) bool {
+	if currCall.inIfCond {
+		// Skip assertions in the "if condition".
+		return true
+	}
+
+	if currCall.parentIf != nil {
+		for _, rootCall := range otherCalls {
+			if (rootCall.parentIf == currCall.parentIf) && rootCall.inIfCond {
+				// Skip assertions in the entire if-else parentBlock, if the "if condition" contains assertion.
+				return true
+			}
+		}
+	}
+
+	blockCalls := callsByBlock[currCall.parentBlock]
+	isLastCallInBlock := blockCalls[len(blockCalls)-1] == currCall
+
+	noCallsAfter := true
+	for i := currCallIndex + 1; i < len(otherCalls); i++ {
+		if (otherCalls[i].parentIf == nil) || (otherCalls[i].parentIf != currCall.parentIf) {
+			noCallsAfter = false
+			break
+		}
+	}
+
+	// Skip assertion if this is the last operation in the test.
+	return isLastCallInBlock && noCallsAfter
+}
+
+func findSurroundingFunc(pass *analysis.Pass, stack []ast.Node) *funcID {
+	for i := len(stack) - 2; i >= 0; i-- {
+		var fType *ast.FuncType
+		var fName string
+		var isTestCleanup bool
+		var isGoroutine bool
+
+		switch fd := stack[i].(type) {
+		case *ast.FuncDecl:
+			fType, fName = fd.Type, fd.Name.Name
+
+			if isTestifySuiteMethod(pass, fd) {
+				if ident := fd.Name; ident != nil && isAfterTestMethod(ident.Name) {
+					isTestCleanup = true
+				}
+			}
+
+		case *ast.FuncLit:
+			fType, fName = fd.Type, "anonymous"
+
+			if i >= 2 { //nolint:nestif
+				if ce, ok := stack[i-1].(*ast.CallExpr); ok {
+					if se, ok := ce.Fun.(*ast.SelectorExpr); ok {
+						isTestCleanup = isTestingTPtr(pass, se.X) && se.Sel != nil && (se.Sel.Name == "Cleanup")
+					}
+
+					if _, ok := stack[i-2].(*ast.GoStmt); ok {
+						isGoroutine = true
+					}
+				}
+			}
+
+		default:
+			continue
+		}
+
+		return &funcID{
+			pos:           fType.Pos(),
+			posStr:        pass.Fset.Position(fType.Pos()).String(),
+			name:          fName,
+			isTestCleanup: isTestCleanup,
+			isGoroutine:   isGoroutine,
+		}
 	}
 	return nil
+}
+
+func findNearestNode[T ast.Node](stack []ast.Node) (v T) {
+	for i := len(stack) - 2; i >= 0; i-- {
+		if n, ok := stack[i].(T); ok {
+			return n
+		}
+	}
+	return
+}
+
+type callMeta struct {
+	call        *ast.CallExpr
+	testifyCall *CallMeta
+	parentIf    *ast.IfStmt
+	parentBlock *ast.BlockStmt
+	inIfCond    bool // True for code like `if assert.NoError(t, err) {`.
+}
+
+type funcID struct {
+	pos           token.Pos
+	posStr        string
+	name          string
+	isTestCleanup bool
+	isGoroutine   bool
+}
+
+func (id funcID) String() string {
+	return fmt.Sprintf("%s at %s", id.name, id.posStr)
+}
+
+func isAfterTestMethod(name string) bool {
+	// https://github.com/stretchr/testify/blob/master/suite/interfaces.go
+	switch name {
+	case "TearDownSuite", "TearDownTest", "AfterTest", "HandleStats", "TearDownSubTest":
+		return true
+	}
+	return false
 }
