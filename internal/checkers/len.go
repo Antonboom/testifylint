@@ -32,6 +32,10 @@ func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnost
 		a, b := call.Args[0], call.Args[1]
 
 		if lenArg, expectedLen, ok := xorLenCall(pass, a, b); ok {
+			if expectedLen == b && !isIntBasicLit(expectedLen) {
+				// https://github.com/Antonboom/testifylint/issues/9
+				return nil
+			}
 			return newUseFunctionDiagnostic(checker.Name(), call, proposedFn,
 				newSuggestedFuncReplacement(call, proposedFn, analysis.TextEdit{
 					Pos:     a.Pos(),
@@ -47,7 +51,7 @@ func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnost
 		}
 		expr := call.Args[0]
 
-		if lenArg, expectedLen, ok := isLenEquality(pass, expr); ok {
+		if lenArg, expectedLen, ok := isLenEquality(pass, expr); ok && isIntBasicLit(expectedLen) {
 			return newUseFunctionDiagnostic(checker.Name(), call, proposedFn,
 				newSuggestedFuncReplacement(call, proposedFn, analysis.TextEdit{
 					Pos:     expr.Pos(),
@@ -83,4 +87,9 @@ func isLenEquality(pass *analysis.Pass, e ast.Expr) (ast.Expr, ast.Expr, bool) {
 		return nil, nil, false
 	}
 	return xorLenCall(pass, be.X, be.Y)
+}
+
+func isIntBasicLit(e ast.Expr) bool {
+	bl, ok := e.(*ast.BasicLit)
+	return ok && bl.Kind == token.INT
 }
