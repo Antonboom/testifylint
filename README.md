@@ -161,6 +161,8 @@ In the rest cases – more appropriate `testify` API with clearer failure messag
      assert.NotNil(t, err)
      assert.Equal(t, err, nil)
      assert.NotEqual(t, err, nil)
+     assert.ErrorIs(t, err, nil)
+     assert.NotErrorIs(t, err, nil)
 
 ✅   assert.NoError(t, err)
      assert.Error(t, err)

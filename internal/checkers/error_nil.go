@@ -16,6 +16,8 @@ import (
 //	assert.NotNil(t, err)
 //	assert.Equal(t, err, nil)
 //	assert.NotEqual(t, err, nil)
+//	assert.ErrorIs(t, err, nil)
+//	assert.NotErrorIs(t, err, nil)
 //
 // and requires
 //
@@ -45,7 +47,7 @@ func (checker ErrorNil) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 				return noErrorFn, call.Args[0], call.Args[0].End()
 			}
 
-		case "Equal", "Equalf":
+		case "Equal", "Equalf", "ErrorIs", "ErrorIsf":
 			if len(call.Args) < 2 {
 				return "", nil, token.NoPos
 			}
@@ -58,7 +60,7 @@ func (checker ErrorNil) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 				return noErrorFn, b, b.End()
 			}
 
-		case "NotEqual", "NotEqualf":
+		case "NotEqual", "NotEqualf", "NotErrorIs", "NotErrorIsf":
 			if len(call.Args) < 2 {
 				return "", nil, token.NoPos
 			}
