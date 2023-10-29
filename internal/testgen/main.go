@@ -14,8 +14,9 @@ import (
 
 var analyserTestdataPath = filepath.Join("analyzer", "testdata", "src")
 
-var freeTestsGenerators = map[string]TestsGenerator{ // by sub-directory.
+var freeTestsGenerators = map[string]TestsGenerator{ // by subdirectory.
 	"base-test":                       BaseTestsGenerator{},
+	"error-as-target":                 ErrorAsTargetTestsGenerator{},
 	"expected-var-custom-pattern":     ExpectedVarCustomPatternTestsGenerator{},
 	"suite-require-extra-assert-call": SuiteRequireExtraAssertCallTestsGenerator{},
 }
@@ -24,11 +25,12 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	BoolCompareTestsGenerator{},
 	ComparesTestsGenerator{},
 	EmptyTestsGenerator{},
-	ErrorTestsGenerator{},
+	ErrorNilTestsGenerator{},
 	ErrorIsAsTestsGenerator{},
 	ExpectedActualTestsGenerator{},
 	FloatCompareTestsGenerator{},
 	LenTestsGenerator{},
+	NilCompareTestsGenerator{},
 	RequireErrorTestsGenerator{},
 	SuiteDontUsePkg{},
 	SuiteExtraAssertCallTestsGenerator{},

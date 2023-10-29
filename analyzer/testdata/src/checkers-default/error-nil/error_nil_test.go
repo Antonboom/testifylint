@@ -15,18 +15,22 @@ func TestErrorNilChecker(t *testing.T) {
 
 	// Invalid.
 	{
-		assert.Nil(t, err)                                             // want "error-nil: use assert\\.NoError"
-		assert.Nilf(t, err, "msg with args %d %s", 42, "42")           // want "error-nil: use assert\\.NoErrorf"
-		assert.NotNil(t, err)                                          // want "error-nil: use assert\\.Error"
-		assert.NotNilf(t, err, "msg with args %d %s", 42, "42")        // want "error-nil: use assert\\.Errorf"
-		assert.Equal(t, err, nil)                                      // want "error-nil: use assert\\.NoError"
-		assert.Equalf(t, err, nil, "msg with args %d %s", 42, "42")    // want "error-nil: use assert\\.NoErrorf"
-		assert.Equal(t, nil, err)                                      // want "error-nil: use assert\\.NoError"
-		assert.Equalf(t, nil, err, "msg with args %d %s", 42, "42")    // want "error-nil: use assert\\.NoErrorf"
-		assert.NotEqual(t, err, nil)                                   // want "error-nil: use assert\\.Error"
-		assert.NotEqualf(t, err, nil, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.Errorf"
-		assert.NotEqual(t, nil, err)                                   // want "error-nil: use assert\\.Error"
-		assert.NotEqualf(t, nil, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.Errorf"
+		assert.Nil(t, err)                                               // want "error-nil: use assert\\.NoError"
+		assert.Nilf(t, err, "msg with args %d %s", 42, "42")             // want "error-nil: use assert\\.NoErrorf"
+		assert.NotNil(t, err)                                            // want "error-nil: use assert\\.Error"
+		assert.NotNilf(t, err, "msg with args %d %s", 42, "42")          // want "error-nil: use assert\\.Errorf"
+		assert.Equal(t, err, nil)                                        // want "error-nil: use assert\\.NoError"
+		assert.Equalf(t, err, nil, "msg with args %d %s", 42, "42")      // want "error-nil: use assert\\.NoErrorf"
+		assert.Equal(t, nil, err)                                        // want "error-nil: use assert\\.NoError"
+		assert.Equalf(t, nil, err, "msg with args %d %s", 42, "42")      // want "error-nil: use assert\\.NoErrorf"
+		assert.NotEqual(t, err, nil)                                     // want "error-nil: use assert\\.Error"
+		assert.NotEqualf(t, err, nil, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
+		assert.NotEqual(t, nil, err)                                     // want "error-nil: use assert\\.Error"
+		assert.NotEqualf(t, nil, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
+		assert.ErrorIs(t, err, nil)                                      // want "error-nil: use assert\\.NoError"
+		assert.ErrorIsf(t, err, nil, "msg with args %d %s", 42, "42")    // want "error-nil: use assert\\.NoErrorf"
+		assert.NotErrorIs(t, err, nil)                                   // want "error-nil: use assert\\.Error"
+		assert.NotErrorIsf(t, err, nil, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.Errorf"
 	}
 
 	// Valid.

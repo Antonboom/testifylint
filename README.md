@@ -1,5 +1,6 @@
 # testifylint
 
+![Latest release](https://img.shields.io/github/v/release/Antonboom/testifylint)
 [![CI](https://github.com/Antonboom/testifylint/actions/workflows/ci.yml/badge.svg)](https://github.com/Antonboom/testifylint/actions/workflows/ci.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Antonboom/testifylint)](https://goreportcard.com/report/github.com/Antonboom/testifylint?dummy=unused)
 [![Coverage Status](https://coveralls.io/repos/github/Antonboom/testifylint/badge.svg?branch=master)](https://coveralls.io/github/Antonboom/testifylint?branch=master&dummy=unused)
@@ -63,10 +64,13 @@ $ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=re
 | [expected-actual](#expected-actual)                 | ✅                  | ✅       |
 | [float-compare](#float-compare)                     | ✅                  | ❌       |
 | [len](#len)                                         | ✅                  | ✅       |
+| [nil-compare](#nil-compare)                         | ✅                  | ✅       |
 | [require-error](#require-error)                     | ✅                  | ❌       |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
 | [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
+
+> ⚠️ Also look at open for contribution [checkers](CONTRIBUTING.md#open-for-contribution)
 
 ---
 
@@ -152,6 +156,9 @@ $ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=re
 **Reason**: In the first two cases, a common mistake that leads to hiding the incorrect wrapping of sentinel errors.
 In the rest cases – more appropriate `testify` API with clearer failure message.
 
+Also `error-is-as` repeats go vet's [errorsas check](https://cs.opensource.google/go/x/tools/+/master:go/analysis/passes/errorsas/errorsas.go) 
+logic, but without autofix.
+
 ---
 
 ### error-nil
@@ -161,6 +168,8 @@ In the rest cases – more appropriate `testify` API with clearer failure messag
      assert.NotNil(t, err)
      assert.Equal(t, err, nil)
      assert.NotEqual(t, err, nil)
+     assert.ErrorIs(t, err, nil)
+     assert.NotErrorIs(t, err, nil)
 
 ✅   assert.NoError(t, err)
      assert.Error(t, err)
@@ -224,6 +233,22 @@ This checker is similar to the [floatcompare](https://github.com/golangci/golang
      assert.True(t, len(arr) == 3)
 
 ✅   assert.Len(t, arr, 3)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: More appropriate `testify` API with clearer failure message.
+
+---
+
+### nil-compare
+
+```go
+❌   assert.Equal(t, value, nil)
+     assert.NotEqual(t, value, nil)
+
+✅   assert.Nil(t, value)
+     assert.NotNil(t, value)
 ```
 
 **Autofix**: true. <br>

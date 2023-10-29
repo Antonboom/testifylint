@@ -30,6 +30,7 @@ func (g LenTestsGenerator) TemplateData() any {
 		InvalidAssertions: []Assertion{
 			{Fn: "Equal", Argsf: "len(arr), 42", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, 42"},
 			{Fn: "Equal", Argsf: "42, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, 42"},
+			{Fn: "Equal", Argsf: "value, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, value"},
 			{Fn: "True", Argsf: "len(arr) == 42", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, 42"},
 			{Fn: "True", Argsf: "42 == len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, 42"},
 		},
@@ -39,7 +40,10 @@ func (g LenTestsGenerator) TemplateData() any {
 		},
 		IgnoredAssertions: []Assertion{
 			{Fn: "Equal", Argsf: "len(arr), len(arr)"},
+			{Fn: "Equal", Argsf: "len(arr), value"},
 			{Fn: "True", Argsf: "len(arr) == len(arr)"},
+			{Fn: "True", Argsf: "len(arr) == value"},
+			{Fn: "True", Argsf: "value == len(arr)"},
 
 			{Fn: "NotEqual", Argsf: "42, len(arr)"},
 			{Fn: "NotEqual", Argsf: "len(arr), 42"},
@@ -103,6 +107,7 @@ import (
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var arr [3]int
+	var value int
 
 	// Invalid.
 	{

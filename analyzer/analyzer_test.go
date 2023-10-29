@@ -19,15 +19,20 @@ func TestTestifyLint(t *testing.T) {
 	}{
 		{
 			dir:   "base-test",
-			flags: map[string]string{"enable": checkers.NewBoolCompare().Name()},
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewBoolCompare().Name()},
 		},
 		{
 			dir:   "checkers-priority",
 			flags: map[string]string{"enable-all": "true"},
 		},
 		{
+			dir:   "error-as-target",
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewErrorIsAs().Name()},
+		},
+		{
 			dir: "expected-var-custom-pattern",
 			flags: map[string]string{
+				"disable-all":             "true",
 				"enable":                  checkers.NewExpectedActual().Name(),
 				"expected-actual.pattern": "goldenValue",
 			},
@@ -38,11 +43,12 @@ func TestTestifyLint(t *testing.T) {
 		{dir: "pkg-alias"},
 		{
 			dir:   "require-error-skip-logic",
-			flags: map[string]string{"enable": checkers.NewRequireError().Name()},
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewRequireError().Name()},
 		},
 		{
 			dir: "suite-require-extra-assert-call",
 			flags: map[string]string{
+				"disable-all":                  "true",
 				"enable":                       checkers.NewSuiteExtraAssertCall().Name(),
 				"suite-extra-assert-call.mode": "require",
 			},
@@ -76,9 +82,13 @@ func TestTestifyLint_CheckersDefault(t *testing.T) {
 			t.Parallel()
 
 			anlzr := analyzer.New()
+			if err := anlzr.Flags.Set("disable-all", "true"); err != nil {
+				t.Fatal(err)
+			}
 			if err := anlzr.Flags.Set("enable", checker); err != nil {
 				t.Fatal(err)
 			}
+
 			pkg := filepath.Join("checkers-default", checker)
 			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), anlzr, pkg)
 		})

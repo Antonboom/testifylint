@@ -19,7 +19,7 @@ issues:
       linters: [ "revive" ]
       text: "exported (method|const)"
 
-    - source: "(Equalf?|NotEqualf?|Greaterf?|Lessf?|Truef?|Falsef?)"
+    - source: "(Equalf?|NotEqualf?|Greaterf?|Lessf?|Truef?|Falsef?|ErrorIsf?|NotErrorIsf?|ErrorAsf?|NotErrorAsf?)"
       linters: [ "goconst" ]
 
     - path: "_test\\.go"
