@@ -1,5 +1,6 @@
 # testifylint
 
+![Latest release](https://img.shields.io/github/v/release/Antonboom/testifylint)
 [![CI](https://github.com/Antonboom/testifylint/actions/workflows/ci.yml/badge.svg)](https://github.com/Antonboom/testifylint/actions/workflows/ci.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Antonboom/testifylint)](https://goreportcard.com/report/github.com/Antonboom/testifylint?dummy=unused)
 [![Coverage Status](https://coveralls.io/repos/github/Antonboom/testifylint/badge.svg?branch=master)](https://coveralls.io/github/Antonboom/testifylint?branch=master&dummy=unused)
@@ -39,37 +40,17 @@ and [2022](https://www.jetbrains.com/lp/devecosystem-2022/go/#which-testing-fram
 ```
 $ go install github.com/Antonboom/testifylint@latest
 $ testifylint -h
-$ testifylint -fix ./...
+$ testifylint ./...
 ```
 
 ## Configuring
 
-### CLI
-
-```bash
-# Use default checkers
-$ testifylint ./...
-
-# Enable checkers in addition to enabled by default checkers
-$ testifylint --enable=require-error,empty ./...
-
-# Disable checkers from enabled by default checkers
-$ testifylint --disable=require-error,empty ./...
-
-# Enable some checkers only
-$ testifylint --disable-all --enable=require-error,empty ./...
-
-# Disable some checkers only
-$ testifylint --enable-all --disable=require-error,empty ./...
-
-# Checker specific settings
-$ testifylint --suite-extra-assert-call.mode=require ./...
-$ testifylint --expected-actual.pattern=^wanted$ ./...
 ```
-
-### golangci-lint
-
-https://golangci-lint.run/usage/linters/#testifylint
+$ testifylint --enable-all ./...
+$ testifylint --enable=empty,error-is-as ./...
+$ testifylint --enable=expected-actual --expected-actual.pattern=^wanted$ ./...
+$ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=require ./...
+```
 
 ## Checkers
 
