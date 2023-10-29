@@ -155,6 +155,9 @@ $ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=re
 **Reason**: In the first two cases, a common mistake that leads to hiding the incorrect wrapping of sentinel errors.
 In the rest cases – more appropriate `testify` API with clearer failure message.
 
+Also `error-is-as` repeats go vet's [errorsas check](https://cs.opensource.google/go/x/tools/+/master:go/analysis/passes/errorsas/errorsas.go) 
+logic, but without autofix.
+
 ---
 
 ### error-nil
