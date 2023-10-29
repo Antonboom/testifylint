@@ -318,6 +318,11 @@ But it doesn't look like a "go way" and the `govet` won't be happy.
 
 But there will be no non-stylistic benefits from the checker in this case (depends on the view of API in `v2`).
 
+Also, in the first iteration `no-fmt-mess` checker could help to avoid code like this:
+```go
+assert.Error(t, err, fmt.Sprintf("Profile %s should not be valid", test.profile))
+```
+
 ---
 
 ### require-len
