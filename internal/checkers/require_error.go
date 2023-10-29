@@ -28,7 +28,7 @@ const requireErrorReport = "for error assertions use require"
 // - the entire `if-else` block, if there is an assertion in the `if` condition;
 // - the last assertion in the block, if there are no methods/functions calls after it.
 // - assertions in an explicit goroutine;
-// - assertions in the testing cleanup function or suite teardown methods.
+// - assertions in an explicit testing cleanup function or suite teardown methods.
 type RequireError struct{}
 
 // NewRequireError constructs RequireError checker.
@@ -140,14 +140,19 @@ func needToSkipBasedOnContext(
 		}
 	}
 
-	blockCalls := callsByBlock[currCall.parentBlock]
+	block := currCall.parentBlock
+	blockCalls := callsByBlock[block]
 	isLastCallInBlock := blockCalls[len(blockCalls)-1] == currCall
 
 	noCallsAfter := true
-	for i := currCallIndex + 1; i < len(otherCalls); i++ {
-		if (otherCalls[i].parentIf == nil) || (otherCalls[i].parentIf != currCall.parentIf) {
-			noCallsAfter = false
-			break
+
+	_, blockEndWithReturn := block.List[len(block.List)-1].(*ast.ReturnStmt)
+	if !blockEndWithReturn {
+		for i := currCallIndex + 1; i < len(otherCalls); i++ {
+			if (otherCalls[i].parentIf == nil) || (otherCalls[i].parentIf != currCall.parentIf) {
+				noCallsAfter = false
+				break
+			}
 		}
 	}
 

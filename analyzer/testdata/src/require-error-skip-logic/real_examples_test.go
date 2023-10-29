@@ -484,6 +484,54 @@ func TestCSRDuration(t *testing.T) {
 	}
 }
 
+type RoleRegistration struct {
+	Role   RoleDTO
+	Grants []string
+}
+
+type RoleDTO struct {
+	Name string `json:"name"`
+}
+
+func TestService_DeclareFixedRoles(t *testing.T) {
+	tests := []struct {
+		name          string
+		registrations []RoleRegistration
+		wantErr       bool
+		err           error
+	}{
+		{
+			name:    "should work with empty list",
+			wantErr: false,
+		},
+		{
+			name: "should add registration",
+			registrations: []RoleRegistration{
+				{
+					Role:   RoleDTO{Name: "fixed:test:test"},
+					Grants: []string{"Admin"},
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := operation()
+			if tt.wantErr {
+				require.Error(t, err)
+				assert.ErrorIs(t, err, tt.err)
+				return
+			}
+			assert.NoError(t, err) // want "require-error: for error assertions use require"
+
+			registrationCnt := 0
+			assert.Equal(t, len(tt.registrations), registrationCnt,
+				"expected service registration list to contain all test registrations")
+		})
+	}
+}
+
 func createTempPackageJson(t *testing.T, version string) error {
 	t.Helper()
 
