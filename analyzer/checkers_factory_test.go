@@ -41,6 +41,11 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewSuiteDontUsePkg(),
 	}
 
+	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{}
+	allAdvancedCheckers := []checkers.AdvancedChecker{
+		checkers.NewSuiteTHelper(),
+	}
+
 	cases := []struct {
 		name        string
 		cfg         config.Config
@@ -51,56 +56,53 @@ func Test_newCheckers(t *testing.T) {
 			name:        "no config",
 			cfg:         config.Config{},
 			expRegular:  enabledByDefaultRegularCheckers,
-			expAdvanced: []checkers.AdvancedChecker{},
+			expAdvanced: enabledByDefaultAdvancedCheckers,
 		},
 		{
-			name: "no enabled checkers",
-			cfg: config.Config{
-				EnabledCheckers: []string{},
-			},
+			name:        "default config",
+			cfg:         config.NewDefault(),
 			expRegular:  enabledByDefaultRegularCheckers,
-			expAdvanced: []checkers.AdvancedChecker{},
+			expAdvanced: enabledByDefaultAdvancedCheckers,
 		},
 		{
-			name: "no enabled checkers but enable-all true",
+			name: "enable two checkers only",
 			cfg: config.Config{
-				EnabledCheckers: []string{},
-				EnableAll:       true,
-			},
-			expRegular: allRegularCheckers,
-			expAdvanced: []checkers.AdvancedChecker{
-				checkers.NewSuiteTHelper(),
-			},
-		},
-		{
-			name: "enabled checkers defined",
-			cfg: config.Config{
+				DisableAll: true,
 				EnabledCheckers: config.KnownCheckersValue{
-					checkers.NewSuiteTHelper().Name(),
 					checkers.NewRequireError().Name(),
-					checkers.NewSuiteExtraAssertCall().Name(),
 					checkers.NewLen().Name(),
 				},
 			},
 			expRegular: []checkers.RegularChecker{
 				checkers.NewLen(),
 				checkers.NewRequireError(),
-				checkers.NewSuiteExtraAssertCall(),
 			},
-			expAdvanced: []checkers.AdvancedChecker{
-				checkers.NewSuiteTHelper(),
-			},
+			expAdvanced: []checkers.AdvancedChecker{},
 		},
 		{
-			name: "enabled checkers defined but enable-all true",
+			name: "disable two checkers only",
+			cfg: config.Config{
+				EnableAll: true,
+				DisabledCheckers: config.KnownCheckersValue{
+					checkers.NewRequireError().Name(),
+					checkers.NewSuiteTHelper().Name(),
+				},
+			},
+			expRegular: filter(allRegularCheckers, config.KnownCheckersValue{
+				checkers.NewRequireError().Name(),
+				checkers.NewSuiteTHelper().Name(),
+			}),
+			expAdvanced: filter(allAdvancedCheckers, config.KnownCheckersValue{
+				checkers.NewRequireError().Name(),
+				checkers.NewSuiteTHelper().Name(),
+			}),
+		},
+		{
+			name: "enable one checker in addition to enabled by default checkers",
 			cfg: config.Config{
 				EnabledCheckers: config.KnownCheckersValue{
 					checkers.NewSuiteTHelper().Name(),
-					checkers.NewRequireError().Name(),
-					checkers.NewSuiteExtraAssertCall().Name(),
-					checkers.NewLen().Name(),
 				},
-				EnableAll: true,
 			},
 			expRegular: allRegularCheckers,
 			expAdvanced: []checkers.AdvancedChecker{
@@ -108,8 +110,29 @@ func Test_newCheckers(t *testing.T) {
 			},
 		},
 		{
+			name: "disable three checkers from enabled by default checkers",
+			cfg: config.Config{
+				DisabledCheckers: config.KnownCheckersValue{
+					checkers.NewNilCompare().Name(),
+					checkers.NewErrorNil().Name(),
+					checkers.NewRequireError().Name(),
+				},
+			},
+			expRegular: filter(enabledByDefaultRegularCheckers, config.KnownCheckersValue{
+				checkers.NewNilCompare().Name(),
+				checkers.NewErrorNil().Name(),
+				checkers.NewRequireError().Name(),
+			}),
+			expAdvanced: filter(enabledByDefaultAdvancedCheckers, config.KnownCheckersValue{
+				checkers.NewNilCompare().Name(),
+				checkers.NewErrorNil().Name(),
+				checkers.NewRequireError().Name(),
+			}),
+		},
+		{
 			name: "expected-actual pattern defined",
 			cfg: config.Config{
+				DisableAll:      true,
 				EnabledCheckers: config.KnownCheckersValue{checkers.NewExpectedActual().Name()},
 				ExpectedActual: config.ExpectedActualConfig{
 					ExpVarPattern: config.RegexpValue{Regexp: pattern},
@@ -123,6 +146,7 @@ func Test_newCheckers(t *testing.T) {
 		{
 			name: "suite-extra-assert-call mode defined",
 			cfg: config.Config{
+				DisableAll:      true,
 				EnabledCheckers: config.KnownCheckersValue{checkers.NewSuiteExtraAssertCall().Name()},
 				SuiteExtraAssertCall: config.SuiteExtraAssertCallConfig{
 					Mode: checkers.SuiteExtraAssertCallModeRequire,
@@ -143,12 +167,19 @@ func Test_newCheckers(t *testing.T) {
 			}
 
 			if !reflect.DeepEqual(tt.expRegular, rc) {
-				t.Fatalf("unexpected regular checkers: %#v", rc)
+				t.Fatalf("unexpected regular checkers: %#v != %#v", rc, tt.expRegular)
 			}
 			if !reflect.DeepEqual(tt.expAdvanced, ac) {
-				t.Fatalf("unexpected expAdvanced checkers: %#v", ac)
+				t.Fatalf("unexpected expAdvanced checkers: %#v != %#v", ac, tt.expAdvanced)
 			}
 		})
+	}
+}
+
+func Test_newCheckers_invalidConfig(t *testing.T) {
+	_, _, err := newCheckers(config.Config{EnableAll: true, DisableAll: true})
+	if nil == err {
+		t.Fatal("no error but expected")
 	}
 }
 
@@ -157,4 +188,15 @@ func Test_newCheckers_unknownChecker(t *testing.T) {
 	if nil == err {
 		t.Fatal("no error but expected")
 	}
+}
+
+func filter[T checkers.Checker](in []T, exclude config.KnownCheckersValue) []T {
+	result := make([]T, 0)
+	for _, v := range in {
+		if exclude.Contains(v.Name()) {
+			continue
+		}
+		result = append(result, v)
+	}
+	return result
 }

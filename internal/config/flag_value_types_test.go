@@ -54,9 +54,31 @@ func TestKnownCheckersValue_Set(t *testing.T) {
 	}
 }
 
-func TestRegexpValue_String_ZeroValue(t *testing.T) {
-	var r config.RegexpValue
-	if r.String() != "" {
+func TestKnownCheckersValue_String(t *testing.T) {
+	t.Run("zero value", func(t *testing.T) {
+		emptyKc := config.KnownCheckersValue{}.String()
+		if emptyKc != "" {
+			t.Fatal(emptyKc)
+		}
+	})
+
+	t.Run("not zero value", func(t *testing.T) {
+		kcAsStr := (config.KnownCheckersValue{"require-error", "nil-compare"}).String()
+		if kcAsStr != "require-error,nil-compare" {
+			t.Fatal(kcAsStr)
+		}
+	})
+}
+
+func TestKnownCheckersValue_Contains(t *testing.T) {
+	kc := config.KnownCheckersValue{"require-error", "nil-compare"}
+	if !kc.Contains("require-error") {
+		t.Fatal()
+	}
+	if !kc.Contains("nil-compare") {
+		t.Fatal()
+	}
+	if kc.Contains("bool-compare") {
 		t.Fatal()
 	}
 }
@@ -93,6 +115,22 @@ func TestRegexp_Set(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestRegexpValue_String(t *testing.T) {
+	t.Run("zero value", func(t *testing.T) {
+		var r config.RegexpValue
+		if v := r.String(); v != "" {
+			t.Fatal(v)
+		}
+	})
+
+	t.Run("not zero value", func(t *testing.T) {
+		r := config.RegexpValue{Regexp: regexp.MustCompile(`exp`)}
+		if v := r.String(); v != "exp" {
+			t.Fatal(v)
+		}
+	})
 }
 
 func TestEnumValue(t *testing.T) {
@@ -139,21 +177,23 @@ func TestEnumValue(t *testing.T) {
 	})
 }
 
-func Test_EnumValue_String_ZeroValue(t *testing.T) {
-	var ev config.EnumValue[int]
-	if ev.String() != "" {
-		t.Fatal()
-	}
-}
+func Test_EnumValue_String(t *testing.T) {
+	t.Run("zero value", func(t *testing.T) {
+		var ev config.EnumValue[int]
+		if ev.String() != "" {
+			t.Fatal()
+		}
+	})
 
-func Test_EnumValue_String_UnknownDefault(t *testing.T) {
-	var business int
-	v := config.NewEnumValue(map[string]int{
-		"b2c": 1,
-		"b2b": 2,
-	}, &business)
+	t.Run("unknown default", func(t *testing.T) {
+		var business int
+		v := config.NewEnumValue(map[string]int{
+			"b2c": 1,
+			"b2b": 2,
+		}, &business)
 
-	if v.String() != "" {
-		t.Fatal()
-	}
+		if v.String() != "" {
+			t.Fatal()
+		}
+	})
 }

@@ -39,17 +39,37 @@ and [2022](https://www.jetbrains.com/lp/devecosystem-2022/go/#which-testing-fram
 ```
 $ go install github.com/Antonboom/testifylint@latest
 $ testifylint -h
-$ testifylint ./...
+$ testifylint -fix ./...
 ```
 
 ## Configuring
 
+### CLI
+
+```bash
+# Use default checkers
+$ testifylint ./...
+
+# Enable checkers in addition to enabled by default checkers
+$ testifylint --enable=require-error,empty ./...
+
+# Disable checkers from enabled by default checkers
+$ testifylint --disable=require-error,empty ./...
+
+# Enable some checkers only
+$ testifylint --disable-all --enable=require-error,empty ./...
+
+# Disable some checkers only
+$ testifylint --enable-all --disable=require-error,empty ./...
+
+# Checker specific settings
+$ testifylint --suite-extra-assert-call.mode=require ./...
+$ testifylint --expected-actual.pattern=^wanted$ ./...
 ```
-$ testifylint --enable-all ./...
-$ testifylint --enable=empty,error-is-as ./...
-$ testifylint --enable=expected-actual --expected-actual.pattern=^wanted$ ./...
-$ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=require ./...
-```
+
+### golangci-lint
+
+https://golangci-lint.run/usage/linters/#testifylint
 
 ## Checkers
 

@@ -2,8 +2,6 @@ package config_test
 
 import (
 	"flag"
-	"slices"
-	"strings"
 	"testing"
 
 	"github.com/Antonboom/testifylint/internal/checkers"
@@ -16,7 +14,13 @@ func TestNewDefault(t *testing.T) {
 	if cfg.EnableAll {
 		t.Fatal()
 	}
-	if !slices.Equal(cfg.EnabledCheckers, checkers.EnabledByDefault()) {
+	if len(cfg.DisabledCheckers) != 0 {
+		t.Fatal()
+	}
+	if cfg.DisableAll {
+		t.Fatal()
+	}
+	if len(cfg.EnabledCheckers) != 0 {
 		t.Fatal()
 	}
 	if cfg.ExpectedActual.ExpVarPattern.String() != checkers.DefaultExpectedVarPattern.String() {
@@ -24,6 +28,109 @@ func TestNewDefault(t *testing.T) {
 	}
 	if cfg.SuiteExtraAssertCall.Mode != checkers.SuiteExtraAssertCallModeRemove {
 		t.Fatal()
+	}
+}
+
+func TestConfig_Validate(t *testing.T) {
+	cases := []struct {
+		name    string
+		cfg     config.Config
+		wantErr bool
+	}{
+		// Positive.
+		{
+			name:    "default config",
+			cfg:     config.NewDefault(),
+			wantErr: false,
+		},
+		{
+			name: "enable-all and disable simultaneously",
+			cfg: config.Config{
+				EnableAll:        true,
+				DisabledCheckers: config.KnownCheckersValue{checkers.NewErrorNil().Name()},
+			},
+			wantErr: false,
+		},
+		{
+			name: "disable-all and enable simultaneously",
+			cfg: config.Config{
+				DisableAll:      true,
+				EnabledCheckers: config.KnownCheckersValue{checkers.NewErrorNil().Name()},
+			},
+			wantErr: false,
+		},
+		{
+			name: "enable some checkers",
+			cfg: config.Config{
+				EnabledCheckers: config.KnownCheckersValue{checkers.NewErrorNil().Name()},
+			},
+			wantErr: false,
+		},
+		{
+			name: "disable some checkers",
+			cfg: config.Config{
+				DisabledCheckers: config.KnownCheckersValue{checkers.NewErrorNil().Name()},
+			},
+			wantErr: false,
+		},
+		{
+			name: "enable and disable simultaneously different checkers",
+			cfg: config.Config{
+				DisabledCheckers: config.KnownCheckersValue{checkers.NewRequireError().Name()},
+				EnabledCheckers:  config.KnownCheckersValue{checkers.NewErrorNil().Name()},
+			},
+			wantErr: false,
+		},
+
+		// Negative.
+		{
+			name: "enable-all and disable-all simultaneously",
+			cfg: config.Config{
+				EnableAll:  true,
+				DisableAll: true,
+			},
+			wantErr: true,
+		},
+		{
+			name: "enable-all and enable simultaneously",
+			cfg: config.Config{
+				EnableAll:       true,
+				EnabledCheckers: config.KnownCheckersValue{checkers.NewExpectedActual().Name()},
+			},
+			wantErr: true,
+		},
+		{
+			name: "disable-all and disable simultaneously",
+			cfg: config.Config{
+				DisableAll:       true,
+				DisabledCheckers: config.KnownCheckersValue{checkers.NewExpectedActual().Name()},
+			},
+			wantErr: true,
+		},
+		{
+			name: "disable-all and no enable",
+			cfg: config.Config{
+				DisableAll: true,
+			},
+			wantErr: true,
+		},
+		{
+			name: "enable and disable simultaneously the same checker",
+			cfg: config.Config{
+				EnabledCheckers:  config.KnownCheckersValue{checkers.NewNilCompare().Name(), checkers.NewExpectedActual().Name()},
+				DisabledCheckers: config.KnownCheckersValue{checkers.NewExpectedActual().Name()},
+			},
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.cfg.Validate()
+			if (err != nil) != tt.wantErr {
+				t.Fatal(err)
+			}
+		})
 	}
 }
 
@@ -35,7 +142,9 @@ func TestBindToFlags(t *testing.T) {
 
 	for flagName, defaultVal := range map[string]string{
 		"enable-all":                   "false",
-		"enable":                       strings.Join(cfg.EnabledCheckers, ","),
+		"disable":                      "",
+		"disable-all":                  "false",
+		"enable":                       "",
 		"expected-actual.pattern":      cfg.ExpectedActual.ExpVarPattern.String(),
 		"suite-extra-assert-call.mode": "remove",
 	} {
