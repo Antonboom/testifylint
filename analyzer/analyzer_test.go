@@ -26,6 +26,10 @@ func TestTestifyLint(t *testing.T) {
 			flags: map[string]string{"enable-all": "true"},
 		},
 		{
+			dir:   "error-as-target",
+			flags: map[string]string{"enable": checkers.NewErrorIsAs().Name()},
+		},
+		{
 			dir: "expected-var-custom-pattern",
 			flags: map[string]string{
 				"enable":                  checkers.NewExpectedActual().Name(),

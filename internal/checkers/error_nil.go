@@ -88,7 +88,10 @@ func (checker ErrorNil) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 	return nil
 }
 
-var errIface = types.Universe.Lookup("error").Type().Underlying().(*types.Interface)
+var (
+	errorType  = types.Universe.Lookup("error").Type()
+	errorIface = errorType.Underlying().(*types.Interface)
+)
 
 func isError(pass *analysis.Pass, expr ast.Expr) bool {
 	t := pass.TypesInfo.TypeOf(expr)
@@ -97,7 +100,7 @@ func isError(pass *analysis.Pass, expr ast.Expr) bool {
 	}
 
 	_, ok := t.Underlying().(*types.Interface)
-	return ok && types.Implements(t, errIface)
+	return ok && types.Implements(t, errorIface)
 }
 
 func isNil(expr ast.Expr) bool {

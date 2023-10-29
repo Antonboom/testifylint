@@ -96,14 +96,18 @@ package {{ .CheckerName.AsPkgName }}
 
 import (
 	"errors"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
-	var errSentinel = errors.New("user not found")
-	var err, target error
+	var (
+		errSentinel = errors.New("user not found") 
+		err error
+		target = new(os.PathError)
+	)
 
 	// Invalid.
 	{
