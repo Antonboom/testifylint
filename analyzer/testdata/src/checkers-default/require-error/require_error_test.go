@@ -14,6 +14,7 @@ import (
 
 func TestRequireErrorChecker(t *testing.T) {
 	var err error
+	var target = new(os.PathError)
 
 	assObj, reqObj := assert.New(t), require.New(t)
 
@@ -22,38 +23,40 @@ func TestRequireErrorChecker(t *testing.T) {
 	assert.Errorf(t, err, "msg with args %d %s", 42, "42")                        // want "require-error: for error assertions use require"
 	assert.ErrorIs(t, err, io.EOF)                                                // want "require-error: for error assertions use require"
 	assert.ErrorIsf(t, err, io.EOF, "msg with args %d %s", 42, "42")              // want "require-error: for error assertions use require"
-	assert.ErrorAs(t, err, new(os.PathError))                                     // want "require-error: for error assertions use require"
-	assert.ErrorAsf(t, err, new(os.PathError), "msg with args %d %s", 42, "42")   // want "require-error: for error assertions use require"
+	assert.ErrorAs(t, err, &target)                                               // want "require-error: for error assertions use require"
+	assert.ErrorAsf(t, err, &target, "msg with args %d %s", 42, "42")             // want "require-error: for error assertions use require"
 	assert.EqualError(t, err, "end of file")                                      // want "require-error: for error assertions use require"
 	assert.EqualErrorf(t, err, "end of file", "msg with args %d %s", 42, "42")    // want "require-error: for error assertions use require"
 	assert.ErrorContains(t, err, "end of file")                                   // want "require-error: for error assertions use require"
 	assert.ErrorContainsf(t, err, "end of file", "msg with args %d %s", 42, "42") // want "require-error: for error assertions use require"
 	assert.NoError(t, err)                                                        // want "require-error: for error assertions use require"
-	assert.NoErrorf(t, err, "msg with args %d %s", 42, "42")                      // want "require-error: for error assertions use require"
-	assert.NotErrorIs(t, err, io.EOF)                                             // want "require-error: for error assertions use require"
-	assert.NotErrorIsf(t, err, io.EOF, "msg with args %d %s", 42, "42")           // want "require-error: for error assertions use require"
-	assObj.Error(err)                                                             // want "require-error: for error assertions use require"
-	assObj.Errorf(err, "msg with args %d %s", 42, "42")                           // want "require-error: for error assertions use require"
-	assObj.ErrorIs(err, io.EOF)                                                   // want "require-error: for error assertions use require"
-	assObj.ErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")                 // want "require-error: for error assertions use require"
-	assObj.ErrorAs(err, new(os.PathError))                                        // want "require-error: for error assertions use require"
-	assObj.ErrorAsf(err, new(os.PathError), "msg with args %d %s", 42, "42")      // want "require-error: for error assertions use require"
-	assObj.EqualError(err, "end of file")                                         // want "require-error: for error assertions use require"
-	assObj.EqualErrorf(err, "end of file", "msg with args %d %s", 42, "42")       // want "require-error: for error assertions use require"
-	assObj.ErrorContains(err, "end of file")                                      // want "require-error: for error assertions use require"
-	assObj.ErrorContainsf(err, "end of file", "msg with args %d %s", 42, "42")    // want "require-error: for error assertions use require"
-	assObj.NoError(err)                                                           // want "require-error: for error assertions use require"
-	assObj.NoErrorf(err, "msg with args %d %s", 42, "42")                         // want "require-error: for error assertions use require"
-	assObj.NotErrorIs(err, io.EOF)                                                // want "require-error: for error assertions use require"
-	assObj.NotErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")              // want "require-error: for error assertions use require"
+	nop()
+	assert.NoErrorf(t, err, "msg with args %d %s", 42, "42")                   // want "require-error: for error assertions use require"
+	assert.NotErrorIs(t, err, io.EOF)                                          // want "require-error: for error assertions use require"
+	assert.NotErrorIsf(t, err, io.EOF, "msg with args %d %s", 42, "42")        // want "require-error: for error assertions use require"
+	assObj.Error(err)                                                          // want "require-error: for error assertions use require"
+	assObj.Errorf(err, "msg with args %d %s", 42, "42")                        // want "require-error: for error assertions use require"
+	assObj.ErrorIs(err, io.EOF)                                                // want "require-error: for error assertions use require"
+	assObj.ErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")              // want "require-error: for error assertions use require"
+	assObj.ErrorAs(err, &target)                                               // want "require-error: for error assertions use require"
+	assObj.ErrorAsf(err, &target, "msg with args %d %s", 42, "42")             // want "require-error: for error assertions use require"
+	assObj.EqualError(err, "end of file")                                      // want "require-error: for error assertions use require"
+	assObj.EqualErrorf(err, "end of file", "msg with args %d %s", 42, "42")    // want "require-error: for error assertions use require"
+	assObj.ErrorContains(err, "end of file")                                   // want "require-error: for error assertions use require"
+	assObj.ErrorContainsf(err, "end of file", "msg with args %d %s", 42, "42") // want "require-error: for error assertions use require"
+	assObj.NoError(err)                                                        // want "require-error: for error assertions use require"
+	nop()
+	assObj.NoErrorf(err, "msg with args %d %s", 42, "42")            // want "require-error: for error assertions use require"
+	assObj.NotErrorIs(err, io.EOF)                                   // want "require-error: for error assertions use require"
+	assObj.NotErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42") // want "require-error: for error assertions use require"
 
 	// Valid.
 	require.Error(t, err)
 	require.Errorf(t, err, "msg with args %d %s", 42, "42")
 	require.ErrorIs(t, err, io.EOF)
 	require.ErrorIsf(t, err, io.EOF, "msg with args %d %s", 42, "42")
-	require.ErrorAs(t, err, new(os.PathError))
-	require.ErrorAsf(t, err, new(os.PathError), "msg with args %d %s", 42, "42")
+	require.ErrorAs(t, err, &target)
+	require.ErrorAsf(t, err, &target, "msg with args %d %s", 42, "42")
 	require.EqualError(t, err, "end of file")
 	require.EqualErrorf(t, err, "end of file", "msg with args %d %s", 42, "42")
 	require.ErrorContains(t, err, "end of file")
@@ -66,8 +69,8 @@ func TestRequireErrorChecker(t *testing.T) {
 	reqObj.Errorf(err, "msg with args %d %s", 42, "42")
 	reqObj.ErrorIs(err, io.EOF)
 	reqObj.ErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")
-	reqObj.ErrorAs(err, new(os.PathError))
-	reqObj.ErrorAsf(err, new(os.PathError), "msg with args %d %s", 42, "42")
+	reqObj.ErrorAs(err, &target)
+	reqObj.ErrorAsf(err, &target, "msg with args %d %s", 42, "42")
 	reqObj.EqualError(err, "end of file")
 	reqObj.EqualErrorf(err, "end of file", "msg with args %d %s", 42, "42")
 	reqObj.ErrorContains(err, "end of file")
@@ -88,21 +91,23 @@ func TestRequireErrorCheckerSuite(t *testing.T) {
 
 func (s *RequireErrorCheckerSuite) TestAll() {
 	var err error
+	var target = new(os.PathError)
 
 	assObj, reqObj := s.Assert(), s.Require()
 
 	// Invalid.
-	s.Error(err)                                                                   // want "require-error: for error assertions use require"
-	s.Errorf(err, "msg with args %d %s", 42, "42")                                 // want "require-error: for error assertions use require"
-	s.ErrorIs(err, io.EOF)                                                         // want "require-error: for error assertions use require"
-	s.ErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")                       // want "require-error: for error assertions use require"
-	s.ErrorAs(err, new(os.PathError))                                              // want "require-error: for error assertions use require"
-	s.ErrorAsf(err, new(os.PathError), "msg with args %d %s", 42, "42")            // want "require-error: for error assertions use require"
-	s.EqualError(err, "end of file")                                               // want "require-error: for error assertions use require"
-	s.EqualErrorf(err, "end of file", "msg with args %d %s", 42, "42")             // want "require-error: for error assertions use require"
-	s.ErrorContains(err, "end of file")                                            // want "require-error: for error assertions use require"
-	s.ErrorContainsf(err, "end of file", "msg with args %d %s", 42, "42")          // want "require-error: for error assertions use require"
-	s.NoError(err)                                                                 // want "require-error: for error assertions use require"
+	s.Error(err)                                                          // want "require-error: for error assertions use require"
+	s.Errorf(err, "msg with args %d %s", 42, "42")                        // want "require-error: for error assertions use require"
+	s.ErrorIs(err, io.EOF)                                                // want "require-error: for error assertions use require"
+	s.ErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")              // want "require-error: for error assertions use require"
+	s.ErrorAs(err, &target)                                               // want "require-error: for error assertions use require"
+	s.ErrorAsf(err, &target, "msg with args %d %s", 42, "42")             // want "require-error: for error assertions use require"
+	s.EqualError(err, "end of file")                                      // want "require-error: for error assertions use require"
+	s.EqualErrorf(err, "end of file", "msg with args %d %s", 42, "42")    // want "require-error: for error assertions use require"
+	s.ErrorContains(err, "end of file")                                   // want "require-error: for error assertions use require"
+	s.ErrorContainsf(err, "end of file", "msg with args %d %s", 42, "42") // want "require-error: for error assertions use require"
+	s.NoError(err)                                                        // want "require-error: for error assertions use require"
+	nop()
 	s.NoErrorf(err, "msg with args %d %s", 42, "42")                               // want "require-error: for error assertions use require"
 	s.NotErrorIs(err, io.EOF)                                                      // want "require-error: for error assertions use require"
 	s.NotErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")                    // want "require-error: for error assertions use require"
@@ -110,38 +115,40 @@ func (s *RequireErrorCheckerSuite) TestAll() {
 	s.Assert().Errorf(err, "msg with args %d %s", 42, "42")                        // want "require-error: for error assertions use require"
 	s.Assert().ErrorIs(err, io.EOF)                                                // want "require-error: for error assertions use require"
 	s.Assert().ErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")              // want "require-error: for error assertions use require"
-	s.Assert().ErrorAs(err, new(os.PathError))                                     // want "require-error: for error assertions use require"
-	s.Assert().ErrorAsf(err, new(os.PathError), "msg with args %d %s", 42, "42")   // want "require-error: for error assertions use require"
+	s.Assert().ErrorAs(err, &target)                                               // want "require-error: for error assertions use require"
+	s.Assert().ErrorAsf(err, &target, "msg with args %d %s", 42, "42")             // want "require-error: for error assertions use require"
 	s.Assert().EqualError(err, "end of file")                                      // want "require-error: for error assertions use require"
 	s.Assert().EqualErrorf(err, "end of file", "msg with args %d %s", 42, "42")    // want "require-error: for error assertions use require"
 	s.Assert().ErrorContains(err, "end of file")                                   // want "require-error: for error assertions use require"
 	s.Assert().ErrorContainsf(err, "end of file", "msg with args %d %s", 42, "42") // want "require-error: for error assertions use require"
 	s.Assert().NoError(err)                                                        // want "require-error: for error assertions use require"
-	s.Assert().NoErrorf(err, "msg with args %d %s", 42, "42")                      // want "require-error: for error assertions use require"
-	s.Assert().NotErrorIs(err, io.EOF)                                             // want "require-error: for error assertions use require"
-	s.Assert().NotErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")           // want "require-error: for error assertions use require"
-	assObj.Error(err)                                                              // want "require-error: for error assertions use require"
-	assObj.Errorf(err, "msg with args %d %s", 42, "42")                            // want "require-error: for error assertions use require"
-	assObj.ErrorIs(err, io.EOF)                                                    // want "require-error: for error assertions use require"
-	assObj.ErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")                  // want "require-error: for error assertions use require"
-	assObj.ErrorAs(err, new(os.PathError))                                         // want "require-error: for error assertions use require"
-	assObj.ErrorAsf(err, new(os.PathError), "msg with args %d %s", 42, "42")       // want "require-error: for error assertions use require"
-	assObj.EqualError(err, "end of file")                                          // want "require-error: for error assertions use require"
-	assObj.EqualErrorf(err, "end of file", "msg with args %d %s", 42, "42")        // want "require-error: for error assertions use require"
-	assObj.ErrorContains(err, "end of file")                                       // want "require-error: for error assertions use require"
-	assObj.ErrorContainsf(err, "end of file", "msg with args %d %s", 42, "42")     // want "require-error: for error assertions use require"
-	assObj.NoError(err)                                                            // want "require-error: for error assertions use require"
-	assObj.NoErrorf(err, "msg with args %d %s", 42, "42")                          // want "require-error: for error assertions use require"
-	assObj.NotErrorIs(err, io.EOF)                                                 // want "require-error: for error assertions use require"
-	assObj.NotErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")               // want "require-error: for error assertions use require"
+	nop()
+	s.Assert().NoErrorf(err, "msg with args %d %s", 42, "42")                  // want "require-error: for error assertions use require"
+	s.Assert().NotErrorIs(err, io.EOF)                                         // want "require-error: for error assertions use require"
+	s.Assert().NotErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")       // want "require-error: for error assertions use require"
+	assObj.Error(err)                                                          // want "require-error: for error assertions use require"
+	assObj.Errorf(err, "msg with args %d %s", 42, "42")                        // want "require-error: for error assertions use require"
+	assObj.ErrorIs(err, io.EOF)                                                // want "require-error: for error assertions use require"
+	assObj.ErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")              // want "require-error: for error assertions use require"
+	assObj.ErrorAs(err, &target)                                               // want "require-error: for error assertions use require"
+	assObj.ErrorAsf(err, &target, "msg with args %d %s", 42, "42")             // want "require-error: for error assertions use require"
+	assObj.EqualError(err, "end of file")                                      // want "require-error: for error assertions use require"
+	assObj.EqualErrorf(err, "end of file", "msg with args %d %s", 42, "42")    // want "require-error: for error assertions use require"
+	assObj.ErrorContains(err, "end of file")                                   // want "require-error: for error assertions use require"
+	assObj.ErrorContainsf(err, "end of file", "msg with args %d %s", 42, "42") // want "require-error: for error assertions use require"
+	assObj.NoError(err)                                                        // want "require-error: for error assertions use require"
+	nop()
+	assObj.NoErrorf(err, "msg with args %d %s", 42, "42")            // want "require-error: for error assertions use require"
+	assObj.NotErrorIs(err, io.EOF)                                   // want "require-error: for error assertions use require"
+	assObj.NotErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42") // want "require-error: for error assertions use require"
 
 	// Valid.
 	s.Require().Error(err)
 	s.Require().Errorf(err, "msg with args %d %s", 42, "42")
 	s.Require().ErrorIs(err, io.EOF)
 	s.Require().ErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")
-	s.Require().ErrorAs(err, new(os.PathError))
-	s.Require().ErrorAsf(err, new(os.PathError), "msg with args %d %s", 42, "42")
+	s.Require().ErrorAs(err, &target)
+	s.Require().ErrorAsf(err, &target, "msg with args %d %s", 42, "42")
 	s.Require().EqualError(err, "end of file")
 	s.Require().EqualErrorf(err, "end of file", "msg with args %d %s", 42, "42")
 	s.Require().ErrorContains(err, "end of file")
@@ -154,8 +161,8 @@ func (s *RequireErrorCheckerSuite) TestAll() {
 	reqObj.Errorf(err, "msg with args %d %s", 42, "42")
 	reqObj.ErrorIs(err, io.EOF)
 	reqObj.ErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")
-	reqObj.ErrorAs(err, new(os.PathError))
-	reqObj.ErrorAsf(err, new(os.PathError), "msg with args %d %s", 42, "42")
+	reqObj.ErrorAs(err, &target)
+	reqObj.ErrorAsf(err, &target, "msg with args %d %s", 42, "42")
 	reqObj.EqualError(err, "end of file")
 	reqObj.EqualErrorf(err, "end of file", "msg with args %d %s", 42, "42")
 	reqObj.ErrorContains(err, "end of file")
@@ -165,3 +172,5 @@ func (s *RequireErrorCheckerSuite) TestAll() {
 	reqObj.NotErrorIs(err, io.EOF)
 	reqObj.NotErrorIsf(err, io.EOF, "msg with args %d %s", 42, "42")
 }
+
+func nop() {} // Hack against ignoring of "NoError" sequence.

@@ -42,6 +42,11 @@ func (e *AssertionExpander) FullMode() *AssertionExpander {
 	return e
 }
 
+func (e *AssertionExpander) FmtSingleMode() *AssertionExpander {
+	e.mode = expandModeFmtSingle
+	return e
+}
+
 func (e *AssertionExpander) NotFmtSetMode() *AssertionExpander {
 	e.mode = expandModeNotFmtSet
 	return e

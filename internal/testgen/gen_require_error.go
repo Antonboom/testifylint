@@ -26,7 +26,7 @@ func (g RequireErrorTestsGenerator) TemplateData() any {
 		ErrorAssertions: []Assertion{
 			{Fn: "Error", Argsf: "err", ReportMsgf: report},
 			{Fn: "ErrorIs", Argsf: "err, io.EOF", ReportMsgf: report},
-			{Fn: "ErrorAs", Argsf: "err, new(os.PathError)", ReportMsgf: report},
+			{Fn: "ErrorAs", Argsf: "err, &target", ReportMsgf: report},
 			{Fn: "EqualError", Argsf: `err, "end of file"`, ReportMsgf: report},
 			{Fn: "ErrorContains", Argsf: `err, "end of file"`, ReportMsgf: report},
 			{Fn: "NoError", Argsf: "err", ReportMsgf: report},
@@ -62,6 +62,7 @@ import (
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var err error
+	var target = new(os.PathError)
 
 	assObj, reqObj := assert.New(t), require.New(t)
 
@@ -69,7 +70,13 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	{{ range $si, $sel := arr "assert" "assObj" }}
 		{{- range $ai, $assrn := $.ErrorAssertions }}
 			{{- $t := "t" }}{{ if eq $sel "assObj"}}{{ $t = "" }}{{ end }}
-			{{- NewAssertionExpander.Expand $assrn $sel $t nil }}
+			{{- if ne $assrn.Fn "NoError" -}}
+				{{- NewAssertionExpander.Expand $assrn $sel $t nil }}
+			{{ else }}
+				{{- NewAssertionExpander.NotFmtSingleMode.Expand $assrn $sel $t nil }}
+				nop()
+				{{ NewAssertionExpander.FmtSingleMode.Expand $assrn $sel $t nil }}
+			{{ end -}}
 		{{ end -}}
 	{{- end }}
 
@@ -94,13 +101,20 @@ func Test{{ $suiteName }}(t *testing.T) {
 
 func (s *{{ $suiteName }}) TestAll() {
 	var err error
+	var target = new(os.PathError)
 
 	assObj, reqObj := s.Assert(), s.Require()
 
 	// Invalid.
 	{{ range $si, $sel := arr "s" "s.Assert()" "assObj" }}
 		{{- range $ai, $assrn := $.ErrorAssertions }}
-			{{- NewAssertionExpander.Expand $assrn $sel "" nil }}
+			{{- if ne $assrn.Fn "NoError" -}}
+				{{- NewAssertionExpander.Expand $assrn $sel "" nil }}
+			{{ else }}
+				{{- NewAssertionExpander.NotFmtSingleMode.Expand $assrn $sel "" nil }}
+				nop()
+				{{ NewAssertionExpander.FmtSingleMode.Expand $assrn $sel "" nil }}
+			{{ end -}}
 		{{ end -}}
 	{{- end }}
 
@@ -111,4 +125,6 @@ func (s *{{ $suiteName }}) TestAll() {
 		{{ end -}}
 	{{ end -}}
 }
+
+func nop() {} // Hack against ignoring of "NoError" sequence.
 `

@@ -28,7 +28,8 @@ const requireErrorReport = "for error assertions use require"
 // - the entire `if-else` block, if there is an assertion in the `if` condition;
 // - the last assertion in the block, if there are no methods/functions calls after it.
 // - assertions in an explicit goroutine;
-// - assertions in an explicit testing cleanup function or suite teardown methods.
+// - assertions in an explicit testing cleanup function or suite teardown methods;
+// - sequence of NoError assertions.
 type RequireError struct{}
 
 // NewRequireError constructs RequireError checker.
@@ -36,7 +37,7 @@ func NewRequireError() RequireError { return RequireError{} }
 func (RequireError) Name() string   { return "require-error" }
 
 func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Inspector) []analysis.Diagnostic {
-	callsByFunc := make(map[funcID][]callMeta)
+	callsByFunc := make(map[funcID][]*callMeta)
 
 	// Stage 1. Collect meta information about any calls inside functions.
 
@@ -61,12 +62,13 @@ func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Insp
 		callExpr := node.(*ast.CallExpr)
 		testifyCall := NewCallMeta(pass, callExpr)
 
-		call := callMeta{
-			call:        callExpr,
-			testifyCall: testifyCall,
-			parentIf:    findNearestNode[*ast.IfStmt](stack),
-			parentBlock: findNearestNode[*ast.BlockStmt](stack),
-			inIfCond:    inIfCond,
+		call := &callMeta{
+			call:         callExpr,
+			testifyCall:  testifyCall,
+			parentIf:     findNearestNode[*ast.IfStmt](stack),
+			parentBlock:  findNearestNode[*ast.BlockStmt](stack),
+			inIfCond:     inIfCond,
+			inNoErrorSeq: false, // Will be filled in below.
 		}
 
 		callsByFunc[*fID] = append(callsByFunc[*fID], call)
@@ -77,7 +79,7 @@ func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Insp
 
 	var diagnostics []analysis.Diagnostic
 
-	callsByBlock := map[*ast.BlockStmt][]callMeta{}
+	callsByBlock := map[*ast.BlockStmt][]*callMeta{}
 	for _, calls := range callsByFunc {
 		for _, c := range calls {
 			if b := c.parentBlock; b != nil {
@@ -85,6 +87,8 @@ func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Insp
 			}
 		}
 	}
+
+	markCallsInNoErrorSequence(callsByBlock)
 
 	for funcInfo, calls := range callsByFunc {
 		for i, c := range calls {
@@ -121,11 +125,16 @@ func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Insp
 }
 
 func needToSkipBasedOnContext(
-	currCall callMeta,
+	currCall *callMeta,
 	currCallIndex int,
-	otherCalls []callMeta,
-	callsByBlock map[*ast.BlockStmt][]callMeta,
+	otherCalls []*callMeta,
+	callsByBlock map[*ast.BlockStmt][]*callMeta,
 ) bool {
+	if currCall.inNoErrorSeq {
+		// Skip `assert.NoError` sequence.
+		return true
+	}
+
 	if currCall.inIfCond {
 		// Skip assertions in the "if condition".
 		return true
@@ -216,12 +225,41 @@ func findNearestNode[T ast.Node](stack []ast.Node) (v T) {
 	return
 }
 
+func markCallsInNoErrorSequence(callsByBlock map[*ast.BlockStmt][]*callMeta) {
+	for _, calls := range callsByBlock {
+		for i, c := range calls {
+			if c.testifyCall == nil {
+				continue
+			}
+
+			var prevIsNoError bool
+			if i > 0 {
+				if prev := calls[i-1].testifyCall; prev != nil {
+					prevIsNoError = isNoErrorAssertion(prev.Fn.Name)
+				}
+			}
+
+			var nextIsNoError bool
+			if i < len(calls)-1 {
+				if next := calls[i+1].testifyCall; next != nil {
+					nextIsNoError = isNoErrorAssertion(next.Fn.Name)
+				}
+			}
+
+			if isNoErrorAssertion(c.testifyCall.Fn.Name) && (prevIsNoError || nextIsNoError) {
+				calls[i].inNoErrorSeq = true
+			}
+		}
+	}
+}
+
 type callMeta struct {
-	call        *ast.CallExpr
-	testifyCall *CallMeta
-	parentIf    *ast.IfStmt
-	parentBlock *ast.BlockStmt
-	inIfCond    bool // True for code like `if assert.NoError(t, err) {`.
+	call         *ast.CallExpr
+	testifyCall  *CallMeta
+	parentIf     *ast.IfStmt
+	parentBlock  *ast.BlockStmt
+	inIfCond     bool // True for code like `if assert.ErrorAs(t, err, &target) {`.
+	inNoErrorSeq bool // True for sequence of `assert.NoError` assertions.
 }
 
 type funcID struct {
@@ -243,4 +281,8 @@ func isAfterTestMethod(name string) bool {
 		return true
 	}
 	return false
+}
+
+func isNoErrorAssertion(fnName string) bool {
+	return (fnName == "NoError") || (fnName == "NoErrorf")
 }

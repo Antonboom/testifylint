@@ -281,7 +281,8 @@ To minimize the number of false positives, `require-error` ignores:
 - the entire `if-else` block, if there is an assertion in the `if` condition;
 - the last assertion in the block, if there are no methods/functions calls after it.
 - assertions in an explicit goroutine;
-- assertions in the testing cleanup function or suite teardown methods.
+- assertions in an explicit testing cleanup function or suite teardown methods;
+- sequence of `NoError` assertions.
 
 ---
 

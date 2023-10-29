@@ -345,29 +345,6 @@ func TestErrors(t *testing.T) {
 	}
 }
 
-func PrepareDB(ctx context.Context, t *testing.T, dbName string) (client any, cleanUp func(ctx context.Context)) {
-	t.Helper()
-	require.NotEmpty(t, dbName)
-
-	_, err := operationWithResult()
-	require.NoError(t, err)
-	assert.NoError(t, operation()) // want "require-error: for error assertions use require"
-
-	client, err = operationWithResult()
-	assert.NoError(t, err) // want "require-error: for error assertions use require"
-
-	{
-		err = operation()
-	}
-	assert.NoError(t, err)
-
-	return client, func(ctx2 context.Context) {
-		assert.NoError(t, operation()) // want "require-error: for error assertions use require"
-		assert.NoError(t, operation()) // want "require-error: for error assertions use require"
-		assert.NoError(t, operation())
-	}
-}
-
 func TestChatID_Validate(t *testing.T) {
 	assert.NoError(t, NewChatID().Validate()) // want "require-error: for error assertions use require"
 	assert.Error(t, ChatID{}.Validate())      // want "require-error: for error assertions use require"
