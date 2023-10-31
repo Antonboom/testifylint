@@ -276,6 +276,14 @@ This checker is similar to the [floatcompare](https://github.com/golangci/golang
 
 `testify/require` allows to stop test execution when a test fails.
 
+To minimize the number of false positives, `require-error` ignores:
+- assertion in the `if` condition;
+- the entire `if-else` block, if there is an assertion in the `if` condition;
+- the last assertion in the block, if there are no methods/functions calls after it;
+- assertions in an explicit goroutine;
+- assertions in an explicit testing cleanup function or suite teardown methods;
+- sequence of `NoError` assertions.
+
 ---
 
 ### suite-dont-use-pkg

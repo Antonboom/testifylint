@@ -21,7 +21,6 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewErrorNil(),
 		checkers.NewNilCompare(),
 		checkers.NewErrorIsAs(),
-		checkers.NewRequireError(),
 		checkers.NewExpectedActual(),
 		checkers.NewSuiteExtraAssertCall(),
 		checkers.NewSuiteDontUsePkg(),
@@ -35,14 +34,16 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewErrorNil(),
 		checkers.NewNilCompare(),
 		checkers.NewErrorIsAs(),
-		checkers.NewRequireError(),
 		checkers.NewExpectedActual(),
 		checkers.NewSuiteExtraAssertCall(),
 		checkers.NewSuiteDontUsePkg(),
 	}
 
-	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{}
+	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{
+		checkers.NewRequireError(),
+	}
 	allAdvancedCheckers := []checkers.AdvancedChecker{
+		checkers.NewRequireError(),
 		checkers.NewSuiteTHelper(),
 	}
 
@@ -75,9 +76,10 @@ func Test_newCheckers(t *testing.T) {
 			},
 			expRegular: []checkers.RegularChecker{
 				checkers.NewLen(),
+			},
+			expAdvanced: []checkers.AdvancedChecker{
 				checkers.NewRequireError(),
 			},
-			expAdvanced: []checkers.AdvancedChecker{},
 		},
 		{
 			name: "disable two checkers only",
@@ -104,10 +106,8 @@ func Test_newCheckers(t *testing.T) {
 					checkers.NewSuiteTHelper().Name(),
 				},
 			},
-			expRegular: allRegularCheckers,
-			expAdvanced: []checkers.AdvancedChecker{
-				checkers.NewSuiteTHelper(),
-			},
+			expRegular:  allRegularCheckers,
+			expAdvanced: allAdvancedCheckers,
 		},
 		{
 			name: "disable three checkers from enabled by default checkers",

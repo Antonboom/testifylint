@@ -230,6 +230,12 @@ assert.Emptyf(t, arr, "msg with arg %d", 42) // want "use assert\\.Emptyf"
 assert.Emptyf(t, arr, "msg with args %d %s", 42, "42") // want "use assert\\.Emptyf"`,
 		},
 		{
+			name:           "fmt single mode",
+			mode:           (*AssertionExpander).FmtSingleMode,
+			expected:       `assert.Lenf(t, arr, 0, "msg with args %d %s", 42, "42") // want "use assert\\.Emptyf"`,
+			expectedGolden: `assert.Emptyf(t, arr, "msg with args %d %s", 42, "42") // want "use assert\\.Emptyf"`,
+		},
+		{
 			name: "not fmt set mode",
 			mode: (*AssertionExpander).NotFmtSetMode,
 			expected: `assert.Len(t, arr, 0) // want "use assert\\.Empty"
