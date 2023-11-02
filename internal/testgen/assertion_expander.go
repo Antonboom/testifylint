@@ -124,7 +124,7 @@ func buildAssertion(selector, fn, args, reportedMsgf, proposedSel, proposedFn st
 		if or(proposedSel, proposedFn) != "" {
 			reportedMsgf = fmt.Sprintf(reportedMsgf, or(proposedSel, selector), or(proposedFn, fn))
 		}
-		s += " // want " + quoteReport(reportedMsgf)
+		s += " // want " + QuoteReport(reportedMsgf)
 	}
 	return s
 }
@@ -147,6 +147,6 @@ func withSuffixF(s string) string {
 	return s + "f"
 }
 
-func quoteReport(msg string) string {
+func QuoteReport(msg string) string {
 	return fmt.Sprintf("%q", regexp.QuoteMeta(msg))
 }

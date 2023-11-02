@@ -35,6 +35,10 @@ type CallMeta struct {
 	ArgsRaw []ast.Expr
 }
 
+func (c CallMeta) String() string {
+	return c.SelectorXStr + "." + c.Fn.Name
+}
+
 // FnMeta stores meta info about assertion function itself, for example "Equal".
 type FnMeta struct {
 	// Range contains start and end position of function Name.
