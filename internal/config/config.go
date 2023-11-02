@@ -18,6 +18,9 @@ func NewDefault() Config {
 		ExpectedActual: ExpectedActualConfig{
 			ExpVarPattern: RegexpValue{checkers.DefaultExpectedVarPattern},
 		},
+		RequireError: RequireErrorConfig{
+			FnPattern: RegexpValue{nil},
+		},
 		SuiteExtraAssertCall: SuiteExtraAssertCallConfig{
 			Mode: checkers.DefaultSuiteExtraAssertCallMode,
 		},
@@ -32,12 +35,18 @@ type Config struct {
 	EnabledCheckers  KnownCheckersValue
 
 	ExpectedActual       ExpectedActualConfig
+	RequireError         RequireErrorConfig
 	SuiteExtraAssertCall SuiteExtraAssertCallConfig
 }
 
 // ExpectedActualConfig implements configuration of checkers.ExpectedActual.
 type ExpectedActualConfig struct {
 	ExpVarPattern RegexpValue
+}
+
+// RequireErrorConfig implements configuration of checkers.RequireError.
+type RequireErrorConfig struct {
+	FnPattern RegexpValue
 }
 
 // SuiteExtraAssertCallConfig implements configuration of checkers.SuiteExtraAssertCall.
@@ -83,6 +92,7 @@ func BindToFlags(cfg *Config, fs *flag.FlagSet) {
 	fs.Var(&cfg.EnabledCheckers, "enable", "comma separated list of enabled checkers (in addition to enabled by default)")
 
 	fs.Var(&cfg.ExpectedActual.ExpVarPattern, "expected-actual.pattern", "regexp for expected variable name")
+	fs.Var(&cfg.RequireError.FnPattern, "require-error.fn-pattern", "regexp for assert functions that should only be analyzed")
 	fs.Var(NewEnumValue(suiteExtraAssertCallModeAsString, &cfg.SuiteExtraAssertCall.Mode),
 		"suite-extra-assert-call.mode", "to require or remove extra Assert() call")
 }

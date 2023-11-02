@@ -42,6 +42,14 @@ func TestTestifyLint(t *testing.T) {
 		{dir: "not-true-testify"}, // Linter ignores stretchr/testify's forks.
 		{dir: "pkg-alias"},
 		{
+			dir: "require-error-fn-pattern",
+			flags: map[string]string{
+				"disable-all":              "true",
+				"enable":                   checkers.NewRequireError().Name(),
+				"require-error.fn-pattern": "^(NoErrorf?|NotErrorIsf?)$",
+			},
+		},
+		{
 			dir:   "require-error-skip-logic",
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewRequireError().Name()},
 		},
