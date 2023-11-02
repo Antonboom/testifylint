@@ -16,8 +16,8 @@ func (SuiteTHelperTestsGenerator) Checker() checkers.Checker {
 func (g SuiteTHelperTestsGenerator) TemplateData() any {
 	var (
 		name    = g.Checker().Name()
-		report1 = quoteReport(name + ": suite helper method must start with suite.T().Helper()")
-		report2 = quoteReport(name + ": suite helper method must start with s.T().Helper()")
+		report1 = QuoteReport(name + ": suite helper method must start with suite.T().Helper()")
+		report2 = QuoteReport(name + ": suite helper method must start with s.T().Helper()")
 	)
 
 	return struct {

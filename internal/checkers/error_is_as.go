@@ -32,7 +32,7 @@ func NewErrorIsAs() ErrorIsAs  { return ErrorIsAs{} }
 func (ErrorIsAs) Name() string { return "error-is-as" }
 
 func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	switch fnName := call.Fn.Name; fnName {
+	switch call.Fn.Name {
 	case "Error", "Errorf":
 		if len(call.Args) >= 2 && isError(pass, call.Args[1]) {
 			const proposed = "ErrorIs"
@@ -110,8 +110,8 @@ func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Di
 		// https://cs.opensource.google/go/x/tools/+/master:go/analysis/passes/errorsas/errorsas.go
 
 		var (
-			defaultReport  = fmt.Sprintf("second argument to %s.%s must be a non-nil pointer to either a type that implements error, or to any interface type", call.SelectorXStr, fnName) //nolint:lll
-			errorPtrReport = fmt.Sprintf("second argument to %s.%s should not be *error", call.SelectorXStr, fnName)
+			defaultReport  = fmt.Sprintf("second argument to %s must be a non-nil pointer to either a type that implements error, or to any interface type", call) //nolint:lll
+			errorPtrReport = fmt.Sprintf("second argument to %s should not be *error", call)
 		)
 
 		target := call.Args[1]

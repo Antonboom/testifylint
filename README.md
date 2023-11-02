@@ -63,6 +63,7 @@ $ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=re
 | [error-nil](#error-nil)                             | ✅                  | ✅       |
 | [expected-actual](#expected-actual)                 | ✅                  | ✅       |
 | [float-compare](#float-compare)                     | ✅                  | ❌       |
+| [go-require](#go-require)                           | ✅                  | ❌       |
 | [len](#len)                                         | ✅                  | ✅       |
 | [nil-compare](#nil-compare)                         | ✅                  | ✅       |
 | [require-error](#require-error)                     | ✅                  | ❌       |
@@ -156,7 +157,7 @@ $ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=re
 **Reason**: In the first two cases, a common mistake that leads to hiding the incorrect wrapping of sentinel errors.
 In the rest cases – more appropriate `testify` API with clearer failure message.
 
-Also `error-is-as` repeats go vet's [errorsas check](https://cs.opensource.google/go/x/tools/+/master:go/analysis/passes/errorsas/errorsas.go) 
+Also `error-is-as` repeats `go vet`'s [errorsas check](https://cs.opensource.google/go/x/tools/+/master:go/analysis/passes/errorsas/errorsas.go) 
 logic, but without autofix.
 
 ---
@@ -226,6 +227,48 @@ This checker is similar to the [floatcompare](https://github.com/golangci/golang
 
 ---
 
+### go-require
+
+```go
+go func() {
+    conn, err = lis.Accept()
+    require.NoError(t, err) ❌
+    
+    if assert.Error(err) {
+        assert.FailNow(t, msg) ❌
+    }
+}()
+```
+
+**Autofix**: false. <br>
+**Enabled by default**: true. <br>
+**Reason**: Incorrect use of functions.
+
+This checker is a radically improved analogue of `go vet`'s
+[testinggoroutine](https://cs.opensource.google/go/x/tools/+/master:go/analysis/passes/testinggoroutine/doc.go) check.
+
+The point of the check is that, according to the [documentation](https://pkg.go.dev/testing#T), 
+functions leading to `t.FailNow` (essentially to `runtime.GoExit`) must only be used in the goroutine that runs the test.
+Otherwise, they will not work as declared, namely, finish the test function.
+
+You can disable the `go-require` checker and continue to use `require` as the current goroutine finisher, but this could lead
+1. to possible resource leaks in tests;
+2. to increasing of confusion, because functions will be not used as intended.
+
+Typically, any assertions inside goroutines are a marker of poor test architecture.
+Try to execute them in the main goroutine and distribute the data necessary for this into it
+([example](https://github.com/ipfs/kubo/issues/2043#issuecomment-164136026)).
+
+Also a bad solution would be to simply replace all `require` in goroutines with `assert`
+(like [here](https://github.com/gravitational/teleport/pull/22567/files#diff-9f5fd20913c5fe80c85263153fa9a0b28dbd1407e53da4ab5d09e13d2774c5dbR7377))
+– this will only mask the problem.
+
+The checker is enabled by default, because `testinggoroutine` is enabled by default in `go vet`.
+
+P.S. Related `testify`'s [thread](https://github.com/stretchr/testify/issues/772).
+
+---
+
 ### len
 
 ```go
@@ -274,7 +317,8 @@ This checker is similar to the [floatcompare](https://github.com/golangci/golang
 **Enabled by default**: true. <br>
 **Reason**: Such "ignoring" of errors leads to further panics, making the test harder to debug.
 
-`testify/require` allows to stop test execution when a test fails.
+[testify/require](https://pkg.go.dev/github.com/stretchr/testify@master/require#hdr-Assertions) allows 
+to stop test execution when a test fails.
 
 To minimize the number of false positives, `require-error` ignores:
 - assertion in the `if` condition;

@@ -29,6 +29,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	ErrorIsAsTestsGenerator{},
 	ExpectedActualTestsGenerator{},
 	FloatCompareTestsGenerator{},
+	GoRequireTestsGenerator{},
 	LenTestsGenerator{},
 	NilCompareTestsGenerator{},
 	RequireErrorTestsGenerator{},
