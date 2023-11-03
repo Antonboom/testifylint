@@ -49,6 +49,7 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 					{Fn: "True", Argsf: "predicate != false", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
 					{Fn: "True", Argsf: "false != predicate", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
 					{Fn: "False", Argsf: "!predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+					{Fn: "False", Argsf: `!result["flag"].(bool)`, ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: `result["flag"].(bool)`}, //nolint:lll
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "True", Argsf: "predicate"},
@@ -70,6 +71,7 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 					{Fn: "False", Argsf: "predicate != false", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
 					{Fn: "False", Argsf: "false != predicate", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
 					{Fn: "True", Argsf: "!predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
+					{Fn: "True", Argsf: `!result["flag"].(bool)`, ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: `result["flag"].(bool)`}, //nolint:lll
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "False", Argsf: "predicate"},
@@ -89,6 +91,50 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 			{Fn: "True", Argsf: "false != false"},
 			{Fn: "False", Argsf: "true != true"},
 			{Fn: "False", Argsf: "false != false"},
+
+			{Fn: "Equal", Argsf: "predicate, predicate"},
+			{Fn: "NotEqual", Argsf: "predicate, predicate"},
+			{Fn: "True", Argsf: "predicate == predicate"},
+			{Fn: "False", Argsf: "predicate == predicate"},
+			{Fn: "True", Argsf: "predicate != predicate"},
+			{Fn: "False", Argsf: "predicate != predicate"},
+
+			// `any` cases.
+
+			{Fn: "Equal", Argsf: `true, result["flag"]`},
+			{Fn: "Equal", Argsf: `result["flag"], true`},
+			{Fn: "Equal", Argsf: `false, result["flag"]`},
+			{Fn: "Equal", Argsf: `result["flag"], false`},
+			{Fn: "NotEqual", Argsf: `true, result["flag"]`},
+			{Fn: "NotEqual", Argsf: `result["flag"], true`},
+			{Fn: "NotEqual", Argsf: `false, result["flag"]`},
+			{Fn: "NotEqual", Argsf: `result["flag"], false`},
+			// https://go.dev/ref/spec#Comparison_operators
+			// A value x of non-interface type X and a value t of interface type T can be compared
+			// if type X is comparable and X implements T.
+			{Fn: "True", Argsf: `true == result["flag"]`},
+			{Fn: "True", Argsf: `result["flag"] == true`},
+			{Fn: "True", Argsf: `false == result["flag"]`},
+			{Fn: "True", Argsf: `result["flag"] == false`},
+			{Fn: "False", Argsf: `true == result["flag"]`},
+			{Fn: "False", Argsf: `result["flag"] == true`},
+			{Fn: "False", Argsf: `false == result["flag"]`},
+			{Fn: "False", Argsf: `result["flag"] == false`},
+			{Fn: "True", Argsf: `true != result["flag"]`},
+			{Fn: "True", Argsf: `result["flag"] != true`},
+			{Fn: "True", Argsf: `false != result["flag"]`},
+			{Fn: "True", Argsf: `result["flag"] != false`},
+			{Fn: "False", Argsf: `true != result["flag"]`},
+			{Fn: "False", Argsf: `result["flag"] != true`},
+			{Fn: "False", Argsf: `false != result["flag"]`},
+			{Fn: "False", Argsf: `result["flag"] != false`},
+
+			{Fn: "Equal", Argsf: "foo, foo"},
+			{Fn: "NotEqual", Argsf: "foo, foo"},
+			{Fn: "True", Argsf: "foo == foo"},
+			{Fn: "False", Argsf: "foo == foo"},
+			{Fn: "True", Argsf: "foo != foo"},
+			{Fn: "False", Argsf: "foo != foo"},
 		},
 	}
 }
@@ -117,6 +163,8 @@ import (
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var predicate bool
+	result := map[string]any{}
+
 	{{ range $ti, $test := $.Tests }}
 		// {{ $test.Name }}.
 		{
@@ -134,7 +182,14 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 }
 
 func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
-	{{- range $ai, $assrn := $.IgnoredAssertions }}
+	var predicate bool
+	var foo any
+	result := map[string]any{}
+
+	foo = true
+	assert.Equal(t, true, foo)
+
+	{{ range $ai, $assrn := $.IgnoredAssertions }}
 		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 	{{- end }}
 }
