@@ -124,6 +124,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [elements-match](#elements-match)
 - [error-compare](#error-compare)
 - [equal-values](#equal-values)
+- [graceful-teardown](#graceful-teardown)
 - [float-compare](#float-compare)
 - [http-const](#http-const)
 - [http-sugar](#http-sugar)
@@ -175,6 +176,25 @@ Describe a new checker in [checkers section](./README.md#checkers).
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
 **Reason**: The `Error()` method on the `error` interface exists for humans, not code.
+
+---
+
+### graceful-teardown
+
+Warns about usage of `require` in `t.Cleanup` functions and suite teardown methods:
+
+```go
+func (s *ServiceIntegrationSuite) TearDownTest() {
+    if p := s.verdictsProducer; p != nil {
+        s.Require().NoError(p.Close()) ❌
+    }
+    if c := s.dlqVerdictsConsumer; c != nil {
+        s.NoError(c.Close())
+    }
+    s.DBSuite.TearDownTest()
+    s.ks.TearDownTest()
+}
+```
 
 ---
 
