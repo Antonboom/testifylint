@@ -115,14 +115,19 @@ func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Di
 		)
 
 		target := call.Args[1]
-		t := pass.TypesInfo.Types[target].Type
-		if it, ok := t.Underlying().(*types.Interface); ok && it.NumMethods() == 0 {
+
+		if isEmptyInterface(pass, target) {
 			// `any` interface case. It is always allowed, since it often indicates
 			// a value forwarded from another source.
 			return nil
 		}
 
-		pt, ok := t.Underlying().(*types.Pointer)
+		tv, ok := pass.TypesInfo.Types[target]
+		if !ok {
+			return nil
+		}
+
+		pt, ok := tv.Type.Underlying().(*types.Pointer)
 		if !ok {
 			return newDiagnostic(checker.Name(), call, defaultReport, nil)
 		}
