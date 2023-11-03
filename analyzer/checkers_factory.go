@@ -52,6 +52,9 @@ func newCheckers(cfg config.Config) ([]checkers.RegularChecker, []checkers.Advan
 		case *checkers.ExpectedActual:
 			c.SetExpVarPattern(cfg.ExpectedActual.ExpVarPattern.Regexp)
 
+		case *checkers.RequireError:
+			c.SetFnPattern(cfg.RequireError.FnPattern.Regexp)
+
 		case *checkers.SuiteExtraAssertCall:
 			c.SetMode(cfg.SuiteExtraAssertCall.Mode)
 		}

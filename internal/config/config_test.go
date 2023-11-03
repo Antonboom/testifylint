@@ -26,6 +26,9 @@ func TestNewDefault(t *testing.T) {
 	if cfg.ExpectedActual.ExpVarPattern.String() != checkers.DefaultExpectedVarPattern.String() {
 		t.Fatal()
 	}
+	if cfg.RequireError.FnPattern.String() != "" {
+		t.Fatal()
+	}
 	if cfg.SuiteExtraAssertCall.Mode != checkers.SuiteExtraAssertCallModeRemove {
 		t.Fatal()
 	}

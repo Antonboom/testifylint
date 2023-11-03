@@ -18,6 +18,7 @@ var freeTestsGenerators = map[string]TestsGenerator{ // by subdirectory.
 	"base-test":                       BaseTestsGenerator{},
 	"error-as-target":                 ErrorAsTargetTestsGenerator{},
 	"expected-var-custom-pattern":     ExpectedVarCustomPatternTestsGenerator{},
+	"require-error-fn-pattern":        RequireErrorFnPatternTestsGenerator{},
 	"suite-require-extra-assert-call": SuiteRequireExtraAssertCallTestsGenerator{},
 }
 

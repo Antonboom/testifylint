@@ -45,12 +45,17 @@ $ testifylint ./...
 
 ## Configuring
 
+### CLI
 ```
 $ testifylint --enable-all ./...
 $ testifylint --enable=empty,error-is-as ./...
 $ testifylint --enable=expected-actual --expected-actual.pattern=^wanted$ ./...
+$ testifylint --enable=require-error --require-error.fn-pattern="^(Errorf?|NoErrorf?)$" ./...
 $ testifylint --enable=suite-extra-assert-call --suite-extra-assert-call.mode=require ./...
 ```
+
+### golangci-lint
+https://golangci-lint.run/usage/linters/#testifylint
 
 ## Checkers
 
@@ -201,7 +206,7 @@ logic, but without autofix.
 **Reason**: A common mistake that makes it harder to understand the reason of failed test.
 
 The checker considers the expected value to be a basic literal, constant, or variable whose name matches the pattern
-(`-expected-actual.pattern` flag).
+(`--expected-actual.pattern` flag).
 
 It is planned [to change the order of assertion arguments](https://github.com/stretchr/testify/issues/1089#Argument_order) to more natural
 (actual, expected) in `v2` of `testify`.
@@ -327,6 +332,8 @@ To minimize the number of false positives, `require-error` ignores:
 - assertions in an explicit goroutine;
 - assertions in an explicit testing cleanup function or suite teardown methods;
 - sequence of `NoError` assertions.
+
+Also you can configure functions to analyze via `--require-error.fn-pattern` flag.
 
 ---
 

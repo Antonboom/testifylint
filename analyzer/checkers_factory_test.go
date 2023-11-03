@@ -10,7 +10,8 @@ import (
 )
 
 func Test_newCheckers(t *testing.T) {
-	pattern := regexp.MustCompile(`^expected[A-Z0-9].*`)
+	expVarPattern := regexp.MustCompile(`^expected[A-Z0-9].*`)
+	fnPattern := regexp.MustCompile(`^NoErrorf?$`)
 
 	enabledByDefaultRegularCheckers := []checkers.RegularChecker{
 		checkers.NewFloatCompare(),
@@ -137,13 +138,27 @@ func Test_newCheckers(t *testing.T) {
 				DisableAll:      true,
 				EnabledCheckers: config.KnownCheckersValue{checkers.NewExpectedActual().Name()},
 				ExpectedActual: config.ExpectedActualConfig{
-					ExpVarPattern: config.RegexpValue{Regexp: pattern},
+					ExpVarPattern: config.RegexpValue{Regexp: expVarPattern},
 				},
 			},
 			expRegular: []checkers.RegularChecker{
-				checkers.NewExpectedActual().SetExpVarPattern(pattern),
+				checkers.NewExpectedActual().SetExpVarPattern(expVarPattern),
 			},
 			expAdvanced: []checkers.AdvancedChecker{},
+		},
+		{
+			name: "require-equal fn pattern defined",
+			cfg: config.Config{
+				DisableAll:      true,
+				EnabledCheckers: config.KnownCheckersValue{checkers.NewRequireError().Name()},
+				RequireError: config.RequireErrorConfig{
+					FnPattern: config.RegexpValue{Regexp: fnPattern},
+				},
+			},
+			expRegular: []checkers.RegularChecker{},
+			expAdvanced: []checkers.AdvancedChecker{
+				checkers.NewRequireError().SetFnPattern(fnPattern),
+			},
 		},
 		{
 			name: "suite-extra-assert-call mode defined",

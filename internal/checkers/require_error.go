@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
+	"regexp"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/ast/inspector"
@@ -30,11 +31,20 @@ const requireErrorReport = "for error assertions use require"
 // - assertions in an explicit goroutine;
 // - assertions in an explicit testing cleanup function or suite teardown methods;
 // - sequence of NoError assertions.
-type RequireError struct{}
+type RequireError struct {
+	fnPattern *regexp.Regexp
+}
 
 // NewRequireError constructs RequireError checker.
-func NewRequireError() RequireError { return RequireError{} }
-func (RequireError) Name() string   { return "require-error" }
+func NewRequireError() *RequireError { return new(RequireError) }
+func (RequireError) Name() string    { return "require-error" }
+
+func (checker *RequireError) SetFnPattern(p *regexp.Regexp) *RequireError {
+	if p != nil {
+		checker.fnPattern = p
+	}
+	return checker
+}
 
 func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Inspector) []analysis.Diagnostic {
 	callsByFunc := make(map[funcID][]*callMeta)
@@ -113,6 +123,9 @@ func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Insp
 			}
 
 			if needToSkipBasedOnContext(c, i, calls, callsByBlock) {
+				continue
+			}
+			if p := checker.fnPattern; p != nil && !p.MatchString(c.testifyCall.Fn.Name) {
 				continue
 			}
 
