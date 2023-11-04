@@ -32,10 +32,25 @@ func (g NilCompareTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: `Row["col"], nil`, ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: `Row["col"]`},
 			{Fn: "Equal", Argsf: `nil, Row["col"]`, ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: `Row["col"]`},
 
+			{Fn: "EqualValues", Argsf: "value, nil", ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: "value"},
+			{Fn: "EqualValues", Argsf: "nil, value", ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: "value"},
+			{Fn: "EqualValues", Argsf: `Row["col"], nil`, ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: `Row["col"]`},
+			{Fn: "EqualValues", Argsf: `nil, Row["col"]`, ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: `Row["col"]`},
+
+			{Fn: "Exactly", Argsf: "value, nil", ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: "value"},
+			{Fn: "Exactly", Argsf: "nil, value", ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: "value"},
+			{Fn: "Exactly", Argsf: `Row["col"], nil`, ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: `Row["col"]`},
+			{Fn: "Exactly", Argsf: `nil, Row["col"]`, ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: `Row["col"]`},
+
 			{Fn: "NotEqual", Argsf: "value, nil", ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: "value"},
 			{Fn: "NotEqual", Argsf: "nil, value", ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: "value"},
 			{Fn: "NotEqual", Argsf: `Row["col"], nil`, ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: `Row["col"]`},
 			{Fn: "NotEqual", Argsf: `nil, Row["col"]`, ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: `Row["col"]`},
+
+			{Fn: "NotEqualValues", Argsf: "value, nil", ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: "value"},
+			{Fn: "NotEqualValues", Argsf: "nil, value", ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: "value"},
+			{Fn: "NotEqualValues", Argsf: `Row["col"], nil`, ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: `Row["col"]`},
+			{Fn: "NotEqualValues", Argsf: `nil, Row["col"]`, ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: `Row["col"]`},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "Nil", Argsf: "value"},
@@ -48,11 +63,29 @@ func (g NilCompareTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: `"foo", Row["col"]`},
 			{Fn: "Equal", Argsf: `Row["col"], Row["col"]`},
 
+			{Fn: "EqualValues", Argsf: "value, value"},
+			{Fn: "EqualValues", Argsf: "nil, nil"},
+			{Fn: "EqualValues", Argsf: `Row["col"], "foo"`},
+			{Fn: "EqualValues", Argsf: `"foo", Row["col"]`},
+			{Fn: "EqualValues", Argsf: `Row["col"], Row["col"]`},
+
+			{Fn: "Exactly", Argsf: "value, value"},
+			{Fn: "Exactly", Argsf: "nil, nil"},
+			{Fn: "Exactly", Argsf: `Row["col"], "foo"`},
+			{Fn: "Exactly", Argsf: `"foo", Row["col"]`},
+			{Fn: "Exactly", Argsf: `Row["col"], Row["col"]`},
+
 			{Fn: "NotEqual", Argsf: "value, value"},
 			{Fn: "NotEqual", Argsf: "nil, nil"},
 			{Fn: "NotEqual", Argsf: `Row["col"], "foo"`},
 			{Fn: "NotEqual", Argsf: `"foo", Row["col"]`},
 			{Fn: "NotEqual", Argsf: `Row["col"], Row["col"]`},
+
+			{Fn: "NotEqualValues", Argsf: "value, value"},
+			{Fn: "NotEqualValues", Argsf: "nil, nil"},
+			{Fn: "NotEqualValues", Argsf: `Row["col"], "foo"`},
+			{Fn: "NotEqualValues", Argsf: `"foo", Row["col"]`},
+			{Fn: "NotEqualValues", Argsf: `Row["col"], Row["col"]`},
 		},
 	}
 }

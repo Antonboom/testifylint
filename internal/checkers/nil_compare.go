@@ -36,9 +36,9 @@ func (checker NilCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.D
 	var proposedFn string
 
 	switch call.Fn.Name {
-	case "Equal", "Equalf":
+	case "Equal", "Equalf", "EqualValues", "EqualValuesf", "Exactly", "Exactlyf":
 		proposedFn = "Nil"
-	case "NotEqual", "NotEqualf":
+	case "NotEqual", "NotEqualf", "NotEqualValues", "NotEqualValuesf":
 		proposedFn = "NotNil"
 	default:
 		return nil

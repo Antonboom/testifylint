@@ -31,6 +31,54 @@ func TestNilCompareChecker(t *testing.T) {
 		assert.Nilf(t, Row["col"], "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.Nilf"
 		require.Nil(t, Row["col"])                                      // want "nil-compare: use require\\.Nil"
 		require.Nilf(t, Row["col"], "msg with args %d %s", 42, "42")    // want "nil-compare: use require\\.Nilf"
+		assert.Nil(t, value)                                            // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, value, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		require.Nil(t, value)                                           // want "nil-compare: use require\\.Nil"
+		require.Nilf(t, value, "msg with args %d %s", 42, "42")         // want "nil-compare: use require\\.Nilf"
+		assert.Nil(t, value)                                            // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, value, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		require.Nil(t, value)                                           // want "nil-compare: use require\\.Nil"
+		require.Nilf(t, value, "msg with args %d %s", 42, "42")         // want "nil-compare: use require\\.Nilf"
+		assert.Nil(t, Row["col"])                                       // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, Row["col"], "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.Nilf"
+		require.Nil(t, Row["col"])                                      // want "nil-compare: use require\\.Nil"
+		require.Nilf(t, Row["col"], "msg with args %d %s", 42, "42")    // want "nil-compare: use require\\.Nilf"
+		assert.Nil(t, Row["col"])                                       // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, Row["col"], "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.Nilf"
+		require.Nil(t, Row["col"])                                      // want "nil-compare: use require\\.Nil"
+		require.Nilf(t, Row["col"], "msg with args %d %s", 42, "42")    // want "nil-compare: use require\\.Nilf"
+		assert.Nil(t, value)                                            // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, value, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		require.Nil(t, value)                                           // want "nil-compare: use require\\.Nil"
+		require.Nilf(t, value, "msg with args %d %s", 42, "42")         // want "nil-compare: use require\\.Nilf"
+		assert.Nil(t, value)                                            // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, value, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		require.Nil(t, value)                                           // want "nil-compare: use require\\.Nil"
+		require.Nilf(t, value, "msg with args %d %s", 42, "42")         // want "nil-compare: use require\\.Nilf"
+		assert.Nil(t, Row["col"])                                       // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, Row["col"], "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.Nilf"
+		require.Nil(t, Row["col"])                                      // want "nil-compare: use require\\.Nil"
+		require.Nilf(t, Row["col"], "msg with args %d %s", 42, "42")    // want "nil-compare: use require\\.Nilf"
+		assert.Nil(t, Row["col"])                                       // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, Row["col"], "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.Nilf"
+		require.Nil(t, Row["col"])                                      // want "nil-compare: use require\\.Nil"
+		require.Nilf(t, Row["col"], "msg with args %d %s", 42, "42")    // want "nil-compare: use require\\.Nilf"
+		assert.NotNil(t, value)                                         // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, value, "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
+		require.NotNil(t, value)                                        // want "nil-compare: use require\\.NotNil"
+		require.NotNilf(t, value, "msg with args %d %s", 42, "42")      // want "nil-compare: use require\\.NotNilf"
+		assert.NotNil(t, value)                                         // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, value, "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
+		require.NotNil(t, value)                                        // want "nil-compare: use require\\.NotNil"
+		require.NotNilf(t, value, "msg with args %d %s", 42, "42")      // want "nil-compare: use require\\.NotNilf"
+		assert.NotNil(t, Row["col"])                                    // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, Row["col"], "msg with args %d %s", 42, "42")  // want "nil-compare: use assert\\.NotNilf"
+		require.NotNil(t, Row["col"])                                   // want "nil-compare: use require\\.NotNil"
+		require.NotNilf(t, Row["col"], "msg with args %d %s", 42, "42") // want "nil-compare: use require\\.NotNilf"
+		assert.NotNil(t, Row["col"])                                    // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, Row["col"], "msg with args %d %s", 42, "42")  // want "nil-compare: use assert\\.NotNilf"
+		require.NotNil(t, Row["col"])                                   // want "nil-compare: use require\\.NotNil"
+		require.NotNilf(t, Row["col"], "msg with args %d %s", 42, "42") // want "nil-compare: use require\\.NotNilf"
 		assert.NotNil(t, value)                                         // want "nil-compare: use assert\\.NotNil"
 		assert.NotNilf(t, value, "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
 		require.NotNil(t, value)                                        // want "nil-compare: use require\\.NotNil"
@@ -83,6 +131,46 @@ func TestNilCompareChecker(t *testing.T) {
 		assert.Equalf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
 		require.Equal(t, Row["col"], Row["col"])
 		require.Equalf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, value, value)
+		assert.EqualValuesf(t, value, value, "msg with args %d %s", 42, "42")
+		require.EqualValues(t, value, value)
+		require.EqualValuesf(t, value, value, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, nil, nil)
+		assert.EqualValuesf(t, nil, nil, "msg with args %d %s", 42, "42")
+		require.EqualValues(t, nil, nil)
+		require.EqualValuesf(t, nil, nil, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, Row["col"], "foo")
+		assert.EqualValuesf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
+		require.EqualValues(t, Row["col"], "foo")
+		require.EqualValuesf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, "foo", Row["col"])
+		assert.EqualValuesf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
+		require.EqualValues(t, "foo", Row["col"])
+		require.EqualValuesf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, Row["col"], Row["col"])
+		assert.EqualValuesf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
+		require.EqualValues(t, Row["col"], Row["col"])
+		require.EqualValuesf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
+		assert.Exactly(t, value, value)
+		assert.Exactlyf(t, value, value, "msg with args %d %s", 42, "42")
+		require.Exactly(t, value, value)
+		require.Exactlyf(t, value, value, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, nil, nil)
+		assert.Exactlyf(t, nil, nil, "msg with args %d %s", 42, "42")
+		require.Exactly(t, nil, nil)
+		require.Exactlyf(t, nil, nil, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, Row["col"], "foo")
+		assert.Exactlyf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
+		require.Exactly(t, Row["col"], "foo")
+		require.Exactlyf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
+		assert.Exactly(t, "foo", Row["col"])
+		assert.Exactlyf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
+		require.Exactly(t, "foo", Row["col"])
+		require.Exactlyf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
+		assert.Exactly(t, Row["col"], Row["col"])
+		assert.Exactlyf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
+		require.Exactly(t, Row["col"], Row["col"])
+		require.Exactlyf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
 		assert.NotEqual(t, value, value)
 		assert.NotEqualf(t, value, value, "msg with args %d %s", 42, "42")
 		require.NotEqual(t, value, value)
@@ -103,5 +191,25 @@ func TestNilCompareChecker(t *testing.T) {
 		assert.NotEqualf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
 		require.NotEqual(t, Row["col"], Row["col"])
 		require.NotEqualf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, value, value)
+		assert.NotEqualValuesf(t, value, value, "msg with args %d %s", 42, "42")
+		require.NotEqualValues(t, value, value)
+		require.NotEqualValuesf(t, value, value, "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, nil, nil)
+		assert.NotEqualValuesf(t, nil, nil, "msg with args %d %s", 42, "42")
+		require.NotEqualValues(t, nil, nil)
+		require.NotEqualValuesf(t, nil, nil, "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, Row["col"], "foo")
+		assert.NotEqualValuesf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
+		require.NotEqualValues(t, Row["col"], "foo")
+		require.NotEqualValuesf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, "foo", Row["col"])
+		assert.NotEqualValuesf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
+		require.NotEqualValues(t, "foo", Row["col"])
+		require.NotEqualValuesf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, Row["col"], Row["col"])
+		assert.NotEqualValuesf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
+		require.NotEqualValues(t, Row["col"], Row["col"])
+		require.NotEqualValuesf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
 	}
 }
