@@ -30,15 +30,16 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 	}
 
 	return struct {
-		CheckerName       CheckerName
-		Typed             []literal
-		Untyped           []string
-		ExpVars           []string
-		Basic             test
-		Strings           test
-		NotDetected       []Assertion
-		RealLifeJSONEq    Assertion
-		IgnoredAssertions []Assertion
+		CheckerName          CheckerName
+		Typed                []literal
+		Untyped              []string
+		ExpVars              []string
+		Basic                test
+		OtherExpActFunctions test
+		Strings              test
+		NotDetected          []Assertion
+		RealLifeJSONEq       Assertion
+		IgnoredAssertions    []Assertion
 	}{
 		CheckerName: CheckerName(checker),
 		Typed: []literal{
@@ -86,6 +87,8 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			"[]int{1, 2, 3}",
 			"[3]int{1, 2, 3}",
 			`map[string]int{"0": 1}`,
+			`user{Name: "Anton"}`,
+			`struct {Name string}{Name: "Anton"}`,
 		},
 		Basic: test{
 			InvalidAssertions: []Assertion{
@@ -95,6 +98,107 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			ValidAssertions: []Assertion{
 				{Fn: "Equal", Argsf: "%s, result"},
 				{Fn: "NotEqual", Argsf: "%s, result"},
+			},
+		},
+		OtherExpActFunctions: test{
+			InvalidAssertions: []Assertion{
+				{
+					Fn: "EqualExportedValues", Argsf: "resultObj, expectedObj",
+					ReportMsgf: report, ProposedArgsf: "expectedObj, resultObj",
+				},
+				{
+					Fn: "EqualExportedValues", Argsf: `resultObj, user{Name: "Anton"}`,
+					ReportMsgf: report, ProposedArgsf: `user{Name: "Anton"}, resultObj`,
+				},
+				{
+					Fn: "EqualExportedValues", Argsf: `resultObj, struct {Name string}{Name: "Anton"}`,
+					ReportMsgf: report, ProposedArgsf: `struct {Name string}{Name: "Anton"}, resultObj`,
+				},
+
+				{Fn: "EqualValues", Argsf: "result, expected", ReportMsgf: report, ProposedArgsf: "expected, result"},
+				{Fn: "EqualValues", Argsf: "result, uint32(100)", ReportMsgf: report, ProposedArgsf: "uint32(100), result"},
+				{Fn: "NotEqualValues", Argsf: "result, expected", ReportMsgf: report, ProposedArgsf: "expected, result"},
+				{Fn: "NotEqualValues", Argsf: "result, uint32(100)", ReportMsgf: report, ProposedArgsf: "uint32(100), result"},
+
+				{Fn: "Exactly", Argsf: "result, expected", ReportMsgf: report, ProposedArgsf: "expected, result"},
+				{Fn: "Exactly", Argsf: "result, int64(1)", ReportMsgf: report, ProposedArgsf: "int64(1), result"},
+
+				{Fn: "InDelta", Argsf: "result, expected, 1.0", ReportMsgf: report, ProposedArgsf: "expected, result, 1.0"},
+				{Fn: "InDelta", Argsf: "result, 42.42, 1.0", ReportMsgf: report, ProposedArgsf: "42.42, result, 1.0"},
+
+				{
+					Fn: "InDeltaMapValues", Argsf: "result, expected, 2.0",
+					ReportMsgf: report, ProposedArgsf: "expected, result, 2.0",
+				},
+				{
+					Fn: "InDeltaMapValues", Argsf: `result, map[string]float64{"score": 0.99}, 2.0`,
+					ReportMsgf: report, ProposedArgsf: `map[string]float64{"score": 0.99}, result, 2.0`,
+				},
+
+				{
+					Fn: "InDeltaSlice", Argsf: "result, expected, 1.0",
+					ReportMsgf: report, ProposedArgsf: "expected, result, 1.0",
+				},
+				{
+					Fn: "InDeltaSlice", Argsf: `result, []float64{0.98, 0.99}, 1.0`,
+					ReportMsgf: report, ProposedArgsf: `[]float64{0.98, 0.99}, result, 1.0`,
+				},
+
+				{
+					Fn: "InEpsilon", Argsf: "result, expected, 0.0001",
+					ReportMsgf: report, ProposedArgsf: "expected, result, 0.0001",
+				},
+				{
+					Fn: "InEpsilon", Argsf: "result, 42.42, 0.0001",
+					ReportMsgf: report, ProposedArgsf: "42.42, result, 0.0001",
+				},
+
+				{Fn: "IsType", Argsf: "result, expected", ReportMsgf: report, ProposedArgsf: "expected, result"},
+				{Fn: "IsType", Argsf: "result, user{}", ReportMsgf: report, ProposedArgsf: "user{}, result"},
+				{Fn: "IsType", Argsf: "result, (*user)(nil)", ReportMsgf: report, ProposedArgsf: "(*user)(nil), result"},
+
+				{Fn: "Same", Argsf: "resultPtr, expectedPtr", ReportMsgf: report, ProposedArgsf: "expectedPtr, resultPtr"},
+				{Fn: "Same", Argsf: "resultPtr, &value", ReportMsgf: report, ProposedArgsf: "&value, resultPtr"},
+				{Fn: "NotSame", Argsf: "resultPtr, expectedPtr", ReportMsgf: report, ProposedArgsf: "expectedPtr, resultPtr"},
+				{Fn: "NotSame", Argsf: "resultPtr, &value", ReportMsgf: report, ProposedArgsf: "&value, resultPtr"},
+
+				{
+					Fn: "WithinDuration", Argsf: "resultTime, expectedTime, time.Second",
+					ReportMsgf: report, ProposedArgsf: "expectedTime, resultTime, time.Second",
+				},
+			},
+			ValidAssertions: []Assertion{
+				{Fn: "EqualExportedValues", Argsf: "expectedObj, resultObj"},
+				{Fn: "EqualExportedValues", Argsf: `user{Name: "Anton"}, resultObj`},
+				{Fn: "EqualExportedValues", Argsf: `struct {Name string}{Name: "Anton"}, resultObj`},
+
+				{Fn: "EqualValues", Argsf: "expected, result"},
+				{Fn: "EqualValues", Argsf: "uint32(100), result"},
+				{Fn: "NotEqualValues", Argsf: "expected, result"},
+				{Fn: "NotEqualValues", Argsf: "uint32(100), result"},
+
+				{Fn: "Exactly", Argsf: "expected, result"},
+				{Fn: "Exactly", Argsf: "int64(1), result"},
+
+				{Fn: "InDelta", Argsf: "expected, result, 1.0"},
+				{Fn: "InDelta", Argsf: "42.42, result, 1.0"},
+
+				{Fn: "InDeltaMapValues", Argsf: "expected, result, 2.0"},
+				{Fn: "InDeltaMapValues", Argsf: `map[string]float64{"score": 0.99}, result, 2.0`},
+
+				{Fn: "InEpsilon", Argsf: "expected, result, 0.0001"},
+				{Fn: "InEpsilon", Argsf: "42.42, result, 0.0001"},
+
+				{Fn: "IsType", Argsf: "expected, result"},
+				{Fn: "IsType", Argsf: "user{}, result"},
+				{Fn: "IsType", Argsf: "(*user)(nil), result"},
+
+				{Fn: "Same", Argsf: "expectedPtr, resultPtr"},
+				{Fn: "Same", Argsf: "&value, resultPtr"},
+				{Fn: "NotSame", Argsf: "expectedPtr, resultPtr"},
+				{Fn: "NotSame", Argsf: "&value, resultPtr"},
+
+				{Fn: "WithinDuration", Argsf: "expectedTime, resultTime, time.Second"},
 			},
 		},
 		Strings: test{
@@ -122,6 +226,18 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: "expected, expected"},
 			{Fn: "Equal", Argsf: "[]int{1, 2}, map[int]int{1: 2}"},
 			{Fn: "NotEqual", Argsf: "result, result"},
+			{Fn: "EqualExportedValues", Argsf: `user{Name: "Anton"}, struct {Name string}{Name: "Anton"}`},
+			{Fn: "EqualValues", Argsf: "uint32(100), int32(100)"},
+			{Fn: "Exactly", Argsf: "int32(200), int64(200)"},
+			{Fn: "NotEqualValues", Argsf: "int32(100), uint32(100)"},
+			{Fn: "InDelta", Argsf: "42.42, expected, 1.0"},
+			{Fn: "InDeltaMapValues", Argsf: `map[string]float64{"score": 0.99}, nil, 2.0`},
+			{Fn: "InDeltaSlice", Argsf: `[]float64{0.98, 0.99}, []float64{0.97, 0.99}, 1.0`},
+			{Fn: "InEpsilon", Argsf: "42.42, 0.0001, 0.0001"},
+			{Fn: "IsType", Argsf: "(*user)(nil), user{}"},
+			{Fn: "Same", Argsf: "&value, &value"},
+			{Fn: "NotSame", Argsf: "expectedPtr, &value"},
+			{Fn: "WithinDuration", Argsf: "expectedTime, time.Now(), time.Second"},
 		},
 	}
 }
@@ -147,10 +263,16 @@ import (
 	"io"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+type user struct {
+	Name string
+	id   uint64
+}
 
 type testCase struct { expected string } //
 func (c testCase) exp() string { return c.expected }
@@ -185,6 +307,30 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	// Valid.
 	{
 		{{- template "var-tests" arr . $.Basic.ValidAssertions -}}
+	}
+}
+
+func {{ .CheckerName.AsTestName }}_Other(t *testing.T) {
+	var (
+		result, expected any
+		resultPtr, expectedPtr *int
+		resultObj, expectedObj user
+		resultTime, expectedTime time.Time
+		value int
+	)
+
+	// Invalid.
+	{
+		{{- range $ai, $assrn := $.OtherExpActFunctions.InvalidAssertions }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+		{{- end }}
+	}
+
+	// Valid.
+	{
+		{{- range $ai, $assrn := $.OtherExpActFunctions.ValidAssertions }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+		{{- end }}
 	}
 }
 
@@ -300,7 +446,12 @@ func {{ .CheckerName.AsTestName }}_CannotDetectVariablesLookedLikeConsts(t *test
 }
 
 func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
-	var result, expected any
+	var (
+		result, expected any
+		expectedPtr *int
+		expectedTime time.Time
+		value int
+	)
 
 	{{ range $ai, $assrn := $.IgnoredAssertions }}
 		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
