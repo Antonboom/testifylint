@@ -32,22 +32,22 @@ func NewErrorIsAs() ErrorIsAs  { return ErrorIsAs{} }
 func (ErrorIsAs) Name() string { return "error-is-as" }
 
 func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	switch call.Fn.Name {
-	case "Error", "Errorf":
+	switch call.Fn.NameFTrimmed {
+	case "Error":
 		if len(call.Args) >= 2 && isError(pass, call.Args[1]) {
 			const proposed = "ErrorIs"
 			msg := fmt.Sprintf("invalid usage of %[1]s.Error, use %[1]s.%[2]s instead", call.SelectorXStr, proposed)
 			return newDiagnostic(checker.Name(), call, msg, newSuggestedFuncReplacement(call, proposed))
 		}
 
-	case "NoError", "NoErrorf":
+	case "NoError":
 		if len(call.Args) >= 2 && isError(pass, call.Args[1]) {
 			const proposed = "NotErrorIs"
 			msg := fmt.Sprintf("invalid usage of %[1]s.NoError, use %[1]s.%[2]s instead", call.SelectorXStr, proposed)
 			return newDiagnostic(checker.Name(), call, msg, newSuggestedFuncReplacement(call, proposed))
 		}
 
-	case "True", "Truef":
+	case "True":
 		if len(call.Args) < 1 {
 			return nil
 		}
@@ -77,7 +77,7 @@ func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Di
 			)
 		}
 
-	case "False", "Falsef":
+	case "False":
 		if len(call.Args) < 1 {
 			return nil
 		}
@@ -101,7 +101,7 @@ func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Di
 			)
 		}
 
-	case "ErrorAs", "ErrorAsf":
+	case "ErrorAs":
 		if len(call.Args) < 2 {
 			return nil
 		}

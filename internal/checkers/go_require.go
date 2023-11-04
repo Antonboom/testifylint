@@ -213,7 +213,7 @@ func (checker GoRequire) checkCall(call *CallMeta) goRequireVerdict {
 	if !call.IsAssert {
 		return goRequireVerdictRequire
 	}
-	if fnName := call.Fn.Name; (fnName == "FailNow") || (fnName == "FailNowf") {
+	if call.Fn.NameFTrimmed == "FailNow" {
 		return goRequireVerdictAssertFailNow
 	}
 	return goRequireVerdictNoExit

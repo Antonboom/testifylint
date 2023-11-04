@@ -24,8 +24,8 @@ func (Len) Name() string { return "len" }
 func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	const proposedFn = "Len"
 
-	switch call.Fn.Name {
-	case "Equal", "Equalf", "EqualValues", "EqualValuesf", "Exactly", "Exactlyf":
+	switch call.Fn.NameFTrimmed {
+	case "Equal", "EqualValues", "Exactly":
 		if len(call.Args) < 2 {
 			return nil
 		}
@@ -45,7 +45,7 @@ func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnost
 			)
 		}
 
-	case "True", "Truef":
+	case "True":
 		if len(call.Args) < 1 {
 			return nil
 		}

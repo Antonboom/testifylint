@@ -36,18 +36,18 @@ func (checker ErrorNil) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 	)
 
 	proposedFn, survivingArg, replacementEndPos := func() (string, ast.Expr, token.Pos) {
-		switch call.Fn.Name {
-		case "NotNil", "NotNilf":
+		switch call.Fn.NameFTrimmed {
+		case "NotNil":
 			if len(call.Args) >= 1 && isError(pass, call.Args[0]) {
 				return errorFn, call.Args[0], call.Args[0].End()
 			}
 
-		case "Nil", "Nilf":
+		case "Nil":
 			if len(call.Args) >= 1 && isError(pass, call.Args[0]) {
 				return noErrorFn, call.Args[0], call.Args[0].End()
 			}
 
-		case "Equal", "Equalf", "EqualValues", "EqualValuesf", "Exactly", "Exactlyf", "ErrorIs", "ErrorIsf":
+		case "Equal", "EqualValues", "Exactly", "ErrorIs":
 			if len(call.Args) < 2 {
 				return "", nil, token.NoPos
 			}
@@ -60,7 +60,7 @@ func (checker ErrorNil) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 				return noErrorFn, b, b.End()
 			}
 
-		case "NotEqual", "NotEqualf", "NotEqualValues", "NotEqualValuesf", "NotErrorIs", "NotErrorIsf":
+		case "NotEqual", "NotEqualValues", "NotErrorIs":
 			if len(call.Args) < 2 {
 				return "", nil, token.NoPos
 			}

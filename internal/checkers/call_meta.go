@@ -45,6 +45,8 @@ type FnMeta struct {
 	analysis.Range
 	// Name is a function name.
 	Name string
+	// NameFTrimmed is a function name without "f" suffix.
+	NameFTrimmed string
 	// IsFmt is true if function is formatted, e.g. "Equalf".
 	IsFmt bool
 }
@@ -97,9 +99,10 @@ func NewCallMeta(pass *analysis.Pass, ce *ast.CallExpr) *CallMeta {
 		Selector:     se,
 		SelectorXStr: analysisutil.NodeString(pass.Fset, se.X),
 		Fn: FnMeta{
-			Range: se.Sel,
-			Name:  fnName,
-			IsFmt: strings.HasSuffix(fnName, "f"),
+			Range:        se.Sel,
+			Name:         fnName,
+			NameFTrimmed: strings.TrimSuffix(fnName, "f"),
+			IsFmt:        strings.HasSuffix(fnName, "f"),
 		},
 		Args:    trimTArg(pass, ce.Args),
 		ArgsRaw: ce.Args,

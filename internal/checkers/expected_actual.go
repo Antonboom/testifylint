@@ -5,7 +5,6 @@ import (
 	"go/token"
 	"go/types"
 	"regexp"
-	"strings"
 
 	"golang.org/x/tools/go/analysis"
 )
@@ -40,7 +39,7 @@ func (checker *ExpectedActual) SetExpVarPattern(p *regexp.Regexp) *ExpectedActua
 }
 
 func (checker ExpectedActual) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	switch strings.TrimSuffix(call.Fn.Name, "f") {
+	switch call.Fn.NameFTrimmed {
 	case "Equal",
 		"EqualExportedValues",
 		"EqualValues",
