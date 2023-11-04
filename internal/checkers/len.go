@@ -25,7 +25,7 @@ func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnost
 	const proposedFn = "Len"
 
 	switch call.Fn.Name {
-	case "Equal", "Equalf":
+	case "Equal", "Equalf", "EqualValues", "EqualValuesf", "Exactly", "Exactlyf":
 		if len(call.Args) < 2 {
 			return nil
 		}
