@@ -52,8 +52,15 @@ func (g FloatCompareTestsGenerator) TemplateData() any {
 		},
 		InvalidAssertions: []Assertion{
 			{Fn: "Equal", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "Equal", Argsf: "result, %s", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "EqualValues", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "EqualValues", Argsf: "result, %s", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "Exactly", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "Exactly", Argsf: "result, %s", ReportMsgf: report, ProposedFn: proposedFn},
 			{Fn: "True", Argsf: "%s == result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "True", Argsf: "result == %s", ReportMsgf: report, ProposedFn: proposedFn},
 			{Fn: "False", Argsf: "%s != result", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "False", Argsf: "result != %s", ReportMsgf: report, ProposedFn: proposedFn},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "InDelta", Argsf: "42.42, result, 0.0001"},

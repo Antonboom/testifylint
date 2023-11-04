@@ -26,7 +26,7 @@ func (FloatCompare) Name() string   { return "float-compare" }
 func (checker FloatCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	invalid := func() bool {
 		switch call.Fn.Name {
-		case "Equal", "Equalf":
+		case "Equal", "Equalf", "EqualValues", "EqualValuesf", "Exactly", "Exactlyf":
 			return len(call.Args) > 1 && isFloat(pass, call.Args[0]) && isFloat(pass, call.Args[1])
 
 		case "True", "Truef":
