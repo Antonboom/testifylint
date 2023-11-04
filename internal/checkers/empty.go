@@ -59,7 +59,7 @@ func (checker Empty) checkEmpty(pass *analysis.Pass, call *CallMeta) *analysis.D
 			return newUseEmptyDiagnostic(a.Pos(), b.End(), a)
 		}
 
-	case "Equal", "Equalf":
+	case "Equal", "Equalf", "EqualValues", "EqualValuesf", "Exactly", "Exactlyf":
 		arg1, ok1 := isLenCallAndZero(pass, a, b)
 		arg2, ok2 := isLenCallAndZero(pass, b, a)
 
@@ -108,7 +108,7 @@ func (checker Empty) checkNotEmpty(pass *analysis.Pass, call *CallMeta) *analysi
 	a, b := call.Args[0], call.Args[1]
 
 	switch call.Fn.Name {
-	case "NotEqual", "NotEqualf":
+	case "NotEqual", "NotEqualf", "NotEqualValues", "NotEqualValuesf":
 		arg1, ok1 := isLenCallAndZero(pass, a, b)
 		arg2, ok2 := isLenCallAndZero(pass, b, a)
 
