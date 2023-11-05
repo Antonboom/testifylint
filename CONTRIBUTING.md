@@ -317,7 +317,7 @@ assert.ErrorContains(t, err, "user") ❌
 ```
 
 **Autofix**: false. <br>
-**Enabled by default**: Probable false, depends on implementation performance. <br>
+**Enabled by default**: Probably false, depends on implementation performance. <br>
 **Reason**: Code simplification, elimination of possible bugs.
 
 ---

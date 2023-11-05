@@ -110,7 +110,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
@@ -121,7 +120,6 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	{
 		{{- range $ai, $assrn := $.InvalidAssertions }}
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
-			{{ NewAssertionExpander.Expand $assrn "require" "t" nil }}
 		{{- end }}
 	}
 
@@ -129,7 +127,6 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	{
 		{{- range $ai, $assrn := $.ValidAssertions }}
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
-			{{ NewAssertionExpander.Expand $assrn "require" "t" nil }}
 		{{- end }}
 	}
 
@@ -137,7 +134,6 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	{
 		{{- range $ai, $assrn := $.IgnoredAssertions }}
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
-			{{ NewAssertionExpander.Expand $assrn "require" "t" nil }}
 		{{- end }}
 	}
 }
