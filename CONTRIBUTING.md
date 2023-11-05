@@ -124,9 +124,11 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [elements-match](#elements-match)
 - [error-compare](#error-compare)
 - [equal-values](#equal-values)
+- [graceful-teardown](#graceful-teardown)
 - [float-compare](#float-compare)
 - [http-const](#http-const)
 - [http-sugar](#http-sugar)
+- [inefficient-assert](#inefficient-assert)
 - [negative-positive](#negative-positive)
 - [no-fmt-mess](#no-fmt-mess)
 - [require-len](#require-len)
@@ -175,6 +177,29 @@ Describe a new checker in [checkers section](./README.md#checkers).
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
 **Reason**: The `Error()` method on the `error` interface exists for humans, not code.
+
+---
+
+### graceful-teardown
+
+Warns about usage of `require` in `t.Cleanup` functions and suite teardown methods:
+
+```go
+func (s *ServiceIntegrationSuite) TearDownTest() {
+    if p := s.verdictsProducer; p != nil {
+        s.Require().NoError(p.Close()) ❌
+    }
+    if c := s.dlqVerdictsConsumer; c != nil {
+        s.NoError(c.Close())
+    }
+    s.DBSuite.TearDownTest()
+    s.ks.TearDownTest()
+}
+```
+
+**Autofix**: false. <br>
+**Enabled by default**: false. <br>
+**Reason**: Possible resource leaks, because `require` finishes the current goroutine.
 
 ---
 
@@ -269,6 +294,31 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 **Autofix**: true. <br>
 **Enabled by default**: maybe? <br>
 **Reason**: Code simplification.
+
+---
+
+### inefficient-assert
+
+Simple:
+```go
+body, err := io.ReadAll(rr.Body)
+require.NoError(t, err)
+require.NoError(t, err) ❌
+
+expectedJSON, err := json.Marshal(expected)
+require.NoError(t, err)
+require.JSONEq(t, string(expectedJSON), string(body))
+```
+
+Complex:
+```go
+require.NoError(t, err)
+assert.ErrorContains(t, err, "user") ❌
+```
+
+**Autofix**: false. <br>
+**Enabled by default**: Probably false, depends on implementation performance. <br>
+**Reason**: Code simplification, elimination of possible bugs.
 
 ---
 

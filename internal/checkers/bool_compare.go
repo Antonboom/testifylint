@@ -60,8 +60,8 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 		)
 	}
 
-	switch call.Fn.Name {
-	case "Equal", "Equalf":
+	switch call.Fn.NameFTrimmed {
+	case "Equal", "EqualValues", "Exactly":
 		if len(call.Args) < 2 {
 			return nil
 		}
@@ -84,7 +84,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			return newUseFalseDiagnostic(survivingArg, arg1.Pos(), arg2.End())
 		}
 
-	case "NotEqual", "NotEqualf":
+	case "NotEqual", "NotEqualValues":
 		if len(call.Args) < 2 {
 			return nil
 		}
@@ -107,7 +107,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			return newUseTrueDiagnostic(survivingArg, arg1.Pos(), arg2.End())
 		}
 
-	case "True", "Truef":
+	case "True":
 		if len(call.Args) < 1 {
 			return nil
 		}
@@ -134,7 +134,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			}
 		}
 
-	case "False", "Falsef":
+	case "False":
 		if len(call.Args) < 1 {
 			return nil
 		}

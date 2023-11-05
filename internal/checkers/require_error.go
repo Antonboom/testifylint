@@ -115,11 +115,10 @@ func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Insp
 			if !c.testifyCall.IsAssert {
 				continue
 			}
-			switch c.testifyCall.Fn.Name {
+			switch c.testifyCall.Fn.NameFTrimmed {
 			default:
 				continue
-			case "Error", "ErrorIs", "ErrorAs", "EqualError", "ErrorContains", "NoError", "NotErrorIs",
-				"Errorf", "ErrorIsf", "ErrorAsf", "EqualErrorf", "ErrorContainsf", "NoErrorf", "NotErrorIsf":
+			case "Error", "ErrorIs", "ErrorAs", "EqualError", "ErrorContains", "NoError", "NotErrorIs":
 			}
 
 			if needToSkipBasedOnContext(c, i, calls, callsByBlock) {
