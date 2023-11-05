@@ -14,9 +14,9 @@ func (FloatCompareTestsGenerator) Checker() checkers.Checker {
 
 func (g FloatCompareTestsGenerator) TemplateData() any {
 	var (
-		name       = g.Checker().Name()
-		report     = name + ": use %s.%s"
-		proposedFn = "InEpsilon (or InDelta)"
+		name      = g.Checker().Name()
+		report    = name + ": use %s.InEpsilon (or %s)"
+		reportFmt = name + ": use %s.InEpsilonf (or %s)" // Workaround for two proposed functions.
 	)
 
 	type floatDetectionTest struct {
@@ -28,6 +28,7 @@ func (g FloatCompareTestsGenerator) TemplateData() any {
 		CheckerName           CheckerName
 		FloatDetection        floatDetectionTest
 		InvalidAssertions     []Assertion
+		InvalidAssertionsF    []Assertion
 		ValidAssertions       []Assertion
 		UnsupportedAssertions []Assertion
 	}{
@@ -48,43 +49,54 @@ func (g FloatCompareTestsGenerator) TemplateData() any {
 				"d * e / a",
 				"math.Round(float64(floatOp()))",
 			},
-			Assrn: Assertion{Fn: "Equal", Argsf: "42.42, %s", ReportMsgf: report, ProposedFn: proposedFn},
+			Assrn: Assertion{Fn: "Equal", Argsf: "42.42, %s", ReportMsgf: report, ProposedFn: "InDelta"},
 		},
 		InvalidAssertions: []Assertion{
-			{Fn: "Equal", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "Equal", Argsf: "result, %s", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "EqualValues", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "EqualValues", Argsf: "result, %s", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "Exactly", Argsf: "%s, result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "Exactly", Argsf: "result, %s", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "True", Argsf: "%s == result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "True", Argsf: "result == %s", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "False", Argsf: "%s != result", ReportMsgf: report, ProposedFn: proposedFn},
-			{Fn: "False", Argsf: "result != %s", ReportMsgf: report, ProposedFn: proposedFn},
+			{Fn: "Equal", Argsf: "%s, %s", ReportMsgf: report, ProposedFn: "InDelta"},
+			{Fn: "EqualValues", Argsf: "%s, %s", ReportMsgf: report, ProposedFn: "InDelta"},
+			{Fn: "Exactly", Argsf: "%s, %s", ReportMsgf: report, ProposedFn: "InDelta"},
+			{Fn: "True", Argsf: "%s == %s", ReportMsgf: report, ProposedFn: "InDelta"},
+			{Fn: "False", Argsf: "%s != %s", ReportMsgf: report, ProposedFn: "InDelta"},
+		},
+		InvalidAssertionsF: []Assertion{
+			{Fn: "Equal", Argsf: "%s, %s", ReportMsgf: reportFmt, ProposedFn: "InDelta"},
+			{Fn: "EqualValues", Argsf: "%s, %s", ReportMsgf: reportFmt, ProposedFn: "InDelta"},
+			{Fn: "Exactly", Argsf: "%s, %s", ReportMsgf: reportFmt, ProposedFn: "InDelta"},
+			{Fn: "True", Argsf: "%s == %s", ReportMsgf: reportFmt, ProposedFn: "InDelta"},
+			{Fn: "False", Argsf: "%s != %s", ReportMsgf: reportFmt, ProposedFn: "InDelta"},
 		},
 		ValidAssertions: []Assertion{
-			{Fn: "InDelta", Argsf: "42.42, result, 0.0001"},
-			{Fn: "InEpsilon", Argsf: "42.42, result, 0.0002"},
+			{Fn: "InDelta", Argsf: "%s, %s, 0.0001"},
+			{Fn: "InEpsilon", Argsf: "%s, %s, 0.0002"},
 		},
-		// NOTE(a.telyshev): Waiting for contribution.
+		// NOTE(a.telyshev): Waiting for contribution:
 		UnsupportedAssertions: []Assertion{
+			{Fn: "NotEqual", Argsf: "42.42, resultFl"},
+			{Fn: "Greater", Argsf: "42.42, resultFl"},
+			{Fn: "GreaterOrEqual", Argsf: "42.42, resultFl"},
+			{Fn: "Less", Argsf: "42.42, resultFl"},
+			{Fn: "LessOrEqual", Argsf: "42.42, resultFl"},
+
+			{Fn: "True", Argsf: "42.42 != resultFl"},
+			{Fn: "True", Argsf: "42.42 > resultFl"},
+			{Fn: "True", Argsf: "42.42 >= resultFl"},
+			{Fn: "True", Argsf: "42.42 < resultFl"},
+			{Fn: "True", Argsf: "42.42 <= resultFl"},
+
+			{Fn: "False", Argsf: "42.42 == resultFl"},
+			{Fn: "False", Argsf: "42.42 <= resultFl"},
+			{Fn: "False", Argsf: "42.42 < resultFl"},
+			{Fn: "False", Argsf: "42.42 <= resultFl"},
+			{Fn: "False", Argsf: "42.42 > resultFl"},
+
+			// `any` cases.
 			{Fn: "NotEqual", Argsf: "42.42, result"},
 			{Fn: "Greater", Argsf: "42.42, result"},
 			{Fn: "GreaterOrEqual", Argsf: "42.42, result"},
 			{Fn: "Less", Argsf: "42.42, result"},
 			{Fn: "LessOrEqual", Argsf: "42.42, result"},
-
 			{Fn: "True", Argsf: "42.42 != result"},
-			{Fn: "True", Argsf: "42.42 > result"},
-			{Fn: "True", Argsf: "42.42 >= result"},
-			{Fn: "True", Argsf: "42.42 < result"},
-			{Fn: "True", Argsf: "42.42 <= result"},
-
 			{Fn: "False", Argsf: "42.42 == result"},
-			{Fn: "False", Argsf: "42.42 <= result"},
-			{Fn: "False", Argsf: "42.42 < result"},
-			{Fn: "False", Argsf: "42.42 <= result"},
-			{Fn: "False", Argsf: "42.42 > result"},
 		},
 	}
 }
@@ -112,19 +124,39 @@ import (
 )
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
-	var result float64
+	var result any
+	var resultFl float64
 
 	// Invalid.
 	{
 		{{- range $ai, $assrn := $.InvalidAssertions }}
-			{{ NewAssertionExpander.Expand $assrn "assert" "t" (arr "42.42") }}
+			{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" (arr "result" "42.42") }}
+			{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" (arr "42.42" "result" ) }}
+			{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" (arr "resultFl" "42.42") }}
+			{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" (arr "42.42" "resultFl" ) }}
+			{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" (arr "result" "resultFl" ) }}
+			{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" (arr "resultFl" "result" ) }}
+		{{- end }}
+
+		{{ range $ai, $assrn := $.InvalidAssertionsF }}
+			{{ NewAssertionExpander.FmtSingleMode.Expand $assrn "assert" "t" (arr "result" "42.42") }}
+			{{ NewAssertionExpander.FmtSingleMode.Expand $assrn "assert" "t" (arr "42.42" "result" ) }}
+			{{ NewAssertionExpander.FmtSingleMode.Expand $assrn "assert" "t" (arr "resultFl" "42.42") }}
+			{{ NewAssertionExpander.FmtSingleMode.Expand $assrn "assert" "t" (arr "42.42" "resultFl" ) }}
+			{{ NewAssertionExpander.FmtSingleMode.Expand $assrn "assert" "t" (arr "result" "resultFl" ) }}
+			{{ NewAssertionExpander.FmtSingleMode.Expand $assrn "assert" "t" (arr "resultFl" "result" ) }}
 		{{- end }}
 	}
 
 	// Valid.
 	{
 		{{- range $ai, $assrn := $.ValidAssertions }}
-			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" (arr "result" "42.42") }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" (arr "42.42" "result" ) }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" (arr "resultFl" "42.42") }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" (arr "42.42" "resultFl" ) }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" (arr "result" "resultFl" ) }}
+			{{ NewAssertionExpander.Expand $assrn "assert" "t" (arr "resultFl" "result" ) }}
 		{{- end }}
 	}
 
@@ -137,10 +169,19 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 }
 
 func {{ .CheckerName.AsTestName }}_NoFloatNoWorries(t *testing.T) {
-	var result int64
+	var result any
+	var resultInt int64
 
 	{{ range $ai, $assrn := $.InvalidAssertions }}
-		{{ NewAssertionExpander.Expand $assrn.WithoutReport "assert" "t" (arr "42") }}
+		{{ NewAssertionExpander.Expand $assrn.WithoutReport "assert" "t" (arr "result" "42") }}
+		{{ NewAssertionExpander.Expand $assrn.WithoutReport "assert" "t" (arr "42" "result") }}
+		{{ NewAssertionExpander.Expand $assrn.WithoutReport "assert" "t" (arr "resultInt" "42") }}
+		{{ NewAssertionExpander.Expand $assrn.WithoutReport "assert" "t" (arr "42" "resultInt") }}
+		{{ NewAssertionExpander.Expand $assrn.WithoutReport "assert" "t" (arr "result" "resultInt") }}
+		{{ NewAssertionExpander.Expand $assrn.WithoutReport "assert" "t" (arr "resultInt" "result") }}
+		{{ NewAssertionExpander.Expand $assrn.WithoutReport "assert" "t" (arr "result" "result") }}
+		{{ NewAssertionExpander.Expand $assrn.WithoutReport "assert" "t" (arr "resultInt" "resultInt") }}
+		{{ NewAssertionExpander.Expand $assrn.WithoutReport "assert" "t" (arr "42" "42") }}
 	{{- end }}
 }
 

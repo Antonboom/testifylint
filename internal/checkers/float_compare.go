@@ -1,6 +1,7 @@
 package checkers
 
 import (
+	"fmt"
 	"go/ast"
 	"go/token"
 	"go/types"
@@ -27,7 +28,7 @@ func (checker FloatCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis
 	invalid := func() bool {
 		switch call.Fn.NameFTrimmed {
 		case "Equal", "EqualValues", "Exactly":
-			return len(call.Args) > 1 && isFloat(pass, call.Args[0]) && isFloat(pass, call.Args[1])
+			return len(call.Args) > 1 && (isFloat(pass, call.Args[0]) || isFloat(pass, call.Args[1]))
 
 		case "True":
 			return len(call.Args) > 0 && isFloatCompare(pass, call.Args[0], token.EQL)
@@ -39,7 +40,11 @@ func (checker FloatCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis
 	}()
 
 	if invalid {
-		return newUseFunctionDiagnostic(checker.Name(), call, "InEpsilon (or InDelta)", nil)
+		format := "use %s.InEpsilon (or InDelta)"
+		if call.Fn.IsFmt {
+			format = "use %s.InEpsilonf (or InDeltaf)"
+		}
+		return newDiagnostic(checker.Name(), call, fmt.Sprintf(format, call.SelectorXStr), nil)
 	}
 	return nil
 }
