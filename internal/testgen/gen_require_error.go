@@ -67,7 +67,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	assObj, reqObj := assert.New(t), require.New(t)
 
 	// Invalid.
-	{{ range $si, $sel := arr "assert" "assObj" }}
+	{{ range $si, $sel := (arr "assert" "assObj") }}
 		{{- range $ai, $assrn := $.ErrorAssertions }}
 			{{- $t := "t" }}{{ if eq $sel "assObj"}}{{ $t = "" }}{{ end }}
 			{{- if ne $assrn.Fn "NoError" -}}
@@ -81,7 +81,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	{{- end }}
 
 	// Valid.
-	{{ range $si, $sel := arr "require" "reqObj" }}
+	{{ range $si, $sel := (arr "require" "reqObj") }}
 		{{- range $ai, $assrn := $.ErrorAssertions }}
 			{{- $t := "t" }}{{ if eq $sel "reqObj"}}{{ $t = "" }}{{ end }}
 			{{- NewAssertionExpander.Expand $assrn.WithoutReport $sel $t nil }}
@@ -106,7 +106,7 @@ func (s *{{ $suiteName }}) TestAll() {
 	assObj, reqObj := s.Assert(), s.Require()
 
 	// Invalid.
-	{{ range $si, $sel := arr "s" "s.Assert()" "assObj" }}
+	{{ range $si, $sel := (arr "s" "s.Assert()" "assObj") }}
 		{{- range $ai, $assrn := $.ErrorAssertions }}
 			{{- if ne $assrn.Fn "NoError" -}}
 				{{- NewAssertionExpander.Expand $assrn $sel "" nil }}
@@ -119,7 +119,7 @@ func (s *{{ $suiteName }}) TestAll() {
 	{{- end }}
 
 	// Valid.
-	{{ range $si, $sel := arr "s.Require()" "reqObj" }}
+	{{ range $si, $sel := (arr "s.Require()" "reqObj") }}
 		{{- range $ai, $assrn := $.ErrorAssertions }}
 			{{- NewAssertionExpander.Expand $assrn.WithoutReport $sel "" nil }}
 		{{ end -}}

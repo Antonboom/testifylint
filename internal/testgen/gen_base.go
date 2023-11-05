@@ -131,34 +131,34 @@ func TestBaseTestsSuite(t *testing.T) {
 
 func (s *BaseTestsSuite) TestAll() {
 	var predicate bool
-	{{ template "suite-assertions" arr . "s.T()" }}
+	{{ template "suite-assertions" (arr . "s.T()") }}
 
 	s.Run("subtest1", func() {
-		{{- template "suite-assertions" arr . "s.T()" }}
+		{{- template "suite-assertions" (arr . "s.T()") }}
 
 		for range []struct{}{} {
 			s.Run("nested test", func() {
-				{{- template "suite-assertions" arr . "s.T()" -}}
+				{{- template "suite-assertions" (arr . "s.T()") -}}
 			})
 		}
 	})
 
 	s.Run("subtest2", func() {
-		{{- template "suite-assertions" arr . "s.T()" -}}
+		{{- template "suite-assertions" (arr . "s.T()") -}}
 	})
 
 	s.T().Run("subtest3", func(t *testing.T) {
-		{{- template "suite-assertions" arr . "t" }}
+		{{- template "suite-assertions" (arr . "t") }}
 
 		for range []struct{}{} {
 			s.T().Run("nested test", func(t *testing.T) {
-				{{- template "suite-assertions" arr . "t" -}}
+				{{- template "suite-assertions" (arr . "t") -}}
 			})
 		}
 	})
 
 	s.T().Run("subtest4", func(t *testing.T) {
-		{{- template "suite-assertions" arr . "t" -}}
+		{{- template "suite-assertions" (arr . "t") -}}
 	})
 }
 `
