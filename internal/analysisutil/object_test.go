@@ -114,3 +114,18 @@ func TestIsObj(t *testing.T) {
 		})
 	}
 }
+
+func TestIsObj_NamesakesFromDifferentPackages(t *testing.T) {
+	lhs := types.NewFunc(token.NoPos, types.NewPackage("errors", "errors"), "Is", nil)
+	rhs := types.NewFunc(token.NoPos, types.NewPackage("pkg/errors", "errors"), "Is", nil)
+
+	ident := new(ast.Ident)
+	typesInfo := &types.Info{
+		Defs: map[*ast.Ident]types.Object{
+			ident: lhs,
+		},
+	}
+	if analysisutil.IsObj(typesInfo, ident, rhs) {
+		t.Fatalf("objects should not be equal")
+	}
+}

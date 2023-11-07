@@ -38,6 +38,10 @@ func TestTestifyLint(t *testing.T) {
 			},
 		},
 		{dir: "ginkgo"},
+		{
+			dir:   "not-std-funcs",
+			flags: map[string]string{"enable-all": "true"},
+		},
 		{dir: "not-test-file"},    // By default, linter checks regular files too.
 		{dir: "not-true-testify"}, // Linter ignores stretchr/testify's forks.
 		{dir: "pkg-alias"},
