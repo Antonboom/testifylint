@@ -117,6 +117,7 @@ func (g EmptyTestsGenerator) TemplateData() any {
 			//  - it is not exactly equivalent of NotEmpty;
 			//  - NotEmpty in such cases may impair the readability of the test.
 			{Fn: "Greater", Argsf: "len(elems), 1"},
+			{Fn: "Greater", Argsf: "testInt, 1"},
 			{Fn: "Less", Argsf: "1, len(elems)"},
 			{Fn: "GreaterOrEqual", Argsf: "len(elems), 1"},
 			{Fn: "LessOrEqual", Argsf: "1, len(elems)"},
@@ -180,6 +181,7 @@ func {{ .CheckerName.AsTestName }}_LenVarIndependence(t *testing.T) {
 
 func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
 	var elems []string
+	var testInt int
 
 	{{ range $ai, $assrn := $.IgnoredAssertions }}
 		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
