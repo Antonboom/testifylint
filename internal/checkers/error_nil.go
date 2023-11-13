@@ -47,30 +47,40 @@ func (checker ErrorNil) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 				return noErrorFn, call.Args[0], call.Args[0].End()
 			}
 
-		case "Equal", "EqualValues", "Exactly", "ErrorIs":
+		case "Equal", "EqualValues", "Exactly":
 			if len(call.Args) < 2 {
 				return "", nil, token.NoPos
 			}
 			a, b := call.Args[0], call.Args[1]
-
-			switch {
-			case isError(pass, a) && isNil(b):
-				return noErrorFn, a, b.End()
-			case isNil(a) && isError(pass, b):
+			if isNil(a) && isError(pass, b) {
 				return noErrorFn, b, b.End()
 			}
 
-		case "NotEqual", "NotEqualValues", "NotErrorIs":
+		case "ErrorIs":
 			if len(call.Args) < 2 {
 				return "", nil, token.NoPos
 			}
 			a, b := call.Args[0], call.Args[1]
+			if isError(pass, a) && isNil(b) {
+				return noErrorFn, a, b.End()
+			}
 
-			switch {
-			case isError(pass, a) && isNil(b):
-				return errorFn, a, b.End()
-			case isNil(a) && isError(pass, b):
+		case "NotEqual", "NotEqualValues":
+			if len(call.Args) < 2 {
+				return "", nil, token.NoPos
+			}
+			a, b := call.Args[0], call.Args[1]
+			if isNil(a) && isError(pass, b) {
 				return errorFn, b, b.End()
+			}
+
+		case "NotErrorIs":
+			if len(call.Args) < 2 {
+				return "", nil, token.NoPos
+			}
+			a, b := call.Args[0], call.Args[1]
+			if isError(pass, a) && isNil(b) {
+				return errorFn, a, b.End()
 			}
 		}
 		return "", nil, token.NoPos

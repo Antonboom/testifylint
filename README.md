@@ -180,8 +180,11 @@ logic, but without autofix.
 ```go
 ❌   assert.Nil(t, err)
      assert.NotNil(t, err)
-     assert.Equal(t, err, nil)
-     assert.NotEqual(t, err, nil)
+     assert.Equal(t, nil, err)
+     assert.NotEqual(t, nil, err)
+     assert.Exactly(t, nil, err)
+     assert.EqualValues(t, nil, err)
+     assert.NotEqualValues(t, nil, err)
      assert.ErrorIs(t, err, nil)
      assert.NotErrorIs(t, err, nil)
 
