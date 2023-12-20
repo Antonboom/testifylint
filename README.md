@@ -82,6 +82,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [require-error](#require-error)                     | ✅                  | ❌       |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
 | [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
+| [useless-import](#useless-import)                   | ✅                  | ✅       |
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
 
 > ⚠️ Also look at open for contribution [checkers](CONTRIBUTING.md#open-for-contribution)
@@ -433,6 +434,32 @@ You can enable such behavior through `--suite-extra-assert-call.mode=require`.
 **Autofix**: true. <br>
 **Enabled by default**: true, in the `remove` mode. <br>
 **Reason**: More simple or uniform code.
+
+---
+
+### useless-import
+
+```go
+❌
+import (
+	"testing"
+
+	_ "github.com/stretchr/testify/assert"
+	_ "github.com/stretchr/testify/http"
+	_ "github.com/stretchr/testify/mock"
+	_ "github.com/stretchr/testify/require"
+	_ "github.com/stretchr/testify/suite"
+)
+
+✅
+import (
+	"testing"
+)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: testify doesn't do any `init()` magic hence these imports as `_` do nothing.
 
 ---
 
