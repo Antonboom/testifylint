@@ -2,36 +2,43 @@ package checkers
 
 import (
 	"fmt"
+	"go/ast"
+	"go/token"
+	"strconv"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/ast/inspector"
 )
 
-const (
-	nullContainer                 = "_"
-	uselessImportCallReportFormat = "avoid the import of %s as _ since it doesn't do anything"
-)
-
-var importPaths = map[string]bool{
-	"\"github.com/stretchr/testify/assert\"":  true,
-	"\"github.com/stretchr/testify/require\"": true,
-	"\"github.com/stretchr/testify/suite\"":   true,
-	"\"github.com/stretchr/testify/mock\"":    true,
-	"\"github.com/stretchr/testify/http\"":    true,
+var packagesNotIntendedForBlankImport = map[string]struct{}{
+	"github.com/stretchr/testify":         {},
+	"github.com/stretchr/testify/assert":  {},
+	"github.com/stretchr/testify/http":    {},
+	"github.com/stretchr/testify/mock":    {},
+	"github.com/stretchr/testify/require": {},
+	"github.com/stretchr/testify/suite":   {},
 }
 
-// UselessImport detects useless imports of testify as _.
+// UselessImport detects useless blank imports of testify packages.
 // These imports are useless since testify doesn't do any magic with init() function.
-// It detects situation like this:
+//
+// The checker detects situations like
 //
 //	import (
 //		"testing"
 //
+//		_ "github.com/stretchr/testify"
 //		_ "github.com/stretchr/testify/assert"
+//		_ "github.com/stretchr/testify/http"
+//		_ "github.com/stretchr/testify/mock"
 //		_ "github.com/stretchr/testify/require"
 //		_ "github.com/stretchr/testify/suite"
-//		_ "github.com/stretchr/testify/mock"
-//		_ "github.com/stretchr/testify/http"
+//	)
+//
+// and requires
+//
+//	import (
+//		"testing"
 //	)
 type UselessImport struct{}
 
@@ -41,15 +48,42 @@ func (UselessImport) Name() string    { return "useless-import" }
 
 func (checker UselessImport) Check(pass *analysis.Pass, _ *inspector.Inspector) (diagnostics []analysis.Diagnostic) {
 	for _, file := range pass.Files {
-		for _, imp := range file.Imports {
-			if imp.Name != nil && imp.Name.Name == nullContainer && importPaths[imp.Path.Value] {
-				msg := fmt.Sprintf(uselessImportCallReportFormat, imp.Path.Value)
+		if len(file.Imports) == 0 {
+			continue
+		}
+
+		for _, decl := range file.Decls {
+			impDecl, ok := decl.(*ast.GenDecl)
+			if !ok {
+				continue
+			}
+			if impDecl.Tok != token.IMPORT {
+				continue
+			}
+
+			for _, spec := range impDecl.Specs {
+				imp := spec.(*ast.ImportSpec)
+				if imp.Name == nil || imp.Name.Name != "_" {
+					continue
+				}
+
+				pkg, err := strconv.Unquote(imp.Path.Value)
+				if err != nil {
+					continue
+				}
+				if _, ok := packagesNotIntendedForBlankImport[pkg]; !ok {
+					continue
+				}
+
+				msg := fmt.Sprintf("avoid blank import of %s as it does nothing", pkg)
+
+				impStart, impEnd := getImportRange(impDecl, imp)
 				fix := &analysis.SuggestedFix{
-					Message: fmt.Sprintf("Remove import of %s as _", imp.Path.Value),
+					Message: "Remove blank import of " + pkg,
 					TextEdits: []analysis.TextEdit{
 						{
-							Pos:     imp.Pos(),
-							End:     imp.End(),
+							Pos:     impStart - 1,
+							End:     impEnd,
 							NewText: []byte(""),
 						},
 					},
@@ -60,4 +94,17 @@ func (checker UselessImport) Check(pass *analysis.Pass, _ *inspector.Inspector) 
 		}
 	}
 	return diagnostics
+}
+
+func getImportRange(impDecl *ast.GenDecl, impSpec *ast.ImportSpec) (token.Pos, token.Pos) {
+	start, end := impSpec.Pos(), impSpec.End()
+
+	if len(impDecl.Specs) == 1 {
+		start = impDecl.Pos()
+	}
+	if impSpec.Comment != nil {
+		end = impSpec.Comment.End()
+	}
+
+	return start, end
 }

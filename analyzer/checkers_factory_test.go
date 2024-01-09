@@ -48,8 +48,8 @@ func Test_newCheckers(t *testing.T) {
 	allAdvancedCheckers := []checkers.AdvancedChecker{
 		checkers.NewGoRequire(),
 		checkers.NewRequireError(),
-		checkers.NewUselessImport(),
 		checkers.NewSuiteTHelper(),
+		checkers.NewUselessImport(),
 	}
 
 	cases := []struct {
