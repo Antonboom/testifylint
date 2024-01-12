@@ -12,7 +12,7 @@ import (
 
 const requireErrorReport = "for error assertions use require"
 
-// RequireError detects situations like
+// RequireError detects error assertions like
 //
 //	assert.Error(t, err) // s.Error(err), s.Assert().Error(err)
 //	assert.ErrorIs(t, err, io.EOF)

@@ -369,15 +369,18 @@ P.S. Related `testify`'s [thread](https://github.com/stretchr/testify/issues/772
 [testify/require](https://pkg.go.dev/github.com/stretchr/testify@master/require#hdr-Assertions) allows 
 to stop test execution when a test fails.
 
-To minimize the number of false positives, `require-error` ignores:
+By default `require-error` only checks the `*Error*` assertions, presented above. <br>
+
+You can set `--require-error.fn-pattern` flag to limit the checking to certain calls (but still from the list above).
+For example, `--require-error.fn-pattern="^(Errorf?|NoErrorf?)$"` will only check `Error`, `Errorf`, `NoError`, and `NoErrorf`.
+
+Also, to minimize the number of false positives, `require-error` ignores:
 - assertion in the `if` condition;
 - the entire `if-else` block, if there is an assertion in the `if` condition;
 - the last assertion in the block, if there are no methods/functions calls after it;
 - assertions in an explicit goroutine;
 - assertions in an explicit testing cleanup function or suite teardown methods;
 - sequence of `NoError` assertions.
-
-Also you can configure functions to analyze via `--require-error.fn-pattern` flag.
 
 ---
 
