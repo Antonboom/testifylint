@@ -1,10 +1,9 @@
 package main
 
 import (
+	"github.com/Antonboom/testifylint/internal/checkers"
 	"strings"
 	"text/template"
-
-	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 type ExpectedActualTestsGenerator struct{}
@@ -81,14 +80,16 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 		},
 		ExpVars: []string{
 			"expected",
+			"expectedObj.Val",
 			"tt.expected",
 			"tt.exp()",
 			"expectedVal()",
 			"[]int{1, 2, 3}",
 			"[3]int{1, 2, 3}",
 			`map[string]int{"0": 1}`,
-			`user{Name: "Anton"}`,
-			`struct {Name string}{Name: "Anton"}`,
+			`user{Name: "Rob"}`,
+			`struct {Name string}{Name: "Rob"}`,
+			`nil`,
 		},
 		Basic: test{
 			InvalidAssertions: []Assertion{
@@ -107,12 +108,12 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 					ReportMsgf: report, ProposedArgsf: "expectedObj, resultObj",
 				},
 				{
-					Fn: "EqualExportedValues", Argsf: `resultObj, user{Name: "Anton"}`,
-					ReportMsgf: report, ProposedArgsf: `user{Name: "Anton"}, resultObj`,
+					Fn: "EqualExportedValues", Argsf: `resultObj, user{Name: "Rob"}`,
+					ReportMsgf: report, ProposedArgsf: `user{Name: "Rob"}, resultObj`,
 				},
 				{
-					Fn: "EqualExportedValues", Argsf: `resultObj, struct {Name string}{Name: "Anton"}`,
-					ReportMsgf: report, ProposedArgsf: `struct {Name string}{Name: "Anton"}, resultObj`,
+					Fn: "EqualExportedValues", Argsf: `resultObj, struct {Name string}{Name: "Rob"}`,
+					ReportMsgf: report, ProposedArgsf: `struct {Name string}{Name: "Rob"}, resultObj`,
 				},
 
 				{Fn: "EqualValues", Argsf: "result, expected", ReportMsgf: report, ProposedArgsf: "expected, result"},
@@ -166,11 +167,15 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 					Fn: "WithinDuration", Argsf: "resultTime, expectedTime, time.Second",
 					ReportMsgf: report, ProposedArgsf: "expectedTime, resultTime, time.Second",
 				},
+				{
+					Fn: "WithinDuration", Argsf: "resultTime, time.Date(2023, 01, 12, 11, 46, 33, 0, nil), 100*time.Millisecond",
+					ReportMsgf: report, ProposedArgsf: "time.Date(2023, 01, 12, 11, 46, 33, 0, nil), resultTime, 100*time.Millisecond",
+				},
 			},
 			ValidAssertions: []Assertion{
 				{Fn: "EqualExportedValues", Argsf: "expectedObj, resultObj"},
-				{Fn: "EqualExportedValues", Argsf: `user{Name: "Anton"}, resultObj`},
-				{Fn: "EqualExportedValues", Argsf: `struct {Name string}{Name: "Anton"}, resultObj`},
+				{Fn: "EqualExportedValues", Argsf: `user{Name: "Rob"}, resultObj`},
+				{Fn: "EqualExportedValues", Argsf: `struct {Name string}{Name: "Rob"}, resultObj`},
 
 				{Fn: "EqualValues", Argsf: "expected, result"},
 				{Fn: "EqualValues", Argsf: "uint32(100), result"},
@@ -199,6 +204,7 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 				{Fn: "NotSame", Argsf: "&value, resultPtr"},
 
 				{Fn: "WithinDuration", Argsf: "expectedTime, resultTime, time.Second"},
+				{Fn: "WithinDuration", Argsf: "time.Date(2023, 01, 12, 11, 46, 33, 0, nil), resultTime, 100*time.Millisecond"},
 			},
 		},
 		Strings: test{
@@ -222,11 +228,12 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			ProposedArgsf: "string(expectedJSON), string(body)",
 		},
 		IgnoredAssertions: []Assertion{
+			{Fn: "Equal", Argsf: `nil, nil`},
 			{Fn: "Equal", Argsf: `"value", "value"`},
 			{Fn: "Equal", Argsf: "expected, expected"},
 			{Fn: "Equal", Argsf: "[]int{1, 2}, map[int]int{1: 2}"},
 			{Fn: "NotEqual", Argsf: "result, result"},
-			{Fn: "EqualExportedValues", Argsf: `user{Name: "Anton"}, struct {Name string}{Name: "Anton"}`},
+			{Fn: "EqualExportedValues", Argsf: `user{Name: "Rob"}, struct {Name string}{Name: "Rob"}`},
 			{Fn: "EqualValues", Argsf: "uint32(100), int32(100)"},
 			{Fn: "Exactly", Argsf: "int32(200), int64(200)"},
 			{Fn: "NotEqualValues", Argsf: "int32(100), uint32(100)"},
@@ -238,6 +245,8 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			{Fn: "Same", Argsf: "&value, &value"},
 			{Fn: "NotSame", Argsf: "expectedPtr, &value"},
 			{Fn: "WithinDuration", Argsf: "expectedTime, time.Now(), time.Second"},
+			{Fn: "WithinDuration", Argsf: "time.Date(2023, 01, 12, 11, 46, 33, 0, nil), " +
+				"time.Date(2023, 01, 12, 11, 46, 33, 0, nil), time.Millisecond"},
 		},
 	}
 }
@@ -296,6 +305,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var expected string
 	var tt testCase
 	expectedVal := func() any { return nil }
+	var expectedObj struct { Val int }
 
 	var result any
 

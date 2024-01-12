@@ -91,8 +91,11 @@ https://golangci-lint.run/usage/linters/#testifylint
 ### bool-compare
 
 ```go
-❌   assert.Equal(t, true, result)
+❌   assert.Equal(t, false, result)
+     assert.EqualValues(t, false, result)
+     assert.Exactly(t, false, result)
      assert.NotEqual(t, true, result)
+     assert.NotEqualValues(t, true, result) 
      assert.False(t, !result)
      assert.True(t, result == true)
      // And other variations...
@@ -116,7 +119,8 @@ https://golangci-lint.run/usage/linters/#testifylint
      assert.True(t, a >= b)
      assert.True(t, a < b)
      assert.True(t, a <= b)
-     // And other variations (with assert.False too)...
+     assert.False(t, a == b)
+     // And other variations...
 
 ✅   assert.Equal(t, a, b)
      assert.NotEqual(t, a, b)
@@ -137,9 +141,16 @@ https://golangci-lint.run/usage/linters/#testifylint
 ```go
 ❌   assert.Len(t, arr, 0)
      assert.Equal(t, 0, len(arr))
+     assert.EqualValues(t, 0, len(arr))
+     assert.Exactly(t, 0, len(arr))
+     assert.LessOrEqual(t, len(arr), 0)
+     assert.GreaterOrEqual(t, 0, len(arr))
+     assert.Less(t, len(arr), 1)
+     assert.Greater(t, 1, len(arr))
      assert.NotEqual(t, 0, len(arr))
-     assert.GreaterOrEqual(t, len(arr), 1)
-     // And other variations around len(arr)...
+     assert.NotEqualValues(t, 0, len(arr))
+     assert.Less(t, 0, len(arr))
+     assert.Greater(t, len(arr), 0)
 
 ✅   assert.Empty(t, arr)
      assert.NotEmpty(t, err)
@@ -180,9 +191,12 @@ logic, but without autofix.
 ```go
 ❌   assert.Nil(t, err)
      assert.NotNil(t, err)
-     assert.Equal(t, err, nil)
-     assert.NotEqual(t, err, nil)
+     assert.Equal(t, nil, err)
+     assert.EqualValues(t, nil, err)
+     assert.Exactly(t, nil, err)
      assert.ErrorIs(t, err, nil)
+     assert.NotEqual(t, nil, err)
+     assert.NotEqualValues(t, nil, err)
      assert.NotErrorIs(t, err, nil)
 
 ✅   assert.NoError(t, err)
@@ -198,15 +212,27 @@ logic, but without autofix.
 ### expected-actual
 
 ```go
-❌   assert.Equal(t, result, 42)
-     assert.NotEqual(t, result, "expected")
+❌   assert.Equal(t, result, expected)
+     assert.EqualExportedValues(t, resultObj, User{Name: "Rob"})
+     assert.EqualValues(t, result, 42)
+     assert.Exactly(t, result, int64(42))
      assert.JSONEq(t, result, `{"version": 3}`)
+     assert.InDelta(t, result, 42.42, 1.0)
+     assert.InDeltaMapValues(t, result, map[string]float64{"score": 0.99}, 1.0)
+     assert.InDeltaSlice(t, result, []float64{0.98, 0.99}, 1.0)
+     assert.InEpsilon(t, result, 42.42, 0.0001)
+     assert.IsType(t, result, (*User)(nil))
+     assert.NotEqual(t, result, "expected")
+     assert.NotEqualValues(t, result, "expected")
+     assert.NotSame(t, resultPtr, &value)
+     assert.Same(t, resultPtr, &value)
+     assert.WithinDuration(t, resultTime, time.Date(2023, 01, 12, 11, 46, 33, 0, nil), time.Second)
      assert.YAMLEq(t, result, "version: '3'")
 
-✅   assert.Equal(t, 42, result)
-     assert.NotEqual(t, "expected", result)
-     assert.JSONEq(t, `{"version": 3}`, result)
-     assert.YAMLEq(t, "version: '3'", result)
+✅   assert.Equal(t, expected, result)
+     assert.EqualExportedValues(t, User{Name: "Rob"}, resultObj)
+     assert.EqualValues(t, 42, result)
+    // And so on...
 ```
 
 **Autofix**: true. <br>
@@ -224,12 +250,13 @@ It is planned [to change the order of assertion arguments](https://github.com/st
 ### float-compare
 
 ```go
-❌   assert.Equal(t, 42.42, a)
-     assert.True(t, a == 42.42)
-     assert.False(t, a != 42.42)
+❌   assert.Equal(t, 42.42, result)
+     assert.EqualValues(t, 42.42, result)
+     assert.Exactly(t, 42.42, result)
+     assert.True(t, result == 42.42)
+     assert.False(t, result != 42.42)
 	
-✅   assert.InEpsilon(t, 42.42, a, 0.0001)
-     assert.InDelta(t, 42.42, a, 0.01)
+✅   assert.InEpsilon(t, 42.42, result, 0.0001) // Or assert.InDelta
 ```
 
 **Autofix**: false. <br>
@@ -286,6 +313,8 @@ P.S. Related `testify`'s [thread](https://github.com/stretchr/testify/issues/772
 
 ```go
 ❌   assert.Equal(t, 3, len(arr))
+     assert.EqualValues(t, 3, len(arr))
+     assert.Exactly(t, 3, len(arr))
      assert.True(t, len(arr) == 3)
 
 ✅   assert.Len(t, arr, 3)
@@ -300,8 +329,11 @@ P.S. Related `testify`'s [thread](https://github.com/stretchr/testify/issues/772
 ### nil-compare
 
 ```go
-❌   assert.Equal(t, value, nil)
-     assert.NotEqual(t, value, nil)
+❌   assert.Equal(t, nil, value)
+     assert.EqualValues(t, nil, value)
+     assert.Exactly(t, nil, value)
+     assert.NotEqual(t, nil, value)
+     assert.NotEqualValues(t, nil, value)
 
 ✅   assert.Nil(t, value)
      assert.NotNil(t, value)
@@ -316,14 +348,18 @@ P.S. Related `testify`'s [thread](https://github.com/stretchr/testify/issues/772
 ### require-error
 
 ```go
-❌   assert.NoError(t, err)
-     s.ErrorIs(err, io.EOF)
-     s.Assert().Error(err)
-     // And other error assertions...
+❌   assert.Error(t, err) // s.Error(err), s.Assert().Error(t, err)
+     assert.ErrorIs(t, err, io.EOF)
+     assert.ErrorAs(t, err, &target)
+     assert.EqualError(t, err, "end of file")
+     assert.ErrorContains(t, err, "end of file")
+     assert.NoError(t, err)
+     assert.NotErrorIs(t, err, io.EOF)
 
-✅   require.NoError(t, err)
-     s.Require().ErrorIs(err, io.EOF)
-     s.Require().Error(err)
+✅   require.Error(t, err) // s.Require().Error(err), s.Require().Error(t, err)
+     require.ErrorIs(t, err, io.EOF)
+     require.ErrorAs(t, err, &target)
+    // And so on...
 ```
 
 **Autofix**: false. <br>

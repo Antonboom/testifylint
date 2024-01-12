@@ -14,15 +14,20 @@ const requireErrorReport = "for error assertions use require"
 
 // RequireError detects situations like
 //
+//	assert.Error(t, err) // s.Error(err), s.Assert().Error(t, err)
+//	assert.ErrorIs(t, err, io.EOF)
+//	assert.ErrorAs(t, err, &target)
+//	assert.EqualError(t, err, "end of file")
+//	assert.ErrorContains(t, err, "end of file")
 //	assert.NoError(t, err)
-//	s.ErrorIs(err, io.EOF)
-//	s.Assert().Error(err)
+//	assert.NotErrorIs(t, err, io.EOF)
 //
 // and requires
 //
-//	require.NoError(t, err)
-//	s.Require().ErrorIs(err, io.EOF)
-//	s.Require().Error(err)
+//	require.Error(t, err) // s.Require().Error(err), s.Require().Error(t, err)
+//	require.ErrorIs(t, err, io.EOF)
+//	require.ErrorAs(t, err, &target)
+//	...
 //
 // RequireError ignores:
 // - assertion in the `if` condition;
