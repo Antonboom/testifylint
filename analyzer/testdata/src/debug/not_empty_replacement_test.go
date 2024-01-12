@@ -226,7 +226,7 @@ func TestNotEmptyReplacement(t *testing.T) {
 			shouldBeEqual: false,
 		},
 		{
-			name:          "LessOrEqual threeElemSlice 2",
+			name:          "LessOrEqual threeElemSlice 4",
 			original:      func() bool { return assert.LessOrEqual(tm, 4, len(threeElemSlice)) },
 			replaced:      func() bool { return assert.NotEmpty(tm, threeElemSlice) },
 			shouldBeEqual: false,
@@ -235,7 +235,11 @@ func TestNotEmptyReplacement(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.shouldBeEqual, tt.original() == tt.replaced())
+			if tt.shouldBeEqual {
+				assert.Equal(t, tt.original(), tt.replaced())
+			} else {
+				assert.NotEqual(t, tt.original(), tt.replaced())
+			}
 		})
 	}
 }

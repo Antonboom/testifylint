@@ -245,7 +245,11 @@ func TestEmptyReplacement(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.shouldBeEqual, tt.original() == tt.replaced())
+			if tt.shouldBeEqual {
+				assert.Equal(t, tt.original(), tt.replaced())
+			} else {
+				assert.NotEqual(t, tt.original(), tt.replaced())
+			}
 		})
 	}
 }
