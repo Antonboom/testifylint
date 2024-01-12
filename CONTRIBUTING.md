@@ -5,9 +5,9 @@
 ### 1) Install developer tools
 
 ```bash
-# https://taskfile.dev/installation/
-$ go install github.com/go-task/task/v3/cmd/task@latest
-$ task tools:install
+$ make dev/tools
+go install github.com/go-task/task/v3/cmd/task@latest
+task tools:install
 Install dev tools...
 ```
 

@@ -14,26 +14,18 @@ tasks:
   default:
     cmds:
       - task: tidy
-      - task: fmt
       - task: lint
       - task: test
       - task: install
 
   tools:install:
     - echo "Install dev tools..."
-    - go install github.com/daixiang0/gci@latest
-    - go install mvdan.cc/gofumpt@latest
+    - go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
   tidy:
     cmds:
       - echo "Tidy..."
       - go mod tidy
-
-  fmt:
-    cmds:
-      - echo "Fmt..."
-      - gofumpt -w .
-      - gci write -s standard -s default -s "Prefix(github.com/Antonboom/testifylint)" . 2> /dev/null
 
   lint:
     cmds:
