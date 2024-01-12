@@ -120,7 +120,7 @@ https://golangci-lint.run/usage/linters/#testifylint
      assert.True(t, a < b)
      assert.True(t, a <= b)
      assert.False(t, a == b)
-     // And other variations...
+     // And so on...
 
 ✅   assert.Equal(t, a, b)
      assert.NotEqual(t, a, b)
@@ -348,7 +348,7 @@ P.S. Related `testify`'s [thread](https://github.com/stretchr/testify/issues/772
 ### require-error
 
 ```go
-❌   assert.Error(t, err) // s.Error(err), s.Assert().Error(t, err)
+❌   assert.Error(t, err) // s.Error(err), s.Assert().Error(err)
      assert.ErrorIs(t, err, io.EOF)
      assert.ErrorAs(t, err, &target)
      assert.EqualError(t, err, "end of file")
@@ -356,10 +356,10 @@ P.S. Related `testify`'s [thread](https://github.com/stretchr/testify/issues/772
      assert.NoError(t, err)
      assert.NotErrorIs(t, err, io.EOF)
 
-✅   require.Error(t, err) // s.Require().Error(err), s.Require().Error(t, err)
+✅   require.Error(t, err) // s.Require().Error(err), s.Require().Error(err)
      require.ErrorIs(t, err, io.EOF)
      require.ErrorAs(t, err, &target)
-    // And so on...
+     // And so on...
 ```
 
 **Autofix**: false. <br>

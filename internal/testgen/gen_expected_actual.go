@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/Antonboom/testifylint/internal/checkers"
 	"strings"
 	"text/template"
+
+	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 type ExpectedActualTestsGenerator struct{}
