@@ -7,13 +7,13 @@ import (
 	"github.com/Antonboom/testifylint/internal/testify"
 )
 
-type UselessImportTestsGenerator struct{}
+type BlankImportTestsGenerator struct{}
 
-func (UselessImportTestsGenerator) Checker() checkers.Checker {
-	return checkers.NewUselessImport()
+func (BlankImportTestsGenerator) Checker() checkers.Checker {
+	return checkers.NewBlankImport()
 }
 
-func (g UselessImportTestsGenerator) TemplateData() any {
+func (g BlankImportTestsGenerator) TemplateData() any {
 	var (
 		checker = g.Checker().Name()
 		report  = checker + ": avoid blank import of %s as it does nothing"
@@ -37,18 +37,18 @@ func (g UselessImportTestsGenerator) TemplateData() any {
 	}
 }
 
-func (UselessImportTestsGenerator) ErroredTemplate() Executor {
-	return template.Must(template.New("UselessImportTestsGenerator.ErroredTemplate").
-		Parse(uselessImportTestTmpl))
+func (BlankImportTestsGenerator) ErroredTemplate() Executor {
+	return template.Must(template.New("BlankImportTestsGenerator.ErroredTemplate").
+		Parse(blankImportTestTmpl))
 }
 
-func (UselessImportTestsGenerator) GoldenTemplate() Executor {
+func (BlankImportTestsGenerator) GoldenTemplate() Executor {
 	// NOTE(a.telyshev): Auto-fixing introduces complexity (a lot of import combinations)
 	// into such a simple and rarely used check.
 	return nil
 }
 
-const uselessImportTestTmpl = header + `
+const blankImportTestTmpl = header + `
 package {{ .CheckerName.AsPkgName }}
 
 import "testing"
@@ -78,14 +78,20 @@ import (
 
 {{ with $pkg := (index $.Packages 0) -}}
 import (
-	_ "github.com/stretchr/testify" // want "{{printf $.ReportFmt $pkg }}"
+	_ "{{ $pkg }}" // want "{{printf $.ReportFmt $pkg }}"
 )
 
 import (
 	// Test dependencies so that it doesn't get cleaned by glide vc
-	_ "github.com/stretchr/testify" // want "{{printf $.ReportFmt $pkg }}"
+	_ "{{ $pkg }}" // want "{{printf $.ReportFmt $pkg }}"
 )
 {{- end }}
+
+import (
+	{{ range $pi, $pkg := $.Packages }}
+	{{- if ne $pi 0 }}"{{ $pkg }}"{{ end }}
+	{{ end }}
+)
 
 func TestDummy(t *testing.T) {
 	dummy := 1 + 3
@@ -96,5 +102,11 @@ func TestDummy(t *testing.T) {
 	_ = strings.Builder{}
 	_ = url.URL{}
 	_ = DB{}
+
+	_ = assert.Equal
+	_ = http.TestRoundTripper{}
+	_ = mock.Mock{}
+	_ = require.Equal
+	_ = suite.Suite{}
 }
 `

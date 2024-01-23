@@ -23,6 +23,7 @@ var freeTestsGenerators = map[string]TestsGenerator{ // by subdirectory.
 }
 
 var checkerTestsGenerators = []CheckerTestsGenerator{
+	BlankImportTestsGenerator{},
 	BoolCompareTestsGenerator{},
 	ComparesTestsGenerator{},
 	EmptyTestsGenerator{},
@@ -37,7 +38,6 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	SuiteDontUsePkg{},
 	SuiteExtraAssertCallTestsGenerator{},
 	SuiteTHelperTestsGenerator{},
-	UselessImportTestsGenerator{},
 }
 
 func init() {

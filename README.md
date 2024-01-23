@@ -69,6 +69,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 
 | Name                                                | Enabled By Default | Autofix |
 |-----------------------------------------------------|--------------------|---------|
+| [blank-import](#blank-import)                       | ✅                  | ❌       |
 | [bool-compare](#bool-compare)                       | ✅                  | ✅       |
 | [compares](#compares)                               | ✅                  | ✅       |
 | [empty](#empty)                                     | ✅                  | ✅       |
@@ -83,9 +84,35 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
 | [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
-| [useless-import](#useless-import)                   | ✅                  | ❌       |
 
 > ⚠️ Also look at open for contribution [checkers](CONTRIBUTING.md#open-for-contribution)
+
+---
+
+### blank-import
+
+```go
+❌
+import (
+    "testing"
+
+    _ "github.com/stretchr/testify"
+    _ "github.com/stretchr/testify/assert"
+    _ "github.com/stretchr/testify/http"
+    _ "github.com/stretchr/testify/mock"
+    _ "github.com/stretchr/testify/require"
+    _ "github.com/stretchr/testify/suite"
+)
+
+✅
+import (
+    "testing"
+)
+```
+
+**Autofix**: false. <br>
+**Enabled by default**: true. <br>
+**Reason**: `testify` doesn't do any `init()` magic, so these imports as `_` do nothing and considered useless.
 
 ---
 
@@ -481,33 +508,6 @@ func (s *RoomSuite) assertRoomRound(roundID RoundID) {
 [anyway](https://github.com/stretchr/testify/blob/882382d845cd9780bd93c1acc8e1fa2ffe266ca1/assert/assertions.go#L317).
 
 The checker rather acts as an example of a [checkers.AdvancedChecker](https://github.com/Antonboom/testifylint/blob/676324836555445fded4e9afc004101ec6f597fe/internal/checkers/checker.go#L56).
-
----
-
-### useless-import
-
-```go
-❌
-import (
-    "testing"
-
-    _ "github.com/stretchr/testify"
-    _ "github.com/stretchr/testify/assert"
-    _ "github.com/stretchr/testify/http"
-    _ "github.com/stretchr/testify/mock"
-    _ "github.com/stretchr/testify/require"
-    _ "github.com/stretchr/testify/suite"
-)
-
-✅
-import (
-    "testing"
-)
-```
-
-**Autofix**: false. <br>
-**Enabled by default**: true. <br>
-**Reason**: `testify` doesn't do any `init()` magic, so these imports as `_` do nothing.
 
 ---
 

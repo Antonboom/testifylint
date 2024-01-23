@@ -10,7 +10,7 @@ import (
 	"github.com/Antonboom/testifylint/internal/testify"
 )
 
-// UselessImport detects useless blank imports of testify packages.
+// BlankImport detects useless blank imports of testify's packages.
 // These imports are useless since testify doesn't do any magic with init() function.
 //
 // The checker detects situations like
@@ -31,13 +31,13 @@ import (
 //	import (
 //		"testing"
 //	)
-type UselessImport struct{}
+type BlankImport struct{}
 
-// NewUselessImport constructs UselessImport checker.
-func NewUselessImport() UselessImport { return UselessImport{} }
-func (UselessImport) Name() string    { return "useless-import" }
+// NewBlankImport constructs BlankImport checker.
+func NewBlankImport() BlankImport { return BlankImport{} }
+func (BlankImport) Name() string  { return "blank-import" }
 
-func (checker UselessImport) Check(pass *analysis.Pass, _ *inspector.Inspector) (diagnostics []analysis.Diagnostic) {
+func (checker BlankImport) Check(pass *analysis.Pass, _ *inspector.Inspector) (diagnostics []analysis.Diagnostic) {
 	for _, file := range pass.Files {
 		for _, imp := range file.Imports {
 			if imp.Name == nil || imp.Name.Name != "_" {

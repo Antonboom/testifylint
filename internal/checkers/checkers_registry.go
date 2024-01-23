@@ -19,10 +19,10 @@ var registry = checkersRegistry{
 	{factory: asCheckerFactory(NewSuiteExtraAssertCall), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteDontUsePkg), enabledByDefault: true},
 	// Advanced checkers.
+	{factory: asCheckerFactory(NewBlankImport), enabledByDefault: true},
 	{factory: asCheckerFactory(NewGoRequire), enabledByDefault: true},
 	{factory: asCheckerFactory(NewRequireError), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteTHelper), enabledByDefault: false},
-	{factory: asCheckerFactory(NewUselessImport), enabledByDefault: true},
 }
 
 type checkersRegistry []checkerMeta

@@ -41,15 +41,15 @@ func Test_newCheckers(t *testing.T) {
 	}
 
 	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{
+		checkers.NewBlankImport(),
 		checkers.NewGoRequire(),
 		checkers.NewRequireError(),
-		checkers.NewUselessImport(),
 	}
 	allAdvancedCheckers := []checkers.AdvancedChecker{
+		checkers.NewBlankImport(),
 		checkers.NewGoRequire(),
 		checkers.NewRequireError(),
 		checkers.NewSuiteTHelper(),
-		checkers.NewUselessImport(),
 	}
 
 	cases := []struct {
