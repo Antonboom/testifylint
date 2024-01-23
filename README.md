@@ -84,6 +84,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
 | [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
+| [useless-assert](#useless-assert)                   | ✅                  | ❌       |
 
 > ⚠️ Also look at open for contribution [checkers](CONTRIBUTING.md#open-for-contribution)
 
@@ -253,6 +254,7 @@ logic, but without autofix.
      assert.InDeltaMapValues(t, result, map[string]float64{"score": 0.99}, 1.0)
      assert.InDeltaSlice(t, result, []float64{0.98, 0.99}, 1.0)
      assert.InEpsilon(t, result, 42.42, 0.0001)
+     assert.InEpsilonSlice(t, result, []float64{0.9801, 0.9902}, 0.0001)
      assert.IsType(t, result, (*User)(nil))
      assert.NotEqual(t, result, "expected")
      assert.NotEqualValues(t, result, "expected")
@@ -508,6 +510,24 @@ func (s *RoomSuite) assertRoomRound(roundID RoundID) {
 [anyway](https://github.com/stretchr/testify/blob/882382d845cd9780bd93c1acc8e1fa2ffe266ca1/assert/assertions.go#L317).
 
 The checker rather acts as an example of a [checkers.AdvancedChecker](https://github.com/Antonboom/testifylint/blob/676324836555445fded4e9afc004101ec6f597fe/internal/checkers/checker.go#L56).
+
+---
+
+### useless-assert
+
+Currently the checker guards against assertion of the same variable:
+
+```go
+❌   assert.Equal(t, tt.value, tt.value)
+     assert.ElementsMatch(t, users, users)
+     // And so on...
+```
+
+More complex cases are [open for contribution](CONTRIBUTING.md#useless-assert).
+
+**Autofix**: false. <br>
+**Enabled by default**: true. <br>
+**Reason**: Protection from bugs and possible dead code.
 
 ---
 

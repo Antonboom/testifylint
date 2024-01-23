@@ -130,12 +130,12 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [float-compare](#float-compare)
 - [http-const](#http-const)
 - [http-sugar](#http-sugar)
-- [inefficient-assert](#inefficient-assert)
 - [negative-positive](#negative-positive)
 - [no-fmt-mess](#no-fmt-mess)
 - [require-len](#require-len)
 - [suite-run](#suite-run)
 - [suite-test-name](#suite-test-name)
+- [useless-assert](#useless-assert)
 - [zero](#zero)
 
 ---
@@ -299,31 +299,6 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 
 ---
 
-### inefficient-assert
-
-Simple:
-```go
-body, err := io.ReadAll(rr.Body)
-require.NoError(t, err)
-require.NoError(t, err) ❌
-
-expectedJSON, err := json.Marshal(expected)
-require.NoError(t, err)
-require.JSONEq(t, string(expectedJSON), string(body))
-```
-
-Complex:
-```go
-require.NoError(t, err)
-assert.ErrorContains(t, err, "user") ❌
-```
-
-**Autofix**: false. <br>
-**Enabled by default**: Probably false, depends on implementation performance. <br>
-**Reason**: Code simplification, elimination of possible bugs.
-
----
-
 ### negative-positive
 
 ```go
@@ -455,6 +430,27 @@ Also, maybe to check the configurable format of subtest name? Mess example:
 func (s *HandlersSuite) Test_Usecase_Success()
 func (s *HandlersSuite) TestUsecaseSuccess()
 func (s *HandlersSuite) Test_UsecaseSuccess()
+```
+
+---
+
+### useless-assert
+
+Support more complex cases, e.g.
+
+```go
+body, err := io.ReadAll(rr.Body)
+require.NoError(t, err)
+require.NoError(t, err) ❌
+
+expectedJSON, err := json.Marshal(expected)
+require.NoError(t, err)
+require.JSONEq(t, string(expectedJSON), string(body))
+```
+
+```go
+require.NoError(t, err)
+assert.ErrorContains(t, err, "user") ❌
 ```
 
 ---
