@@ -101,6 +101,8 @@ Pay attention to `Assertion` and `NewAssertionExpander`, but keep your tests as 
 Usually 100-200 lines are enough for checker testing. You need to find balance between coverage,
 common sense, and processing of boundary conditions. See existing tests as example.
 
+For testing checker replacements use [testdata/src/debug](./analyzer/testdata/src/debug).
+
 ### 9) Run the `task` command from the project's root directory
 
 ```bash

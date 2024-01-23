@@ -36,6 +36,14 @@ func TestEmptyChecker(t *testing.T) {
 		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
 		assert.Empty(t, elems)                                   // want "empty: use assert\\.Empty"
 		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, elems)                                   // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, elems)                                   // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, elems)                                   // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, elems)                                   // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
 
 		// Valid.
 		assert.Empty(t, elems)
@@ -117,8 +125,6 @@ func TestEmptyChecker_Ignored(t *testing.T) {
 	assert.GreaterOrEqualf(t, 2, len(elems), "msg with args %d %s", 42, "42")
 	assert.Less(t, len(elems), len(elems))
 	assert.Lessf(t, len(elems), len(elems), "msg with args %d %s", 42, "42")
-	assert.Less(t, len(elems), 0)
-	assert.Lessf(t, len(elems), 0, "msg with args %d %s", 42, "42")
 	assert.Less(t, len(elems), 2)
 	assert.Lessf(t, len(elems), 2, "msg with args %d %s", 42, "42")
 	assert.Less(t, 2, len(elems))
