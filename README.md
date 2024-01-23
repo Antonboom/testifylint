@@ -362,7 +362,7 @@ assert.NotEqual(t, (chan Event)(nil), eventsChan)
 
 But in the case of `Equal`, `NotEqual` and `Exactly` it still doesn't work for the function type.
 
-The best option here is to just use `NIl` / `NotNil` (see [details](https://github.com/stretchr/testify/issues/1524)).
+The best option here is to just use `Nil` / `NotNil` (see [details](https://github.com/stretchr/testify/issues/1524)).
 
 ---
 

@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEmptyReplacement(t *testing.T) {
+func TestEmptyReplacements(t *testing.T) {
 	var tm tMock
 
 	var nilSlice []string
@@ -184,7 +184,7 @@ func TestEmptyReplacement(t *testing.T) {
 	}
 }
 
-func TestNotEmptyReplacement(t *testing.T) {
+func TestNotEmptyReplacements(t *testing.T) {
 	var tm tMock
 
 	var nilSlice []string

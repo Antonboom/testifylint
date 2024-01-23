@@ -20,18 +20,7 @@ func (g NilCompareTestsGenerator) TemplateData() any {
 	)
 
 	var unsupportedAssertions []Assertion
-	for _, fn := range []string{"Equal", "EqualValues", "Exactly"} {
-		unsupportedAssertions = append(unsupportedAssertions, []Assertion{
-			{Fn: fn, Argsf: "(chan struct{})(nil), ch"},
-			{Fn: fn, Argsf: "(func())(nil), fn"},
-			{Fn: fn, Argsf: "(any)(nil), iface"},
-			{Fn: fn, Argsf: "(map[int]int)(nil), mp"},
-			{Fn: fn, Argsf: "(*int)(nil), ptr"},
-			{Fn: fn, Argsf: "[]int(nil), slice"},
-			{Fn: fn, Argsf: "(unsafe.Pointer)(nil), unsafePtr"},
-		}...)
-	}
-	for _, fn := range []string{"NotEqual", "NotEqualValues"} {
+	for _, fn := range []string{"Equal", "EqualValues", "Exactly", "NotEqual", "NotEqualValues"} {
 		unsupportedAssertions = append(unsupportedAssertions, []Assertion{
 			{Fn: fn, Argsf: "(chan struct{})(nil), ch"},
 			{Fn: fn, Argsf: "(func())(nil), fn"},

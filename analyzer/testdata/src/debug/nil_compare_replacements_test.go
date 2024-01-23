@@ -43,7 +43,7 @@ var nillables = map[string]any{
 	"notNilUnsafePointer": notNilUnsafePointer,
 }
 
-func TestNilReplacement(t *testing.T) {
+func TestNilReplacements(t *testing.T) {
 	var tm tMock
 
 	for varName, v := range nillables {
@@ -69,7 +69,7 @@ func TestNilReplacement(t *testing.T) {
 	}
 }
 
-func TestNotNilReplacement(t *testing.T) {
+func TestNotNilReplacements(t *testing.T) {
 	var tm tMock
 
 	for varName, v := range nillables {
