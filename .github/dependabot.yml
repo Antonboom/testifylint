@@ -3,6 +3,7 @@ version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
+    update-types: semver-major
     schedule:
       interval: monthly
 
