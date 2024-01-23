@@ -59,6 +59,14 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					{Fn: "GreaterOrEqual", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 					{Fn: "Less", Argsf: "len(elems), 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 					{Fn: "Greater", Argsf: "1, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+
+					// Bullshit, but supported by the checker:
+					// n < 0, n <= 0
+					// 0 > n, 0 >= n
+					{Fn: "Less", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Greater", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "LessOrEqual", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "GreaterOrEqual", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "Empty", Argsf: "elems"},
@@ -104,7 +112,6 @@ func (g EmptyTestsGenerator) TemplateData() any {
 			{Fn: "GreaterOrEqual", Argsf: "2, len(elems)"},
 
 			{Fn: "Less", Argsf: "len(elems), len(elems)"},
-			{Fn: "Less", Argsf: "len(elems), 0"},
 			{Fn: "Less", Argsf: "len(elems), 2"},
 			{Fn: "Less", Argsf: "2, len(elems)"},
 

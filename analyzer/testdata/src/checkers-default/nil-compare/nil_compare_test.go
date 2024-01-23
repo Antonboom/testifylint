@@ -4,117 +4,308 @@ package nilcompare
 
 import (
 	"testing"
+	"unsafe"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNilCompareChecker(t *testing.T) {
-	var value any
-	var Row map[string]any
+	var (
+		ch        chan struct{}
+		fn        func()
+		iface     any
+		mp        map[int]int
+		ptr       *int
+		slice     []int
+		unsafePtr unsafe.Pointer
+	)
+
+	// Not working as expected!
+	{
+		assert.Equal(t, nil, ch)                                                   // want "nil-compare: use assert\\.Nil"
+		assert.Equalf(t, nil, ch, "msg with args %d %s", 42, "42")                 // want "nil-compare: use assert\\.Nilf"
+		assert.Equal(t, nil, fn)                                                   // want "nil-compare: use assert\\.Nil"
+		assert.Equalf(t, nil, fn, "msg with args %d %s", 42, "42")                 // want "nil-compare: use assert\\.Nilf"
+		assert.Equal(t, nil, mp)                                                   // want "nil-compare: use assert\\.Nil"
+		assert.Equalf(t, nil, mp, "msg with args %d %s", 42, "42")                 // want "nil-compare: use assert\\.Nilf"
+		assert.Equal(t, nil, ptr)                                                  // want "nil-compare: use assert\\.Nil"
+		assert.Equalf(t, nil, ptr, "msg with args %d %s", 42, "42")                // want "nil-compare: use assert\\.Nilf"
+		assert.Equal(t, nil, slice)                                                // want "nil-compare: use assert\\.Nil"
+		assert.Equalf(t, nil, slice, "msg with args %d %s", 42, "42")              // want "nil-compare: use assert\\.Nilf"
+		assert.Equal(t, nil, unsafePtr)                                            // want "nil-compare: use assert\\.Nil"
+		assert.Equalf(t, nil, unsafePtr, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		assert.Equal(t, ch, nil)                                                   // want "nil-compare: use assert\\.Nil"
+		assert.Equalf(t, ch, nil, "msg with args %d %s", 42, "42")                 // want "nil-compare: use assert\\.Nilf"
+		assert.Equal(t, fn, nil)                                                   // want "nil-compare: use assert\\.Nil"
+		assert.Equalf(t, fn, nil, "msg with args %d %s", 42, "42")                 // want "nil-compare: use assert\\.Nilf"
+		assert.Equal(t, mp, nil)                                                   // want "nil-compare: use assert\\.Nil"
+		assert.Equalf(t, mp, nil, "msg with args %d %s", 42, "42")                 // want "nil-compare: use assert\\.Nilf"
+		assert.Equal(t, ptr, nil)                                                  // want "nil-compare: use assert\\.Nil"
+		assert.Equalf(t, ptr, nil, "msg with args %d %s", 42, "42")                // want "nil-compare: use assert\\.Nilf"
+		assert.Equal(t, slice, nil)                                                // want "nil-compare: use assert\\.Nil"
+		assert.Equalf(t, slice, nil, "msg with args %d %s", 42, "42")              // want "nil-compare: use assert\\.Nilf"
+		assert.Equal(t, unsafePtr, nil)                                            // want "nil-compare: use assert\\.Nil"
+		assert.Equalf(t, unsafePtr, nil, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		assert.EqualValues(t, nil, ch)                                             // want "nil-compare: use assert\\.Nil"
+		assert.EqualValuesf(t, nil, ch, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.EqualValues(t, nil, fn)                                             // want "nil-compare: use assert\\.Nil"
+		assert.EqualValuesf(t, nil, fn, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.EqualValues(t, nil, mp)                                             // want "nil-compare: use assert\\.Nil"
+		assert.EqualValuesf(t, nil, mp, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.EqualValues(t, nil, ptr)                                            // want "nil-compare: use assert\\.Nil"
+		assert.EqualValuesf(t, nil, ptr, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		assert.EqualValues(t, nil, slice)                                          // want "nil-compare: use assert\\.Nil"
+		assert.EqualValuesf(t, nil, slice, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.EqualValues(t, nil, unsafePtr)                                      // want "nil-compare: use assert\\.Nil"
+		assert.EqualValuesf(t, nil, unsafePtr, "msg with args %d %s", 42, "42")    // want "nil-compare: use assert\\.Nilf"
+		assert.EqualValues(t, ch, nil)                                             // want "nil-compare: use assert\\.Nil"
+		assert.EqualValuesf(t, ch, nil, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.EqualValues(t, fn, nil)                                             // want "nil-compare: use assert\\.Nil"
+		assert.EqualValuesf(t, fn, nil, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.EqualValues(t, mp, nil)                                             // want "nil-compare: use assert\\.Nil"
+		assert.EqualValuesf(t, mp, nil, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.EqualValues(t, ptr, nil)                                            // want "nil-compare: use assert\\.Nil"
+		assert.EqualValuesf(t, ptr, nil, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		assert.EqualValues(t, slice, nil)                                          // want "nil-compare: use assert\\.Nil"
+		assert.EqualValuesf(t, slice, nil, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.EqualValues(t, unsafePtr, nil)                                      // want "nil-compare: use assert\\.Nil"
+		assert.EqualValuesf(t, unsafePtr, nil, "msg with args %d %s", 42, "42")    // want "nil-compare: use assert\\.Nilf"
+		assert.Exactly(t, nil, ch)                                                 // want "nil-compare: use assert\\.Nil"
+		assert.Exactlyf(t, nil, ch, "msg with args %d %s", 42, "42")               // want "nil-compare: use assert\\.Nilf"
+		assert.Exactly(t, nil, fn)                                                 // want "nil-compare: use assert\\.Nil"
+		assert.Exactlyf(t, nil, fn, "msg with args %d %s", 42, "42")               // want "nil-compare: use assert\\.Nilf"
+		assert.Exactly(t, nil, mp)                                                 // want "nil-compare: use assert\\.Nil"
+		assert.Exactlyf(t, nil, mp, "msg with args %d %s", 42, "42")               // want "nil-compare: use assert\\.Nilf"
+		assert.Exactly(t, nil, ptr)                                                // want "nil-compare: use assert\\.Nil"
+		assert.Exactlyf(t, nil, ptr, "msg with args %d %s", 42, "42")              // want "nil-compare: use assert\\.Nilf"
+		assert.Exactly(t, nil, slice)                                              // want "nil-compare: use assert\\.Nil"
+		assert.Exactlyf(t, nil, slice, "msg with args %d %s", 42, "42")            // want "nil-compare: use assert\\.Nilf"
+		assert.Exactly(t, nil, unsafePtr)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Exactlyf(t, nil, unsafePtr, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.Exactly(t, ch, nil)                                                 // want "nil-compare: use assert\\.Nil"
+		assert.Exactlyf(t, ch, nil, "msg with args %d %s", 42, "42")               // want "nil-compare: use assert\\.Nilf"
+		assert.Exactly(t, fn, nil)                                                 // want "nil-compare: use assert\\.Nil"
+		assert.Exactlyf(t, fn, nil, "msg with args %d %s", 42, "42")               // want "nil-compare: use assert\\.Nilf"
+		assert.Exactly(t, mp, nil)                                                 // want "nil-compare: use assert\\.Nil"
+		assert.Exactlyf(t, mp, nil, "msg with args %d %s", 42, "42")               // want "nil-compare: use assert\\.Nilf"
+		assert.Exactly(t, ptr, nil)                                                // want "nil-compare: use assert\\.Nil"
+		assert.Exactlyf(t, ptr, nil, "msg with args %d %s", 42, "42")              // want "nil-compare: use assert\\.Nilf"
+		assert.Exactly(t, slice, nil)                                              // want "nil-compare: use assert\\.Nil"
+		assert.Exactlyf(t, slice, nil, "msg with args %d %s", 42, "42")            // want "nil-compare: use assert\\.Nilf"
+		assert.Exactly(t, unsafePtr, nil)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Exactlyf(t, unsafePtr, nil, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.NotEqual(t, nil, ch)                                                // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualf(t, nil, ch, "msg with args %d %s", 42, "42")              // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqual(t, nil, fn)                                                // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualf(t, nil, fn, "msg with args %d %s", 42, "42")              // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqual(t, nil, mp)                                                // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualf(t, nil, mp, "msg with args %d %s", 42, "42")              // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqual(t, nil, ptr)                                               // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualf(t, nil, ptr, "msg with args %d %s", 42, "42")             // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqual(t, nil, slice)                                             // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualf(t, nil, slice, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqual(t, nil, unsafePtr)                                         // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualf(t, nil, unsafePtr, "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqual(t, ch, nil)                                                // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualf(t, ch, nil, "msg with args %d %s", 42, "42")              // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqual(t, fn, nil)                                                // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualf(t, fn, nil, "msg with args %d %s", 42, "42")              // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqual(t, mp, nil)                                                // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualf(t, mp, nil, "msg with args %d %s", 42, "42")              // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqual(t, ptr, nil)                                               // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualf(t, ptr, nil, "msg with args %d %s", 42, "42")             // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqual(t, slice, nil)                                             // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualf(t, slice, nil, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqual(t, unsafePtr, nil)                                         // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualf(t, unsafePtr, nil, "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqualValues(t, nil, ch)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualValuesf(t, nil, ch, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqualValues(t, nil, fn)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualValuesf(t, nil, fn, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqualValues(t, nil, mp)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualValuesf(t, nil, mp, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqualValues(t, nil, ptr)                                         // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualValuesf(t, nil, ptr, "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqualValues(t, nil, slice)                                       // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualValuesf(t, nil, slice, "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqualValues(t, nil, unsafePtr)                                   // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualValuesf(t, nil, unsafePtr, "msg with args %d %s", 42, "42") // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqualValues(t, ch, nil)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualValuesf(t, ch, nil, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqualValues(t, fn, nil)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualValuesf(t, fn, nil, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqualValues(t, mp, nil)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualValuesf(t, mp, nil, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqualValues(t, ptr, nil)                                         // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualValuesf(t, ptr, nil, "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqualValues(t, slice, nil)                                       // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualValuesf(t, slice, nil, "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqualValues(t, unsafePtr, nil)                                   // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualValuesf(t, unsafePtr, nil, "msg with args %d %s", 42, "42") // want "nil-compare: use assert\\.NotNilf"
+	}
 
 	// Invalid.
 	{
-		assert.Equal(t, value, nil)                                                 // want "nil-compare: use assert\\.Nil"
-		assert.Equalf(t, value, nil, "msg with args %d %s", 42, "42")               // want "nil-compare: use assert\\.Nilf"
-		assert.Equal(t, nil, value)                                                 // want "nil-compare: use assert\\.Nil"
-		assert.Equalf(t, nil, value, "msg with args %d %s", 42, "42")               // want "nil-compare: use assert\\.Nilf"
-		assert.Equal(t, Row["col"], nil)                                            // want "nil-compare: use assert\\.Nil"
-		assert.Equalf(t, Row["col"], nil, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
-		assert.Equal(t, nil, Row["col"])                                            // want "nil-compare: use assert\\.Nil"
-		assert.Equalf(t, nil, Row["col"], "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
-		assert.EqualValues(t, value, nil)                                           // want "nil-compare: use assert\\.Nil"
-		assert.EqualValuesf(t, value, nil, "msg with args %d %s", 42, "42")         // want "nil-compare: use assert\\.Nilf"
-		assert.EqualValues(t, nil, value)                                           // want "nil-compare: use assert\\.Nil"
-		assert.EqualValuesf(t, nil, value, "msg with args %d %s", 42, "42")         // want "nil-compare: use assert\\.Nilf"
-		assert.EqualValues(t, Row["col"], nil)                                      // want "nil-compare: use assert\\.Nil"
-		assert.EqualValuesf(t, Row["col"], nil, "msg with args %d %s", 42, "42")    // want "nil-compare: use assert\\.Nilf"
-		assert.EqualValues(t, nil, Row["col"])                                      // want "nil-compare: use assert\\.Nil"
-		assert.EqualValuesf(t, nil, Row["col"], "msg with args %d %s", 42, "42")    // want "nil-compare: use assert\\.Nilf"
-		assert.Exactly(t, value, nil)                                               // want "nil-compare: use assert\\.Nil"
-		assert.Exactlyf(t, value, nil, "msg with args %d %s", 42, "42")             // want "nil-compare: use assert\\.Nilf"
-		assert.Exactly(t, nil, value)                                               // want "nil-compare: use assert\\.Nil"
-		assert.Exactlyf(t, nil, value, "msg with args %d %s", 42, "42")             // want "nil-compare: use assert\\.Nilf"
-		assert.Exactly(t, Row["col"], nil)                                          // want "nil-compare: use assert\\.Nil"
-		assert.Exactlyf(t, Row["col"], nil, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
-		assert.Exactly(t, nil, Row["col"])                                          // want "nil-compare: use assert\\.Nil"
-		assert.Exactlyf(t, nil, Row["col"], "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
-		assert.NotEqual(t, value, nil)                                              // want "nil-compare: use assert\\.NotNil"
-		assert.NotEqualf(t, value, nil, "msg with args %d %s", 42, "42")            // want "nil-compare: use assert\\.NotNilf"
-		assert.NotEqual(t, nil, value)                                              // want "nil-compare: use assert\\.NotNil"
-		assert.NotEqualf(t, nil, value, "msg with args %d %s", 42, "42")            // want "nil-compare: use assert\\.NotNilf"
-		assert.NotEqual(t, Row["col"], nil)                                         // want "nil-compare: use assert\\.NotNil"
-		assert.NotEqualf(t, Row["col"], nil, "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
-		assert.NotEqual(t, nil, Row["col"])                                         // want "nil-compare: use assert\\.NotNil"
-		assert.NotEqualf(t, nil, Row["col"], "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
-		assert.NotEqualValues(t, value, nil)                                        // want "nil-compare: use assert\\.NotNil"
-		assert.NotEqualValuesf(t, value, nil, "msg with args %d %s", 42, "42")      // want "nil-compare: use assert\\.NotNilf"
-		assert.NotEqualValues(t, nil, value)                                        // want "nil-compare: use assert\\.NotNil"
-		assert.NotEqualValuesf(t, nil, value, "msg with args %d %s", 42, "42")      // want "nil-compare: use assert\\.NotNilf"
-		assert.NotEqualValues(t, Row["col"], nil)                                   // want "nil-compare: use assert\\.NotNil"
-		assert.NotEqualValuesf(t, Row["col"], nil, "msg with args %d %s", 42, "42") // want "nil-compare: use assert\\.NotNilf"
-		assert.NotEqualValues(t, nil, Row["col"])                                   // want "nil-compare: use assert\\.NotNil"
-		assert.NotEqualValuesf(t, nil, Row["col"], "msg with args %d %s", 42, "42") // want "nil-compare: use assert\\.NotNilf"
+		assert.Equal(t, nil, iface)                                            // want "nil-compare: use assert\\.Nil"
+		assert.Equalf(t, nil, iface, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		assert.EqualValues(t, nil, iface)                                      // want "nil-compare: use assert\\.Nil"
+		assert.EqualValuesf(t, nil, iface, "msg with args %d %s", 42, "42")    // want "nil-compare: use assert\\.Nilf"
+		assert.Exactly(t, nil, iface)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Exactlyf(t, nil, iface, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.NotEqual(t, nil, iface)                                         // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualf(t, nil, iface, "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
+		assert.NotEqualValues(t, nil, iface)                                   // want "nil-compare: use assert\\.NotNil"
+		assert.NotEqualValuesf(t, nil, iface, "msg with args %d %s", 42, "42") // want "nil-compare: use assert\\.NotNilf"
+	}
+
+	// Invalid, but unsupported.
+	{
+		assert.Equal(t, (chan struct{})(nil), ch)
+		assert.Equalf(t, (chan struct{})(nil), ch, "msg with args %d %s", 42, "42")
+		assert.Equal(t, (func())(nil), fn)
+		assert.Equalf(t, (func())(nil), fn, "msg with args %d %s", 42, "42")
+		assert.Equal(t, (any)(nil), iface)
+		assert.Equalf(t, (any)(nil), iface, "msg with args %d %s", 42, "42")
+		assert.Equal(t, (map[int]int)(nil), mp)
+		assert.Equalf(t, (map[int]int)(nil), mp, "msg with args %d %s", 42, "42")
+		assert.Equal(t, (*int)(nil), ptr)
+		assert.Equalf(t, (*int)(nil), ptr, "msg with args %d %s", 42, "42")
+		assert.Equal(t, []int(nil), slice)
+		assert.Equalf(t, []int(nil), slice, "msg with args %d %s", 42, "42")
+		assert.Equal(t, (unsafe.Pointer)(nil), unsafePtr)
+		assert.Equalf(t, (unsafe.Pointer)(nil), unsafePtr, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, (chan struct{})(nil), ch)
+		assert.EqualValuesf(t, (chan struct{})(nil), ch, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, (func())(nil), fn)
+		assert.EqualValuesf(t, (func())(nil), fn, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, (any)(nil), iface)
+		assert.EqualValuesf(t, (any)(nil), iface, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, (map[int]int)(nil), mp)
+		assert.EqualValuesf(t, (map[int]int)(nil), mp, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, (*int)(nil), ptr)
+		assert.EqualValuesf(t, (*int)(nil), ptr, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, []int(nil), slice)
+		assert.EqualValuesf(t, []int(nil), slice, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, (unsafe.Pointer)(nil), unsafePtr)
+		assert.EqualValuesf(t, (unsafe.Pointer)(nil), unsafePtr, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, (chan struct{})(nil), ch)
+		assert.Exactlyf(t, (chan struct{})(nil), ch, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, (func())(nil), fn)
+		assert.Exactlyf(t, (func())(nil), fn, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, (any)(nil), iface)
+		assert.Exactlyf(t, (any)(nil), iface, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, (map[int]int)(nil), mp)
+		assert.Exactlyf(t, (map[int]int)(nil), mp, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, (*int)(nil), ptr)
+		assert.Exactlyf(t, (*int)(nil), ptr, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, []int(nil), slice)
+		assert.Exactlyf(t, []int(nil), slice, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, (unsafe.Pointer)(nil), unsafePtr)
+		assert.Exactlyf(t, (unsafe.Pointer)(nil), unsafePtr, "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, (chan struct{})(nil), ch)
+		assert.NotEqualf(t, (chan struct{})(nil), ch, "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, (func())(nil), fn)
+		assert.NotEqualf(t, (func())(nil), fn, "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, (any)(nil), iface)
+		assert.NotEqualf(t, (any)(nil), iface, "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, (map[int]int)(nil), mp)
+		assert.NotEqualf(t, (map[int]int)(nil), mp, "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, (*int)(nil), ptr)
+		assert.NotEqualf(t, (*int)(nil), ptr, "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, []int(nil), slice)
+		assert.NotEqualf(t, []int(nil), slice, "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, (unsafe.Pointer)(nil), unsafePtr)
+		assert.NotEqualf(t, (unsafe.Pointer)(nil), unsafePtr, "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, (chan struct{})(nil), ch)
+		assert.NotEqualValuesf(t, (chan struct{})(nil), ch, "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, (func())(nil), fn)
+		assert.NotEqualValuesf(t, (func())(nil), fn, "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, (any)(nil), iface)
+		assert.NotEqualValuesf(t, (any)(nil), iface, "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, (map[int]int)(nil), mp)
+		assert.NotEqualValuesf(t, (map[int]int)(nil), mp, "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, (*int)(nil), ptr)
+		assert.NotEqualValuesf(t, (*int)(nil), ptr, "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, []int(nil), slice)
+		assert.NotEqualValuesf(t, []int(nil), slice, "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, (unsafe.Pointer)(nil), unsafePtr)
+		assert.NotEqualValuesf(t, (unsafe.Pointer)(nil), unsafePtr, "msg with args %d %s", 42, "42")
 	}
 
 	// Valid.
 	{
-		assert.Nil(t, value)
-		assert.Nilf(t, value, "msg with args %d %s", 42, "42")
-		assert.NotNil(t, value)
-		assert.NotNilf(t, value, "msg with args %d %s", 42, "42")
+		assert.Nil(t, iface)
+		assert.Nilf(t, iface, "msg with args %d %s", 42, "42")
+		assert.NotNil(t, iface)
+		assert.NotNilf(t, iface, "msg with args %d %s", 42, "42")
 	}
 
 	// Ignored.
 	{
-		assert.Equal(t, value, value)
-		assert.Equalf(t, value, value, "msg with args %d %s", 42, "42")
+		assert.Equal(t, iface, iface)
+		assert.Equalf(t, iface, iface, "msg with args %d %s", 42, "42")
 		assert.Equal(t, nil, nil)
 		assert.Equalf(t, nil, nil, "msg with args %d %s", 42, "42")
-		assert.Equal(t, Row["col"], "foo")
-		assert.Equalf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
-		assert.Equal(t, "foo", Row["col"])
-		assert.Equalf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
-		assert.Equal(t, Row["col"], Row["col"])
-		assert.Equalf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
-		assert.EqualValues(t, value, value)
-		assert.EqualValuesf(t, value, value, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, iface, iface)
+		assert.EqualValuesf(t, iface, iface, "msg with args %d %s", 42, "42")
 		assert.EqualValues(t, nil, nil)
 		assert.EqualValuesf(t, nil, nil, "msg with args %d %s", 42, "42")
-		assert.EqualValues(t, Row["col"], "foo")
-		assert.EqualValuesf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
-		assert.EqualValues(t, "foo", Row["col"])
-		assert.EqualValuesf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
-		assert.EqualValues(t, Row["col"], Row["col"])
-		assert.EqualValuesf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
-		assert.Exactly(t, value, value)
-		assert.Exactlyf(t, value, value, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, iface, iface)
+		assert.Exactlyf(t, iface, iface, "msg with args %d %s", 42, "42")
 		assert.Exactly(t, nil, nil)
 		assert.Exactlyf(t, nil, nil, "msg with args %d %s", 42, "42")
-		assert.Exactly(t, Row["col"], "foo")
-		assert.Exactlyf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
-		assert.Exactly(t, "foo", Row["col"])
-		assert.Exactlyf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
-		assert.Exactly(t, Row["col"], Row["col"])
-		assert.Exactlyf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
-		assert.NotEqual(t, value, value)
-		assert.NotEqualf(t, value, value, "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, iface, iface)
+		assert.NotEqualf(t, iface, iface, "msg with args %d %s", 42, "42")
 		assert.NotEqual(t, nil, nil)
 		assert.NotEqualf(t, nil, nil, "msg with args %d %s", 42, "42")
-		assert.NotEqual(t, Row["col"], "foo")
-		assert.NotEqualf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
-		assert.NotEqual(t, "foo", Row["col"])
-		assert.NotEqualf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
-		assert.NotEqual(t, Row["col"], Row["col"])
-		assert.NotEqualf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
-		assert.NotEqualValues(t, value, value)
-		assert.NotEqualValuesf(t, value, value, "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, iface, iface)
+		assert.NotEqualValuesf(t, iface, iface, "msg with args %d %s", 42, "42")
 		assert.NotEqualValues(t, nil, nil)
 		assert.NotEqualValuesf(t, nil, nil, "msg with args %d %s", 42, "42")
-		assert.NotEqualValues(t, Row["col"], "foo")
-		assert.NotEqualValuesf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
-		assert.NotEqualValues(t, "foo", Row["col"])
-		assert.NotEqualValuesf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
-		assert.NotEqualValues(t, Row["col"], Row["col"])
-		assert.NotEqualValuesf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
 	}
+}
+
+func TestNilCompareChecker_UntypedNilBug(t *testing.T) {
+	var Row map[string]any
+
+	assert.Equal(t, nil, Row["col"])                                            // want "nil-compare: use assert\\.Nil"
+	assert.Equalf(t, nil, Row["col"], "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+	assert.EqualValues(t, nil, Row["col"])                                      // want "nil-compare: use assert\\.Nil"
+	assert.EqualValuesf(t, nil, Row["col"], "msg with args %d %s", 42, "42")    // want "nil-compare: use assert\\.Nilf"
+	assert.Exactly(t, nil, Row["col"])                                          // want "nil-compare: use assert\\.Nil"
+	assert.Exactlyf(t, nil, Row["col"], "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+	assert.NotEqual(t, nil, Row["col"])                                         // want "nil-compare: use assert\\.NotNil"
+	assert.NotEqualf(t, nil, Row["col"], "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
+	assert.NotEqualValues(t, nil, Row["col"])                                   // want "nil-compare: use assert\\.NotNil"
+	assert.NotEqualValuesf(t, nil, Row["col"], "msg with args %d %s", 42, "42") // want "nil-compare: use assert\\.NotNilf"
+	assert.Equal(t, Row["col"], "foo")
+	assert.Equalf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
+	assert.Equal(t, "foo", Row["col"])
+	assert.Equalf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
+	assert.Equal(t, Row["col"], Row["col"])
+	assert.Equalf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
+	assert.EqualValues(t, Row["col"], "foo")
+	assert.EqualValuesf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
+	assert.EqualValues(t, "foo", Row["col"])
+	assert.EqualValuesf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
+	assert.EqualValues(t, Row["col"], Row["col"])
+	assert.EqualValuesf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
+	assert.Exactly(t, Row["col"], "foo")
+	assert.Exactlyf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
+	assert.Exactly(t, "foo", Row["col"])
+	assert.Exactlyf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
+	assert.Exactly(t, Row["col"], Row["col"])
+	assert.Exactlyf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
+	assert.NotEqual(t, Row["col"], "foo")
+	assert.NotEqualf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
+	assert.NotEqual(t, "foo", Row["col"])
+	assert.NotEqualf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
+	assert.NotEqual(t, Row["col"], Row["col"])
+	assert.NotEqualf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
+	assert.NotEqualValues(t, Row["col"], "foo")
+	assert.NotEqualValuesf(t, Row["col"], "foo", "msg with args %d %s", 42, "42")
+	assert.NotEqualValues(t, "foo", Row["col"])
+	assert.NotEqualValuesf(t, "foo", Row["col"], "msg with args %d %s", 42, "42")
+	assert.NotEqualValues(t, Row["col"], Row["col"])
+	assert.NotEqualValuesf(t, Row["col"], Row["col"], "msg with args %d %s", 42, "42")
 }
