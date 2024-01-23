@@ -504,5 +504,5 @@ makes some above checkers irrelevant.
 
 In this case, the possibility of supporting `v2` in the linter is not excluded.
 
-But at the moment it looks like we are [extremely far](https://github.com/stretchr/testify/pull/1109#issuecomment-1650619745)
+But at the moment it looks like we are [extremely far](https://github.com/stretchr/testify/issues/1089#issuecomment-1812734472)
 from `v2`. Related milestone [here](https://github.com/stretchr/testify/milestone/4).
