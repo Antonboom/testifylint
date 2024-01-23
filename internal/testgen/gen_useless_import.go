@@ -4,6 +4,7 @@ import (
 	"text/template"
 
 	"github.com/Antonboom/testifylint/internal/checkers"
+	"github.com/Antonboom/testifylint/internal/testify"
 )
 
 type UselessImportTestsGenerator struct{}
@@ -26,12 +27,12 @@ func (g UselessImportTestsGenerator) TemplateData() any {
 		CheckerName: CheckerName(checker),
 		ReportFmt:   report,
 		Packages: []string{
-			"github.com/stretchr/testify",
-			"github.com/stretchr/testify/assert",
-			"github.com/stretchr/testify/http",
-			"github.com/stretchr/testify/mock",
-			"github.com/stretchr/testify/require",
-			"github.com/stretchr/testify/suite",
+			testify.ModulePath,
+			testify.AssertPkgPath,
+			testify.HTTPPkgPath,
+			testify.MockPkgPath,
+			testify.RequirePkgPath,
+			testify.SuitePkgPath,
 		},
 	}
 }
@@ -42,8 +43,9 @@ func (UselessImportTestsGenerator) ErroredTemplate() Executor {
 }
 
 func (UselessImportTestsGenerator) GoldenTemplate() Executor {
-	return template.Must(template.New("UselessImportTestsGenerator.GoldenTemplate").
-		Parse(uselessImportTestTmplGolden))
+	// NOTE(a.telyshev): Auto-fixing introduces complexity (a lot of import combinations)
+	// into such a simple and rarely used check.
+	return nil
 }
 
 const uselessImportTestTmpl = header + `
@@ -64,44 +66,26 @@ import (
 import (
 	"net/url"
 	_ "gopkg.in/yaml.v3"
+
 	// Testing.
-	{{ range $.Packages }}
+	{{- range $.Packages }}
 	_ "{{.}}" // want "{{printf $.ReportFmt . }}"
 	{{- end}}
-	
+
 	_ "github.com/pmezard/go-difflib/difflib"
 	. "database/sql"
 )
 
-func TestDummy(t *testing.T) {
-	dummy := 1 + 3
-	if dummy != 4 {
-		t.Errorf("expected %d, but got %d", 4, dummy)
-	}
-
-	_ = strings.Builder{}
-	_ = url.URL{}
-	_ = DB{}
-}
-`
-
-const uselessImportTestTmplGolden = header + `
-package {{ .CheckerName.AsPkgName }}
-
-import "testing"
-import "strings"
-
+{{ with $pkg := (index $.Packages 0) -}}
 import (
+	_ "github.com/stretchr/testify" // want "{{printf $.ReportFmt $pkg }}"
 )
 
 import (
-	"net/url"
-	_ "gopkg.in/yaml.v3"
-	// Testing.
-	
-	_ "github.com/pmezard/go-difflib/difflib"
-	. "database/sql"
+	// Test dependencies so that it doesn't get cleaned by glide vc
+	_ "github.com/stretchr/testify" // want "{{printf $.ReportFmt $pkg }}"
 )
+{{- end }}
 
 func TestDummy(t *testing.T) {
 	dummy := 1 + 3

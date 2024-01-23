@@ -22,8 +22,8 @@ import (
 import (
 	_ "gopkg.in/yaml.v3"
 	"net/url"
-	// Testing.
 
+	// Testing.
 	_ "github.com/stretchr/testify"         // want "useless-import: avoid blank import of github.com/stretchr/testify as it does nothing"
 	_ "github.com/stretchr/testify/assert"  // want "useless-import: avoid blank import of github.com/stretchr/testify/assert as it does nothing"
 	_ "github.com/stretchr/testify/http"    // want "useless-import: avoid blank import of github.com/stretchr/testify/http as it does nothing"
@@ -33,6 +33,15 @@ import (
 
 	. "database/sql"
 	_ "github.com/pmezard/go-difflib/difflib"
+)
+
+import (
+	_ "github.com/stretchr/testify" // want "useless-import: avoid blank import of github.com/stretchr/testify as it does nothing"
+)
+
+import (
+	// Test dependencies so that it doesn't get cleaned by glide vc
+	_ "github.com/stretchr/testify" // want "useless-import: avoid blank import of github.com/stretchr/testify as it does nothing"
 )
 
 func TestDummy(t *testing.T) {

@@ -83,7 +83,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
 | [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
-| [useless-import](#useless-import)                   | ✅                  | ✅       |
+| [useless-import](#useless-import)                   | ✅                  | ❌       |
 
 > ⚠️ Also look at open for contribution [checkers](CONTRIBUTING.md#open-for-contribution)
 
@@ -505,7 +505,7 @@ import (
 )
 ```
 
-**Autofix**: true. <br>
+**Autofix**: false. <br>
 **Enabled by default**: true. <br>
 **Reason**: `testify` doesn't do any `init()` magic, so these imports as `_` do nothing.
 
