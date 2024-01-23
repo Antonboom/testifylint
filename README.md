@@ -145,8 +145,11 @@ https://golangci-lint.run/usage/linters/#testifylint
      assert.Exactly(t, 0, len(arr))
      assert.LessOrEqual(t, len(arr), 0)
      assert.GreaterOrEqual(t, 0, len(arr))
+     assert.Less(t, len(arr), 0)
+     assert.Greater(t, 0, len(arr))
      assert.Less(t, len(arr), 1)
      assert.Greater(t, 1, len(arr))
+
      assert.NotEqual(t, 0, len(arr))
      assert.NotEqualValues(t, 0, len(arr))
      assert.Less(t, 0, len(arr))
@@ -195,6 +198,7 @@ logic, but without autofix.
      assert.EqualValues(t, nil, err)
      assert.Exactly(t, nil, err)
      assert.ErrorIs(t, err, nil)
+
      assert.NotEqual(t, nil, err)
      assert.NotEqualValues(t, nil, err)
      assert.NotErrorIs(t, err, nil)
@@ -332,6 +336,7 @@ P.S. Related `testify`'s [thread](https://github.com/stretchr/testify/issues/772
 ❌   assert.Equal(t, nil, value)
      assert.EqualValues(t, nil, value)
      assert.Exactly(t, nil, value)
+
      assert.NotEqual(t, nil, value)
      assert.NotEqualValues(t, nil, value)
 
@@ -341,7 +346,23 @@ P.S. Related `testify`'s [thread](https://github.com/stretchr/testify/issues/772
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
-**Reason**: More appropriate `testify` API with clearer failure message.
+**Reason**: Protection from bugs and more appropriate `testify` API with clearer failure message.
+
+Using untyped `nil` in the functions above along with a non-interface type does not make sense:
+```go
+assert.Equal(t, nil, eventsChan)    // Always fail.
+assert.NotEqual(t, nil, eventsChan) // Always pass.
+```
+
+The right way:
+```go
+assert.Equal(t, (chan Event)(nil), eventsChan)
+assert.NotEqual(t, (chan Event)(nil), eventsChan)
+```
+
+But in the case of `Equal`, `NotEqual` and `Exactly` it still doesn't work for the function type.
+
+The best option here is to just use `Nil` / `NotNil` (see [details](https://github.com/stretchr/testify/issues/1524)).
 
 ---
 

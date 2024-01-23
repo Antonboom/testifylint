@@ -59,6 +59,14 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					{Fn: "GreaterOrEqual", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 					{Fn: "Less", Argsf: "len(elems), 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 					{Fn: "Greater", Argsf: "1, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+
+					// Bullshit, but supported by the checker:
+					// n < 0, n <= 0
+					// 0 > n, 0 >= n
+					{Fn: "Less", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Greater", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "LessOrEqual", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "GreaterOrEqual", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "Empty", Argsf: "elems"},
@@ -104,7 +112,6 @@ func (g EmptyTestsGenerator) TemplateData() any {
 			{Fn: "GreaterOrEqual", Argsf: "2, len(elems)"},
 
 			{Fn: "Less", Argsf: "len(elems), len(elems)"},
-			{Fn: "Less", Argsf: "len(elems), 0"},
 			{Fn: "Less", Argsf: "len(elems), 2"},
 			{Fn: "Less", Argsf: "2, len(elems)"},
 
@@ -113,11 +120,10 @@ func (g EmptyTestsGenerator) TemplateData() any {
 			{Fn: "LessOrEqual", Argsf: "len(elems), 2"},
 			{Fn: "LessOrEqual", Argsf: "2, len(elems)"},
 
-			// The linter ignores n > 1 and n >= 1 cases, because
-			//  - it is not exactly equivalent of NotEmpty;
-			//  - NotEmpty in such cases may impair the readability of the test.
+			// The linter ignores n > 1 case, because it is not exactly equivalent of NotEmpty.
 			{Fn: "Greater", Argsf: "len(elems), 1"},
 			{Fn: "Less", Argsf: "1, len(elems)"},
+			// The linter ignores n >= 1 case, because NotEmpty in such case may impair the readability of the test.
 			{Fn: "GreaterOrEqual", Argsf: "len(elems), 1"},
 			{Fn: "LessOrEqual", Argsf: "1, len(elems)"},
 		},
