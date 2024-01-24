@@ -12,6 +12,7 @@ import (
 //
 //	assert.Equal(t, tt.value, tt.value)
 //	assert.ElementsMatch(t, users, users)
+//	...
 //
 // 2) Open for contribution...
 type UselessAssert struct{}
