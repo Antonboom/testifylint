@@ -13,7 +13,7 @@ env:
 
 jobs:
   go_install:
-    if: github.repository == 'Antonboom/testifylint'
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     steps:
       - uses: rlespinasse/github-slug-action@v4.4.1
