@@ -155,6 +155,15 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 					ReportMsgf: report, ProposedArgsf: "42.42, result, 0.0001",
 				},
 
+				{
+					Fn: "InEpsilonSlice", Argsf: "result, expected, 0.0001",
+					ReportMsgf: report, ProposedArgsf: "expected, result, 0.0001",
+				},
+				{
+					Fn: "InEpsilonSlice", Argsf: `result, []float64{0.9801, 0.9902}, 0.0001`,
+					ReportMsgf: report, ProposedArgsf: `[]float64{0.9801, 0.9902}, result, 0.0001`,
+				},
+
 				{Fn: "IsType", Argsf: "result, expected", ReportMsgf: report, ProposedArgsf: "expected, result"},
 				{Fn: "IsType", Argsf: "result, user{}", ReportMsgf: report, ProposedArgsf: "user{}, result"},
 				{Fn: "IsType", Argsf: "result, (*user)(nil)", ReportMsgf: report, ProposedArgsf: "(*user)(nil), result"},

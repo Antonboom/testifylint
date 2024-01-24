@@ -26,6 +26,7 @@ var DefaultExpectedVarPattern = regexp.MustCompile(
 //	assert.InDeltaMapValues(t, result, map[string]float64{"score": 0.99}, 1.0)
 //	assert.InDeltaSlice(t, result, []float64{0.98, 0.99}, 1.0)
 //	assert.InEpsilon(t, result, 42.42, 0.0001)
+//	assert.InEpsilonSlice(t, result, []float64{0.9801, 0.9902}, 0.0001)
 //	assert.IsType(t, result, (*User)(nil))
 //	assert.NotEqual(t, result, "expected")
 //	assert.NotEqualValues(t, result, "expected")
@@ -64,12 +65,13 @@ func (checker ExpectedActual) Check(pass *analysis.Pass, call *CallMeta) *analys
 		"EqualExportedValues",
 		"EqualValues",
 		"Exactly",
-		"JSONEq",
 		"InDelta",
 		"InDeltaMapValues",
 		"InDeltaSlice",
 		"InEpsilon",
+		"InEpsilonSlice",
 		"IsType",
+		"JSONEq",
 		"NotEqual",
 		"NotEqualValues",
 		"NotSame",

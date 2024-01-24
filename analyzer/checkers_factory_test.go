@@ -25,6 +25,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewExpectedActual(),
 		checkers.NewSuiteExtraAssertCall(),
 		checkers.NewSuiteDontUsePkg(),
+		checkers.NewUselessAssert(),
 	}
 	allRegularCheckers := []checkers.RegularChecker{
 		checkers.NewFloatCompare(),
@@ -38,6 +39,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewExpectedActual(),
 		checkers.NewSuiteExtraAssertCall(),
 		checkers.NewSuiteDontUsePkg(),
+		checkers.NewUselessAssert(),
 	}
 
 	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{

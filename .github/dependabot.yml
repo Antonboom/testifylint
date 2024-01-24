@@ -1,13 +1,17 @@
 version: 2
 
 updates:
-  - package-ecosystem: github-actions
-    directory: /
-    update-types: semver-major
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: monthly
+      interval: "monthly"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
 
-  - package-ecosystem: gomod
-    directory: /
+  - package-ecosystem: "gomod"
+    directory: "/"
     schedule:
-      interval: monthly
+      interval: "monthly"
