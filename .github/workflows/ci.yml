@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: rlespinasse/github-slug-action@v4.4.1
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
       - run: cd /tmp && go install github.com/Antonboom/testifylint@${{ env.version }} && testifylint -h
@@ -33,7 +33,7 @@ jobs:
       pull-requests: read  # for golangci/golangci-lint-action to fetch pull requests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
       - uses: actions/checkout@v3
@@ -48,7 +48,7 @@ jobs:
       contents: read  # for actions/checkout to fetch code
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
       - uses: actions/checkout@v3
