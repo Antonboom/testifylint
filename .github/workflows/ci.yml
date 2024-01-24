@@ -11,9 +11,12 @@ env:
   GO_VERSION: ^1.21
   GOLANGCI_LINT_VERSION: v1.54.0
 
+permissions:
+  contents: read
+
 jobs:
   go_install:
-    if: github.repository == 'Antonboom/testifylint'
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     steps:
       - uses: rlespinasse/github-slug-action@v4.4.1
@@ -25,6 +28,9 @@ jobs:
           version: ${{ env.GITHUB_EVENT_PULL_REQUEST_HEAD_SHA || env.GITHUB_REF_SLUG }}
 
   lint:
+    permissions:
+      contents: read  # for actions/checkout to fetch code
+      pull-requests: read  # for golangci/golangci-lint-action to fetch pull requests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v4
@@ -37,6 +43,9 @@ jobs:
           args: --timeout=5m
 
   test:
+    permissions:
+      checks: write  # for shogo82148/actions-goveralls to create a new check based on the results
+      contents: read  # for actions/checkout to fetch code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v4
