@@ -69,6 +69,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 
 | Name                                                | Enabled By Default | Autofix |
 |-----------------------------------------------------|--------------------|---------|
+| [blank-import](#blank-import)                       | ✅                  | ❌       |
 | [bool-compare](#bool-compare)                       | ✅                  | ✅       |
 | [compares](#compares)                               | ✅                  | ✅       |
 | [empty](#empty)                                     | ✅                  | ✅       |
@@ -85,6 +86,33 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
 
 > ⚠️ Also look at open for contribution [checkers](CONTRIBUTING.md#open-for-contribution)
+
+---
+
+### blank-import
+
+```go
+❌
+import (
+    "testing"
+
+    _ "github.com/stretchr/testify"
+    _ "github.com/stretchr/testify/assert"
+    _ "github.com/stretchr/testify/http"
+    _ "github.com/stretchr/testify/mock"
+    _ "github.com/stretchr/testify/require"
+    _ "github.com/stretchr/testify/suite"
+)
+
+✅
+import (
+    "testing"
+)
+```
+
+**Autofix**: false. <br>
+**Enabled by default**: true. <br>
+**Reason**: `testify` doesn't do any `init()` magic, so these imports as `_` do nothing and considered useless.
 
 ---
 

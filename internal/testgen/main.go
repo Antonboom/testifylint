@@ -23,6 +23,7 @@ var freeTestsGenerators = map[string]TestsGenerator{ // by subdirectory.
 }
 
 var checkerTestsGenerators = []CheckerTestsGenerator{
+	BlankImportTestsGenerator{},
 	BoolCompareTestsGenerator{},
 	ComparesTestsGenerator{},
 	EmptyTestsGenerator{},
