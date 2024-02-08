@@ -427,7 +427,7 @@ For example, `--require-error.fn-pattern="^(Errorf?|NoErrorf?)$"` will only chec
 
 Also, to minimize the number of false positives, `require-error` ignores:
 - assertion in the `if` condition;
-- the entire `if-else` block, if there is an assertion in the `if` condition;
+- the entire `if-else[-if]` block, if there is an assertion in any `if` condition;
 - the last assertion in the block, if there are no methods/functions calls after it;
 - assertions in an explicit goroutine;
 - assertions in an explicit testing cleanup function or suite teardown methods;
