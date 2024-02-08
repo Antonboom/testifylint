@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sort"
 	"text/template"
 
 	"github.com/Antonboom/testifylint/internal/checkers"
@@ -55,6 +56,9 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 		twoSideAssertions = append(twoSideAssertions,
 			Assertion{Fn: fn, Argsf: args, ReportMsgf: sameVarReport})
 	}
+	sort.Slice(twoSideAssertions, func(i, j int) bool {
+		return twoSideAssertions[i].Fn < twoSideAssertions[j].Fn
+	})
 
 	return struct {
 		CheckerName            CheckerName
