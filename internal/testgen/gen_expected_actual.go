@@ -84,6 +84,7 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			"expectedObj.Val",
 			"tt.expected",
 			"tt.exp()",
+			"tt.expPtr()",
 			"expectedVal()",
 			"[]int{1, 2, 3}",
 			"[3]int{1, 2, 3}",
@@ -91,6 +92,23 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			`user{Name: "Rob"}`,
 			`struct {Name string}{Name: "Rob"}`,
 			`nil`,
+
+			"&expected",
+			"&expectedObj.Val",
+			"&(expectedObj.Val)",
+			"&tt.expected",
+			"&(tt.expected)",
+			`&user{Name: "Rob"}`,
+
+			"*expectedPtr",
+			"expectedObjPtr.Val",
+			"*tt.expPtr()",
+			"*(tt.expPtr())",
+			"ttPtr.expected",
+
+			// NOTE(a.telyshev): Unsupported rare cases:
+			// "(*expectedObjPtr).Val",
+			// "(*ttPtr).expected",
 		},
 		Basic: test{
 			InvalidAssertions: []Assertion{
@@ -169,9 +187,11 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 				{Fn: "IsType", Argsf: "result, (*user)(nil)", ReportMsgf: report, ProposedArgsf: "(*user)(nil), result"},
 
 				{Fn: "Same", Argsf: "resultPtr, expectedPtr", ReportMsgf: report, ProposedArgsf: "expectedPtr, resultPtr"},
-				{Fn: "Same", Argsf: "resultPtr, &value", ReportMsgf: report, ProposedArgsf: "&value, resultPtr"},
+				{Fn: "Same", Argsf: "&value, expectedPtr", ReportMsgf: report, ProposedArgsf: "expectedPtr, &value"},
+				{Fn: "Same", Argsf: "value, &expected", ReportMsgf: report, ProposedArgsf: "&expected, value"},
 				{Fn: "NotSame", Argsf: "resultPtr, expectedPtr", ReportMsgf: report, ProposedArgsf: "expectedPtr, resultPtr"},
-				{Fn: "NotSame", Argsf: "resultPtr, &value", ReportMsgf: report, ProposedArgsf: "&value, resultPtr"},
+				{Fn: "NotSame", Argsf: "&value, expectedPtr", ReportMsgf: report, ProposedArgsf: "expectedPtr, &value"},
+				{Fn: "NotSame", Argsf: "value, &expected", ReportMsgf: report, ProposedArgsf: "&expected, value"},
 
 				{
 					Fn: "WithinDuration", Argsf: "resultTime, expectedTime, time.Second",
@@ -238,11 +258,13 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			ProposedArgsf: "string(expectedJSON), string(body)",
 		},
 		IgnoredAssertions: []Assertion{
-			{Fn: "Equal", Argsf: `nil, nil`},
+			{Fn: "Equal", Argsf: "nil, nil"},
 			{Fn: "Equal", Argsf: `"value", "value"`},
 			{Fn: "Equal", Argsf: "expected, expected"},
+			{Fn: "Equal", Argsf: "value, &resultPtr"},
 			{Fn: "Equal", Argsf: "[]int{1, 2}, map[int]int{1: 2}"},
 			{Fn: "NotEqual", Argsf: "result, result"},
+			{Fn: "NotEqual", Argsf: "value, &resultPtr"},
 			{Fn: "EqualExportedValues", Argsf: `user{Name: "Rob"}, struct {Name string}{Name: "Rob"}`},
 			{Fn: "EqualValues", Argsf: "uint32(100), int32(100)"},
 			{Fn: "Exactly", Argsf: "int32(200), int64(200)"},
@@ -253,7 +275,13 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			{Fn: "InEpsilon", Argsf: "42.42, 0.0001, 0.0001"},
 			{Fn: "IsType", Argsf: "(*user)(nil), user{}"},
 			{Fn: "Same", Argsf: "&value, &value"},
+			{Fn: "Same", Argsf: "resultPtr, &value"},
+			{Fn: "Same", Argsf: "expectedPtr, &value"},
+			{Fn: "Same", Argsf: "&expected, value"},
+			{Fn: "NotSame", Argsf: "&value, &value"},
+			{Fn: "NotSame", Argsf: "resultPtr, &value"},
 			{Fn: "NotSame", Argsf: "expectedPtr, &value"},
+			{Fn: "NotSame", Argsf: "&expected, value"},
 			{Fn: "WithinDuration", Argsf: "expectedTime, time.Now(), time.Second"},
 			{Fn: "WithinDuration", Argsf: "time.Date(2023, 01, 12, 11, 46, 33, 0, nil), " +
 				"time.Date(2023, 01, 12, 11, 46, 33, 0, nil), time.Millisecond"},
@@ -295,6 +323,7 @@ type user struct {
 
 type testCase struct { expected string } //
 func (c testCase) exp() string { return c.expected }
+func (c testCase) expPtr() *string { return &c.expected }
 
 {{ define "var-tests" }}
 	{{- $ := index . 0 }}
@@ -313,9 +342,12 @@ func (c testCase) exp() string { return c.expected }
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var expected string
+	var expectedPtr *string
 	var tt testCase
+	var ttPtr *testCase
 	expectedVal := func() any { return nil }
 	var expectedObj struct { Val int }
+	var expectedObjPtr = &expectedObj
 
 	var result any
 
@@ -468,9 +500,9 @@ func {{ .CheckerName.AsTestName }}_CannotDetectVariablesLookedLikeConsts(t *test
 func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
 	var (
 		result, expected any
-		expectedPtr *int
-		expectedTime time.Time
+		resultPtr, expectedPtr *int
 		value int
+		expectedTime time.Time
 	)
 
 	{{ range $ai, $assrn := $.IgnoredAssertions }}
