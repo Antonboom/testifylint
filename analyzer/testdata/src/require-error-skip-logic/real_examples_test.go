@@ -509,6 +509,38 @@ func TestService_DeclareFixedRoles(t *testing.T) {
 	}
 }
 
+func TestIssue62(t *testing.T) {
+	cases := []struct {
+		name           string
+		expectedError  error
+		failureDetails any
+	}{
+		{},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			failureDetails, err := operationWithResult()
+
+			if tc.expectedError != nil {
+				assert.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				if tc.failureDetails != nil {
+					assert.Error(t, err) // want "require-error: for error assertions use require"
+					assert.Equal(t, failureDetails, tc.failureDetails)
+				} else if false {
+					assert.Error(t, err)
+				} else if true {
+					assert.Error(t, err)
+				} else {
+					assert.Equal(t, failureDetails, tc.failureDetails)
+				}
+			}
+		})
+	}
+}
+
 func createTempPackageJson(t *testing.T, version string) error {
 	t.Helper()
 
