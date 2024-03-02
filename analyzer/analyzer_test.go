@@ -39,6 +39,10 @@ func TestTestifyLint(t *testing.T) {
 		},
 		{dir: "ginkgo"},
 		{
+			dir:   "go-require-issue67",
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewGoRequire().Name()},
+		},
+		{
 			dir:   "not-std-funcs",
 			flags: map[string]string{"enable-all": "true"},
 		},
@@ -79,7 +83,7 @@ func TestTestifyLint(t *testing.T) {
 					t.Fatal(err)
 				}
 			}
-			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), anlzr, tt.dir)
+			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), anlzr, filepath.Join(tt.dir, "..."))
 		})
 	}
 }
