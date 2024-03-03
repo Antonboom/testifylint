@@ -1,0 +1,113 @@
+package boolcomparecustomtypes_test
+
+import (
+	"testing"
+
+	"bool-compare-custom-types/types"
+	"github.com/stretchr/testify/assert"
+)
+
+type MyBool bool
+
+func TestBoolCompareChecker_CustomTypes(t *testing.T) {
+	var b MyBool
+	{
+		assert.False(t, bool(b)) // want "bool-compare: use assert\\.False"
+		assert.False(t, bool(b)) // want "bool-compare: use assert\\.False"
+		assert.Exactly(t, false, b)
+
+		assert.True(t, bool(b)) // want "bool-compare: use assert\\.True"
+		assert.True(t, bool(b)) // want "bool-compare: use assert\\.True"
+		assert.Exactly(t, true, b)
+
+		assert.True(t, bool(b)) // want "bool-compare: use assert\\.True"
+		assert.True(t, bool(b)) // want "bool-compare: use assert\\.True"
+
+		assert.False(t, bool(b)) // want "bool-compare: use assert\\.False"
+		assert.False(t, bool(b)) // want "bool-compare: use assert\\.False"
+
+		assert.True(t, bool(b))  // want "bool-compare: need to simplify the assertion"
+		assert.True(t, bool(b))  // want "bool-compare: need to simplify the assertion"
+		assert.False(t, bool(b)) // want "bool-compare: use assert\\.False"
+		assert.False(t, bool(b)) // want "bool-compare: use assert\\.False"
+
+		assert.False(t, bool(b)) // want "bool-compare: need to simplify the assertion"
+		assert.False(t, bool(b)) // want "bool-compare: need to simplify the assertion"
+		assert.True(t, bool(b))  // want "bool-compare: use assert\\.True"
+		assert.True(t, bool(b))  // want "bool-compare: use assert\\.True"
+	}
+
+	var extB types.Bool
+	{
+		assert.False(t, bool(extB)) // want "bool-compare: use assert\\.False"
+		assert.False(t, bool(extB)) // want "bool-compare: use assert\\.False"
+		assert.Exactly(t, false, extB)
+
+		assert.True(t, bool(extB)) // want "bool-compare: use assert\\.True"
+		assert.True(t, bool(extB)) // want "bool-compare: use assert\\.True"
+		assert.Exactly(t, true, extB)
+
+		assert.True(t, bool(extB)) // want "bool-compare: use assert\\.True"
+		assert.True(t, bool(extB)) // want "bool-compare: use assert\\.True"
+
+		assert.False(t, bool(extB)) // want "bool-compare: use assert\\.False"
+		assert.False(t, bool(extB)) // want "bool-compare: use assert\\.False"
+
+		assert.True(t, bool(extB))  // want "bool-compare: need to simplify the assertion"
+		assert.True(t, bool(extB))  // want "bool-compare: need to simplify the assertion"
+		assert.False(t, bool(extB)) // want "bool-compare: use assert\\.False"
+		assert.False(t, bool(extB)) // want "bool-compare: use assert\\.False"
+
+		assert.False(t, bool(extB)) // want "bool-compare: need to simplify the assertion"
+		assert.False(t, bool(extB)) // want "bool-compare: need to simplify the assertion"
+		assert.True(t, bool(extB))  // want "bool-compare: use assert\\.True"
+		assert.True(t, bool(extB))  // want "bool-compare: use assert\\.True"
+	}
+
+	var extSuperB types.SuperBool
+	{
+		assert.False(t, bool(extSuperB)) // want "bool-compare: use assert\\.False"
+		assert.False(t, bool(extSuperB)) // want "bool-compare: use assert\\.False"
+		assert.Exactly(t, false, extSuperB)
+
+		assert.True(t, bool(extSuperB)) // want "bool-compare: use assert\\.True"
+		assert.True(t, bool(extSuperB)) // want "bool-compare: use assert\\.True"
+		assert.Exactly(t, true, extSuperB)
+
+		assert.True(t, bool(extSuperB)) // want "bool-compare: use assert\\.True"
+		assert.True(t, bool(extSuperB)) // want "bool-compare: use assert\\.True"
+
+		assert.False(t, bool(extSuperB)) // want "bool-compare: use assert\\.False"
+		assert.False(t, bool(extSuperB)) // want "bool-compare: use assert\\.False"
+
+		assert.True(t, bool(extSuperB))  // want "bool-compare: need to simplify the assertion"
+		assert.True(t, bool(extSuperB))  // want "bool-compare: need to simplify the assertion"
+		assert.False(t, bool(extSuperB)) // want "bool-compare: use assert\\.False"
+		assert.False(t, bool(extSuperB)) // want "bool-compare: use assert\\.False"
+
+		assert.False(t, bool(extSuperB)) // want "bool-compare: need to simplify the assertion"
+		assert.False(t, bool(extSuperB)) // want "bool-compare: need to simplify the assertion"
+		assert.True(t, bool(extSuperB))  // want "bool-compare: use assert\\.True"
+		assert.True(t, bool(extSuperB))  // want "bool-compare: use assert\\.True"
+	}
+
+	// Crazy cases:
+	{
+		assert.True(t, bool(types.Bool(extSuperB))) // want "bool-compare: use assert\\.True"
+		assert.True(t, bool(types.SuperBool(b)))    // want "bool-compare: use assert\\.True"
+		assert.True(t, bool(types.SuperBool(b)))    // want "bool-compare: use assert\\.True"
+		assert.False(t, bool(types.SuperBool(b)))   // want "bool-compare: use assert\\.False"
+		assert.True(t, bool(types.SuperBool(b)))    // want "bool-compare: use assert\\.True"
+	}
+}
+
+func TestBoolCompareChecker_CustomTypes_Format(t *testing.T) {
+	var predicate MyBool
+	assert.True(t, bool(predicate))                                   // want "bool-compare: use assert\\.True"
+	assert.True(t, bool(predicate), "msg")                            // want "bool-compare: use assert\\.True"
+	assert.True(t, bool(predicate), "msg with arg %d", 42)            // want "bool-compare: use assert\\.True"
+	assert.True(t, bool(predicate), "msg with args %d %s", 42, "42")  // want "bool-compare: use assert\\.True"
+	assert.Truef(t, bool(predicate), "msg")                           // want "bool-compare: use assert\\.Truef"
+	assert.Truef(t, bool(predicate), "msg with arg %d", 42)           // want "bool-compare: use assert\\.Truef"
+	assert.Truef(t, bool(predicate), "msg with args %d %s", 42, "42") // want "bool-compare: use assert\\.Truef"
+}

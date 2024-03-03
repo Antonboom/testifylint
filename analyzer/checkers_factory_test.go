@@ -137,6 +137,20 @@ func Test_newCheckers(t *testing.T) {
 			}),
 		},
 		{
+			name: "bool-compare ignore custom types",
+			cfg: config.Config{
+				DisableAll:      true,
+				EnabledCheckers: config.KnownCheckersValue{checkers.NewBoolCompare().Name()},
+				BoolCompare: config.BoolCompareConfig{
+					IgnoreCustomTypes: true,
+				},
+			},
+			expRegular: []checkers.RegularChecker{
+				checkers.NewBoolCompare().SetIgnoreCustomTypes(true),
+			},
+			expAdvanced: []checkers.AdvancedChecker{},
+		},
+		{
 			name: "expected-actual pattern defined",
 			cfg: config.Config{
 				DisableAll:      true,

@@ -22,6 +22,18 @@ func TestTestifyLint(t *testing.T) {
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewBoolCompare().Name()},
 		},
 		{
+			dir:   "bool-compare-custom-types",
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewBoolCompare().Name()},
+		},
+		{
+			dir: "bool-compare-ignore-custom-types",
+			flags: map[string]string{
+				"disable-all":                      "true",
+				"enable":                           checkers.NewBoolCompare().Name(),
+				"bool-compare.ignore-custom-types": "true",
+			},
+		},
+		{
 			dir:   "checkers-priority",
 			flags: map[string]string{"enable-all": "true"},
 		},
