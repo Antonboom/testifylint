@@ -137,6 +137,22 @@ import (
 **Enabled by default**: true. <br>
 **Reason**: Code simplification.
 
+Also `bool-compare` supports user defined types like
+
+```go
+type Bool bool
+```
+
+And fixes assertions via casting variable to builtin `bool`:
+
+```go
+var predicate Bool
+❌ assert.Equal(t, false, predicate)
+✅ assert.False(t, bool(predicate))
+```
+
+To turn off this behavior use the `--bool-compare.ignore-custom-types` flag.
+
 ---
 
 ### compares

@@ -3,9 +3,8 @@ package boolcomparecustomtypes_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"bool-compare-custom-types/types"
+	"github.com/stretchr/testify/assert"
 )
 
 type MyBool bool

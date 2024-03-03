@@ -25,11 +25,18 @@ import (
 //
 //	assert.False(t, result)
 //	assert.True(t, result)
-type BoolCompare struct{} //
+type BoolCompare struct {
+	ignoreCustomTypes bool
+}
 
 // NewBoolCompare constructs BoolCompare checker.
-func NewBoolCompare() BoolCompare { return BoolCompare{} }
-func (BoolCompare) Name() string  { return "bool-compare" }
+func NewBoolCompare() *BoolCompare { return new(BoolCompare) }
+func (BoolCompare) Name() string   { return "bool-compare" }
+
+func (checker *BoolCompare) SetIgnoreCustomTypes(v bool) *BoolCompare {
+	checker.ignoreCustomTypes = v
+	return checker
+}
 
 func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	newBoolCast := func(e ast.Expr) ast.Expr {
@@ -38,6 +45,9 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 
 	newUseFnDiagnostic := func(proposed string, survivingArg ast.Expr, replaceStart, replaceEnd token.Pos) *analysis.Diagnostic {
 		if !isBuiltinBool(pass, survivingArg) {
+			if checker.ignoreCustomTypes {
+				return nil
+			}
 			survivingArg = newBoolCast(survivingArg)
 		}
 		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
@@ -59,6 +69,9 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 
 	newNeedSimplifyDiagnostic := func(survivingArg ast.Expr, replaceStart, replaceEnd token.Pos) *analysis.Diagnostic {
 		if !isBuiltinBool(pass, survivingArg) {
+			if checker.ignoreCustomTypes {
+				return nil
+			}
 			survivingArg = newBoolCast(survivingArg)
 		}
 		return newDiagnostic(checker.Name(), call, "need to simplify the assertion",
