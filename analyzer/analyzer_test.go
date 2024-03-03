@@ -39,6 +39,10 @@ func TestTestifyLint(t *testing.T) {
 		},
 		{dir: "ginkgo"},
 		{
+			dir:   "go-require-issue66",
+			flags: map[string]string{"enable-all": "true"},
+		},
+		{
 			dir:   "go-require-issue67",
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewGoRequire().Name()},
 		},
