@@ -157,15 +157,8 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			arg1, ok1 := isComparisonWithTrue(pass, expr, token.EQL)
 			arg2, ok2 := isComparisonWithFalse(pass, expr, token.NEQ)
 
-			if anyCondSatisfaction(pass, isEmptyInterface, arg1, arg2) {
-				return nil
-			}
-			if anyCondSatisfaction(pass, isBoolOverride, arg1, arg2) {
-				return nil
-			}
-
 			survivingArg, ok := anyVal([]bool{ok1, ok2}, arg1, arg2)
-			if ok {
+			if ok && !isEmptyInterface(pass, survivingArg) {
 				return newNeedSimplifyDiagnostic(survivingArg, expr.Pos(), expr.End())
 			}
 		}
@@ -175,15 +168,8 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			arg2, ok2 := isComparisonWithFalse(pass, expr, token.EQL)
 			arg3, ok3 := isNegation(expr)
 
-			if anyCondSatisfaction(pass, isEmptyInterface, arg1, arg2, arg3) {
-				return nil
-			}
-			if anyCondSatisfaction(pass, isBoolOverride, arg1, arg2, arg3) {
-				return nil
-			}
-
 			survivingArg, ok := anyVal([]bool{ok1, ok2, ok3}, arg1, arg2, arg3)
-			if ok {
+			if ok && !isEmptyInterface(pass, survivingArg) {
 				return newUseFalseDiagnostic(survivingArg, expr.Pos(), expr.End())
 			}
 		}
@@ -198,15 +184,8 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			arg1, ok1 := isComparisonWithTrue(pass, expr, token.EQL)
 			arg2, ok2 := isComparisonWithFalse(pass, expr, token.NEQ)
 
-			if anyCondSatisfaction(pass, isEmptyInterface, arg1, arg2) {
-				return nil
-			}
-			if anyCondSatisfaction(pass, isBoolOverride, arg1, arg2) {
-				return nil
-			}
-
 			survivingArg, ok := anyVal([]bool{ok1, ok2}, arg1, arg2)
-			if ok {
+			if ok && !isEmptyInterface(pass, survivingArg) {
 				return newNeedSimplifyDiagnostic(survivingArg, expr.Pos(), expr.End())
 			}
 		}
@@ -216,15 +195,8 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			arg2, ok2 := isComparisonWithFalse(pass, expr, token.EQL)
 			arg3, ok3 := isNegation(expr)
 
-			if anyCondSatisfaction(pass, isEmptyInterface, arg1, arg2, arg3) {
-				return nil
-			}
-			if anyCondSatisfaction(pass, isBoolOverride, arg1, arg2, arg3) {
-				return nil
-			}
-
 			survivingArg, ok := anyVal([]bool{ok1, ok2, ok3}, arg1, arg2, arg3)
-			if ok {
+			if ok && !isEmptyInterface(pass, survivingArg) {
 				return newUseTrueDiagnostic(survivingArg, expr.Pos(), expr.End())
 			}
 		}
