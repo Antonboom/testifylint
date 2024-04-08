@@ -178,7 +178,8 @@ Describe a new checker in [checkers section](./README.md#checkers).
 
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
-**Reason**: The `Error()` method on the `error` interface exists for humans, not code.
+**Reason**: The `Error()` method on the `error` interface exists for humans, not code. <br>
+**Related issues**: [#47](https://github.com/Antonboom/testifylint/issues/47)
 
 ---
 
@@ -311,14 +312,16 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 
 **Autofix**: true. <br>
 **Enabled by default**: maybe? <br>
-**Reason**: More appropriate `testify` API with clearer failure message.
+**Reason**: More appropriate `testify` API with clearer failure message. <br>
+**Related issues**: [#76](https://github.com/Antonboom/testifylint/issues/76)
 
 ---
 
 ### no-fmt-mess
 
 **Autofix**: true. <br>
-**Enabled by default**: maybe?
+**Enabled by default**: maybe? <br>
+**Related issues**: [#33](https://github.com/Antonboom/testifylint/issues/33)
 
 Those who are new to `testify` may be discouraged by the duplicative API:
 
@@ -391,7 +394,8 @@ func (s *Suite) TestSomething() {
 
 **Autofix**: true. <br>
 **Enabled by default**: probably yes. <br>
-**Reason**: Code simplification and consistency.
+**Reason**: Code simplification and consistency. <br>
+**Related issues**: [#35](https://github.com/Antonboom/testifylint/issues/35)
 
 But need to investigate the technical difference and the reasons for the appearance of `s.Run`.
 Also, maybe this case is already covered by [suite-dont-use-pkg](README.md#suite-dont-use-pkg)?
@@ -422,7 +426,8 @@ type BalanceSubscriptionSuite struct {
 
 **Autofix**: true. <br>
 **Enabled by default**: false. <br>
-**Reason**: Just unification of approach.
+**Reason**: Just unification of approach. <br>
+**Related issues**: [#48](https://github.com/Antonboom/testifylint/issues/48)
 
 Also, maybe to check the configurable format of subtest name? Mess example:
 
@@ -470,7 +475,8 @@ assert.ErrorContains(t, err, "user") ❌
 
 **Autofix**: true. <br>
 **Enabled by default**: false. <br>
-**Reason**: Just for your reflection and suggestion.
+**Reason**: Just for your reflection and suggestion. <br>
+**Related issues**: [#75](https://github.com/Antonboom/testifylint/issues/75)
 
 I'm not sure if anyone uses `assert.Zero` – it looks strange and conflicts with `assert.Empty`:
 
