@@ -69,22 +69,24 @@ https://golangci-lint.run/usage/linters/#testifylint
 
 | Name                                                | Enabled By Default | Autofix |
 |-----------------------------------------------------|--------------------|---------|
-| [blank-import](#blank-import)                       | ✅                  | ❌       |
-| [bool-compare](#bool-compare)                       | ✅                  | ✅       |
-| [compares](#compares)                               | ✅                  | ✅       |
-| [empty](#empty)                                     | ✅                  | ✅       |
-| [error-is-as](#error-is-as)                         | ✅                  | ✅       |
-| [error-nil](#error-nil)                             | ✅                  | ✅       |
-| [expected-actual](#expected-actual)                 | ✅                  | ✅       |
-| [float-compare](#float-compare)                     | ✅                  | ❌       |
-| [go-require](#go-require)                           | ✅                  | ❌       |
-| [len](#len)                                         | ✅                  | ✅       |
-| [nil-compare](#nil-compare)                         | ✅                  | ✅       |
-| [require-error](#require-error)                     | ✅                  | ❌       |
-| [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
-| [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
-| [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
-| [useless-assert](#useless-assert)                   | ✅                  | ❌       |
+| [blank-import](#blank-import)                       | ✅                 | ❌      |
+| [bool-compare](#bool-compare)                       | ✅                 | ✅      |
+| [compares](#compares)                               | ✅                 | ✅      |
+| [empty](#empty)                                     | ✅                 | ✅      |
+| [error-is-as](#error-is-as)                         | ✅                 | ✅      |
+| [error-nil](#error-nil)                             | ✅                 | ✅      |
+| [error-nil](#error-nil)                             | ✅                 | ✅      |
+| [expected-actual](#expected-actual)                 | ✅                 | ✅      |
+| [float-compare](#float-compare)                     | ✅                 | ❌      |
+| [go-require](#go-require)                           | ✅                 | ❌      |
+| [len](#len)                                         | ✅                 | ✅      |
+| [negative-positive](#negative-positive)             | ✅                 | ✅      |
+| [nil-compare](#nil-compare)                         | ✅                 | ✅      |
+| [require-error](#require-error)                     | ✅                 | ❌      |
+| [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                 | ✅      |
+| [suite-extra-assert-call](#suite-extra-assert-call) | ✅                 | ✅      |
+| [suite-thelper](#suite-thelper)                     | ❌                 | ✅      |
+| [useless-assert](#useless-assert)                   | ✅                 | ❌      |
 
 > ⚠️ Also look at open for contribution [checkers](CONTRIBUTING.md#open-for-contribution)
 
@@ -124,7 +126,7 @@ import (
      assert.EqualValues(t, false, result)
      assert.Exactly(t, false, result)
      assert.NotEqual(t, true, result)
-     assert.NotEqualValues(t, true, result) 
+     assert.NotEqualValues(t, true, result)
      assert.False(t, !result)
      assert.True(t, result == true)
      // And other variations...
@@ -229,7 +231,7 @@ To turn off this behavior use the `--bool-compare.ignore-custom-types` flag.
 **Reason**: In the first two cases, a common mistake that leads to hiding the incorrect wrapping of sentinel errors.
 In the rest cases – more appropriate `testify` API with clearer failure message.
 
-Also `error-is-as` repeats `go vet`'s [errorsas check](https://cs.opensource.google/go/x/tools/+/master:go/analysis/passes/errorsas/errorsas.go) 
+Also `error-is-as` repeats `go vet`'s [errorsas check](https://cs.opensource.google/go/x/tools/+/master:go/analysis/passes/errorsas/errorsas.go)
 logic, but without autofix.
 
 ---
@@ -305,7 +307,7 @@ It is planned [to change the order of assertion arguments](https://github.com/st
      assert.Exactly(t, 42.42, result)
      assert.True(t, result == 42.42)
      assert.False(t, result != 42.42)
-	
+
 ✅   assert.InEpsilon(t, 42.42, result, 0.0001) // Or assert.InDelta
 ```
 
@@ -323,7 +325,7 @@ This checker is similar to the [floatcompare](https://github.com/golangci/golang
 go func() {
     conn, err = lis.Accept()
     require.NoError(t, err) ❌
-    
+
     if assert.Error(err) {
         assert.FailNow(t, msg) ❌
     }
@@ -337,7 +339,7 @@ go func() {
 This checker is a radically improved analogue of `go vet`'s
 [testinggoroutine](https://cs.opensource.google/go/x/tools/+/master:go/analysis/passes/testinggoroutine/doc.go) check.
 
-The point of the check is that, according to the [documentation](https://pkg.go.dev/testing#T), 
+The point of the check is that, according to the [documentation](https://pkg.go.dev/testing#T),
 functions leading to `t.FailNow` (essentially to `runtime.GoExit`) must only be used in the goroutine that runs the test.
 Otherwise, they will not work as declared, namely, finish the test function.
 
@@ -372,6 +374,24 @@ P.S. Related `testify`'s [thread](https://github.com/stretchr/testify/issues/772
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
+**Reason**: More appropriate `testify` API with clearer failure message.
+
+---
+
+### negative-positive
+
+```go
+❌   assert.Less(t, val, 0)
+     assert.Greater(t, 0, val)
+     assert.Less(t, val, 0)
+     assert.Greater(t, 0, val)
+
+✅   assert.Negative(t, val)
+     assert.Positive(t, val)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
 
 ---
@@ -433,7 +453,7 @@ The best option here is to just use `Nil` / `NotNil` (see [details](https://gith
 **Enabled by default**: true. <br>
 **Reason**: Such "ignoring" of errors leads to further panics, making the test harder to debug.
 
-[testify/require](https://pkg.go.dev/github.com/stretchr/testify@master/require#hdr-Assertions) allows 
+[testify/require](https://pkg.go.dev/github.com/stretchr/testify@master/require#hdr-Assertions) allows
 to stop test execution when a test fails.
 
 By default `require-error` only checks the `*Error*` assertions, presented above. <br>
@@ -484,7 +504,7 @@ But sometimes, on the contrary, people want consistency with `s.Assert()` and `s
 ```go
 func (s *MySuite) TestSomething() {
      // ...
- 
+
      ❌
      s.Require().NoError(err)
      s.Equal(42, value)

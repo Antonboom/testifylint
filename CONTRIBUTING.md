@@ -21,12 +21,12 @@ package checkers
 
 // Zero detects situations like
 //
-//	assert.Equal(t, 0, count) 
+//	assert.Equal(t, 0, count)
 //	assert.Equal(t, nil, userObj)
 //
 // and requires
 //
-//	assert.Zero(t, count) 
+//	assert.Zero(t, count)
 //	assert.Zero(t, userObj)
 type Zero struct{}
 
@@ -41,8 +41,8 @@ The above code is enough to satisfy the `checkers.Checker` interface.
 
 The earlier the checker is in [the registry](internal/checkers/checkers_registry.go), the more priority it is.
 
-For example, the `zero` checker takes precedence over the `expected-actual` or `empty`, 
-because its check is more "narrow" and when you fix the warning from `zero`, 
+For example, the `zero` checker takes precedence over the `expected-actual` or `empty`,
+because its check is more "narrow" and when you fix the warning from `zero`,
 the rest of the checkers will become irrelevant.
 
 ```go
@@ -89,7 +89,7 @@ FAIL
 
 ### 7) Implement the checker
 
-`Zero` is an example of [checkers.RegularChecker](./internal/checkers/checker.go) because it works with "general" 
+`Zero` is an example of [checkers.RegularChecker](./internal/checkers/checker.go) because it works with "general"
 assertion call. For more complex checkers, use the [checkers.AdvancedChecker](./internal/checkers/checker.go) interface.
 
 If the checker turns out to be too “fat”, then you can omit some obviously rare combinations,
@@ -130,7 +130,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [float-compare](#float-compare)
 - [http-const](#http-const)
 - [http-sugar](#http-sugar)
-- [negative-positive](#negative-positive)
 - [no-fmt-mess](#no-fmt-mess)
 - [require-len](#require-len)
 - [suite-run](#suite-run)
@@ -229,7 +228,7 @@ func (s *ServiceIntegrationSuite) TearDownTest() {
      assert.GreaterOrEqual(t, a, 42.42)
      assert.Less(t, a, 42.42)
      assert.LessOrEqual(t, a, 42.42)
-    
+
      assert.True(t, a != 42.42) // assert.False(t, a == 42.42)
      assert.True(t, a > 42.42)  // assert.False(t, a <= 42.42)
      assert.True(t, a >= 42.42) // assert.False(t, a < 42.42)
@@ -283,7 +282,7 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 ```go
 ❌   assert.HTTPStatusCode(t,
          handler, http.MethodGet, "/index", nil, http.StatusOK)
-     assert.HTTPStatusCode(t, 
+     assert.HTTPStatusCode(t,
          handler, http.MethodGet, "/admin", nil, http.StatusNotFound)
      assert.HTTPStatusCode(t,
          handler, http.MethodGet, "/oauth", nil, http.StatusFound)
@@ -300,23 +299,6 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 
 ---
 
-### negative-positive
-
-```go
-❌   assert.Less(t, val, 0)
-     assert.Greater(t, val, 0)
-
-✅   assert.Negative(t, val)
-     assert.Positive(t, val)
-```
-
-**Autofix**: true. <br>
-**Enabled by default**: maybe? <br>
-**Reason**: More appropriate `testify` API with clearer failure message. <br>
-**Related issues**: [#76](https://github.com/Antonboom/testifylint/issues/76)
-
----
-
 ### no-fmt-mess
 
 **Autofix**: true. <br>
@@ -330,7 +312,7 @@ func Equal(t TestingT, expected, actual interface{}, msgAndArgs ...interface{}) 
 func Equalf(t TestingT, expected interface{}, actual interface{}, msg string, args ...interface{}) bool
 ```
 
-The f-functions [were added a long time ago](https://github.com/stretchr/testify/pull/356) to eliminate 
+The f-functions [were added a long time ago](https://github.com/stretchr/testify/pull/356) to eliminate
 `govet` [complain](https://go.googlesource.com/tools/+/refs/heads/release-branch.go1.12/go/analysis/passes/printf/printf.go?pli=1#506).
 
 This introduces some inconsistency into the test code, and the next strategies are seen for the checker:
@@ -343,7 +325,7 @@ This will make it easier to migrate to [v2](https://github.com/stretchr/testify/
 
 But it doesn't look like a "go way" and the `govet` won't be happy.
 
-2) IMHO, a more appropriate option is to disallow the use of `msgAndArgs` in non-f assertions. Look at 
+2) IMHO, a more appropriate option is to disallow the use of `msgAndArgs` in non-f assertions. Look at
 [the comment](https://github.com/stretchr/testify/issues/1089#issuecomment-1695059265).
 
 But there will be no non-stylistic benefits from the checker in this case (depends on the view of API in `v2`).
@@ -357,7 +339,7 @@ assert.Error(t, err, fmt.Sprintf("Profile %s should not be valid", test.profile)
 
 ### require-len
 
-The main idea: if code contains array/slice indexing, 
+The main idea: if code contains array/slice indexing,
 then before that there must be a length constraint through `require`.
 
 ```go
@@ -383,7 +365,7 @@ func (s *Suite) TestSomething() {
         // ...
         assert.Equal(t, "gopher", result)
     })
-	
+
     ✅
     s.Run("subtest1", func() {
         // ...
