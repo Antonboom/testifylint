@@ -33,7 +33,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	FloatCompareTestsGenerator{},
 	GoRequireTestsGenerator{},
 	LenTestsGenerator{},
-	NegativePostiveTestsGenerator{},
+	NegativePositiveTestsGenerator{},
 	NilCompareTestsGenerator{},
 	RequireErrorTestsGenerator{},
 	SuiteDontUsePkg{},
