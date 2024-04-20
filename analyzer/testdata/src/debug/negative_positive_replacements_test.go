@@ -12,10 +12,10 @@ func TestNegativeReplacements(t *testing.T) {
 
 	negativeAssertions := []func(v int) bool{
 		func(v int) bool { return assert.Less(tm, v, 0) },
-		func(v int) bool { return assert.True(tm, v < 0) },
-		func(v int) bool { return assert.False(tm, v >= 0) },
 		func(v int) bool { return assert.Greater(tm, 0, v) },
+		func(v int) bool { return assert.True(tm, v < 0) },
 		func(v int) bool { return assert.True(tm, 0 > v) },
+		func(v int) bool { return assert.False(tm, v >= 0) },
 		func(v int) bool { return assert.False(tm, 0 <= v) },
 	}
 
@@ -36,10 +36,10 @@ func TestPositiveReplacements(t *testing.T) {
 
 	positiveAssertions := []func(v int) bool{
 		func(v int) bool { return assert.Greater(tm, v, 0) },
-		func(v int) bool { return assert.True(tm, v > 0) },
-		func(v int) bool { return assert.False(tm, v <= 0) },
 		func(v int) bool { return assert.Less(tm, 0, v) },
+		func(v int) bool { return assert.True(tm, v > 0) },
 		func(v int) bool { return assert.True(tm, 0 < v) },
+		func(v int) bool { return assert.False(tm, v <= 0) },
 		func(v int) bool { return assert.False(tm, 0 >= v) },
 	}
 
