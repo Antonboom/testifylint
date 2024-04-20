@@ -13,18 +13,6 @@ func TestNegativePositiveChecker(t *testing.T) {
 
 	// Invalid.
 	{
-		assert.Positive(t, a)                                   // want "negative-positive: use assert\\.Positive"
-		assert.Positivef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
-		assert.Positive(t, a)                                   // want "negative-positive: use assert\\.Positive"
-		assert.Positivef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
-		assert.Positive(t, a)                                   // want "negative-positive: use assert\\.Positive"
-		assert.Positivef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
-		assert.Positive(t, a)                                   // want "negative-positive: use assert\\.Positive"
-		assert.Positivef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
-		assert.Positive(t, a)                                   // want "negative-positive: use assert\\.Positive"
-		assert.Positivef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
-		assert.Positive(t, a)                                   // want "negative-positive: use assert\\.Positive"
-		assert.Positivef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
 		assert.Negative(t, a)                                   // want "negative-positive: use assert\\.Negative"
 		assert.Negativef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
 		assert.Negative(t, a)                                   // want "negative-positive: use assert\\.Negative"
@@ -37,14 +25,26 @@ func TestNegativePositiveChecker(t *testing.T) {
 		assert.Negativef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
 		assert.Negative(t, a)                                   // want "negative-positive: use assert\\.Negative"
 		assert.Negativef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
+		assert.Positive(t, a)                                   // want "negative-positive: use assert\\.Positive"
+		assert.Positivef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
+		assert.Positive(t, a)                                   // want "negative-positive: use assert\\.Positive"
+		assert.Positivef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
+		assert.Positive(t, a)                                   // want "negative-positive: use assert\\.Positive"
+		assert.Positivef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
+		assert.Positive(t, a)                                   // want "negative-positive: use assert\\.Positive"
+		assert.Positivef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
+		assert.Positive(t, a)                                   // want "negative-positive: use assert\\.Positive"
+		assert.Positivef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
+		assert.Positive(t, a)                                   // want "negative-positive: use assert\\.Positive"
+		assert.Positivef(t, a, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
 	}
 
 	// Valid.
 	{
-		assert.Positive(t, a)
-		assert.Positivef(t, a, "msg with args %d %s", 42, "42")
 		assert.Negative(t, a)
 		assert.Negativef(t, a, "msg with args %d %s", 42, "42")
+		assert.Positive(t, a)
+		assert.Positivef(t, a, "msg with args %d %s", 42, "42")
 	}
 
 	// Ignored.

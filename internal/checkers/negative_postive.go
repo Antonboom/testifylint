@@ -11,13 +11,6 @@ import (
 
 // NegativePositive detects situations like
 //
-//	assert.Greater(t, a, 0)
-//	assert.Less(t, 0, a)
-//	assert.True(t, a > 0)
-//	assert.True(t, 0 < a)
-//	assert.False(t, a <= 0)
-//	assert.False(t, 0 >= a)
-//
 //	assert.Less(t, a, 0)
 //	assert.Greater(t, 0, a)
 //	assert.True(t, a < 0)
@@ -25,10 +18,17 @@ import (
 //	assert.False(t, a >= 0)
 //	assert.False(t, 0 <= a)
 //
+//	assert.Greater(t, a, 0)
+//	assert.Less(t, 0, a)
+//	assert.True(t, a > 0)
+//	assert.True(t, 0 < a)
+//	assert.False(t, a <= 0)
+//	assert.False(t, 0 >= a)
+//
 // and requires
 //
-//	assert.Positive(t, value)
 //	assert.Negative(t, value)
+//	assert.Positive(t, value)
 type NegativePositive struct{}
 
 // NewNegativePositive constructs NegativePositive checker.

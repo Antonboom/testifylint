@@ -27,23 +27,23 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 	}{
 		CheckerName: CheckerName(checker),
 		InvalidAssertions: []Assertion{
-			{Fn: "Greater", Argsf: "a, 0", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			{Fn: "Less", Argsf: "0, a", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			{Fn: "True", Argsf: "a > 0", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			{Fn: "True", Argsf: "0 < a", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			{Fn: "False", Argsf: "a <= 0", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			{Fn: "False", Argsf: "0 >= a", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-
 			{Fn: "Less", Argsf: "a, 0", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
 			{Fn: "Greater", Argsf: "0, a", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
 			{Fn: "True", Argsf: "a < 0", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
 			{Fn: "True", Argsf: "0 > a", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
 			{Fn: "False", Argsf: "a >= 0", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
 			{Fn: "False", Argsf: "0 <= a", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+
+			{Fn: "Greater", Argsf: "a, 0", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			{Fn: "Less", Argsf: "0, a", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			{Fn: "True", Argsf: "a > 0", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			{Fn: "True", Argsf: "0 < a", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			{Fn: "False", Argsf: "a <= 0", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			{Fn: "False", Argsf: "0 >= a", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
 		},
 		ValidAssertions: []Assertion{
-			{Fn: "Positive", Argsf: "a"},
 			{Fn: "Negative", Argsf: "a"},
+			{Fn: "Positive", Argsf: "a"},
 		},
 		IgnoredAssertions: []Assertion{
 			{Fn: "Equal", Argsf: "-1, a"},

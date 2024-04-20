@@ -381,19 +381,19 @@ P.S. Related `testify`'s [thread](https://github.com/stretchr/testify/issues/772
 ### negative-positive
 
 ```go
-❌   assert.Greater(t, a, 0)
-     assert.Less(t, 0, a)
-     assert.True(t, a > 0)
-     assert.True(t, 0 < a)
-     assert.False(t, a <= 0)
-     assert.False(t, 0 >= a)
-
-     assert.Less(t, a, 0)
+❌   assert.Less(t, a, 0)
      assert.Greater(t, 0, a)
      assert.True(t, a < 0)
      assert.True(t, 0 > a)
      assert.False(t, a >= 0)
      assert.False(t, 0 <= a)
+
+     assert.Greater(t, a, 0)
+     assert.Less(t, 0, a)
+     assert.True(t, a > 0)
+     assert.True(t, 0 < a)
+     assert.False(t, a <= 0)
+     assert.False(t, 0 >= a)
 
 ✅   assert.Negative(t, a)
      assert.Positive(t, a)
