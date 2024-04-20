@@ -49,7 +49,7 @@ $ testifylint ./...
 $ testifylint --fix ./...
 ```
 
-Fixing with `golangci-lint` is currently unavailable due to
+Fixing with `golangci-lint` is currently **unavailable** due to
 [golangci/golangci-lint#1779](https://github.com/golangci/golangci-lint/issues/1779).
 
 ## Configuring
