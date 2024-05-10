@@ -37,7 +37,7 @@ type BlankImport struct{}
 func NewBlankImport() BlankImport { return BlankImport{} }
 func (BlankImport) Name() string  { return "blank-import" }
 
-func (checker BlankImport) Check(pass *analysis.Pass, _ *inspector.Inspector) (diagnostics []analysis.Diagnostic) {
+func (checker BlankImport) Check(pass *analysis.Pass, _ *inspector.Inspector) (diagnostics []analysis.Diagnostic, err error) {
 	for _, file := range pass.Files {
 		for _, imp := range file.Imports {
 			if imp.Name == nil || imp.Name.Name != "_" {
@@ -56,7 +56,7 @@ func (checker BlankImport) Check(pass *analysis.Pass, _ *inspector.Inspector) (d
 			diagnostics = append(diagnostics, *newDiagnostic(checker.Name(), imp, msg, nil))
 		}
 	}
-	return diagnostics
+	return diagnostics, nil
 }
 
 var packagesNotIntendedForBlankImport = map[string]struct{}{

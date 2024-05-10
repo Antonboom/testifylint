@@ -3,7 +3,6 @@ package analyzer
 import (
 	"fmt"
 	"go/ast"
-
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/ast/inspector"
 
@@ -68,7 +67,11 @@ func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
 
 	// Advanced checkers.
 	for _, ch := range tl.advancedCheckers {
-		for _, d := range ch.Check(pass, insp) {
+		diagnostics, err := ch.Check(pass, insp)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %v", ch.Name(), err)
+		}
+		for _, d := range diagnostics {
 			pass.Report(d)
 		}
 	}

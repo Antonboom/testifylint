@@ -49,6 +49,7 @@ func (SuiteTHelperTestsGenerator) GoldenTemplate() Executor {
 }
 
 const suiteTHelperTestTmpl = header + `
+
 package {{ .CheckerName.AsPkgName }}
 
 import (

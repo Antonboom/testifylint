@@ -3,6 +3,7 @@ package checkers
 import (
 	"go/ast"
 	"go/types"
+	"golang.org/x/tools/go/types/typeutil"
 	"strings"
 
 	"golang.org/x/tools/go/analysis"
@@ -49,6 +50,8 @@ type FnMeta struct {
 	NameFTrimmed string
 	// IsFmt is true if function is formatted, e.g. "Equalf".
 	IsFmt bool
+	// Obj represents types.Object of assertion.
+	Obj *types.Func // TODO – конфликт методов объекта и полей выше, сделать просто FullName field?
 }
 
 // NewCallMeta returns meta information about testify assertion call.
@@ -92,6 +95,11 @@ func NewCallMeta(pass *analysis.Pass, ce *ast.CallExpr) *CallMeta {
 		return nil
 	}
 
+	funcObj, ok := typeutil.Callee(pass.TypesInfo, ce).(*types.Func)
+	if !ok {
+		return nil
+	}
+
 	return &CallMeta{
 		Range:        ce,
 		IsPkg:        isPkgCall,
@@ -103,6 +111,7 @@ func NewCallMeta(pass *analysis.Pass, ce *ast.CallExpr) *CallMeta {
 			Name:         fnName,
 			NameFTrimmed: strings.TrimSuffix(fnName, "f"),
 			IsFmt:        strings.HasSuffix(fnName, "f"),
+			Obj:          funcObj,
 		},
 		Args:    trimTArg(pass, ce.Args),
 		ArgsRaw: ce.Args,

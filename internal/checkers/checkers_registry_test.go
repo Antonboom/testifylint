@@ -49,6 +49,7 @@ func TestAll(t *testing.T) {
 		"suite-dont-use-pkg",
 		"useless-assert",
 		"blank-import",
+		"formatter",
 		"go-require",
 		"require-error",
 		"suite-thelper",
@@ -80,6 +81,7 @@ func TestEnabledByDefault(t *testing.T) {
 		"suite-dont-use-pkg",
 		"useless-assert",
 		"blank-import",
+		"formatter",
 		"go-require",
 		"require-error",
 	}

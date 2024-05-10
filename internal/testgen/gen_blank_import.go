@@ -49,6 +49,7 @@ func (BlankImportTestsGenerator) GoldenTemplate() Executor {
 }
 
 const blankImportTestTmpl = header + `
+
 package {{ .CheckerName.AsPkgName }}
 
 import "testing"

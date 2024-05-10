@@ -22,7 +22,7 @@ type SuiteTHelper struct{}
 func NewSuiteTHelper() SuiteTHelper { return SuiteTHelper{} }
 func (SuiteTHelper) Name() string   { return "suite-thelper" }
 
-func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Inspector) (diagnostics []analysis.Diagnostic) {
+func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Inspector) (diagnostics []analysis.Diagnostic, err error) {
 	inspector.Preorder([]ast.Node{(*ast.FuncDecl)(nil)}, func(node ast.Node) {
 		fd := node.(*ast.FuncDecl)
 		if !isSuiteMethod(pass, fd) {
@@ -63,5 +63,5 @@ func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Insp
 		})
 		diagnostics = append(diagnostics, *d)
 	})
-	return diagnostics
+	return diagnostics, nil
 }
