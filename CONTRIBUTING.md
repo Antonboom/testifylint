@@ -95,6 +95,10 @@ assertion call. For more complex checkers, use the [checkers.AdvancedChecker](./
 If the checker turns out to be too “fat”, then you can omit some obviously rare combinations,
 especially if they are covered by other checkers. Usually these are expressions in `assert.True/False`.
 
+Remember that [assert.TestingT](https://pkg.go.dev/github.com/stretchr/testify/assert#TestingT) and
+[require.TestingT](https://pkg.go.dev/github.com/stretchr/testify/require#TestingT) are different interfaces,
+which may be important in some contexts.
+
 ### 8) Improve tests from p.4 if necessary
 
 Pay attention to `Assertion` and `NewAssertionExpander`, but keep your tests as small as possible.

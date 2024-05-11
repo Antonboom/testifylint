@@ -480,8 +480,9 @@ By default `require-error` only checks the `*Error*` assertions, presented above
 You can set `--require-error.fn-pattern` flag to limit the checking to certain calls (but still from the list above).
 For example, `--require-error.fn-pattern="^(Errorf?|NoErrorf?)$"` will only check `Error`, `Errorf`, `NoError`, and `NoErrorf`.
 
-Also, to minimize the number of false positives, `require-error` ignores:
+Also, to minimize false positives, `require-error` ignores:
 - assertion in the `if` condition;
+- assertion in the bool expression;
 - the entire `if-else[-if]` block, if there is an assertion in any `if` condition;
 - the last assertion in the block, if there are no methods/functions calls after it;
 - assertions in an explicit goroutine;
