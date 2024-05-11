@@ -74,6 +74,8 @@ func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Insp
 		_, prevPrevIsIfStmt := stack[len(stack)-3].(*ast.IfStmt)
 		inIfCond := prevIsIfStmt || (prevPrevIsIfStmt && prevIsAssignStmt)
 
+		_, inBoolExpr := stack[len(stack)-2].(*ast.BinaryExpr)
+
 		callExpr := node.(*ast.CallExpr)
 		testifyCall := NewCallMeta(pass, callExpr)
 
@@ -84,6 +86,7 @@ func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Insp
 			parentIf:     findNearestNode[*ast.IfStmt](stack),
 			parentBlock:  findNearestNode[*ast.BlockStmt](stack),
 			inIfCond:     inIfCond,
+			inBoolExpr:   inBoolExpr,
 			inNoErrorSeq: false, // Will be filled in below.
 		}
 
@@ -148,13 +151,8 @@ func needToSkipBasedOnContext(
 	otherCalls []*callMeta,
 	callsByBlock map[*ast.BlockStmt][]*callMeta,
 ) bool {
-	if currCall.inNoErrorSeq {
-		// Skip `assert.NoError` sequence.
-		return true
-	}
-
-	if currCall.inIfCond {
-		// Skip assertions in the "if condition".
+	switch {
+	case currCall.inIfCond, currCall.inBoolExpr, currCall.inNoErrorSeq:
 		return true
 	}
 
@@ -309,6 +307,7 @@ type callMeta struct {
 	parentIf     *ast.IfStmt // The nearest `if`, can be equal with rootIf.
 	parentBlock  *ast.BlockStmt
 	inIfCond     bool // True for code like `if assert.ErrorAs(t, err, &target) {`.
+	inBoolExpr   bool // True for code like `assert.Error(t, err) && assert.ErrorContains(t, err, "value")`
 	inNoErrorSeq bool // True for sequence of `assert.NoError` assertions.
 }
 
