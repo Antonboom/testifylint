@@ -51,7 +51,15 @@ func TestTestifyLint(t *testing.T) {
 		},
 		{dir: "ginkgo"},
 		{
-			dir:   "go-require-issue66",
+			dir: "go-require-ignore-http-handlers",
+			flags: map[string]string{
+				"disable-all":                     "true",
+				"enable":                          checkers.NewGoRequire().Name(),
+				"go-require.ignore-http-handlers": "true",
+			},
+		},
+		{
+			dir:   "go-require-issue66-issue73",
 			flags: map[string]string{"enable-all": "true"},
 		},
 		{

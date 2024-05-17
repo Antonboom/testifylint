@@ -4,10 +4,13 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
+	"go/types"
 	"regexp"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/ast/inspector"
+
+	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
 const requireErrorReport = "for error assertions use require"
@@ -30,10 +33,11 @@ const requireErrorReport = "for error assertions use require"
 //	...
 //
 // RequireError ignores:
-// - assertion in the `if` condition;
+// - assertions in the `if` condition;
+// - assertions in the bool expression;
 // - the entire `if-else[-if]` block, if there is an assertion in any `if` condition;
 // - the last assertion in the block, if there are no methods/functions calls after it;
-// - assertions in an explicit goroutine;
+// - assertions in an explicit goroutine (including `http.Handler`);
 // - assertions in an explicit testing cleanup function or suite teardown methods;
 // - sequence of NoError assertions.
 type RequireError struct {
@@ -111,10 +115,7 @@ func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Insp
 
 	for funcInfo, calls := range callsByFunc {
 		for i, c := range calls {
-			if funcInfo.isTestCleanup {
-				continue
-			}
-			if funcInfo.isGoroutine {
+			if m := funcInfo.meta; m.isTestCleanup || m.isGoroutine || m.isHTTPHandler {
 				continue
 			}
 
@@ -151,8 +152,7 @@ func needToSkipBasedOnContext(
 	otherCalls []*callMeta,
 	callsByBlock map[*ast.BlockStmt][]*callMeta,
 ) bool {
-	switch {
-	case currCall.inIfCond, currCall.inBoolExpr, currCall.inNoErrorSeq:
+	if currCall.inIfCond || currCall.inBoolExpr || currCall.inNoErrorSeq {
 		return true
 	}
 
@@ -204,6 +204,7 @@ func findSurroundingFunc(pass *analysis.Pass, stack []ast.Node) *funcID {
 		var fName string
 		var isTestCleanup bool
 		var isGoroutine bool
+		var isHTTPHandler bool
 
 		switch fd := stack[i].(type) {
 		case *ast.FuncDecl:
@@ -215,13 +216,21 @@ func findSurroundingFunc(pass *analysis.Pass, stack []ast.Node) *funcID {
 				}
 			}
 
+			if mimicHTTPHandler(pass, fd.Type) {
+				isHTTPHandler = true
+			}
+
 		case *ast.FuncLit:
 			fType, fName = fd.Type, "anonymous"
+
+			if mimicHTTPHandler(pass, fType) {
+				isHTTPHandler = true
+			}
 
 			if i >= 2 { //nolint:nestif
 				if ce, ok := stack[i-1].(*ast.CallExpr); ok {
 					if se, ok := ce.Fun.(*ast.SelectorExpr); ok {
-						isTestCleanup = isTestingTPtr(pass, se.X) && se.Sel != nil && (se.Sel.Name == "Cleanup")
+						isTestCleanup = implementsTestingT(pass, se.X) && se.Sel != nil && (se.Sel.Name == "Cleanup")
 					}
 
 					if _, ok := stack[i-2].(*ast.GoStmt); ok {
@@ -235,11 +244,14 @@ func findSurroundingFunc(pass *analysis.Pass, stack []ast.Node) *funcID {
 		}
 
 		return &funcID{
-			pos:           fType.Pos(),
-			posStr:        pass.Fset.Position(fType.Pos()).String(),
-			name:          fName,
-			isTestCleanup: isTestCleanup,
-			isGoroutine:   isGoroutine,
+			pos:    fType.Pos(),
+			posStr: pass.Fset.Position(fType.Pos()).String(),
+			name:   fName,
+			meta: funcMeta{
+				isTestCleanup: isTestCleanup,
+				isGoroutine:   isGoroutine,
+				isHTTPHandler: isHTTPHandler,
+			},
 		}
 	}
 	return nil
@@ -312,11 +324,16 @@ type callMeta struct {
 }
 
 type funcID struct {
-	pos           token.Pos
-	posStr        string
-	name          string
+	pos    token.Pos
+	posStr string
+	name   string
+	meta   funcMeta
+}
+
+type funcMeta struct {
 	isTestCleanup bool
 	isGoroutine   bool
+	isHTTPHandler bool
 }
 
 func (id funcID) String() string {
@@ -334,4 +351,29 @@ func isAfterTestMethod(name string) bool {
 
 func isNoErrorAssertion(fnName string) bool {
 	return (fnName == "NoError") || (fnName == "NoErrorf")
+}
+
+func mimicHTTPHandler(pass *analysis.Pass, fType *ast.FuncType) bool {
+	httpHandlerFuncObj := analysisutil.ObjectOf(pass.Pkg, "net/http", "HandlerFunc")
+	if httpHandlerFuncObj == nil {
+		return false
+	}
+
+	sig, ok := httpHandlerFuncObj.Type().Underlying().(*types.Signature)
+	if !ok {
+		return false
+	}
+
+	if len(fType.Params.List) != sig.Params().Len() {
+		return false
+	}
+
+	for i := 0; i < sig.Params().Len(); i++ {
+		lhs := sig.Params().At(i).Type()
+		rhs := pass.TypesInfo.TypeOf(fType.Params.List[i].Type)
+		if !types.Identical(lhs, rhs) {
+			return false
+		}
+	}
+	return true
 }

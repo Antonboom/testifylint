@@ -167,6 +167,20 @@ func Test_newCheckers(t *testing.T) {
 			expAdvanced: []checkers.AdvancedChecker{},
 		},
 		{
+			name: "go-require ignore http handlers",
+			cfg: config.Config{
+				DisableAll:      true,
+				EnabledCheckers: config.KnownCheckersValue{checkers.NewGoRequire().Name()},
+				GoRequire: config.GoRequireConfig{
+					IgnoreHTTPHandlers: true,
+				},
+			},
+			expRegular: []checkers.RegularChecker{},
+			expAdvanced: []checkers.AdvancedChecker{
+				checkers.NewGoRequire().SetIgnoreHTTPHandlers(true),
+			},
+		},
+		{
 			name: "require-equal fn pattern defined",
 			cfg: config.Config{
 				DisableAll:      true,

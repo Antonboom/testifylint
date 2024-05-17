@@ -74,7 +74,7 @@ func isTestifySuiteMethod(pass *analysis.Pass, fDecl *ast.FuncDecl) bool {
 	}
 
 	rcv := fDecl.Recv.List[0]
-	return implementsTestifySuiteIface(pass, rcv.Type)
+	return implementsTestifySuite(pass, rcv.Type)
 }
 
 func isTestMethod(name string) bool {

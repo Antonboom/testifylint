@@ -114,13 +114,13 @@ func trimTArg(pass *analysis.Pass, args []ast.Expr) []ast.Expr {
 		return args
 	}
 
-	if isTestingTPtr(pass, args[0]) {
+	if implementsTestingT(pass, args[0]) {
 		return args[1:]
 	}
 	return args
 }
 
-func isTestingTPtr(pass *analysis.Pass, arg ast.Expr) bool {
+func implementsTestingT(pass *analysis.Pass, arg ast.Expr) bool {
 	return implementsAssertTestingT(pass, arg) || implementsRequireTestingT(pass, arg)
 }
 

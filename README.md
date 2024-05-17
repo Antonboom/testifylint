@@ -68,6 +68,7 @@ $ testifylint --enable-all --disable=empty,error-is-as ./...
 # Checkers configuration.
 $ testifylint --bool-compare.ignore-custom-types ./...
 $ testifylint --expected-actual.pattern=^wanted$ ./...
+$ testifylint --go-require.ignore-http-handlers ./...
 $ testifylint --require-error.fn-pattern="^(Errorf?|NoErrorf?)$" ./...
 $ testifylint --suite-extra-assert-call.mode=require ./...
 ```
@@ -336,7 +337,7 @@ go func() {
     conn, err = lis.Accept()
     require.NoError(t, err) ❌
 
-    if assert.Error(err) {
+    if assert.Error(err) {     ✅
         assert.FailNow(t, msg) ❌
     }
 }()
@@ -481,11 +482,11 @@ You can set `--require-error.fn-pattern` flag to limit the checking to certain c
 For example, `--require-error.fn-pattern="^(Errorf?|NoErrorf?)$"` will only check `Error`, `Errorf`, `NoError`, and `NoErrorf`.
 
 Also, to minimize false positives, `require-error` ignores:
-- assertion in the `if` condition;
-- assertion in the bool expression;
+- assertions in the `if` condition;
+- assertions in the bool expression;
 - the entire `if-else[-if]` block, if there is an assertion in any `if` condition;
 - the last assertion in the block, if there are no methods/functions calls after it;
-- assertions in an explicit goroutine;
+- assertions in an explicit goroutine (including `http.Handler`);
 - assertions in an explicit testing cleanup function or suite teardown methods;
 - sequence of `NoError` assertions.
 
