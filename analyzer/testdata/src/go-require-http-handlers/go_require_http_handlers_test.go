@@ -90,6 +90,25 @@ func TestServerSuite(t *testing.T) {
 
 func (s *ServerSuite) TestServer() {
 	httptest.NewServer(http.HandlerFunc(s.handler))
+	httptest.NewServer(s)
+}
+
+func (s *ServerSuite) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
+	s.T().Helper()
+
+	file, err := os.Open("some file.json")
+	s.Require().NoError(err) // want "go-require: do not use require in http handlers"
+
+	data, err := io.ReadAll(file)
+	if !s.NoError(err) {
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(data)
+	if !s.NoError(err) {
+		s.FailNow(err.Error()) // want "go-require: do not use s\\.FailNow in http handlers"
+	}
 }
 
 func (s *ServerSuite) handler(w http.ResponseWriter, _ *http.Request) {

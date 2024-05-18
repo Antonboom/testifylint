@@ -1,6 +1,7 @@
 package gorequireignorehttphandlers_test
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 )
 
 func TestServer_Require(t *testing.T) {
@@ -45,4 +47,35 @@ func TestServer_Require(t *testing.T) {
 	}()
 
 	require.Equal(t, http.StatusOK, <-statusCode)
+}
+
+type SomeServerSuite struct {
+	suite.Suite
+}
+
+func TestSomeServerSuite(t *testing.T) {
+	suite.Run(t, &SomeServerSuite{})
+}
+
+func (s *SomeServerSuite) TestServer() {
+	httptest.NewServer(http.HandlerFunc(s.handler))
+	httptest.NewServer(s)
+}
+
+func (s *SomeServerSuite) ServeHTTP(hres http.ResponseWriter, hreq *http.Request) {
+	var req MyRequest
+	err := json.NewDecoder(hreq.Body).Decode(&req)
+	s.Require().NoError(err)
+	s.Equal("42", req.ID)
+}
+
+func (s *SomeServerSuite) handler(hres http.ResponseWriter, hreq *http.Request) {
+	var req MyRequest
+	err := json.NewDecoder(hreq.Body).Decode(&req)
+	s.Require().NoError(err)
+	s.Equal("42", req.ID)
+}
+
+type MyRequest struct {
+	ID string
 }

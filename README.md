@@ -368,7 +368,13 @@ Also a bad solution would be to simply replace all `require` in goroutines with 
 
 The checker is enabled by default, because `testinggoroutine` is enabled by default in `go vet`.
 
-P.S. Related `testify`'s [thread](https://github.com/stretchr/testify/issues/772).
+In addition, the checker warns about `require` in HTTP handlers (functions and methods whose signature matches 
+[http.HandlerFunc](https://pkg.go.dev/net/http#HandlerFunc)), because handlers run in a separate 
+[service goroutine](https://cs.opensource.google/go/go/+/refs/tags/go1.22.3:src/net/http/server.go;l=2782;drc=1d45a7ef560a76318ed59dfdb178cecd58caf948) that 
+services the HTTP connection. Terminating these goroutines can lead to undefined behaviour and difficulty debugging tests.
+You can turn off the check using the `--go-require.ignore-http-handlers` flag.
+
+P.S. Look at [testify's issue](https://github.com/stretchr/testify/issues/772), related to assertions in the goroutines.
 
 ---
 

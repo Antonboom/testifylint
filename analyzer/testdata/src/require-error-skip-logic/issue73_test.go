@@ -73,6 +73,14 @@ func TestSomeServerSuite(t *testing.T) {
 
 func (s *SomeServerSuite) TestServer() {
 	httptest.NewServer(http.HandlerFunc(s.handler))
+	httptest.NewServer(s)
+}
+
+func (s *SomeServerSuite) ServeHTTP(hres http.ResponseWriter, hreq *http.Request) {
+	var req MyRequest
+	err := json.NewDecoder(hreq.Body).Decode(&req)
+	s.Require().NoError(err)
+	s.Equal("42", req.ID)
 }
 
 func (s *SomeServerSuite) handler(hres http.ResponseWriter, hreq *http.Request) {

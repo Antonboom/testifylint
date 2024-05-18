@@ -49,7 +49,16 @@ func TestTestifyLint(t *testing.T) {
 				"expected-actual.pattern": "goldenValue",
 			},
 		},
-		{dir: "ginkgo"},
+		{
+			dir: "ginkgo",
+		},
+		{
+			dir: "go-require-http-handlers",
+			flags: map[string]string{
+				"enable": checkers.NewGoRequire().Name() + "," + // https://github.com/Antonboom/testifylint/issues/66
+					checkers.NewRequireError().Name(), // https://github.com/Antonboom/testifylint/issues/73
+			},
+		},
 		{
 			dir: "go-require-ignore-http-handlers",
 			flags: map[string]string{
@@ -57,10 +66,6 @@ func TestTestifyLint(t *testing.T) {
 				"enable":                          checkers.NewGoRequire().Name(),
 				"go-require.ignore-http-handlers": "true",
 			},
-		},
-		{
-			dir:   "go-require-issue66-issue73",
-			flags: map[string]string{"enable-all": "true"},
 		},
 		{
 			dir:   "go-require-issue67",
