@@ -3,7 +3,6 @@ package checkers
 import (
 	"fmt"
 	"go/ast"
-	"go/types"
 
 	"golang.org/x/tools/go/analysis"
 
@@ -47,7 +46,7 @@ func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analy
 	if !ok {
 		return nil
 	}
-	if se.X == nil || !implementsTestifySuiteIface(pass, se.X) {
+	if se.X == nil || !implementsTestifySuite(pass, se.X) {
 		return nil
 	}
 	if se.Sel == nil || se.Sel.Name != "T" {
@@ -83,14 +82,7 @@ func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analy
 	})
 }
 
-func implementsTestifySuiteIface(pass *analysis.Pass, rcv ast.Expr) bool {
-	suiteIface := analysisutil.ObjectOf(pass.Pkg, testify.SuitePkgPath, "TestingSuite")
-	if suiteIface == nil {
-		return false
-	}
-
-	return types.Implements(
-		pass.TypesInfo.TypeOf(rcv),
-		suiteIface.Type().Underlying().(*types.Interface),
-	)
+func implementsTestifySuite(pass *analysis.Pass, rcv ast.Expr) bool {
+	suiteIfaceObj := analysisutil.ObjectOf(pass.Pkg, testify.SuitePkgPath, "TestingSuite")
+	return (suiteIfaceObj != nil) && implements(pass, rcv, suiteIfaceObj)
 }

@@ -23,10 +23,13 @@ func TestNewDefault(t *testing.T) {
 	if len(cfg.EnabledCheckers) != 0 {
 		t.Fatal()
 	}
-	if cfg.BoolCompare.IgnoreCustomTypes != false {
+	if cfg.BoolCompare.IgnoreCustomTypes {
 		t.Fatal()
 	}
 	if cfg.ExpectedActual.ExpVarPattern.String() != checkers.DefaultExpectedVarPattern.String() {
+		t.Fatal()
+	}
+	if cfg.GoRequire.IgnoreHTTPHandlers {
 		t.Fatal()
 	}
 	if cfg.RequireError.FnPattern.String() != "" {
@@ -153,6 +156,7 @@ func TestBindToFlags(t *testing.T) {
 		"enable":                           "",
 		"bool-compare.ignore-custom-types": "false",
 		"expected-actual.pattern":          cfg.ExpectedActual.ExpVarPattern.String(),
+		"go-require.ignore-http-handlers":  "false",
 		"require-error.fn-pattern":         cfg.RequireError.FnPattern.String(),
 		"suite-extra-assert-call.mode":     "remove",
 	} {
