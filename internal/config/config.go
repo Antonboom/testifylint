@@ -113,7 +113,7 @@ func BindToFlags(cfg *Config, fs *flag.FlagSet) {
 		"to ignore user defined types (over builtin bool)")
 	fs.Var(&cfg.ExpectedActual.ExpVarPattern, "expected-actual.pattern", "regexp for expected variable name")
 	fs.BoolVar(&cfg.GoRequire.IgnoreHTTPHandlers, "go-require.ignore-http-handlers", false,
-		"to ignore HTTP handlers (http.HandlerFunc)")
+		"to ignore HTTP handlers (like http.HandlerFunc)")
 	fs.Var(&cfg.RequireError.FnPattern, "require-error.fn-pattern", "regexp for error assertions that should only be analyzed")
 	fs.Var(NewEnumValue(suiteExtraAssertCallModeAsString, &cfg.SuiteExtraAssertCall.Mode),
 		"suite-extra-assert-call.mode", "to require or remove extra Assert() call")
