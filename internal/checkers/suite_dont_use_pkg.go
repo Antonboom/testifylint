@@ -5,9 +5,6 @@ import (
 	"go/ast"
 
 	"golang.org/x/tools/go/analysis"
-
-	"github.com/Antonboom/testifylint/internal/analysisutil"
-	"github.com/Antonboom/testifylint/internal/testify"
 )
 
 // SuiteDontUsePkg detects situation like
@@ -80,9 +77,4 @@ func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analy
 			},
 		},
 	})
-}
-
-func implementsTestifySuite(pass *analysis.Pass, rcv ast.Expr) bool {
-	suiteIfaceObj := analysisutil.ObjectOf(pass.Pkg, testify.SuitePkgPath, "TestingSuite")
-	return (suiteIfaceObj != nil) && implements(pass, rcv, suiteIfaceObj)
 }

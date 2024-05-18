@@ -169,32 +169,3 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 	}
 	return nil
 }
-
-func isStrictComparisonWith(
-	pass *analysis.Pass,
-	e ast.Expr,
-	lhs predicate,
-	op token.Token,
-	rhs predicate,
-) (ast.Expr, ast.Expr, bool) {
-	be, ok := e.(*ast.BinaryExpr)
-	if !ok {
-		return nil, nil, false
-	}
-
-	if be.Op == op && lhs(pass, be.X) && rhs(pass, be.Y) {
-		return be.X, be.Y, true
-	}
-	return nil, nil, false
-}
-
-// p transforms simple is-function in a predicate.
-func p(fn func(e ast.Expr) bool) predicate {
-	return func(_ *analysis.Pass, e ast.Expr) bool {
-		return fn(e)
-	}
-}
-
-func isNotZero(e ast.Expr) bool {
-	return !isZero(e)
-}

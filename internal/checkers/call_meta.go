@@ -119,25 +119,3 @@ func trimTArg(pass *analysis.Pass, args []ast.Expr) []ast.Expr {
 	}
 	return args
 }
-
-func implementsTestingT(pass *analysis.Pass, arg ast.Expr) bool {
-	return implementsAssertTestingT(pass, arg) || implementsRequireTestingT(pass, arg)
-}
-
-func implementsAssertTestingT(pass *analysis.Pass, e ast.Expr) bool {
-	assertTestingTObj := analysisutil.ObjectOf(pass.Pkg, testify.AssertPkgPath, "TestingT")
-	return (assertTestingTObj != nil) && implements(pass, e, assertTestingTObj)
-}
-
-func implementsRequireTestingT(pass *analysis.Pass, e ast.Expr) bool {
-	requireTestingTObj := analysisutil.ObjectOf(pass.Pkg, testify.RequirePkgPath, "TestingT")
-	return (requireTestingTObj != nil) && implements(pass, e, requireTestingTObj)
-}
-
-func implements(pass *analysis.Pass, e ast.Expr, ifaceObj types.Object) bool {
-	t := pass.TypesInfo.TypeOf(e)
-	if t == nil {
-		return false
-	}
-	return types.Implements(t, ifaceObj.Type().Underlying().(*types.Interface))
-}
