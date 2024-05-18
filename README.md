@@ -86,7 +86,6 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [empty](#empty)                                     | ✅                 | ✅      |
 | [error-is-as](#error-is-as)                         | ✅                 | ✅      |
 | [error-nil](#error-nil)                             | ✅                 | ✅      |
-| [error-nil](#error-nil)                             | ✅                 | ✅      |
 | [expected-actual](#expected-actual)                 | ✅                 | ✅      |
 | [float-compare](#float-compare)                     | ✅                 | ❌      |
 | [go-require](#go-require)                           | ✅                 | ❌      |
