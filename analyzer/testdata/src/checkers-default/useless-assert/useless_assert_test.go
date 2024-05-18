@@ -13,6 +13,7 @@ func TestUselessAssertChecker(t *testing.T) {
 	var err error
 	var elapsed time.Time
 	var str string
+	var num int
 	var tc testCase
 
 	// Invalid.
@@ -75,6 +76,18 @@ func TestUselessAssertChecker(t *testing.T) {
 		assert.ErrorIsf(t, err, err, "msg with args %d %s", 42, "42")                                     // want "useless-assert: asserting of the same variable"
 		assert.Exactly(t, value, value)                                                                   // want "useless-assert: asserting of the same variable"
 		assert.Exactlyf(t, value, value, "msg with args %d %s", 42, "42")                                 // want "useless-assert: asserting of the same variable"
+		assert.False(t, num != num)                                                                       // want "useless-assert: asserting of the same variable"
+		assert.Falsef(t, num != num, "msg with args %d %s", 42, "42")                                     // want "useless-assert: asserting of the same variable"
+		assert.False(t, num < num)                                                                        // want "useless-assert: asserting of the same variable"
+		assert.Falsef(t, num < num, "msg with args %d %s", 42, "42")                                      // want "useless-assert: asserting of the same variable"
+		assert.False(t, num <= num)                                                                       // want "useless-assert: asserting of the same variable"
+		assert.Falsef(t, num <= num, "msg with args %d %s", 42, "42")                                     // want "useless-assert: asserting of the same variable"
+		assert.False(t, num == num)                                                                       // want "useless-assert: asserting of the same variable"
+		assert.Falsef(t, num == num, "msg with args %d %s", 42, "42")                                     // want "useless-assert: asserting of the same variable"
+		assert.False(t, num > num)                                                                        // want "useless-assert: asserting of the same variable"
+		assert.Falsef(t, num > num, "msg with args %d %s", 42, "42")                                      // want "useless-assert: asserting of the same variable"
+		assert.False(t, num >= num)                                                                       // want "useless-assert: asserting of the same variable"
+		assert.Falsef(t, num >= num, "msg with args %d %s", 42, "42")                                     // want "useless-assert: asserting of the same variable"
 		assert.Greater(t, value, value)                                                                   // want "useless-assert: asserting of the same variable"
 		assert.Greaterf(t, value, value, "msg with args %d %s", 42, "42")                                 // want "useless-assert: asserting of the same variable"
 		assert.GreaterOrEqual(t, value, value)                                                            // want "useless-assert: asserting of the same variable"
@@ -117,6 +130,18 @@ func TestUselessAssertChecker(t *testing.T) {
 		assert.Samef(t, value, value, "msg with args %d %s", 42, "42")                                    // want "useless-assert: asserting of the same variable"
 		assert.Subset(t, value, value)                                                                    // want "useless-assert: asserting of the same variable"
 		assert.Subsetf(t, value, value, "msg with args %d %s", 42, "42")                                  // want "useless-assert: asserting of the same variable"
+		assert.True(t, num != num)                                                                        // want "useless-assert: asserting of the same variable"
+		assert.Truef(t, num != num, "msg with args %d %s", 42, "42")                                      // want "useless-assert: asserting of the same variable"
+		assert.True(t, num < num)                                                                         // want "useless-assert: asserting of the same variable"
+		assert.Truef(t, num < num, "msg with args %d %s", 42, "42")                                       // want "useless-assert: asserting of the same variable"
+		assert.True(t, num <= num)                                                                        // want "useless-assert: asserting of the same variable"
+		assert.Truef(t, num <= num, "msg with args %d %s", 42, "42")                                      // want "useless-assert: asserting of the same variable"
+		assert.True(t, num == num)                                                                        // want "useless-assert: asserting of the same variable"
+		assert.Truef(t, num == num, "msg with args %d %s", 42, "42")                                      // want "useless-assert: asserting of the same variable"
+		assert.True(t, num > num)                                                                         // want "useless-assert: asserting of the same variable"
+		assert.Truef(t, num > num, "msg with args %d %s", 42, "42")                                       // want "useless-assert: asserting of the same variable"
+		assert.True(t, num >= num)                                                                        // want "useless-assert: asserting of the same variable"
+		assert.Truef(t, num >= num, "msg with args %d %s", 42, "42")                                      // want "useless-assert: asserting of the same variable"
 		assert.WithinDuration(t, elapsed, elapsed, time.Second)                                           // want "useless-assert: asserting of the same variable"
 		assert.WithinDurationf(t, elapsed, elapsed, time.Second, "msg with args %d %s", 42, "42")         // want "useless-assert: asserting of the same variable"
 		assert.YAMLEq(t, str, str)                                                                        // want "useless-assert: asserting of the same variable"
