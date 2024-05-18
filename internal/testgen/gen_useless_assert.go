@@ -73,7 +73,10 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 
 	sort.Slice(twoSideAssertions, func(i, j int) bool {
 		lhs, rhs := twoSideAssertions[i], twoSideAssertions[j]
-		return lhs.Fn < rhs.Fn && lhs.Argsf < rhs.Argsf
+		if lhs.Fn < rhs.Fn {
+			return true
+		}
+		return lhs.Argsf < rhs.Argsf
 	})
 
 	return struct {
