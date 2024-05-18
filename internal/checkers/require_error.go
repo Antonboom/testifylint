@@ -1,16 +1,11 @@
 package checkers
 
 import (
-	"fmt"
 	"go/ast"
-	"go/token"
-	"go/types"
 	"regexp"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/ast/inspector"
-
-	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
 const requireErrorReport = "for error assertions use require"
@@ -198,65 +193,6 @@ func needToSkipBasedOnContext(
 	return isLastCallInBlock && noCallsAfter
 }
 
-func findSurroundingFunc(pass *analysis.Pass, stack []ast.Node) *funcID {
-	for i := len(stack) - 2; i >= 0; i-- {
-		var fType *ast.FuncType
-		var fName string
-		var isTestCleanup bool
-		var isGoroutine bool
-		var isHTTPHandler bool
-
-		switch fd := stack[i].(type) {
-		case *ast.FuncDecl:
-			fType, fName = fd.Type, fd.Name.Name
-
-			if isTestifySuiteMethod(pass, fd) {
-				if ident := fd.Name; ident != nil && isAfterTestMethod(ident.Name) {
-					isTestCleanup = true
-				}
-			}
-
-			if mimicHTTPHandler(pass, fd.Type) {
-				isHTTPHandler = true
-			}
-
-		case *ast.FuncLit:
-			fType, fName = fd.Type, "anonymous"
-
-			if mimicHTTPHandler(pass, fType) {
-				isHTTPHandler = true
-			}
-
-			if i >= 2 { //nolint:nestif
-				if ce, ok := stack[i-1].(*ast.CallExpr); ok {
-					if se, ok := ce.Fun.(*ast.SelectorExpr); ok {
-						isTestCleanup = implementsTestingT(pass, se.X) && se.Sel != nil && (se.Sel.Name == "Cleanup")
-					}
-
-					if _, ok := stack[i-2].(*ast.GoStmt); ok {
-						isGoroutine = true
-					}
-				}
-			}
-
-		default:
-			continue
-		}
-
-		return &funcID{
-			pos:    fType.Pos(),
-			posStr: pass.Fset.Position(fType.Pos()).String(),
-			name:   fName,
-			meta: funcMeta{
-				isTestCleanup: isTestCleanup,
-				isGoroutine:   isGoroutine,
-				isHTTPHandler: isHTTPHandler,
-			},
-		}
-	}
-	return nil
-}
-
 func findRootIf(stack []ast.Node) *ast.IfStmt {
 	nearestIf, i := findNearestNodeWithIdx[*ast.IfStmt](stack)
 	for ; i > 0; i-- {
@@ -268,20 +204,6 @@ func findRootIf(stack []ast.Node) *ast.IfStmt {
 		}
 	}
 	return nearestIf
-}
-
-func findNearestNode[T ast.Node](stack []ast.Node) (v T) {
-	v, _ = findNearestNodeWithIdx[T](stack)
-	return
-}
-
-func findNearestNodeWithIdx[T ast.Node](stack []ast.Node) (v T, index int) {
-	for i := len(stack) - 2; i >= 0; i-- {
-		if n, ok := stack[i].(T); ok {
-			return n, i
-		}
-	}
-	return
 }
 
 func markCallsInNoErrorSequence(callsByBlock map[*ast.BlockStmt][]*callMeta) {
@@ -323,57 +245,6 @@ type callMeta struct {
 	inNoErrorSeq bool // True for sequence of `assert.NoError` assertions.
 }
 
-type funcID struct {
-	pos    token.Pos
-	posStr string
-	name   string
-	meta   funcMeta
-}
-
-type funcMeta struct {
-	isTestCleanup bool
-	isGoroutine   bool
-	isHTTPHandler bool
-}
-
-func (id funcID) String() string {
-	return fmt.Sprintf("%s at %s", id.name, id.posStr)
-}
-
-func isAfterTestMethod(name string) bool {
-	// https://github.com/stretchr/testify/blob/master/suite/interfaces.go
-	switch name {
-	case "TearDownSuite", "TearDownTest", "AfterTest", "HandleStats", "TearDownSubTest":
-		return true
-	}
-	return false
-}
-
 func isNoErrorAssertion(fnName string) bool {
 	return (fnName == "NoError") || (fnName == "NoErrorf")
-}
-
-func mimicHTTPHandler(pass *analysis.Pass, fType *ast.FuncType) bool {
-	httpHandlerFuncObj := analysisutil.ObjectOf(pass.Pkg, "net/http", "HandlerFunc")
-	if httpHandlerFuncObj == nil {
-		return false
-	}
-
-	sig, ok := httpHandlerFuncObj.Type().Underlying().(*types.Signature)
-	if !ok {
-		return false
-	}
-
-	if len(fType.Params.List) != sig.Params().Len() {
-		return false
-	}
-
-	for i := 0; i < sig.Params().Len(); i++ {
-		lhs := sig.Params().At(i).Type()
-		rhs := pass.TypesInfo.TypeOf(fType.Params.List[i].Type)
-		if !types.Identical(lhs, rhs) {
-			return false
-		}
-	}
-	return true
 }
