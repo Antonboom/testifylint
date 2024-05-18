@@ -33,7 +33,7 @@ func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Insp
 			return
 		}
 
-		if !containsAssertions(pass, fd) {
+		if !fnContainsAssertions(pass, fd) {
 			return
 		}
 
@@ -64,31 +64,4 @@ func (checker SuiteTHelper) Check(pass *analysis.Pass, inspector *inspector.Insp
 		diagnostics = append(diagnostics, *d)
 	})
 	return diagnostics
-}
-
-func containsAssertions(pass *analysis.Pass, fn *ast.FuncDecl) bool {
-	if fn.Body == nil {
-		return false
-	}
-
-	for _, s := range fn.Body.List {
-		if isAssertionStmt(pass, s) {
-			return true
-		}
-	}
-	return false
-}
-
-func isAssertionStmt(pass *analysis.Pass, stmt ast.Stmt) bool {
-	expr, ok := stmt.(*ast.ExprStmt)
-	if !ok {
-		return false
-	}
-
-	ce, ok := expr.X.(*ast.CallExpr)
-	if !ok {
-		return false
-	}
-
-	return NewCallMeta(pass, ce) != nil
 }

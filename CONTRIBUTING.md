@@ -99,6 +99,8 @@ Remember that [assert.TestingT](https://pkg.go.dev/github.com/stretchr/testify/a
 [require.TestingT](https://pkg.go.dev/github.com/stretchr/testify/require#TestingT) are different interfaces,
 which may be important in some contexts.
 
+Also, pay attention to `internal/checkers/helpers_*.go` files. Try to reuse existing code as much as possible.
+
 ### 8) Improve tests from p.4 if necessary
 
 Pay attention to `Assertion` and `NewAssertionExpander`, but keep your tests as small as possible.
