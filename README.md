@@ -584,6 +584,8 @@ Currently the checker guards against assertion of the same variable:
 ❌   assert.Equal(t, tt.value, tt.value)
      assert.ElementsMatch(t, users, users)
      // And so on...
+     assert.True(t, num > num)
+     assert.False(t, num == num)
 ```
 
 More complex cases are [open for contribution](CONTRIBUTING.md#useless-assert).

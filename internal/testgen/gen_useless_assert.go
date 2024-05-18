@@ -56,8 +56,24 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 		twoSideAssertions = append(twoSideAssertions,
 			Assertion{Fn: fn, Argsf: args, ReportMsgf: sameVarReport})
 	}
+
+	for _, args := range []string{
+		"num > num",
+		"num < num",
+		"num >= num",
+		"num <= num",
+		"num == num",
+		"num != num",
+	} {
+		for _, fn := range []string{"True", "False"} {
+			twoSideAssertions = append(twoSideAssertions,
+				Assertion{Fn: fn, Argsf: args, ReportMsgf: sameVarReport})
+		}
+	}
+
 	sort.Slice(twoSideAssertions, func(i, j int) bool {
-		return twoSideAssertions[i].Fn < twoSideAssertions[j].Fn
+		lhs, rhs := twoSideAssertions[i], twoSideAssertions[j]
+		return lhs.Fn < rhs.Fn && lhs.Argsf < rhs.Argsf
 	})
 
 	return struct {
@@ -112,6 +128,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var err error
 	var elapsed time.Time
 	var str string
+	var num int
 	var tc testCase
 
 	// Invalid.
