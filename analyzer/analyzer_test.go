@@ -42,6 +42,10 @@ func TestTestifyLint(t *testing.T) {
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewErrorIsAs().Name()},
 		},
 		{
+			dir:   "error-nil-issue95",
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewErrorNil().Name()},
+		},
+		{
 			dir: "expected-var-custom-pattern",
 			flags: map[string]string{
 				"disable-all":             "true",
