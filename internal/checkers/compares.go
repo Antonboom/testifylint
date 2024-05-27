@@ -3,7 +3,6 @@ package checkers
 import (
 	"go/ast"
 	"go/token"
-	"go/types"
 
 	"golang.org/x/tools/go/analysis"
 )
@@ -46,39 +45,39 @@ func (checker Compares) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 		return nil
 	}
 
-	_, ptrComparison := pass.TypesInfo.TypeOf(be.X).(*types.Pointer)
-
 	var tokenToProposedFn map[token.Token]string
 
 	switch call.Fn.NameFTrimmed {
 	case "True":
-		if ptrComparison {
-			tokenToProposedFn = tokenToProposedFnInsteadOfTrueForPtr
-		} else {
-			tokenToProposedFn = tokenToProposedFnInsteadOfTrue
-		}
-
+		tokenToProposedFn = tokenToProposedFnInsteadOfTrue
 	case "False":
-		if ptrComparison {
-			tokenToProposedFn = tokenToProposedFnInsteadOfFalseForPtr
-		} else {
-			tokenToProposedFn = tokenToProposedFnInsteadOfFalse
-		}
+		tokenToProposedFn = tokenToProposedFnInsteadOfFalse
 	default:
 		return nil
 	}
 
-	if proposedFn, ok := tokenToProposedFn[be.Op]; ok {
-		a, b := be.X, be.Y
-		return newUseFunctionDiagnostic(checker.Name(), call, proposedFn,
-			newSuggestedFuncReplacement(call, proposedFn, analysis.TextEdit{
-				Pos:     be.X.Pos(),
-				End:     be.Y.End(),
-				NewText: formatAsCallArgs(pass, a, b),
-			}),
-		)
+	proposedFn, ok := tokenToProposedFn[be.Op]
+	if !ok {
+		return nil
 	}
-	return nil
+
+	if isPointer(pass, be.X) && isPointer(pass, be.Y) {
+		switch proposedFn {
+		case "Equal":
+			proposedFn = "Same"
+		case "NotEqual":
+			proposedFn = "NotSame"
+		}
+	}
+
+	a, b := be.X, be.Y
+	return newUseFunctionDiagnostic(checker.Name(), call, proposedFn,
+		newSuggestedFuncReplacement(call, proposedFn, analysis.TextEdit{
+			Pos:     be.X.Pos(),
+			End:     be.Y.End(),
+			NewText: formatAsCallArgs(pass, a, b),
+		}),
+	)
 }
 
 var tokenToProposedFnInsteadOfTrue = map[token.Token]string{
@@ -97,14 +96,4 @@ var tokenToProposedFnInsteadOfFalse = map[token.Token]string{
 	token.GEQ: "Less",
 	token.LSS: "GreaterOrEqual",
 	token.LEQ: "Greater",
-}
-
-var tokenToProposedFnInsteadOfTrueForPtr = map[token.Token]string{
-	token.EQL: "Same",
-	token.NEQ: "NotSame",
-}
-
-var tokenToProposedFnInsteadOfFalseForPtr = map[token.Token]string{
-	token.EQL: "NotSame",
-	token.NEQ: "Same",
 }
