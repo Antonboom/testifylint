@@ -3,6 +3,7 @@ package checkers
 import (
 	"go/ast"
 	"go/token"
+	"go/types"
 
 	"golang.org/x/tools/go/analysis"
 )
@@ -26,6 +27,9 @@ import (
 //	assert.GreaterOrEqual(t, a, b)
 //	assert.Less(t, a, b)
 //	assert.LessOrEqual(t, a, b)
+//
+// If `a` and `b` are pointers then `assert.Same`/`NotSame` is required instead,
+// due to the inappropriate recursive nature of `assert.Equal` (based on `reflect.DeepEqual`).
 type Compares struct{}
 
 // NewCompares constructs Compares checker.
@@ -42,13 +46,24 @@ func (checker Compares) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 		return nil
 	}
 
+	_, ptrComparison := pass.TypesInfo.TypeOf(be.X).(*types.Pointer)
+
 	var tokenToProposedFn map[token.Token]string
 
 	switch call.Fn.NameFTrimmed {
 	case "True":
-		tokenToProposedFn = tokenToProposedFnInsteadOfTrue
+		if ptrComparison {
+			tokenToProposedFn = tokenToProposedFnInsteadOfTrueForPtr
+		} else {
+			tokenToProposedFn = tokenToProposedFnInsteadOfTrue
+		}
+
 	case "False":
-		tokenToProposedFn = tokenToProposedFnInsteadOfFalse
+		if ptrComparison {
+			tokenToProposedFn = tokenToProposedFnInsteadOfFalseForPtr
+		} else {
+			tokenToProposedFn = tokenToProposedFnInsteadOfFalse
+		}
 	default:
 		return nil
 	}
@@ -82,4 +97,14 @@ var tokenToProposedFnInsteadOfFalse = map[token.Token]string{
 	token.GEQ: "Less",
 	token.LSS: "GreaterOrEqual",
 	token.LEQ: "Greater",
+}
+
+var tokenToProposedFnInsteadOfTrueForPtr = map[token.Token]string{
+	token.EQL: "Same",
+	token.NEQ: "NotSame",
+}
+
+var tokenToProposedFnInsteadOfFalseForPtr = map[token.Token]string{
+	token.EQL: "NotSame",
+	token.NEQ: "Same",
 }
