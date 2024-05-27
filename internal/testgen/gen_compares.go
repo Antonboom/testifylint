@@ -51,6 +51,11 @@ func (g ComparesTestsGenerator) TemplateData() any {
 			{Fn: "False", Argsf: "a >= b", ReportMsgf: report, ProposedFn: "Less", ProposedArgsf: "a, b"},
 			{Fn: "False", Argsf: "a < b", ReportMsgf: report, ProposedFn: "GreaterOrEqual", ProposedArgsf: "a, b"},
 			{Fn: "False", Argsf: "a <= b", ReportMsgf: report, ProposedFn: "Greater", ProposedArgsf: "a, b"},
+
+			{Fn: "True", Argsf: "ptrA == ptrB", ReportMsgf: report, ProposedFn: "Same", ProposedArgsf: "ptrA, ptrB"},
+			{Fn: "True", Argsf: "ptrA != ptrB", ReportMsgf: report, ProposedFn: "NotSame", ProposedArgsf: "ptrA, ptrB"},
+			{Fn: "False", Argsf: "ptrA == ptrB", ReportMsgf: report, ProposedFn: "NotSame", ProposedArgsf: "ptrA, ptrB"},
+			{Fn: "False", Argsf: "ptrA != ptrB", ReportMsgf: report, ProposedFn: "Same", ProposedArgsf: "ptrA, ptrB"},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "Equal", Argsf: "a, b"},
@@ -59,6 +64,9 @@ func (g ComparesTestsGenerator) TemplateData() any {
 			{Fn: "GreaterOrEqual", Argsf: "a, b"},
 			{Fn: "Less", Argsf: "a, b"},
 			{Fn: "LessOrEqual", Argsf: "a, b"},
+
+			{Fn: "Same", Argsf: "ptrA, ptrB"},
+			{Fn: "NotSame", Argsf: "ptrA, ptrB"},
 		},
 		IgnoredAssertions: ignored,
 	}
@@ -89,6 +97,7 @@ import (
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var a, b int
 	var c, d bool
+	var ptrA, ptrB *int
 
 	// Invalid.
 	{

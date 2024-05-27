@@ -191,6 +191,10 @@ To turn off this behavior use the `--bool-compare.ignore-custom-types` flag.
 **Enabled by default**: true. <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
 
+If `a` and `b` are pointers then `assert.Same`/`NotSame` is required instead,
+due to the inappropriate recursive nature of `assert.Equal` (based on
+[reflect.DeepEqual](https://pkg.go.dev/reflect#DeepEqual)).
+
 ---
 
 ### empty
