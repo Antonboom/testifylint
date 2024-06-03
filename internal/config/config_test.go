@@ -29,6 +29,12 @@ func TestNewDefault(t *testing.T) {
 	if cfg.ExpectedActual.ExpVarPattern.String() != checkers.DefaultExpectedVarPattern.String() {
 		t.Fatal()
 	}
+	if !cfg.Formatter.CheckFormatString {
+		t.Fatal()
+	}
+	if cfg.Formatter.RequireFFuncs {
+		t.Fatal()
+	}
 	if cfg.GoRequire.IgnoreHTTPHandlers {
 		t.Fatal()
 	}
@@ -156,6 +162,8 @@ func TestBindToFlags(t *testing.T) {
 		"enable":                           "",
 		"bool-compare.ignore-custom-types": "false",
 		"expected-actual.pattern":          cfg.ExpectedActual.ExpVarPattern.String(),
+		"formatter.check-format-string":    "true",
+		"formatter.require-f-funcs":        "false",
 		"go-require.ignore-http-handlers":  "false",
 		"require-error.fn-pattern":         cfg.RequireError.FnPattern.String(),
 		"suite-extra-assert-call.mode":     "remove",

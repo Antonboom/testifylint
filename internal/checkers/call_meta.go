@@ -3,10 +3,10 @@ package checkers
 import (
 	"go/ast"
 	"go/types"
-	"golang.org/x/tools/go/types/typeutil"
 	"strings"
 
 	"golang.org/x/tools/go/analysis"
+	"golang.org/x/tools/go/types/typeutil"
 
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 	"github.com/Antonboom/testifylint/internal/testify"
@@ -16,6 +16,8 @@ import (
 //
 //	assert.Equal(t, 42, result, "helpful comment")
 type CallMeta struct {
+	// Call stores the original call expression.
+	Call *ast.CallExpr
 	// Range contains start and end position of assertion call.
 	analysis.Range
 	// IsPkg true if this is package (not object) call.
@@ -50,8 +52,8 @@ type FnMeta struct {
 	NameFTrimmed string
 	// IsFmt is true if function is formatted, e.g. "Equalf".
 	IsFmt bool
-	// Obj represents types.Object of assertion.
-	Obj *types.Func // TODO – конфликт методов объекта и полей выше, сделать просто FullName field?
+	// Signature represents assertion signature.
+	Signature *types.Signature
 }
 
 // NewCallMeta returns meta information about testify assertion call.
@@ -69,16 +71,16 @@ func NewCallMeta(pass *analysis.Pass, ce *ast.CallExpr) *CallMeta {
 		// s.Assert().Equal -> method of *assert.Assertions  -> package assert ("vendor/github.com/stretchr/testify/assert")
 		// s.Equal          -> method of *assert.Assertions  -> package assert ("vendor/github.com/stretchr/testify/assert")
 		// reqObj.Falsef    -> method of *require.Assertions -> package require ("vendor/github.com/stretchr/testify/require")
-		if sel, ok := pass.TypesInfo.Selections[se]; ok {
+		if sel, isSel := pass.TypesInfo.Selections[se]; isSel {
 			return sel.Obj().Pkg(), false
 		}
 
 		// Examples:
 		// assert.False      -> assert  -> package assert ("vendor/github.com/stretchr/testify/assert")
 		// require.NotEqualf -> require -> package require ("vendor/github.com/stretchr/testify/require")
-		if id, ok := se.X.(*ast.Ident); ok {
+		if id, isIdent := se.X.(*ast.Ident); isIdent {
 			if selObj := pass.TypesInfo.ObjectOf(id); selObj != nil {
-				if pkg, ok := selObj.(*types.PkgName); ok {
+				if pkg, isPkgName := selObj.(*types.PkgName); isPkgName {
 					return pkg.Imported(), true
 				}
 			}
@@ -101,6 +103,7 @@ func NewCallMeta(pass *analysis.Pass, ce *ast.CallExpr) *CallMeta {
 	}
 
 	return &CallMeta{
+		Call:         ce,
 		Range:        ce,
 		IsPkg:        isPkgCall,
 		IsAssert:     isAssert,
@@ -111,7 +114,7 @@ func NewCallMeta(pass *analysis.Pass, ce *ast.CallExpr) *CallMeta {
 			Name:         fnName,
 			NameFTrimmed: strings.TrimSuffix(fnName, "f"),
 			IsFmt:        strings.HasSuffix(fnName, "f"),
-			Obj:          funcObj,
+			Signature:    funcObj.Type().(*types.Signature),
 		},
 		Args:    trimTArg(pass, ce.Args),
 		ArgsRaw: ce.Args,

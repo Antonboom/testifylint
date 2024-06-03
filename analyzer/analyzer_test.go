@@ -54,6 +54,15 @@ func TestTestifyLint(t *testing.T) {
 			},
 		},
 		{
+			dir: "formatter-not-defaults",
+			flags: map[string]string{
+				"disable-all":                   "true",
+				"enable":                        checkers.NewFormatter().Name(),
+				"formatter.check-format-string": "false",
+				"formatter.require-f-funcs":     "true",
+			},
+		},
+		{
 			dir: "ginkgo",
 		},
 		{

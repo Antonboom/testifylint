@@ -3,6 +3,7 @@ package analyzer //nolint:testpackage
 import (
 	"reflect"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/Antonboom/testifylint/internal/checkers"
@@ -27,6 +28,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewSuiteExtraAssertCall(),
 		checkers.NewSuiteDontUsePkg(),
 		checkers.NewUselessAssert(),
+		checkers.NewFormatter(),
 	}
 	allRegularCheckers := []checkers.RegularChecker{
 		checkers.NewFloatCompare(),
@@ -42,21 +44,24 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewSuiteExtraAssertCall(),
 		checkers.NewSuiteDontUsePkg(),
 		checkers.NewUselessAssert(),
+		checkers.NewFormatter(),
 	}
 
 	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{
 		checkers.NewBlankImport(),
-		checkers.NewFormatter(),
 		checkers.NewGoRequire(),
 		checkers.NewRequireError(),
 	}
 	allAdvancedCheckers := []checkers.AdvancedChecker{
 		checkers.NewBlankImport(),
-		checkers.NewFormatter(),
 		checkers.NewGoRequire(),
 		checkers.NewRequireError(),
 		checkers.NewSuiteTHelper(),
 	}
+
+	zeroedFormatter := checkers.RegularChecker(checkers.NewFormatter().
+		SetCheckFormatString(false).
+		SetRequireFFuncs(false))
 
 	cases := []struct {
 		name        string
@@ -67,7 +72,7 @@ func Test_newCheckers(t *testing.T) {
 		{
 			name:        "no config",
 			cfg:         config.Config{},
-			expRegular:  enabledByDefaultRegularCheckers,
+			expRegular:  replace(enabledByDefaultRegularCheckers, zeroedFormatter),
 			expAdvanced: enabledByDefaultAdvancedCheckers,
 		},
 		{
@@ -101,7 +106,7 @@ func Test_newCheckers(t *testing.T) {
 					checkers.NewSuiteTHelper().Name(),
 				},
 			},
-			expRegular: filter(allRegularCheckers, config.KnownCheckersValue{
+			expRegular: filter(replace(allRegularCheckers, zeroedFormatter), config.KnownCheckersValue{
 				checkers.NewRequireError().Name(),
 				checkers.NewSuiteTHelper().Name(),
 			}),
@@ -117,7 +122,7 @@ func Test_newCheckers(t *testing.T) {
 					checkers.NewSuiteTHelper().Name(),
 				},
 			},
-			expRegular:  allRegularCheckers,
+			expRegular:  replace(enabledByDefaultRegularCheckers, zeroedFormatter),
 			expAdvanced: allAdvancedCheckers,
 		},
 		{
@@ -129,7 +134,7 @@ func Test_newCheckers(t *testing.T) {
 					checkers.NewRequireError().Name(),
 				},
 			},
-			expRegular: filter(enabledByDefaultRegularCheckers, config.KnownCheckersValue{
+			expRegular: filter(replace(enabledByDefaultRegularCheckers, zeroedFormatter), config.KnownCheckersValue{
 				checkers.NewNilCompare().Name(),
 				checkers.NewErrorNil().Name(),
 				checkers.NewRequireError().Name(),
@@ -220,10 +225,12 @@ func Test_newCheckers(t *testing.T) {
 			}
 
 			if !reflect.DeepEqual(tt.expRegular, rc) {
-				t.Fatalf("unexpected regular checkers: %#v != %#v", rc, tt.expRegular)
+				t.Fatalf("unexpected regular checkers:\n%v\n\n!=\n\n%v\n\ncheck the checkers config!",
+					checkerNames(rc), checkerNames(tt.expRegular))
 			}
 			if !reflect.DeepEqual(tt.expAdvanced, ac) {
-				t.Fatalf("unexpected expAdvanced checkers: %#v != %#v", ac, tt.expAdvanced)
+				t.Fatalf("unexpected expAdvanced checkers:\n%v\n\n!=\n\n%v\n\ncheck the checkers config!",
+					checkerNames(ac), checkerNames(tt.expAdvanced))
 			}
 		})
 	}
@@ -252,4 +259,27 @@ func filter[T checkers.Checker](in []T, exclude config.KnownCheckersValue) []T {
 		result = append(result, v)
 	}
 	return result
+}
+
+func replace[T checkers.Checker](in []T, with T) []T {
+	result := make([]T, 0)
+	for _, v := range in {
+		if v.Name() == with.Name() {
+			result = append(result, with)
+		} else {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+func checkerNames[T checkers.Checker](in []T) string {
+	var b strings.Builder
+	for i, c := range in {
+		b.WriteString(c.Name())
+		if i != len(in)-1 {
+			b.WriteString("\n")
+		}
+	}
+	return b.String()
 }

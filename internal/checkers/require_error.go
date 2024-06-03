@@ -50,7 +50,7 @@ func (checker *RequireError) SetFnPattern(p *regexp.Regexp) *RequireError {
 	return checker
 }
 
-func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Inspector) ([]analysis.Diagnostic, error) {
+func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Inspector) []analysis.Diagnostic {
 	callsByFunc := make(map[funcID][]*callMeta)
 
 	// Stage 1. Collect meta information about any calls inside functions.
@@ -138,7 +138,7 @@ func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Insp
 		}
 	}
 
-	return diagnostics, nil
+	return diagnostics
 }
 
 func needToSkipBasedOnContext(

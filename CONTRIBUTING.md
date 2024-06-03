@@ -136,7 +136,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [float-compare](#float-compare)
 - [http-const](#http-const)
 - [http-sugar](#http-sugar)
-- [no-fmt-mess](#no-fmt-mess)
 - [require-len](#require-len)
 - [suite-run](#suite-run)
 - [suite-test-name](#suite-test-name)
@@ -302,44 +301,6 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 **Autofix**: true. <br>
 **Enabled by default**: maybe? <br>
 **Reason**: Code simplification.
-
----
-
-### no-fmt-mess
-
-**Autofix**: true. <br>
-**Enabled by default**: maybe? <br>
-**Related issues**: [#33](https://github.com/Antonboom/testifylint/issues/33)
-
-Those who are new to `testify` may be discouraged by the duplicative API:
-
-```go
-func Equal(t TestingT, expected, actual interface{}, msgAndArgs ...interface{}) bool
-func Equalf(t TestingT, expected interface{}, actual interface{}, msg string, args ...interface{}) bool
-```
-
-The f-functions [were added a long time ago](https://github.com/stretchr/testify/pull/356) to eliminate
-`govet` [complain](https://go.googlesource.com/tools/+/refs/heads/release-branch.go1.12/go/analysis/passes/printf/printf.go?pli=1#506).
-
-This introduces some inconsistency into the test code, and the next strategies are seen for the checker:
-
-1) Forbid f-functions at all (also could be done through the [forbidigo](https://golangci-lint.run/usage/linters/#forbidigo) linter).
-
-This will make it easier to migrate to [v2](https://github.com/stretchr/testify/issues/1089), because
-
-> Format functions should not be accepted as they are equivalent to their "non-f" counterparts.
-
-But it doesn't look like a "go way" and the `govet` won't be happy.
-
-2) IMHO, a more appropriate option is to disallow the use of `msgAndArgs` in non-f assertions. Look at
-[the comment](https://github.com/stretchr/testify/issues/1089#issuecomment-1695059265).
-
-But there will be no non-stylistic benefits from the checker in this case (depends on the view of API in `v2`).
-
-Also, in the first iteration `no-fmt-mess` checker could help to avoid code like this:
-```go
-assert.Error(t, err, fmt.Sprintf("Profile %s should not be valid", test.profile))
-```
 
 ---
 

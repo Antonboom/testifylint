@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/Antonboom/testifylint/internal/checkers"
 	"strings"
 	"text/template"
+
+	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
 type FormatterTestsGenerator struct{}
@@ -13,107 +14,105 @@ func (FormatterTestsGenerator) Checker() checkers.Checker {
 }
 
 func (g FormatterTestsGenerator) TemplateData() any {
+	reportRemove := g.Checker().Name() + ": remove unnecessary fmt.Sprintf"
 
-	// TODO
-	// 1) Тесты на use *f, подробные
-	// 2) По тесту на каждый кейс из современного printf
-	//		- тест на другие объекты
-	// 3) Тесты на все функции, но по 1 кейсу из 1 и 2
-	// 4) Positive tests (ignores)
-	// 5) Тест на то, чтобы перезатирать printf и не ругаться на не-testify функции
-	// 6) Тесты на fmt.Srpintf
-	// 7) Autofix для 6) и 1)
-	// 8) Ввести в readme понятие частичного автофикса (+-)
-	// 9) тест на несколько варнингов в рамках одного ассерта
+	baseAssertion := Assertion{Fn: "Equal", Argsf: "1, 2"}
 
-	baseAssertions := []Assertion{
-		{Fn: "Condition", Argsf: "nil"},
-		{Fn: "Contains", Argsf: "nil, nil"},
-		{Fn: "DirExists", Argsf: `""`},
-		{Fn: "ElementsMatch", Argsf: "nil, nil"},
-		{Fn: "Empty", Argsf: "nil"},
-		{Fn: "Equal", Argsf: "nil, nil"},
-		{Fn: "EqualError", Argsf: `nil, ""`},
-		{Fn: "EqualExportedValues", Argsf: "nil, nil"},
-		{Fn: "EqualValues", Argsf: "nil, nil"},
-		{Fn: "Error", Argsf: "nil"},
-		{Fn: "ErrorAs", Argsf: "nil, nil"},
-		{Fn: "ErrorContains", Argsf: `nil, ""`},
-		{Fn: "ErrorIs", Argsf: "nil, nil"},
-		{Fn: "Eventually", Argsf: "nil, 0, 0"},
-		{Fn: "EventuallyWithT", Argsf: "nil, 0, 0"},
-		{Fn: "Exactly", Argsf: "nil, nil"},
-		{Fn: "Fail", Argsf: `""`},
-		{Fn: "FailNow", Argsf: `""`},
-		{Fn: "False", Argsf: "false"},
-		{Fn: "FileExists", Argsf: `""`},
-		{Fn: "Implements", Argsf: "nil, nil"},
-		{Fn: "InDelta", Argsf: "0., 0., 0."},
-		{Fn: "InDeltaMapValues", Argsf: "nil, nil, 0."},
-		{Fn: "InDeltaSlice", Argsf: "nil, nil, 0."},
-		{Fn: "InEpsilon", Argsf: "nil, nil, 0."},
-		{Fn: "InEpsilonSlice", Argsf: "nil, nil, 0."},
-		{Fn: "IsType", Argsf: "nil, nil"},
-		{Fn: "JSONEq", Argsf: `"", ""`},
-		{Fn: "Len", Argsf: "nil, 0"},
-		{Fn: "Never", Argsf: "nil, 0, 0"},
-		{Fn: "Nil", Argsf: "nil"},
-		{Fn: "NoDirExists", Argsf: `""`},
-		{Fn: "NoError", Argsf: "nil"},
-		{Fn: "NoFileExists", Argsf: `""`},
-		{Fn: "NotContains", Argsf: "nil, nil"},
-		{Fn: "NotEmpty", Argsf: "nil"},
-		{Fn: "NotEqual", Argsf: "nil, nil"},
-		{Fn: "NotEqualValues", Argsf: "nil, nil"},
-		{Fn: "NotErrorIs", Argsf: "nil, nil"},
-		{Fn: "NotNil", Argsf: "nil"},
-		{Fn: "NotPanics", Argsf: "nil"},
-		{Fn: "NotRegexp", Argsf: `nil, ""`},
-		{Fn: "NotSame", Argsf: "nil, nil"},
-		{Fn: "NotSubset", Argsf: "nil, nil"},
-		{Fn: "NotZero", Argsf: "nil"},
-		{Fn: "Panics", Argsf: "nil"},
-		{Fn: "PanicsWithError", Argsf: `"", nil`},
-		{Fn: "PanicsWithValue", Argsf: "nil, nil"},
-		{Fn: "Regexp", Argsf: "nil, nil"},
-		{Fn: "Same", Argsf: "nil, nil"},
-		{Fn: "Subset", Argsf: "nil, nil"},
-		{Fn: "True", Argsf: "true"},
-		{Fn: "WithinDuration", Argsf: "time.Time{}, time.Time{}, 0"},
-		{Fn: "WithinRange", Argsf: "time.Time{}, time.Time{}, time.Time{}"},
-		{Fn: "YAMLEq", Argsf: `"", ""`},
-		{Fn: "Zero", Argsf: "nil"},
+	sprintfAssertions := []Assertion{
+		{
+			Fn:            "Equal",
+			Argsf:         `1, 2, fmt.Sprintf("msg")`,
+			ReportMsgf:    reportRemove,
+			ProposedArgsf: `1, 2, "msg"`,
+		},
+		{
+			Fn:            "Equal",
+			Argsf:         `1, 2, fmt.Sprintf("msg with arg %d", 42)`,
+			ReportMsgf:    reportRemove,
+			ProposedArgsf: `1, 2, "msg with arg %d", 42`,
+		},
+		{
+			Fn:            "Equal",
+			Argsf:         `1, 2, fmt.Sprintf("msg with args %d %s", 42, "42")`,
+			ReportMsgf:    reportRemove,
+			ProposedArgsf: `1, 2, "msg with args %d %s", 42, "42"`,
+		},
+		{
+			Fn:    "Equal",
+			Argsf: `1, 2, fmt.Sprintf("msg"), 42`,
+		},
+		{
+			Fn:    "Equal",
+			Argsf: `1, 2, fmt.Sprintf("msg with arg %d", 42), "42"`,
+		},
+
+		{
+			Fn:            "Equalf",
+			Argsf:         `1, 2, fmt.Sprintf("msg")`,
+			ReportMsgf:    reportRemove,
+			ProposedArgsf: `1, 2, "msg"`,
+		},
+		{
+			Fn:            "Equalf",
+			Argsf:         `1, 2, fmt.Sprintf("msg with arg %d", 42)`,
+			ReportMsgf:    reportRemove,
+			ProposedArgsf: `1, 2, "msg with arg %d", 42`,
+		},
+		{
+			Fn:            "Equalf",
+			Argsf:         `1, 2, fmt.Sprintf("msg with args %d %s", 42, "42")`,
+			ReportMsgf:    reportRemove,
+			ProposedArgsf: `1, 2, "msg with args %d %s", 42, "42"`,
+		},
+		{
+			Fn:    "Equalf",
+			Argsf: `1, 2, fmt.Sprintf("msg"), 42`,
+		},
+		{
+			Fn:    "Equalf",
+			Argsf: `1, 2, fmt.Sprintf("msg with arg %d", 42), "42"`,
+		},
 	}
 
-	assertions := make([]Assertion, 0, len(baseAssertions)*3)
-	for _, a := range baseAssertions {
+	assertions := make([]Assertion, 0, len(allAssertions)*5)
+	for _, a := range allAssertions {
 		assertions = append(assertions,
 			Assertion{
 				Fn:    a.Fn,
 				Argsf: a.Argsf,
 			},
 			Assertion{
-				Fn:         a.Fn,
-				Argsf:      a.Argsf + `, "simple msg"`,
-				ReportMsgf: g.Checker().Name() + ": use %s.%s",
-				ProposedFn: a.Fn + "f",
+				Fn:    a.Fn,
+				Argsf: a.Argsf + `, "msg"`,
+			},
+			Assertion{
+				Fn:    a.Fn + "f",
+				Argsf: a.Argsf + `, "msg"`,
 			},
 			Assertion{
 				Fn:         a.Fn + "f",
-				Argsf:      a.Argsf + `, "msg with arg", "arg"`,
+				Argsf:      a.Argsf + `, "msg with arg", 42`,
 				ReportMsgf: g.Checker().Name() + ": %s.%s call has arguments but no formatting directives",
 				ProposedFn: a.Fn + "f",
+			},
+			Assertion{
+				Fn:    a.Fn + "f",
+				Argsf: a.Argsf + `, "msg with arg %d", 42`,
 			},
 		)
 	}
 
 	return struct {
 		CheckerName       CheckerName
-		Assertions        []Assertion
+		BaseAssertion     Assertion
+		SprintfAssertions []Assertion
+		AllAssertions     []Assertion
 		IgnoredAssertions []Assertion
 	}{
-		CheckerName: CheckerName(g.Checker().Name()),
-		Assertions:  assertions,
+		CheckerName:       CheckerName(g.Checker().Name()),
+		BaseAssertion:     baseAssertion,
+		SprintfAssertions: sprintfAssertions,
+		AllAssertions:     assertions,
 		IgnoredAssertions: []Assertion{
 			{Fn: "ObjectsAreEqual", Argsf: "nil, nil"},
 			{Fn: "ObjectsAreEqualValues", Argsf: "nil, nil"},
@@ -129,16 +128,29 @@ func (FormatterTestsGenerator) ErroredTemplate() Executor {
 }
 
 func (FormatterTestsGenerator) GoldenTemplate() Executor {
-	return template.Must(template.New("LenTestsGenerator.GoldenTemplate").
+	return template.Must(template.New("FormatterTestsGenerator.GoldenTemplate").
 		Funcs(fm).
 		Parse(strings.ReplaceAll(formatterTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")))
 }
+
+// NOTE(a.telyshev): The tests below are not supported by printf fork.
+// They are waiting for a wonderful future.
+/*
+assert.Equalf(t, 1, 2, "msg with arg %.*d x", "42", 3) // want "formatter: assert\\.Equalf format %.*d uses non-int \"42\" as argument of \\*"
+assert.Equalf(t, 1, 2, "msg with arg %d", "42")        // want "formatter: assert\\.Equalf format %d has arg \"42\" of wrong type string"
+
+func assertTrue(t *testing.T, v bool, arg1 string, arg2 ...interface{}) {
+	t.Helper()
+	assert.Truef(t, v, arg1, arg2) // want "formatter: missing \\.\\.\\. in args forwarded to printf-like function"
+}
+*/
 
 const formatterTestTmpl = header + `
 
 package {{ .CheckerName.AsPkgName }}
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -147,18 +159,16 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func TestFormatterChecker(t *testing.T) {
+func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var err error
 	var args []any
-	assert.Error(t, err, "Parse(%v) should fail.", args) // want "formatter: use assert\\.Errorf"
+	assert.Error(t, err, "Parse(%v) should fail.", args)
 
-	assert.Equal(t, 1, 2)
-	assert.Equal(t, 1, 2, "msg")                           // want "formatter: use assert\\.Equalf"
-	assert.Equal(t, 1, 2, "msg with arg %d", 42)           // want "formatter: use assert\\.Equalf"
-	assert.Equal(t, 1, 2, "msg with args %d %s", 42, "42") // want "formatter: use assert\\.Equalf"
-	assert.Equalf(t, 1, 2, "msg")
-	assert.Equalf(t, 1, 2, "msg with arg %d", 42)
-	assert.Equalf(t, 1, 2, "msg with args %d %s", 42, "42")
+	{{ NewAssertionExpander.FullMode.Expand $.BaseAssertion "assert" "t" nil }}
+
+	{{ range $ai, $assrn := $.SprintfAssertions }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" nil }}
+	{{- end }}
 }
 
 func {{ .CheckerName.AsTestName }}_PrintfChecks(t *testing.T) {
@@ -169,12 +179,10 @@ func {{ .CheckerName.AsTestName }}_PrintfChecks(t *testing.T) {
 
 	assert.Equalf(t, 1, 2, "msg with arg %[3]*.[2*[1]f", 1, 2, 3)  // want "formatter: assert\\.Equalf format has invalid argument index \\[2\\*\\[1\\]"
 	
-	assert.Equalf(t, 1, 2, "msg with arg %", 42)           // want "formatter: assert\\.Equalf format % is missing verb at end of string"
-	assert.Equalf(t, 1, 2, "msg with arg %r", 42)          // want "formatter: assert\\.Equalf format %r has unknown verb r"
-	assert.Equalf(t, 1, 2, "msg with arg %#s", 42)         // want "formatter: assert\\.Equalf format %#s has unrecognized flag #"
-	assert.Equalf(t, 1, 2, "msg with arg %.*d x", "42", 3) // want "formatter: assert\\.Equalf format %.*d uses non-int \"42\" as argument of \\*"
-	assert.Equalf(t, 1, 2, "msg with arg %d", assertTrue)  // want "formatter: assert\\.Equalf format %d arg assertTrue is a func value, not called"
-	assert.Equalf(t, 1, 2, "msg with arg %d", "42")        // want "formatter: assert\\.Equalf format %d has arg \"42\" of wrong type string"
+	assert.Equalf(t, 1, 2, "msg with arg %", 42)            // want "formatter: assert\\.Equalf format % is missing verb at end of string"
+	assert.Equalf(t, 1, 2, "msg with arg %r", 42)           // want "formatter: assert\\.Equalf format %r has unknown verb r"
+	assert.Equalf(t, 1, 2, "msg with arg %#s", 42)          // want "formatter: assert\\.Equalf format %#s has unrecognized flag #"
+	assert.Equalf(t, 1, 2, "msg with arg %d", assertFalse)  // want "formatter: assert\\.Equalf format %d arg assertFalse is a func value, not called"
 
 	assert.Equalf(t, 1, 2, "msg with args %s %s", "42") // want "formatter: assert\\.Equalf format %s reads arg #2, but call has 1 arg$"
 }
@@ -202,13 +210,13 @@ func (suite *{{ $suiteName }}) TestFuncNameInDiagnostic() {
 	requireObj.Equalf(1, 2, "msg with arg", "arg") // want "formatter: requireObj\\.Equalf call has arguments but no formatting directives"
 }
 
-func assertTrue(t *testing.T, v bool, arg1 string, arg2 ...interface{}) {
+func assertFalse(t *testing.T, v bool, arg1 string, arg2 ...interface{}) {
 	t.Helper()
-	assert.Truef(t, v, arg1, arg2) // want "formatter: missing \\.\\.\\. in args forwarded to printf-like function"
+	assert.Falsef(t, v, arg1, arg2...)
 }
 
 func {{ .CheckerName.AsTestName }}_AllAssertions(t *testing.T) {
-	{{- range $ai, $assrn := $.Assertions }}
+	{{- range $ai, $assrn := $.AllAssertions }}
 		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" nil }}
 	{{- end }}
 }
