@@ -118,7 +118,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 ❌
 import (
     "testing"
-    
+
     _ "github.com/stretchr/testify"
     _ "github.com/stretchr/testify/assert"
     _ "github.com/stretchr/testify/http"
@@ -411,7 +411,7 @@ and sets the stage for moving to `v2` of `testify`. In this way the checker rese
 
 <details>
 
-<summary>Expand...</summary>
+<summary>Click to expand...</summary>
 
 <br>
 Those who are new to `testify` may be discouraged by the duplicative API:
@@ -605,7 +605,7 @@ assert.NotNil(t, value)
 Using untyped `nil` in the functions above along with a non-interface type does not make sense:
 
 ```go
-assert.Equal(t, nil, eventsChan) // Always fail.
+assert.Equal(t, nil, eventsChan)    // Always fail.
 assert.NotEqual(t, nil, eventsChan) // Always pass.
 ```
 

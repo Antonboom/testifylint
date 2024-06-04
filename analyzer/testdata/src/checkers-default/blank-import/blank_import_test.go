@@ -2,41 +2,55 @@
 
 package blankimport
 
-import (
-	. "database/sql"
-	"net/url"
-	"strings"
-	"testing"
+import "testing"
+import _ "github.com/stretchr/testify"         // want "blank-import: avoid blank import of github.com/stretchr/testify as it does nothing"
+import _ "github.com/stretchr/testify/assert"  // want "blank-import: avoid blank import of github.com/stretchr/testify/assert as it does nothing"
+import _ "github.com/stretchr/testify/http"    // want "blank-import: avoid blank import of github.com/stretchr/testify/http as it does nothing"
+import _ "github.com/stretchr/testify/mock"    // want "blank-import: avoid blank import of github.com/stretchr/testify/mock as it does nothing"
+import _ "github.com/stretchr/testify/require" // want "blank-import: avoid blank import of github.com/stretchr/testify/require as it does nothing"
+import _ "github.com/stretchr/testify/suite"   // want "blank-import: avoid blank import of github.com/stretchr/testify/suite as it does nothing"
+import "strings"
 
-	_ "github.com/pmezard/go-difflib/difflib"
-	_ "github.com/stretchr/testify" // want "blank-import: avoid blank import of github.com/stretchr/testify as it does nothing"
+import (
+	_ "github.com/stretchr/testify"         // want "blank-import: avoid blank import of github.com/stretchr/testify as it does nothing"
+	_ "github.com/stretchr/testify/assert"  // want "blank-import: avoid blank import of github.com/stretchr/testify/assert as it does nothing"
+	_ "github.com/stretchr/testify/http"    // want "blank-import: avoid blank import of github.com/stretchr/testify/http as it does nothing"
+	_ "github.com/stretchr/testify/mock"    // want "blank-import: avoid blank import of github.com/stretchr/testify/mock as it does nothing"
+	_ "github.com/stretchr/testify/require" // want "blank-import: avoid blank import of github.com/stretchr/testify/require as it does nothing"
+	_ "github.com/stretchr/testify/suite"   // want "blank-import: avoid blank import of github.com/stretchr/testify/suite as it does nothing"
+)
+
+import (
+	_ "gopkg.in/yaml.v3"
+	"net/url"
+
 	// Testing.
+	_ "github.com/stretchr/testify"         // want "blank-import: avoid blank import of github.com/stretchr/testify as it does nothing"
+	_ "github.com/stretchr/testify/assert"  // want "blank-import: avoid blank import of github.com/stretchr/testify/assert as it does nothing"
+	_ "github.com/stretchr/testify/http"    // want "blank-import: avoid blank import of github.com/stretchr/testify/http as it does nothing"
+	_ "github.com/stretchr/testify/mock"    // want "blank-import: avoid blank import of github.com/stretchr/testify/mock as it does nothing"
+	_ "github.com/stretchr/testify/require" // want "blank-import: avoid blank import of github.com/stretchr/testify/require as it does nothing"
+	_ "github.com/stretchr/testify/suite"   // want "blank-import: avoid blank import of github.com/stretchr/testify/suite as it does nothing"
+
+	. "database/sql"
+	_ "github.com/pmezard/go-difflib/difflib"
+)
+
+import (
 	_ "github.com/stretchr/testify" // want "blank-import: avoid blank import of github.com/stretchr/testify as it does nothing"
+)
+
+import (
 	// Test dependencies so that it doesn't get cleaned by glide vc
 	_ "github.com/stretchr/testify" // want "blank-import: avoid blank import of github.com/stretchr/testify as it does nothing"
-	_ "github.com/stretchr/testify" // want "blank-import: avoid blank import of github.com/stretchr/testify as it does nothing"
-	_ "github.com/stretchr/testify" // want "blank-import: avoid blank import of github.com/stretchr/testify as it does nothing"
+)
+
+import (
 	"github.com/stretchr/testify/assert"
-	_ "github.com/stretchr/testify/assert" // want "blank-import: avoid blank import of github.com/stretchr/testify/assert as it does nothing"
-	_ "github.com/stretchr/testify/assert" // want "blank-import: avoid blank import of github.com/stretchr/testify/assert as it does nothing"
-	_ "github.com/stretchr/testify/assert" // want "blank-import: avoid blank import of github.com/stretchr/testify/assert as it does nothing"
 	"github.com/stretchr/testify/http"
-	_ "github.com/stretchr/testify/http" // want "blank-import: avoid blank import of github.com/stretchr/testify/http as it does nothing"
-	_ "github.com/stretchr/testify/http" // want "blank-import: avoid blank import of github.com/stretchr/testify/http as it does nothing"
-	_ "github.com/stretchr/testify/http" // want "blank-import: avoid blank import of github.com/stretchr/testify/http as it does nothing"
 	"github.com/stretchr/testify/mock"
-	_ "github.com/stretchr/testify/mock" // want "blank-import: avoid blank import of github.com/stretchr/testify/mock as it does nothing"
-	_ "github.com/stretchr/testify/mock" // want "blank-import: avoid blank import of github.com/stretchr/testify/mock as it does nothing"
-	_ "github.com/stretchr/testify/mock" // want "blank-import: avoid blank import of github.com/stretchr/testify/mock as it does nothing"
 	"github.com/stretchr/testify/require"
-	_ "github.com/stretchr/testify/require" // want "blank-import: avoid blank import of github.com/stretchr/testify/require as it does nothing"
-	_ "github.com/stretchr/testify/require" // want "blank-import: avoid blank import of github.com/stretchr/testify/require as it does nothing"
-	_ "github.com/stretchr/testify/require" // want "blank-import: avoid blank import of github.com/stretchr/testify/require as it does nothing"
 	"github.com/stretchr/testify/suite"
-	_ "github.com/stretchr/testify/suite" // want "blank-import: avoid blank import of github.com/stretchr/testify/suite as it does nothing"
-	_ "github.com/stretchr/testify/suite" // want "blank-import: avoid blank import of github.com/stretchr/testify/suite as it does nothing"
-	_ "github.com/stretchr/testify/suite" // want "blank-import: avoid blank import of github.com/stretchr/testify/suite as it does nothing"
-	_ "gopkg.in/yaml.v3"
 )
 
 func TestDummy(t *testing.T) {
