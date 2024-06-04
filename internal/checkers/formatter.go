@@ -65,13 +65,15 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 		return nil
 	}
 
+	fFunc := call.Fn.Name + "f"
+
 	if msgAndArgsPos == len(call.ArgsRaw)-1 {
 		msgAndArgs := call.ArgsRaw[msgAndArgsPos]
 		if args, ok := isFmtSprintfCall(pass, msgAndArgs); ok {
 			if checker.requireFFuncs {
-				msg := fmt.Sprintf("remove unnecessary fmt.Sprintf and use %s.%s", call.SelectorXStr, call.Fn.Name+"f")
+				msg := fmt.Sprintf("remove unnecessary fmt.Sprintf and use %s.%s", call.SelectorXStr, fFunc)
 				return newDiagnostic(checker.Name(), call, msg,
-					newSuggestedFuncReplacement(call, call.Fn.Name+"f", analysis.TextEdit{
+					newSuggestedFuncReplacement(call, fFunc, analysis.TextEdit{
 						Pos:     msgAndArgs.Pos(),
 						End:     msgAndArgs.End(),
 						NewText: formatAsCallArgs(pass, args...),
@@ -83,21 +85,20 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 	}
 
 	if checker.requireFFuncs {
-		return newUseFunctionDiagnostic(checker.Name(), call, call.Fn.Name+"f",
-			newSuggestedFuncReplacement(call, call.Fn.Name+"f"))
+		return newUseFunctionDiagnostic(checker.Name(), call, fFunc, newSuggestedFuncReplacement(call, fFunc))
 	}
 	return nil
 }
 
 func (checker Formatter) checkFmtAssertion(pass *analysis.Pass, call *CallMeta) (result *analysis.Diagnostic) {
-	formatIdx := getMsgPosition(call.Fn.Signature)
-	if formatIdx == 0 {
+	formatPos := getMsgPosition(call.Fn.Signature)
+	if formatPos < 0 {
 		return nil
 	}
 
-	msg := call.ArgsRaw[formatIdx]
+	msg := call.ArgsRaw[formatPos]
 
-	if formatIdx == len(call.ArgsRaw)-1 {
+	if formatPos == len(call.ArgsRaw)-1 {
 		if args, ok := isFmtSprintfCall(pass, msg); ok {
 			return newRemoveSprintfDiagnostic(pass, checker.Name(), call, msg, args)
 		}
@@ -115,7 +116,7 @@ func (checker Formatter) checkFmtAssertion(pass *analysis.Pass, call *CallMeta) 
 		if err != nil {
 			return nil
 		}
-		printf.CheckPrintf(pass, call.Call, call.String(), format, formatIdx)
+		printf.CheckPrintf(pass, call.Call, call.String(), format, formatPos)
 	}
 	return result
 }
@@ -159,7 +160,7 @@ func getMsgPosition(sig *types.Signature) int {
 			return i
 		}
 	}
-	return 0
+	return -1
 }
 
 func isFmtSprintfCall(pass *analysis.Pass, expr ast.Expr) ([]ast.Expr, bool) {

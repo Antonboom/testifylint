@@ -9,14 +9,13 @@ import (
 
 type FormatterNotDefaultsTestsGenerator struct{}
 
-func (FormatterNotDefaultsTestsGenerator) Checker() checkers.Checker {
-	return checkers.NewFormatter()
-}
-
 func (g FormatterNotDefaultsTestsGenerator) TemplateData() any {
-	reportUse := g.Checker().Name() + ": use %s.%s"
-	reportRemove := g.Checker().Name() + ": remove unnecessary fmt.Sprintf"
-	reportRemoveAndUse := g.Checker().Name() + ": remove unnecessary fmt.Sprintf and use %s.%s"
+	var (
+		checker            = checkers.NewFormatter().Name()
+		reportUse          = checker + ": use %s.%s"
+		reportRemove       = checker + ": remove unnecessary fmt.Sprintf"
+		reportRemoveAndUse = checker + ": remove unnecessary fmt.Sprintf and use %s.%s"
+	)
 
 	baseAssertions := []Assertion{
 		{Fn: "Equal", Argsf: "1, 2"},
@@ -126,7 +125,7 @@ func (g FormatterNotDefaultsTestsGenerator) TemplateData() any {
 		SprintfAssertions []Assertion
 		AllAssertions     []Assertion
 	}{
-		CheckerName:       CheckerName(g.Checker().Name()),
+		CheckerName:       CheckerName(checker),
 		BaseAssertions:    baseAssertions,
 		SprintfAssertions: sprintfAssertions,
 		AllAssertions:     assertions,
