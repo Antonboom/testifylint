@@ -93,7 +93,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [bool-compare](#bool-compare)                       | ✅                  | ✅       |
 | [compares](#compares)                               | ✅                  | ✅       |
 | [empty](#empty)                                     | ✅                  | ✅       |
-| [error-is-as](#error-is-as)                         | ✅                  | ✅       |
+| [error-is-as](#error-is-as)                         | ✅                  | 🤏      |
 | [error-nil](#error-nil)                             | ✅                  | ✅       |
 | [expected-actual](#expected-actual)                 | ✅                  | ✅       |
 | [float-compare](#float-compare)                     | ✅                  | ❌       |
@@ -117,19 +117,19 @@ https://golangci-lint.run/usage/linters/#testifylint
 ```go
 ❌
 import (
-"testing"
-
-_ "github.com/stretchr/testify"
-_ "github.com/stretchr/testify/assert"
-_ "github.com/stretchr/testify/http"
-_ "github.com/stretchr/testify/mock"
-_ "github.com/stretchr/testify/require"
-_ "github.com/stretchr/testify/suite"
+    "testing"
+    
+    _ "github.com/stretchr/testify"
+    _ "github.com/stretchr/testify/assert"
+    _ "github.com/stretchr/testify/http"
+    _ "github.com/stretchr/testify/mock"
+    _ "github.com/stretchr/testify/require"
+    _ "github.com/stretchr/testify/suite"
 )
 
 ✅
 import (
-"testing"
+    "testing"
 )
 ```
 
@@ -258,7 +258,7 @@ assert.NotErrorIs(t, err, errSentinel)
 assert.ErrorAs(t, err, &target)
 ```
 
-**Autofix**: true. <br>
+**Autofix**: partially. <br>
 **Enabled by default**: true. <br>
 **Reason**: In the first two cases, a common mistake that leads to hiding the incorrect wrapping of sentinel errors.
 In the rest cases – more appropriate `testify` API with clearer failure message.
@@ -390,7 +390,7 @@ Detecting unnecessary `fmt.Sprintf` in assertions. Somewhat reminiscent of the
 #### 2)
 
 Validating consistency of assertions format strings and corresponding arguments, using a patched fork of `go vet`'s
-[printf](https://pkg.go.dev/golang.org/x/tools@v0.21.0/go/analysis/passes/printf#hdr-Analyzer_printf) analyzer. To
+[printf](https://cs.opensource.google/go/x/tools/+/master:go/analysis/passes/printf/printf.go) analyzer. To
 disable this feature, use `--formatter.check-format-string=false` flag.
 
 #### 3)
@@ -405,7 +405,7 @@ and sets the stage for moving to `v2` of `testify`. In this way the checker rese
 [golangci-lint](https://golangci-lint.run/usage/linters/)). Also format string in f-assertions is highlighted by IDE
 , e.g. GoLand:
 
-<img width="600" alt="F-assertion highlighting" src="https://github.com/Antonboom/testifylint/assets/17127404/9bdab802-d6eb-477d-a411-6cba043d33a5">
+<img width="600" alt="F-assertion IDE highlighting" src="https://github.com/Antonboom/testifylint/assets/17127404/9bdab802-d6eb-477d-a411-6cba043d33a5">
 
 #### Historical Reference
 
@@ -413,6 +413,7 @@ and sets the stage for moving to `v2` of `testify`. In this way the checker rese
 
 <summary>Expand...</summary>
 
+<br>
 Those who are new to `testify` may be discouraged by the duplicative API:
 
 ```go
@@ -466,11 +467,8 @@ Now **printf** only checked Golang standard library functions (unless configured
 
 Despite this, f-functions have already been released, giving rise to ambiguous API.
 
-But surely the maintainers had no choice to change the signatures in accordance with the implicit Go convention
-
-> Printf-like functions must end with `f`
-
-because it would break backwards compatibility:
+But surely the maintainers had no choice to change the signatures in accordance with Go convention, because it would
+break backwards compatibility:
 
 ```go
 func Equal(t TestingT, expected, actual any) bool
@@ -520,8 +518,8 @@ Try to execute them in the main goroutine and distribute the data necessary for 
 ([example](https://github.com/ipfs/kubo/issues/2043#issuecomment-164136026)).
 
 Also a bad solution would be to simply replace all `require` in goroutines with `assert`
-(
-like [here](https://github.com/gravitational/teleport/pull/22567/files#diff-9f5fd20913c5fe80c85263153fa9a0b28dbd1407e53da4ab5d09e13d2774c5dbR7377))
+(like
+[here](https://github.com/gravitational/teleport/pull/22567/files#diff-9f5fd20913c5fe80c85263153fa9a0b28dbd1407e53da4ab5d09e13d2774c5dbR7377))
 – this will only mask the problem.
 
 The checker is enabled by default, because `testinggoroutine` is enabled by default in `go vet`.
@@ -529,10 +527,8 @@ The checker is enabled by default, because `testinggoroutine` is enabled by defa
 In addition, the checker warns about `require` in HTTP handlers (functions and methods whose signature matches
 [http.HandlerFunc](https://pkg.go.dev/net/http#HandlerFunc)), because handlers run in a separate
 [service goroutine](https://cs.opensource.google/go/go/+/refs/tags/go1.22.3:src/net/http/server.go;l=2782;drc=1d45a7ef560a76318ed59dfdb178cecd58caf948)
-that
-services the HTTP connection. Terminating these goroutines can lead to undefined behaviour and difficulty debugging
-tests.
-You can turn off the check using the `--go-require.ignore-http-handlers` flag.
+that services the HTTP connection. Terminating these goroutines can lead to undefined behaviour and difficulty debugging
+tests. You can turn off the check using the `--go-require.ignore-http-handlers` flag.
 
 P.S. Look at [testify's issue](https://github.com/stretchr/testify/issues/772), related to assertions in the goroutines.
 
@@ -620,7 +616,7 @@ assert.Equal(t, (chan Event)(nil), eventsChan)
 assert.NotEqual(t, (chan Event)(nil), eventsChan)
 ```
 
-But in the case of `Equal`, `NotEqual` and `Exactly` it still doesn't work for the function type.
+But in the case of `Equal`, `NotEqual` and `Exactly` type casting approach still doesn't work for the function type.
 
 The best option here is to just use `Nil` / `NotNil` (see [details](https://github.com/stretchr/testify/issues/1524)).
 

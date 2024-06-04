@@ -9,7 +9,7 @@ import (
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-// formatAsCallArgs joins a, b and c return bytes like `a, b, c`.
+// formatAsCallArgs joins a, b and c and returns bytes like `a, b, c`.
 func formatAsCallArgs(pass *analysis.Pass, args ...ast.Expr) []byte {
 	if len(args) == 0 {
 		return []byte("")

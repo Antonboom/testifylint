@@ -16,7 +16,7 @@ import (
 //
 //	assert.Equal(t, 42, result, "helpful comment")
 type CallMeta struct {
-	// Call stores the original call expression.
+	// Call stores the original AST call expression.
 	Call *ast.CallExpr
 	// Range contains start and end position of assertion call.
 	analysis.Range
@@ -114,7 +114,7 @@ func NewCallMeta(pass *analysis.Pass, ce *ast.CallExpr) *CallMeta {
 			Name:         fnName,
 			NameFTrimmed: strings.TrimSuffix(fnName, "f"),
 			IsFmt:        strings.HasSuffix(fnName, "f"),
-			Signature:    funcObj.Type().(*types.Signature),
+			Signature:    funcObj.Type().(*types.Signature), // NOTE(a.telyshev): Func's Type() is always a *Signature.
 		},
 		Args:    trimTArg(pass, ce.Args),
 		ArgsRaw: ce.Args,
