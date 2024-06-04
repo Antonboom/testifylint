@@ -37,6 +37,7 @@ func (SuiteRequireExtraAssertCallTestsGenerator) GoldenTemplate() Executor {
 }
 
 const suiteRequireExtraAssertCallTestTmpl = header + `
+
 package {{ .CheckerName.AsPkgName }}
 
 import (

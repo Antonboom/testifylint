@@ -43,6 +43,7 @@ func (SuiteDontUsePkg) GoldenTemplate() Executor {
 }
 
 const suiteDontUsePkgTestTmpl = header + `
+
 package {{ .CheckerName.AsPkgName }}
 
 import (

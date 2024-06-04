@@ -18,6 +18,7 @@ var freeTestsGenerators = map[string]TestsGenerator{ // by subdirectory.
 	"base-test":                       BaseTestsGenerator{},
 	"error-as-target":                 ErrorAsTargetTestsGenerator{},
 	"expected-var-custom-pattern":     ExpectedVarCustomPatternTestsGenerator{},
+	"formatter-not-defaults":          FormatterNotDefaultsTestsGenerator{},
 	"require-error-fn-pattern":        RequireErrorFnPatternTestsGenerator{},
 	"suite-require-extra-assert-call": SuiteRequireExtraAssertCallTestsGenerator{},
 }
@@ -31,6 +32,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	ErrorIsAsTestsGenerator{},
 	ExpectedActualTestsGenerator{},
 	FloatCompareTestsGenerator{},
+	FormatterTestsGenerator{},
 	GoRequireTestsGenerator{},
 	LenTestsGenerator{},
 	NegativePositiveTestsGenerator{},

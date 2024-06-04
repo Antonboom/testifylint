@@ -117,6 +117,7 @@ func (UselessAssertTestsGenerator) GoldenTemplate() Executor {
 }
 
 const uselessAssertTestTmpl = header + `
+
 package {{ .CheckerName.AsPkgName }}
 
 import (

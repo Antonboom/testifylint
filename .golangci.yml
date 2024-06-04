@@ -7,6 +7,9 @@ issues:
   # revive should check comments for exported (and not internal) code.
   include: [ EXC0012, EXC0013, EXC0014 ]
 
+  exclude-dirs:
+    - internal/checkers/printf # A patched fork of go vet's printf.
+
   exclude-rules:
     - path: "internal/testgen"
       linters: [ "revive" ]
@@ -20,6 +23,9 @@ issues:
       text: "exported (method|const)"
 
     - path: "_test\\.go"
+      linters: [ "lll" ]
+
+    - source: ' // want "'
       linters: [ "lll" ]
 
 linters-settings:
