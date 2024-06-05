@@ -14,25 +14,23 @@ Install dev tools...
 ### 2) Create a checker skeleton in `internal/checkers/{checker_name}.go`
 
 For example, we want to create a new checker
-`Zero` in `internal/checkers/zero.go`:
+`TimeCompare` in `internal/checkers/time_compare.go`:
 
 ```go
 package checkers
 
-// Zero detects situations like
+// TimeCompare detects situations like
 //
-//	assert.Equal(t, 0, count)
-//	assert.Equal(t, nil, userObj)
+//	assert.Equal(t, expTs, actualTs)
 //
 // and requires
 //
-//	assert.Zero(t, count)
-//	assert.Zero(t, userObj)
-type Zero struct{}
+//	assert.True(t, actualTs.Equal(expTs))
+type TimeCompare struct{}
 
-// NewZero constructs Zero checker.
-func NewZero() Zero      { return Zero{} }
-func (Zero) Name() string { return "zero" }
+// NewTimeCompare constructs TimeCompare checker.
+func NewTimeCompare() TimeCompare { return TimeCompare{} }
+func (TimeCompare) Name() string  { return "TimeCompare" }
 ```
 
 The above code is enough to satisfy the `checkers.Checker` interface.
@@ -41,14 +39,14 @@ The above code is enough to satisfy the `checkers.Checker` interface.
 
 The earlier the checker is in [the registry](internal/checkers/checkers_registry.go), the more priority it is.
 
-For example, the `zero` checker takes precedence over the `expected-actual` or `empty`,
-because its check is more "narrow" and when you fix the warning from `zero`,
+For example, the `TimeCompare` checker takes precedence over the `empty` and `expected-actual`,
+because its check is more "narrow" and when you fix the warning from `TimeCompare`,
 the rest of the checkers will become irrelevant.
 
 ```go
 var registry = checkersRegistry{
     // ...
-    {factory: asCheckerFactory(NewZero), enabledByDefault: false},
+    {factory: asCheckerFactory(NewTimeCompare), enabledByDefault: false},
     // ...
     {factory: asCheckerFactory(NewEmpty), enabledByDefault: true},
     // ...
@@ -61,7 +59,7 @@ By default, we disable the checker if we doubt its 100% usefulness.
 
 ### 4) Create new tests generator in `internal/testgen/gen_{checker_name}.go`
 
-Create new `ZeroTestsGenerator` in `internal/testgen/gen_zero.go`.
+Create new `TimeCompareTestsGenerator` in `internal/testgen/gen_time_compare.go`.
 
 See examples in adjacent files.
 
@@ -89,7 +87,7 @@ FAIL
 
 ### 7) Implement the checker
 
-`Zero` is an example of [checkers.RegularChecker](./internal/checkers/checker.go) because it works with "general"
+`TimeCompare` is an example of [checkers.RegularChecker](./internal/checkers/checker.go) because it works with "general"
 assertion call. For more complex checkers, use the [checkers.AdvancedChecker](./internal/checkers/checker.go) interface.
 
 If the checker turns out to be too “fat”, then you can omit some obviously rare combinations,
@@ -140,7 +138,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [suite-run](#suite-run)
 - [suite-test-name](#suite-test-name)
 - [useless-assert](#useless-assert)
-- [zero](#zero)
 
 ---
 
@@ -406,39 +403,6 @@ require.JSONEq(t, string(expectedJSON), string(body))
 require.NoError(t, err)
 assert.ErrorContains(t, err, "user") ❌
 ```
-
----
-
-### zero
-
-```go
-❌   assert.Equal(t, 0, count)
-     assert.Equal(t, nil, userObj)
-     assert.Equal(t, "", name)
-     // etc.
-
-✅   assert.Zero(t, count)
-     assert.Zero(t, userObj)
-     assert.Zero(t, name)
-```
-
-**Autofix**: true. <br>
-**Enabled by default**: false. <br>
-**Reason**: Just for your reflection and suggestion. <br>
-**Related issues**: [#75](https://github.com/Antonboom/testifylint/issues/75)
-
-I'm not sure if anyone uses `assert.Zero` – it looks strange and conflicts with `assert.Empty`:
-
-```go
-❌   assert.Equal(t, "", result)
-     assert.Nil(t, errCh)
-
-✅   assert.Empty(t, result)
-     assert.Empty(t, errCh)
-```
-
-Maybe it's better to make configurable support for other types in the `empty` checker and
-vice versa to prohibit the `Zero`?
 
 ---
 
