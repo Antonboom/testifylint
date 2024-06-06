@@ -14,7 +14,7 @@ import (
 var DefaultExpectedVarPattern = regexp.MustCompile(
 	`(^(exp(ected)?|want(ed)?)([A-Z]\w*)?$)|(^(\w*[a-z])?(Exp(ected)?|Want(ed)?)$)`)
 
-// ExpectedActual detects situation like
+// ExpectedActual detects situations like
 //
 //	assert.Equal(t, result, expected)
 //	assert.EqualExportedValues(t, resultObj, User{Name: "Anton"})

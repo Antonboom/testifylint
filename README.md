@@ -725,24 +725,23 @@ You can enable such behavior through `--suite-extra-assert-call.mode=require`.
 func (s *MySuite) TestSomething() {
     ❌
     s.T().Run("subtest", func(t *testing.T) {
-       assert.Equal(t, 42, result)
+        assert.Equal(t, 42, result)
     })
      
     ✅
     s.Run("subtest", func() {
-       s.Equal(42, result)
+        s.Equal(42, result)
     }) 
 }
 ```
 
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
-**Reason**: Protection from bugs.
+**Reason**: Protection from undefined behavior.
 
-According to testify
-[documentation](https://github.com/stretchr/testify/blob/1b4fca7679ac5ddaf45491840c8a0cace9fc6d83/suite/suite.go#L94),
-`s.Run` should be used for running subtests. This call initializes the suite with a fresh instance of `t` and protects
-tests from undefined behavior (such as data races).
+According to `testify` [documentation](https://pkg.go.dev/github.com/stretchr/testify/suite#Suite.Run), `s.Run` should
+be used for running subtests. This call (among other things) initializes the suite with a fresh instance of `t` and
+protects tests from undefined behavior (such as data races).
 
 Autofix is disabled because in the most cases it requires rewriting the assertions in the subtest and can leads to dead
 code.

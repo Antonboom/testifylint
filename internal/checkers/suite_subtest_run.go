@@ -10,7 +10,7 @@ import (
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-// SuiteSubtestRun detects situation like
+// SuiteSubtestRun detects situations like
 //
 //	s.T().Run("subtest", func(t *testing.T) {
 //		assert.Equal(t, 42, result)

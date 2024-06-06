@@ -109,5 +109,12 @@ func (suite *{{ $suiteName }}) TestTwo() {
 			assert.Equal(t, 22, 11)
 		})
 	})
+
+	cases := []struct{ Name string }{}
+	for _, tt := range cases {
+		suite.T().Run(tt.Name, func(t *testing.T) { // want {{ $.SuiteReport }}
+			suite.Equal(1, 2)
+		})
+	}
 }
 `
