@@ -44,6 +44,10 @@ func TestEmptyChecker(t *testing.T) {
 		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
 		assert.Empty(t, elems)                                   // want "empty: use assert\\.Empty"
 		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, elems)                                   // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, elems)                                   // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
 
 		// Valid.
 		assert.Empty(t, elems)
@@ -53,6 +57,10 @@ func TestEmptyChecker(t *testing.T) {
 	// assert.NotEmpty cases.
 	{
 		// Invalid.
+		assert.NotEmpty(t, elems)                                   // want "empty: use assert\\.NotEmpty"
+		assert.NotEmptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.NotEmptyf"
+		assert.NotEmpty(t, elems)                                   // want "empty: use assert\\.NotEmpty"
+		assert.NotEmptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.NotEmptyf"
 		assert.NotEmpty(t, elems)                                   // want "empty: use assert\\.NotEmpty"
 		assert.NotEmptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.NotEmptyf"
 		assert.NotEmpty(t, elems)                                   // want "empty: use assert\\.NotEmpty"

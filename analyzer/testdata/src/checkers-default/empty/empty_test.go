@@ -36,6 +36,10 @@ func TestEmptyChecker(t *testing.T) {
 		assert.Lessf(t, len(elems), 1, "msg with args %d %s", 42, "42")           // want "empty: use assert\\.Emptyf"
 		assert.Greater(t, 1, len(elems))                                          // want "empty: use assert\\.Empty"
 		assert.Greaterf(t, 1, len(elems), "msg with args %d %s", 42, "42")        // want "empty: use assert\\.Emptyf"
+		assert.Zero(t, len(elems))                                                // want "empty: use assert\\.Empty"
+		assert.Zerof(t, len(elems), "msg with args %d %s", 42, "42")              // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, len(elems))                                               // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, len(elems), "msg with args %d %s", 42, "42")             // want "empty: use assert\\.Emptyf"
 		assert.Less(t, len(elems), 0)                                             // want "empty: use assert\\.Empty"
 		assert.Lessf(t, len(elems), 0, "msg with args %d %s", 42, "42")           // want "empty: use assert\\.Emptyf"
 		assert.Greater(t, 0, len(elems))                                          // want "empty: use assert\\.Empty"
@@ -65,6 +69,10 @@ func TestEmptyChecker(t *testing.T) {
 		assert.Greaterf(t, len(elems), 0, "msg with args %d %s", 42, "42")        // want "empty: use assert\\.NotEmptyf"
 		assert.Less(t, 0, len(elems))                                             // want "empty: use assert\\.NotEmpty"
 		assert.Lessf(t, 0, len(elems), "msg with args %d %s", 42, "42")           // want "empty: use assert\\.NotEmptyf"
+		assert.NotZero(t, len(elems))                                             // want "empty: use assert\\.NotEmpty"
+		assert.NotZerof(t, len(elems), "msg with args %d %s", 42, "42")           // want "empty: use assert\\.NotEmptyf"
+		assert.NotEmpty(t, len(elems))                                            // want "empty: use assert\\.NotEmpty"
+		assert.NotEmptyf(t, len(elems), "msg with args %d %s", 42, "42")          // want "empty: use assert\\.NotEmptyf"
 
 		// Valid.
 		assert.NotEmpty(t, elems)
