@@ -51,11 +51,13 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewBlankImport(),
 		checkers.NewGoRequire(),
 		checkers.NewRequireError(),
+		checkers.NewSuiteSubtestRun(),
 	}
 	allAdvancedCheckers := []checkers.AdvancedChecker{
 		checkers.NewBlankImport(),
 		checkers.NewGoRequire(),
 		checkers.NewRequireError(),
+		checkers.NewSuiteSubtestRun(),
 		checkers.NewSuiteTHelper(),
 	}
 

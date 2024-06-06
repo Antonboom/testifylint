@@ -81,7 +81,7 @@ func (s *{{ $suiteName }}) TestAll() {
 	{{ NewAssertionExpander.Expand $.RequireAssrn "require" "s.T()" nil }}
 	{{ NewAssertionExpander.Expand $.RequireAssrn "r" "s.T()" nil }}
 
-	s.T().Run("not detected", func(t *testing.T) {
+	s.T().Run("not detected in order to avoid conflict with suite-subtest-run", func(t *testing.T) {
 		{{ template "pkg-assertions" . }}
 	})
 }

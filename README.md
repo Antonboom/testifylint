@@ -105,6 +105,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [require-error](#require-error)                     | ✅                  | ❌       |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
 | [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
+| [suite-subtest-run](#suite-subtest-run)             | ✅                  | ❌       |
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
 | [useless-assert](#useless-assert)                   | ✅                  | ❌       |
 
@@ -443,8 +444,8 @@ but did not take into account its package, thereby reacting to everything that i
 ```go
 // isPrint records the unformatted-print functions.
 var isPrint = map[string]bool{
-    "error":    true,
-    "fatal":    true,
+    "error": true,
+    "fatal": true,
     // ...
 }
 ```
@@ -456,8 +457,8 @@ in Go 1.10 after a related [issue](https://github.com/golang/go/issues/22936):
 ```go
 // isPrint records the print functions.
 var isPrint = map[string]bool{
-    "fmt.Errorf":         true,
-    "fmt.Fprint":         true,
+    "fmt.Errorf": true,
+    "fmt.Fprint": true,
     // ...
 }
 ```
@@ -672,8 +673,8 @@ Also, to minimize false positives, `require-error` ignores:
 import "github.com/stretchr/testify/assert"
 
 func (s *MySuite) TestSomething() {
-     ❌ assert.Equal(s.T(), 42, value)
-     ✅ s.Equal(42, value)
+    ❌ assert.Equal(s.T(), 42, value)
+    ✅ s.Equal(42, value)
 }
 ```
 
@@ -689,8 +690,8 @@ By default, the checker wants you to remove unnecessary `Assert()` calls:
 
 ```go
 func (s *MySuite) TestSomething() {
-     ❌ s.Assert().Equal(42, value)
-     ✅ s.Equal(42, value)
+    ❌ s.Assert().Equal(42, value)
+    ✅ s.Equal(42, value)
 }
 ```
 
@@ -698,15 +699,15 @@ But sometimes, on the contrary, people want consistency with `s.Assert()` and `s
 
 ```go
 func (s *MySuite) TestSomething() {
-     // ...
+    // ...
 
-     ❌
-     s.Require().NoError(err)
-     s.Equal(42, value)
+    ❌
+    s.Require().NoError(err)
+    s.Equal(42, value)
 
-     ✅
-     s.Require().NoError(err)
-     s.Assert().Equal(42, value)
+    ✅
+    s.Require().NoError(err)
+    s.Assert().Equal(42, value)
 }
 ```
 
@@ -718,18 +719,50 @@ You can enable such behavior through `--suite-extra-assert-call.mode=require`.
 
 ---
 
+### suite-subtest-run
+
+```go
+func (s *MySuite) TestSomething() {
+    ❌
+    s.T().Run("subtest", func(t *testing.T) {
+       assert.Equal(t, 42, result)
+    })
+     
+    ✅
+    s.Run("subtest", func() {
+       s.Equal(42, result)
+    }) 
+}
+```
+
+**Autofix**: false. <br>
+**Enabled by default**: true. <br>
+**Reason**: Protection from bugs.
+
+According to testify
+[documentation](https://github.com/stretchr/testify/blob/1b4fca7679ac5ddaf45491840c8a0cace9fc6d83/suite/suite.go#L94),
+`s.Run` should be used for running subtests. This call initializes the suite with a fresh instance of `t` and protects
+tests from undefined behavior (such as data races).
+
+Autofix is disabled because in the most cases it requires rewriting the assertions in the subtest and can leads to dead
+code.
+
+The checker is especially useful in combination with [suite-dont-use-pkg](#suite-dont-use-pkg).
+
+---
+
 ### suite-thelper
 
 ```go
 ❌
 func (s *RoomSuite) assertRoomRound(roundID RoundID) {
-     s.Equal(roundID, s.getRoom().CurrentRound.ID)
+    s.Equal(roundID, s.getRoom().CurrentRound.ID)
 }
 
 ✅
 func (s *RoomSuite) assertRoomRound(roundID RoundID) {
-     s.T().Helper()
-     s.Equal(roundID, s.getRoom().CurrentRound.ID)
+    s.T().Helper()
+    s.Equal(roundID, s.getRoom().CurrentRound.ID)
 }
 ```
 
