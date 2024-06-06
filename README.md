@@ -190,6 +190,10 @@ assert.True(t, a >= b)
 assert.True(t, a < b)
 assert.True(t, a <= b)
 assert.False(t, a == b)
+assert.NotEmpty(t, a == b)
+assert.NotZero(t, a == b)
+assert.Zero(t, a == b)
+assert.Empty(t, a == b)
 // And so on...
 
 ✅

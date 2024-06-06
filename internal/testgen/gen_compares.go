@@ -32,7 +32,9 @@ func (g ComparesTestsGenerator) TemplateData() any {
 
 	var invalidAssertions []Assertion //nolint:prealloc
 	for checker, oppositeChecker := range map[string]string{
-		"True": "False",
+		"True":     "False",
+		"NotEmpty": "Empty",
+		"NotZero":  "Zero",
 	} {
 		invalidAssertions = append(invalidAssertions,
 			Assertion{Fn: checker, Argsf: "a == b", ReportMsgf: report, ProposedFn: "Equal", ProposedArgsf: "a, b"},
