@@ -65,7 +65,7 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 		"num == num",
 		"num != num",
 	} {
-		for _, fn := range []string{"True", "False"} {
+		for _, fn := range []string{"True", "False", "Empty", "NotEmpty", "Zero", "NotZero"} {
 			twoSideAssertions = append(twoSideAssertions,
 				Assertion{Fn: fn, Argsf: args, ReportMsgf: sameVarReport})
 		}

@@ -66,7 +66,7 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 		}
 		first, second = call.Args[0], call.Args[1]
 
-	case "True", "False":
+	case "True", "False", "Zero", "NotZero", "Empty", "NotEmpty":
 		if len(call.Args) < 1 {
 			return nil
 		}
