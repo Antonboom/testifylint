@@ -30,33 +30,41 @@ func (g ComparesTestsGenerator) TemplateData() any {
 		)
 	}
 
+	var invalidAssertions []Assertion //nolint:prealloc
+	for checker, oppositeChecker := range map[string]string{
+		"True": "False",
+	} {
+		invalidAssertions = append(invalidAssertions,
+			Assertion{Fn: checker, Argsf: "a == b", ReportMsgf: report, ProposedFn: "Equal", ProposedArgsf: "a, b"},
+			Assertion{Fn: checker, Argsf: "a != b", ReportMsgf: report, ProposedFn: "NotEqual", ProposedArgsf: "a, b"},
+			Assertion{Fn: checker, Argsf: "a > b", ReportMsgf: report, ProposedFn: "Greater", ProposedArgsf: "a, b"},
+			Assertion{Fn: checker, Argsf: "a >= b", ReportMsgf: report, ProposedFn: "GreaterOrEqual", ProposedArgsf: "a, b"},
+			Assertion{Fn: checker, Argsf: "a < b", ReportMsgf: report, ProposedFn: "Less", ProposedArgsf: "a, b"},
+			Assertion{Fn: checker, Argsf: "a <= b", ReportMsgf: report, ProposedFn: "LessOrEqual", ProposedArgsf: "a, b"},
+			Assertion{Fn: oppositeChecker, Argsf: "a == b", ReportMsgf: report, ProposedFn: "NotEqual", ProposedArgsf: "a, b"},
+			Assertion{Fn: oppositeChecker, Argsf: "a != b", ReportMsgf: report, ProposedFn: "Equal", ProposedArgsf: "a, b"},
+			Assertion{Fn: oppositeChecker, Argsf: "a > b", ReportMsgf: report, ProposedFn: "LessOrEqual", ProposedArgsf: "a, b"},
+			Assertion{Fn: oppositeChecker, Argsf: "a >= b", ReportMsgf: report, ProposedFn: "Less", ProposedArgsf: "a, b"},
+			Assertion{Fn: oppositeChecker, Argsf: "a < b", ReportMsgf: report, ProposedFn: "GreaterOrEqual", ProposedArgsf: "a, b"},
+			Assertion{Fn: oppositeChecker, Argsf: "a <= b", ReportMsgf: report, ProposedFn: "Greater", ProposedArgsf: "a, b"},
+		)
+	}
+
+	invalidAssertions = append(invalidAssertions,
+		Assertion{Fn: "True", Argsf: "ptrA == ptrB", ReportMsgf: report, ProposedFn: "Same", ProposedArgsf: "ptrA, ptrB"},
+		Assertion{Fn: "True", Argsf: "ptrA != ptrB", ReportMsgf: report, ProposedFn: "NotSame", ProposedArgsf: "ptrA, ptrB"},
+		Assertion{Fn: "False", Argsf: "ptrA == ptrB", ReportMsgf: report, ProposedFn: "NotSame", ProposedArgsf: "ptrA, ptrB"},
+		Assertion{Fn: "False", Argsf: "ptrA != ptrB", ReportMsgf: report, ProposedFn: "Same", ProposedArgsf: "ptrA, ptrB"},
+	)
+
 	return struct {
 		CheckerName       CheckerName
 		InvalidAssertions []Assertion
 		ValidAssertions   []Assertion
 		IgnoredAssertions []Assertion
 	}{
-		CheckerName: CheckerName(checker),
-		InvalidAssertions: []Assertion{
-			{Fn: "True", Argsf: "a == b", ReportMsgf: report, ProposedFn: "Equal", ProposedArgsf: "a, b"},
-			{Fn: "True", Argsf: "a != b", ReportMsgf: report, ProposedFn: "NotEqual", ProposedArgsf: "a, b"},
-			{Fn: "True", Argsf: "a > b", ReportMsgf: report, ProposedFn: "Greater", ProposedArgsf: "a, b"},
-			{Fn: "True", Argsf: "a >= b", ReportMsgf: report, ProposedFn: "GreaterOrEqual", ProposedArgsf: "a, b"},
-			{Fn: "True", Argsf: "a < b", ReportMsgf: report, ProposedFn: "Less", ProposedArgsf: "a, b"},
-			{Fn: "True", Argsf: "a <= b", ReportMsgf: report, ProposedFn: "LessOrEqual", ProposedArgsf: "a, b"},
-
-			{Fn: "False", Argsf: "a == b", ReportMsgf: report, ProposedFn: "NotEqual", ProposedArgsf: "a, b"},
-			{Fn: "False", Argsf: "a != b", ReportMsgf: report, ProposedFn: "Equal", ProposedArgsf: "a, b"},
-			{Fn: "False", Argsf: "a > b", ReportMsgf: report, ProposedFn: "LessOrEqual", ProposedArgsf: "a, b"},
-			{Fn: "False", Argsf: "a >= b", ReportMsgf: report, ProposedFn: "Less", ProposedArgsf: "a, b"},
-			{Fn: "False", Argsf: "a < b", ReportMsgf: report, ProposedFn: "GreaterOrEqual", ProposedArgsf: "a, b"},
-			{Fn: "False", Argsf: "a <= b", ReportMsgf: report, ProposedFn: "Greater", ProposedArgsf: "a, b"},
-
-			{Fn: "True", Argsf: "ptrA == ptrB", ReportMsgf: report, ProposedFn: "Same", ProposedArgsf: "ptrA, ptrB"},
-			{Fn: "True", Argsf: "ptrA != ptrB", ReportMsgf: report, ProposedFn: "NotSame", ProposedArgsf: "ptrA, ptrB"},
-			{Fn: "False", Argsf: "ptrA == ptrB", ReportMsgf: report, ProposedFn: "NotSame", ProposedArgsf: "ptrA, ptrB"},
-			{Fn: "False", Argsf: "ptrA != ptrB", ReportMsgf: report, ProposedFn: "Same", ProposedArgsf: "ptrA, ptrB"},
-		},
+		CheckerName:       CheckerName(checker),
+		InvalidAssertions: invalidAssertions,
 		ValidAssertions: []Assertion{
 			{Fn: "Equal", Argsf: "a, b"},
 			{Fn: "NotEqual", Argsf: "a, b"},
