@@ -69,7 +69,7 @@ func (suite *SuiteSubtestRunCheckerSuite) TestTwo() {
 
 	cases := []struct{ Name string }{}
 	for _, tt := range cases {
-		suite.T().Run(tt.Name, func(t *testing.T) {
+		suite.T().Run(tt.Name, func(t *testing.T) { // want "suite-subtest-run: use suite\\.Run to run subtest"
 			suite.Equal(1, 2)
 		})
 	}
