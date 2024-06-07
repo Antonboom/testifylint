@@ -40,6 +40,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	RequireErrorTestsGenerator{},
 	SuiteDontUsePkg{},
 	SuiteExtraAssertCallTestsGenerator{},
+	SuiteSubtestRunTestsGenerator{},
 	SuiteTHelperTestsGenerator{},
 	UselessAssertTestsGenerator{},
 }

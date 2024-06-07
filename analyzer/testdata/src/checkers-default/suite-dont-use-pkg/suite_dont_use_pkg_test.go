@@ -46,7 +46,7 @@ func (s *SuiteDontUsePkgCheckerSuite) TestAll() {
 	r.Equal(s.T(), 42, result)                                         // want "suite-dont-use-pkg: use s\\.Require\\(\\)\\.Equal"
 	r.Equalf(s.T(), 42, result, "msg with args %d %s", 42, "42")       // want "suite-dont-use-pkg: use s\\.Require\\(\\)\\.Equalf"
 
-	s.T().Run("not detected", func(t *testing.T) {
+	s.T().Run("not detected in order to avoid conflict with suite-subtest-run", func(t *testing.T) {
 		var result any
 		assObj, reqObj := assert.New(t), require.New(t)
 
