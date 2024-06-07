@@ -1,5 +1,7 @@
 package main
 
+import "sort"
+
 // Assertion is a generic view of testify assertion.
 // Designed to be expanded (by AssertionExpander) to multiple lines of assertions.
 type Assertion struct {
@@ -75,4 +77,14 @@ var allAssertions = []Assertion{
 	{Fn: "WithinRange", Argsf: "time.Time{}, time.Time{}, time.Time{}"},
 	{Fn: "YAMLEq", Argsf: `"", ""`},
 	{Fn: "Zero", Argsf: "nil"},
+}
+
+func sortAssertions(assertions []Assertion) {
+	sort.Slice(assertions, func(i, j int) bool {
+		lhs, rhs := assertions[i], assertions[j]
+		if lhs.Fn == rhs.Fn {
+			return lhs.Argsf < rhs.Argsf
+		}
+		return lhs.Fn < rhs.Fn
+	})
 }
