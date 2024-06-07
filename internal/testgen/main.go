@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/Antonboom/testifylint/internal/checkers"
@@ -132,4 +133,14 @@ func genGoFileFromTmpl(output string, exec Executor, data any) error {
 	}
 
 	return os.WriteFile(output, formatted, 0o644)
+}
+
+func sortAssertions(assertions []Assertion) {
+	sort.Slice(assertions, func(i, j int) bool {
+		lhs, rhs := assertions[i], assertions[j]
+		if lhs.Fn == rhs.Fn {
+			return lhs.Argsf < rhs.Argsf
+		}
+		return lhs.Fn < rhs.Fn
+	})
 }
