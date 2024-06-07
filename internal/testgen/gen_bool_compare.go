@@ -26,109 +26,134 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 		ValidAssertions   []Assertion
 	}
 
-	invalidAssertionsForTrue := []Assertion{
-		{Fn: "Equal", Argsf: "predicate, true", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "Equal", Argsf: "true, predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "EqualValues", Argsf: "predicate, true", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "EqualValues", Argsf: "true, predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "Exactly", Argsf: "predicate, true", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "Exactly", Argsf: "true, predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "NotEqual", Argsf: "predicate, false", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "NotEqual", Argsf: "false, predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "NotEqualValues", Argsf: "predicate, false", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "NotEqualValues", Argsf: "false, predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "True", Argsf: "predicate == true", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
-		{Fn: "True", Argsf: "true == predicate", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
-		{Fn: "False", Argsf: "predicate == false", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "False", Argsf: "false == predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "False", Argsf: "predicate != true", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "False", Argsf: "true != predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "True", Argsf: "predicate != false", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
-		{Fn: "True", Argsf: "false != predicate", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
-		{Fn: "False", Argsf: "!predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-		{Fn: "False", Argsf: `!result["flag"].(bool)`, ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: `result["flag"].(bool)`}, //nolint:lll
+	ignoredAssertions := make([]Assertion, 0)
+	for _, fn := range []string{
+		"Equal",
+		"NotEqual",
+	} {
+		ignoredAssertions = append(ignoredAssertions,
+			Assertion{Fn: fn, Argsf: "true, true"},
+			Assertion{Fn: fn, Argsf: "false, false"},
+			Assertion{Fn: fn, Argsf: "predicate, predicate"},
+			Assertion{Fn: fn, Argsf: "false, false"},
+
+			// https://go.dev/ref/spec#Comparison_operators
+			// A value x of non-interface type X and a value t of interface type T can be compared
+			// if type X is comparable and X implements T.
+			Assertion{Fn: fn, Argsf: `true, result["flag"]`},
+			Assertion{Fn: fn, Argsf: `result["flag"], true`},
+			Assertion{Fn: fn, Argsf: `false, result["flag"]`},
+			Assertion{Fn: fn, Argsf: `result["flag"], false`},
+		)
 	}
 
-	invalidAssertionsForFalse := []Assertion{
-		{Fn: "Equal", Argsf: "predicate, false", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "Equal", Argsf: "false, predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "EqualValues", Argsf: "predicate, false", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "EqualValues", Argsf: "false, predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "Exactly", Argsf: "predicate, false", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "Exactly", Argsf: "false, predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "NotEqual", Argsf: "predicate, true", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "NotEqual", Argsf: "true, predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "NotEqualValues", Argsf: "predicate, true", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "NotEqualValues", Argsf: "true, predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "False", Argsf: "predicate == true", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
-		{Fn: "False", Argsf: "true == predicate", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
-		{Fn: "True", Argsf: "predicate == false", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "True", Argsf: "false == predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "True", Argsf: "predicate != true", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "True", Argsf: "true != predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "False", Argsf: "predicate != false", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
-		{Fn: "False", Argsf: "false != predicate", ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
-		{Fn: "True", Argsf: "!predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
-		{Fn: "True", Argsf: `!result["flag"].(bool)`, ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: `result["flag"].(bool)`}, //nolint:lll
+	for _, fn := range []string{
+		"True",
+		"False",
+	} {
+		ignoredAssertions = append(ignoredAssertions,
+			Assertion{Fn: fn, Argsf: "true == true"},
+			Assertion{Fn: fn, Argsf: "false == false"},
+			Assertion{Fn: fn, Argsf: "true != true"},
+			Assertion{Fn: fn, Argsf: "false != false"},
+			Assertion{Fn: fn, Argsf: "predicate == predicate"},
+			Assertion{Fn: fn, Argsf: "predicate != predicate"},
+
+			// https://go.dev/ref/spec#Comparison_operators
+			// A value x of non-interface type X and a value t of interface type T can be compared
+			// if type X is comparable and X implements T.
+
+			Assertion{Fn: fn, Argsf: `true == result["flag"]`},
+			Assertion{Fn: fn, Argsf: `result["flag"] == true`},
+			Assertion{Fn: fn, Argsf: `false == result["flag"]`},
+			Assertion{Fn: fn, Argsf: `result["flag"] == false`},
+			Assertion{Fn: fn, Argsf: `true != result["flag"]`},
+			Assertion{Fn: fn, Argsf: `result["flag"] != true`},
+			Assertion{Fn: fn, Argsf: `false != result["flag"]`},
+			Assertion{Fn: fn, Argsf: `result["flag"] != false`},
+		)
 	}
 
-	ignoredAssertions := []Assertion{
-		{Fn: "Equal", Argsf: "true, true"},
-		{Fn: "Equal", Argsf: "false, false"},
-		{Fn: "NotEqual", Argsf: "true, true"},
-		{Fn: "NotEqual", Argsf: "false, false"},
-		{Fn: "True", Argsf: "true == true"},
-		{Fn: "True", Argsf: "false == false"},
-		{Fn: "False", Argsf: "true == true"},
-		{Fn: "False", Argsf: "false == false"},
-		{Fn: "True", Argsf: "true != true"},
-		{Fn: "True", Argsf: "false != false"},
-		{Fn: "False", Argsf: "true != true"},
-		{Fn: "False", Argsf: "false != false"},
+	// `any` cases.
+	ignoredAssertions = append(ignoredAssertions,
+		Assertion{Fn: "Equal", Argsf: "foo, foo"},
+		Assertion{Fn: "NotEqual", Argsf: "foo, foo"},
+		Assertion{Fn: "True", Argsf: "foo == foo"},
+		Assertion{Fn: "False", Argsf: "foo == foo"},
+		Assertion{Fn: "True", Argsf: "foo != foo"},
+		Assertion{Fn: "False", Argsf: "foo != foo"},
+	)
 
-		{Fn: "Equal", Argsf: "predicate, predicate"},
-		{Fn: "NotEqual", Argsf: "predicate, predicate"},
-		{Fn: "True", Argsf: "predicate == predicate"},
-		{Fn: "False", Argsf: "predicate == predicate"},
-		{Fn: "True", Argsf: "predicate != predicate"},
-		{Fn: "False", Argsf: "predicate != predicate"},
+	invalidAssertionsForTrue := make([]Assertion, 0)
+	invalidAssertionsForFalse := make([]Assertion, 0)
+	for _, fn := range []string{
+		"Equal",
+		"EqualValues",
+		"Exactly",
+	} {
+		invalidAssertionsForTrue = append(invalidAssertionsForTrue,
+			Assertion{Fn: fn, Argsf: "predicate, true", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+			Assertion{Fn: fn, Argsf: "true, predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+		)
 
-		// `any` cases.
+		invalidAssertionsForFalse = append(invalidAssertionsForFalse,
+			Assertion{Fn: fn, Argsf: "predicate, false", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"}, //nolint:lll
+			Assertion{Fn: fn, Argsf: "false, predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"}, //nolint:lll
+		)
+	}
 
-		{Fn: "Equal", Argsf: `true, result["flag"]`},
-		{Fn: "Equal", Argsf: `result["flag"], true`},
-		{Fn: "Equal", Argsf: `false, result["flag"]`},
-		{Fn: "Equal", Argsf: `result["flag"], false`},
-		{Fn: "NotEqual", Argsf: `true, result["flag"]`},
-		{Fn: "NotEqual", Argsf: `result["flag"], true`},
-		{Fn: "NotEqual", Argsf: `false, result["flag"]`},
-		{Fn: "NotEqual", Argsf: `result["flag"], false`},
-		// https://go.dev/ref/spec#Comparison_operators
-		// A value x of non-interface type X and a value t of interface type T can be compared
-		// if type X is comparable and X implements T.
-		{Fn: "True", Argsf: `true == result["flag"]`},
-		{Fn: "True", Argsf: `result["flag"] == true`},
-		{Fn: "True", Argsf: `false == result["flag"]`},
-		{Fn: "True", Argsf: `result["flag"] == false`},
-		{Fn: "False", Argsf: `true == result["flag"]`},
-		{Fn: "False", Argsf: `result["flag"] == true`},
-		{Fn: "False", Argsf: `false == result["flag"]`},
-		{Fn: "False", Argsf: `result["flag"] == false`},
-		{Fn: "True", Argsf: `true != result["flag"]`},
-		{Fn: "True", Argsf: `result["flag"] != true`},
-		{Fn: "True", Argsf: `false != result["flag"]`},
-		{Fn: "True", Argsf: `result["flag"] != false`},
-		{Fn: "False", Argsf: `true != result["flag"]`},
-		{Fn: "False", Argsf: `result["flag"] != true`},
-		{Fn: "False", Argsf: `false != result["flag"]`},
-		{Fn: "False", Argsf: `result["flag"] != false`},
+	for _, fn := range []string{
+		"NotEqual",
+		"NotEqualValues",
+	} {
+		invalidAssertionsForTrue = append(invalidAssertionsForTrue,
+			Assertion{Fn: fn, Argsf: "predicate, false", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+			Assertion{Fn: fn, Argsf: "false, predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+		)
 
-		{Fn: "Equal", Argsf: "foo, foo"},
-		{Fn: "NotEqual", Argsf: "foo, foo"},
-		{Fn: "True", Argsf: "foo == foo"},
-		{Fn: "False", Argsf: "foo == foo"},
-		{Fn: "True", Argsf: "foo != foo"},
-		{Fn: "False", Argsf: "foo != foo"},
+		invalidAssertionsForFalse = append(invalidAssertionsForFalse,
+			Assertion{Fn: fn, Argsf: "predicate, true", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"}, //nolint:lll
+			Assertion{Fn: fn, Argsf: "true, predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"}, //nolint:lll
+		)
+	}
+
+	for _, argsf := range []string{
+		"predicate == false",
+		"false == predicate",
+		"predicate != true",
+		"true != predicate",
+		"!predicate",
+	} {
+		invalidAssertionsForTrue = append(invalidAssertionsForTrue,
+			Assertion{Fn: "False", Argsf: argsf, ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+		)
+
+		invalidAssertionsForFalse = append(invalidAssertionsForFalse,
+			Assertion{Fn: "True", Argsf: argsf, ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
+		)
+	}
+
+	invalidAssertionsForTrue = append(invalidAssertionsForTrue,
+		Assertion{Fn: "False", Argsf: `!result["flag"].(bool)`, ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: `result["flag"].(bool)`}, //nolint:lll
+	)
+
+	invalidAssertionsForFalse = append(invalidAssertionsForFalse,
+		Assertion{Fn: "True", Argsf: `!result["flag"].(bool)`, ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: `result["flag"].(bool)`}, //nolint:lll
+	)
+
+	for _, argsf := range []string{
+		"predicate == true",
+		"true == predicate",
+		"predicate != false",
+		"false != predicate",
+	} {
+		invalidAssertionsForTrue = append(invalidAssertionsForTrue,
+			Assertion{Fn: "True", Argsf: argsf, ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
+		)
+
+		invalidAssertionsForFalse = append(invalidAssertionsForFalse,
+			Assertion{Fn: "False", Argsf: argsf, ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
+		)
 	}
 
 	sortAssertions(invalidAssertionsForTrue)

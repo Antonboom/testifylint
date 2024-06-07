@@ -121,6 +121,8 @@ func TestBoolCompareChecker_Ignored(t *testing.T) {
 
 	assert.Equal(t, false, false)
 	assert.Equalf(t, false, false, "msg with args %d %s", 42, "42")
+	assert.Equal(t, false, false)
+	assert.Equalf(t, false, false, "msg with args %d %s", 42, "42")
 	assert.Equal(t, false, result["flag"])
 	assert.Equalf(t, false, result["flag"], "msg with args %d %s", 42, "42")
 	assert.Equal(t, foo, foo)
@@ -167,6 +169,8 @@ func TestBoolCompareChecker_Ignored(t *testing.T) {
 	assert.Falsef(t, true == result["flag"], "msg with args %d %s", 42, "42")
 	assert.False(t, true == true)
 	assert.Falsef(t, true == true, "msg with args %d %s", 42, "42")
+	assert.NotEqual(t, false, false)
+	assert.NotEqualf(t, false, false, "msg with args %d %s", 42, "42")
 	assert.NotEqual(t, false, false)
 	assert.NotEqualf(t, false, false, "msg with args %d %s", 42, "42")
 	assert.NotEqual(t, false, result["flag"])
