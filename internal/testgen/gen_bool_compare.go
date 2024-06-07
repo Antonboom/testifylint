@@ -131,6 +131,10 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 		{Fn: "False", Argsf: "foo != foo"},
 	}
 
+	sortAssertions(invalidAssertionsForTrue)
+	sortAssertions(invalidAssertionsForFalse)
+	sortAssertions(ignoredAssertions)
+
 	return struct {
 		CheckerName       CheckerName
 		Tests             []test
