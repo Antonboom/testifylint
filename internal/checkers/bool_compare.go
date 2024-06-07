@@ -146,7 +146,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			return newUseTrueDiagnostic(survivingArg, arg1.Pos(), arg2.End())
 		}
 
-	case "True":
+	case "True", "NotEmpty", "NotZero":
 		if len(call.Args) < 1 {
 			return nil
 		}
@@ -173,7 +173,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			}
 		}
 
-	case "False":
+	case "False", "Zero", "Empty":
 		if len(call.Args) < 1 {
 			return nil
 		}
