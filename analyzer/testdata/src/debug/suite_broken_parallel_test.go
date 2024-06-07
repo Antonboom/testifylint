@@ -37,7 +37,7 @@ func (s *SuiteWithParallelTests) TestTwo() {
 
 // go test -race -run=TestSuiteWithParallelSubTests suite_broken_parallel_test.go
 //
-// NO DATARACE, but s.T().Parallel() not working (18.407s):
+// NO DATARACE, but s.T().Parallel() for subtests not working (18.407s):
 //
 //	TestOne: 0: I am started at 2024-06-06 09:18:56.72165
 //	TestOne: 1: I am started at 2024-06-06 09:18:59.72348
@@ -79,6 +79,41 @@ func (s *SuiteWithParallelSubTests) TestTwo() {
 	}
 }
 
+// go test -race -run=TestSuiteWithParallelThroughSetupTest suite_broken_parallel_test.go
+//
+// DATARACE!
+func TestSuiteWithParallelThroughSetupTest(t *testing.T) {
+	suite.Run(t, new(SuiteWithParallelThroughSetupTest))
+}
+
+type SuiteWithParallelThroughSetupTest struct {
+	suite.Suite
+}
+
+func (s *SuiteWithParallelThroughSetupTest) SetupTest() {
+	s.T().Parallel()
+}
+
+func (s *SuiteWithParallelThroughSetupTest) TestOne() {
+	for i := 0; i <= 2; i++ {
+		s.Run(fmt.Sprintf("%d", i), func() {
+			s.T().Logf("%s: %d: I am started at %s", "TestOne", i, time.Now())
+			s.GreaterOrEqual(i, 0)
+			time.Sleep(3 * time.Second)
+		})
+	}
+}
+
+func (s *SuiteWithParallelThroughSetupTest) TestTwo() {
+	for i := 0; i <= 2; i++ {
+		s.Run(fmt.Sprintf("%d", i), func() {
+			s.T().Logf("%s: %d: I am started at %s", "TestTwo", i, time.Now())
+			s.GreaterOrEqual(i, 0)
+			time.Sleep(3 * time.Second)
+		})
+	}
+}
+
 // go test -race -run=TestSuiteWithParallelRawTForRunSubTest suite_broken_parallel_test.go
 //
 // NO DATARACE, but:
@@ -98,9 +133,9 @@ func (s *SuiteWithParallelRawTForRunSubTest) TestOne() {
 		s.T().Run(fmt.Sprintf("%d", i), func(t *testing.T) {
 			s.T().Parallel()
 
-			for i := 0; i < 100; i++ {
-				s.GreaterOrEqual(i, 0)
-			}
+			s.T().Logf("%s: %d: I am started at %s", "TestOne", i, time.Now())
+			s.GreaterOrEqual(i, 0)
+			time.Sleep(3 * time.Second)
 		})
 	}
 }
@@ -111,9 +146,9 @@ func (s *SuiteWithParallelRawTForRunSubTest) TestTwo() {
 		s.T().Run(fmt.Sprintf("%d", i), func(t *testing.T) {
 			s.T().Parallel()
 
-			for i := 0; i < 100; i++ {
-				s.GreaterOrEqual(i, 0)
-			}
+			s.T().Logf("%s: %d: I am started at %s", "TestOne", i, time.Now())
+			s.GreaterOrEqual(i, 0)
+			time.Sleep(3 * time.Second)
 		})
 	}
 }
@@ -122,18 +157,26 @@ func (s *SuiteWithParallelRawTForRunSubTest) TestTwo() {
 //
 // NO DATARACE, and t.Parallel() working fine (6.279s):
 //
-//	TestOne: 0: I am started at 2024-06-06 09:32:57.42371
-//	TestOne: 2: I am started at 2024-06-06 09:32:57.42374
-//	TestOne: 1: I am started at 2024-06-06 09:32:57.42375
-//	TestTwo: 0: I am started at 2024-06-06 09:33:00.42553
-//	TestTwo: 2: I am started at 2024-06-06 09:33:00.42554
-//	TestTwo: 1: I am started at 2024-06-06 09:33:00.42563
+//	AfterTest of TestOne: I am started at 2024-06-07 08:29:54.81907
+//	TestOne: 0: I am started at 2024-06-07 08:29:54.81969
+//	TestOne: 2: I am started at 2024-06-07 08:29:54.81982
+//	TestOne: 1: I am started at 2024-06-07 08:29:54.81981
+//	AfterTest of TestTwo: I am started at 2024-06-07 08:29:57.82127
+//	TestTwo: 0: I am started at 2024-06-07 08:29:57.82130
+//	TestTwo: 2: I am started at 2024-06-07 08:29:57.82132
+//	TestTwo: 1: I am started at 2024-06-07 08:29:57.82132
+//
+// But AfterTest (and other hooks) don't work correctly.
 func TestSuiteWithParallelRawTForRunSubTestAndTParallel(t *testing.T) {
 	suite.Run(t, new(SuiteWithParallelRawTForRunSubTestAndTParallel))
 }
 
 type SuiteWithParallelRawTForRunSubTestAndTParallel struct {
 	suite.Suite
+}
+
+func (s *SuiteWithParallelRawTForRunSubTestAndTParallel) AfterTest(_, testName string) {
+	s.T().Logf("AfterTest of %s: I am started at %s", testName, time.Now())
 }
 
 func (s *SuiteWithParallelRawTForRunSubTestAndTParallel) TestOne() {
@@ -164,7 +207,7 @@ func (s *SuiteWithParallelRawTForRunSubTestAndTParallel) TestTwo() {
 
 // go test -race -run=TestSuiteWithParallelInDifferentRunSubtest suite_broken_parallel_test.go
 //
-// DATARACE! But fun fact – if s.Run before s.T().Run then everything is ok.
+// DATARACE! But difficult to catch (try several times to see it).
 func TestSuiteWithParallelInDifferentRunSubtest(t *testing.T) {
 	suite.Run(t, new(SuiteWithParallelInDifferentRunSubtest))
 }
@@ -174,17 +217,19 @@ type SuiteWithParallelInDifferentRunSubtest struct {
 }
 
 func (s *SuiteWithParallelInDifferentRunSubtest) TestOne() {
-	s.T().Run("2", func(t *testing.T) {
+	s.T().Run("1", func(t *testing.T) {
 		t.Parallel()
 
-		s.GreaterOrEqual(1, 0)
-		time.Sleep(time.Second)
+		for i := 0; i < 100; i++ {
+			s.GreaterOrEqual(i, 0)
+		}
 	})
 
-	s.Run("1", func() {
+	s.Run("2", func() {
 		s.T().Parallel()
 
-		s.GreaterOrEqual(1, 0)
-		time.Sleep(time.Second)
+		for i := 0; i < 100; i++ {
+			s.GreaterOrEqual(i, 0)
+		}
 	})
 }

@@ -7,13 +7,13 @@ import (
 	"github.com/Antonboom/testifylint/internal/checkers"
 )
 
-type SuiteDontUsePkg struct{}
+type SuiteDontUsePkgTestsGenerator struct{}
 
-func (SuiteDontUsePkg) Checker() checkers.Checker {
+func (SuiteDontUsePkgTestsGenerator) Checker() checkers.Checker {
 	return checkers.NewSuiteDontUsePkg()
 }
 
-func (g SuiteDontUsePkg) TemplateData() any {
+func (g SuiteDontUsePkgTestsGenerator) TemplateData() any {
 	var (
 		checker = g.Checker().Name()
 		report  = checker + ": use %s.%s"
@@ -30,16 +30,16 @@ func (g SuiteDontUsePkg) TemplateData() any {
 	}
 }
 
-func (SuiteDontUsePkg) ErroredTemplate() Executor {
-	return template.Must(template.New("SuiteDontUsePkg.ErroredTemplate").
+func (SuiteDontUsePkgTestsGenerator) ErroredTemplate() Executor {
+	return template.Must(template.New("SuiteDontUsePkgTestsGenerator.ErroredTemplate").
 		Funcs(fm).
 		Parse(suiteDontUsePkgTestTmpl))
 }
 
-func (SuiteDontUsePkg) GoldenTemplate() Executor {
+func (SuiteDontUsePkgTestsGenerator) GoldenTemplate() Executor {
 	golden := strings.ReplaceAll(suiteDontUsePkgTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")
 	golden = strings.Replace(golden, "s.T()", "", 4)
-	return template.Must(template.New("SuiteDontUsePkg.GoldenTemplate").Funcs(fm).Parse(golden))
+	return template.Must(template.New("SuiteDontUsePkgTestsGenerator.GoldenTemplate").Funcs(fm).Parse(golden))
 }
 
 const suiteDontUsePkgTestTmpl = header + `
