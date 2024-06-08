@@ -59,6 +59,8 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					{Fn: "GreaterOrEqual", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 					{Fn: "Less", Argsf: "len(elems), 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 					{Fn: "Greater", Argsf: "1, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Zero", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Empty", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 
 					// Bullshit, but supported by the checker:
 					// n < 0, n <= 0
@@ -84,6 +86,8 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					{Fn: "NotEqualValues", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "Greater", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "Less", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotZero", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotEmpty", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "NotEmpty", Argsf: "elems"},
@@ -161,7 +165,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 			{{- range $ai, $assrn := $test.InvalidAssertions }}
 				{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 			{{- end }}
-	
+
 			// Valid.
 			{{- range $ai, $assrn := $test.ValidAssertions }}
 				{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
