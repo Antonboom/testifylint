@@ -213,7 +213,7 @@ func isFormatter(typ types.Type) bool {
 		types.Identical(sig.Params().At(1).Type(), types.Typ[types.Rune])
 }
 
-// isTypeParam reports whether t is a type parameter (or an alias of one).
+// isTypeParam reports whether t is a type parameter.
 func isTypeParam(t types.Type) bool {
 	_, ok := t.(*types.TypeParam)
 	return ok
