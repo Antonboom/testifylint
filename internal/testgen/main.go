@@ -38,8 +38,10 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	NegativePositiveTestsGenerator{},
 	NilCompareTestsGenerator{},
 	RequireErrorTestsGenerator{},
-	SuiteDontUsePkg{},
+	SuiteBrokenParallelTestsGenerator{},
+	SuiteDontUsePkgTestsGenerator{},
 	SuiteExtraAssertCallTestsGenerator{},
+	SuiteSubtestRunTestsGenerator{},
 	SuiteTHelperTestsGenerator{},
 	UselessAssertTestsGenerator{},
 }

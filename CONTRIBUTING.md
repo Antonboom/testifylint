@@ -135,7 +135,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [http-const](#http-const)
 - [http-sugar](#http-sugar)
 - [require-len](#require-len)
-- [suite-run](#suite-run)
 - [suite-test-name](#suite-test-name)
 - [useless-assert](#useless-assert)
 
@@ -319,32 +318,6 @@ then before that there must be a length constraint through `require`.
 **Reason**: Similar to [require-error](README.md#require-error). Save you from annoying panics.
 
 Or maybe do something similar for maps? And come up with better name for the checker.
-
-### suite-run
-
-```go
-func (s *Suite) TestSomething() {
-    ❌
-    s.T().Run("subtest1", func(t *testing.T) {
-        // ...
-        assert.Equal(t, "gopher", result)
-    })
-
-    ✅
-    s.Run("subtest1", func() {
-        // ...
-        s.Equal("gopher", result)
-    })
-}
-```
-
-**Autofix**: true. <br>
-**Enabled by default**: probably yes. <br>
-**Reason**: Code simplification and consistency. <br>
-**Related issues**: [#35](https://github.com/Antonboom/testifylint/issues/35)
-
-But need to investigate the technical difference and the reasons for the appearance of `s.Run`.
-Also, maybe this case is already covered by [suite-dont-use-pkg](README.md#suite-dont-use-pkg)?
 
 ---
 
