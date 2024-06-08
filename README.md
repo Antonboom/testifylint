@@ -675,9 +675,7 @@ func (s *MySuite) SetupTest() {
     s.T().Parallel() ❌
 }
 
-func (s *MySuite) BeforeTest(suiteName, testName string) {
-    s.T().Parallel() ❌
-}
+// And other hooks...
 
 func (s *MySuite) TestSomething() {
     s.T().Parallel() ❌

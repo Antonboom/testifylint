@@ -16,9 +16,7 @@ import (
 //		s.T().Parallel()
 //	}
 //
-//	func (s *MySuite) BeforeTest(suiteName, testName string) {
-//		s.T().Parallel()
-//	}
+//	// And other hooks...
 //
 //	func (s *MySuite) TestSomething() {
 //		s.T().Parallel()
@@ -65,22 +63,24 @@ func (checker SuiteBrokenParallel) Check(pass *analysis.Pass, insp *inspector.In
 				continue
 			}
 
-			if isSuiteMethod(pass, fd) {
-				nextLine := pass.Fset.Position(ce.Pos()).Line + 1
-				d := newDiagnostic(checker.Name(), ce, report, &analysis.SuggestedFix{
-					Message: fmt.Sprintf("Remove `%s` call", analysisutil.NodeString(pass.Fset, ce)),
-					TextEdits: []analysis.TextEdit{
-						{
-							Pos:     ce.Pos(),
-							End:     pass.Fset.File(ce.Pos()).LineStart(nextLine),
-							NewText: []byte(""),
-						},
-					},
-				})
-
-				diagnostics = append(diagnostics, *d)
+			if !isSuiteMethod(pass, fd) {
+				continue
 			}
-			return true
+
+			nextLine := pass.Fset.Position(ce.Pos()).Line + 1
+			d := newDiagnostic(checker.Name(), ce, report, &analysis.SuggestedFix{
+				Message: fmt.Sprintf("Remove `%s` call", analysisutil.NodeString(pass.Fset, ce)),
+				TextEdits: []analysis.TextEdit{
+					{
+						Pos:     ce.Pos(),
+						End:     pass.Fset.File(ce.Pos()).LineStart(nextLine),
+						NewText: []byte(""),
+					},
+				},
+			})
+
+			diagnostics = append(diagnostics, *d)
+			return false
 		}
 
 		return true
