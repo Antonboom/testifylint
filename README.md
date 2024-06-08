@@ -103,6 +103,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [negative-positive](#negative-positive)             | ✅                  | ✅       |
 | [nil-compare](#nil-compare)                         | ✅                  | ✅       |
 | [require-error](#require-error)                     | ✅                  | ❌       |
+| [suite-broken-parallel](#suite-broken-parallel)     | ✅                  | ✅       |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
 | [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
 | [suite-subtest-run](#suite-subtest-run)             | ✅                  | ❌       |
@@ -667,11 +668,61 @@ Also, to minimize false positives, `require-error` ignores:
 
 ---
 
+### suite-broken-parallel
+
+```go
+func (s *MySuite) SetupTest() {
+    s.T().Parallel() ❌
+}
+
+// And other hooks...
+
+func (s *MySuite) TestSomething() {
+    s.T().Parallel() ❌
+    
+    for _, tt := range cases {
+        s.Run(tt.name, func() {
+            s.T().Parallel() ❌
+        })
+        
+        s.T().Run(tt.name, func(t *testing.T) {
+            t.Parallel() ❌
+        })
+    }
+}
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Protection from undefined behaviour.
+
+`v1` of `testify` doesn't support suite's parallel tests and subtests.
+
+Depending on [case](./analyzer/testdata/src/debug/suite_broken_parallel_test.go) using of `t.Parallel()` leads to
+
+- data race
+- panic
+- non-working suite hooks
+- silent ignoring of this directive
+
+So, `testify`'s maintainers recommend discourage parallel tests inside suite.
+
+<details>
+<summary>Related issues...</summary>
+
+- https://github.com/stretchr/testify/issues/187
+- https://github.com/stretchr/testify/issues/466
+- https://github.com/stretchr/testify/issues/934
+- https://github.com/stretchr/testify/issues/1139
+- https://github.com/stretchr/testify/issues/1253
+
+</details>
+
+---
+
 ### suite-dont-use-pkg
 
 ```go
-import "github.com/stretchr/testify/assert"
-
 func (s *MySuite) TestSomething() {
     ❌ assert.Equal(s.T(), 42, value)
     ✅ s.Equal(42, value)
