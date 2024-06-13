@@ -19,6 +19,7 @@ import (
 //	assert.GreaterOrEqual(t, 0, len(arr))
 //	assert.Less(t, len(arr), 0)
 //	assert.Greater(t, 0, len(arr))
+//	assert.Positive(t, len(arr))
 //	assert.Less(t, len(arr), 1)
 //	assert.Greater(t, 1, len(arr))
 //	assert.Zero(t, len(arr))
@@ -133,7 +134,7 @@ func (checker Empty) checkNotEmpty(pass *analysis.Pass, call *CallMeta) *analysi
 
 	a := call.Args[0]
 	switch call.Fn.NameFTrimmed {
-	case "NotZero", "NotEmpty":
+	case "NotZero", "NotEmpty", "Positive":
 		lenArg, ok := isBuiltinLenCall(pass, a)
 		if ok {
 			return newUseNotEmptyDiagnostic(a.Pos(), a.End(), lenArg)
