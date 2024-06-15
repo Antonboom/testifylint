@@ -234,6 +234,7 @@ assert.NotEqual(t, 0, len(arr))
 assert.NotEqualValues(t, 0, len(arr))
 assert.Less(t, 0, len(arr))
 assert.Greater(t, len(arr), 0)
+assert.Positive(t, len(arr))
 assert.NotZero(t, len(arr))
 assert.NotEmpty(t, len(arr))
 
