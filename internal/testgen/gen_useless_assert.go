@@ -1,7 +1,6 @@
 package main
 
 import (
-	"sort"
 	"text/template"
 
 	"github.com/Antonboom/testifylint/internal/checkers"
@@ -19,7 +18,7 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 		sameVarReport = checker + ": asserting of the same variable"
 	)
 
-	var twoSideAssertions []Assertion //nolint:prealloc
+	var twoSideAssertions []Assertion
 	for fn, args := range map[string]string{
 		"Contains":            "value, value",
 		"ElementsMatch":       "value, value",
@@ -71,13 +70,7 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 		}
 	}
 
-	sort.Slice(twoSideAssertions, func(i, j int) bool {
-		lhs, rhs := twoSideAssertions[i], twoSideAssertions[j]
-		if lhs.Fn == rhs.Fn {
-			return lhs.Argsf < rhs.Argsf
-		}
-		return lhs.Fn < rhs.Fn
-	})
+	sortAssertions(twoSideAssertions)
 
 	return struct {
 		CheckerName            CheckerName
