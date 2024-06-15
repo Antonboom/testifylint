@@ -16,7 +16,7 @@ issues:
       text: "exported"
 
     - path: "internal/testgen"
-      linters: [ "forbidigo", "gochecknoinits" ] # Internal test generation tool.
+      linters: [ "forbidigo", "gochecknoinits", "prealloc" ] # Internal test generation tool.
 
     - path: "internal"
       linters: [ "revive" ]

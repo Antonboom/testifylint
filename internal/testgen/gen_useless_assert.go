@@ -18,7 +18,7 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 		sameVarReport = checker + ": asserting of the same variable"
 	)
 
-	var twoSideAssertions []Assertion //nolint:prealloc
+	var twoSideAssertions []Assertion
 	for fn, args := range map[string]string{
 		"Contains":            "value, value",
 		"ElementsMatch":       "value, value",

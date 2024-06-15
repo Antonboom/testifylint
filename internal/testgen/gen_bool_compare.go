@@ -26,7 +26,7 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 		ValidAssertions   []Assertion
 	}
 
-	var ignoredAssertions []Assertion //nolint:prealloc
+	var ignoredAssertions []Assertion
 	for _, fn := range []string{
 		"Equal",
 		"NotEqual",
@@ -84,21 +84,33 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 		Assertion{Fn: "False", Argsf: "foo != foo"},
 	)
 
-	var invalidAssertionsForTrue []Assertion  //nolint:prealloc
-	var invalidAssertionsForFalse []Assertion //nolint:prealloc
+	var invalidAssertionsForTrue []Assertion
+	var invalidAssertionsForFalse []Assertion
 	for _, fn := range []string{
 		"Equal",
 		"EqualValues",
 		"Exactly",
 	} {
 		invalidAssertionsForTrue = append(invalidAssertionsForTrue,
-			Assertion{Fn: fn, Argsf: "predicate, true", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-			Assertion{Fn: fn, Argsf: "true, predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+			Assertion{
+				Fn: fn, Argsf: "predicate, true", ReportMsgf: reportUse,
+				ProposedFn: "True", ProposedArgsf: "predicate",
+			},
+			Assertion{
+				Fn: fn, Argsf: "true, predicate", ReportMsgf: reportUse,
+				ProposedFn: "True", ProposedArgsf: "predicate",
+			},
 		)
 
 		invalidAssertionsForFalse = append(invalidAssertionsForFalse,
-			Assertion{Fn: fn, Argsf: "predicate, false", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"}, //nolint:lll
-			Assertion{Fn: fn, Argsf: "false, predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"}, //nolint:lll
+			Assertion{
+				Fn: fn, Argsf: "predicate, false",
+				ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate",
+			},
+			Assertion{
+				Fn: fn, Argsf: "false, predicate",
+				ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate",
+			},
 		)
 	}
 
@@ -107,13 +119,25 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 		"NotEqualValues",
 	} {
 		invalidAssertionsForTrue = append(invalidAssertionsForTrue,
-			Assertion{Fn: fn, Argsf: "predicate, false", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
-			Assertion{Fn: fn, Argsf: "false, predicate", ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+			Assertion{
+				Fn: fn, Argsf: "predicate, false",
+				ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate",
+			},
+			Assertion{
+				Fn: fn, Argsf: "false, predicate",
+				ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate",
+			},
 		)
 
 		invalidAssertionsForFalse = append(invalidAssertionsForFalse,
-			Assertion{Fn: fn, Argsf: "predicate, true", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"}, //nolint:lll
-			Assertion{Fn: fn, Argsf: "true, predicate", ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"}, //nolint:lll
+			Assertion{
+				Fn: fn, Argsf: "predicate, true",
+				ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate",
+			},
+			Assertion{
+				Fn: fn, Argsf: "true, predicate",
+				ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate",
+			},
 		)
 	}
 
@@ -125,21 +149,19 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 		"!predicate",
 	} {
 		invalidAssertionsForTrue = append(invalidAssertionsForTrue,
-			Assertion{Fn: "False", Argsf: argsf, ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate"},
+			Assertion{
+				Fn: "False", Argsf: argsf,
+				ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "predicate",
+			},
 		)
 
 		invalidAssertionsForFalse = append(invalidAssertionsForFalse,
-			Assertion{Fn: "True", Argsf: argsf, ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate"},
+			Assertion{
+				Fn: "True", Argsf: argsf,
+				ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "predicate",
+			},
 		)
 	}
-
-	invalidAssertionsForTrue = append(invalidAssertionsForTrue,
-		Assertion{Fn: "False", Argsf: `!result["flag"].(bool)`, ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: `result["flag"].(bool)`}, //nolint:lll
-	)
-
-	invalidAssertionsForFalse = append(invalidAssertionsForFalse,
-		Assertion{Fn: "True", Argsf: `!result["flag"].(bool)`, ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: `result["flag"].(bool)`}, //nolint:lll
-	)
 
 	for _, argsf := range []string{
 		"predicate == true",
@@ -155,6 +177,20 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 			Assertion{Fn: "False", Argsf: argsf, ReportMsgf: reportSimplify, ProposedArgsf: "predicate"},
 		)
 	}
+
+	invalidAssertionsForTrue = append(invalidAssertionsForTrue,
+		Assertion{
+			Fn: "False", Argsf: `!result["flag"].(bool)`,
+			ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: `result["flag"].(bool)`,
+		},
+	)
+
+	invalidAssertionsForFalse = append(invalidAssertionsForFalse,
+		Assertion{
+			Fn: "True", Argsf: `!result["flag"].(bool)`,
+			ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: `result["flag"].(bool)`,
+		},
+	)
 
 	return struct {
 		CheckerName       CheckerName
