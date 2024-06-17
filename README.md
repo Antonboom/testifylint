@@ -589,6 +589,8 @@ assert.Positive(t, a)
 **Enabled by default**: true <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
 
+Typed zeros (like `int(0)`, `int(8)`, … `uint(64)`) are also supported.
+
 ---
 
 ### nil-compare
