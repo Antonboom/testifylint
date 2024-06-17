@@ -25,6 +25,8 @@ import (
 //	assert.False(t, a <= 0)
 //	assert.False(t, 0 >= a)
 //
+// Typed zeros (like `int(0)`, `int(8)`, … `uint(64)`) are also supported.
+//
 // and requires
 //
 //	assert.Negative(t, value)
@@ -61,7 +63,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		}
 		a, b := call.Args[0], call.Args[1]
 
-		if isNotZero(a) && isZero(b) {
+		if !isZeroValue(a) && isZeroValue(b) {
 			return newUseNegativeDiagnostic(a.Pos(), b.End(), a)
 		}
 
@@ -71,7 +73,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		}
 		a, b := call.Args[0], call.Args[1]
 
-		if isZero(a) && isNotZero(b) {
+		if isZeroValue(a) && !isZeroValue(b) {
 			return newUseNegativeDiagnostic(a.Pos(), b.End(), b)
 		}
 
@@ -81,8 +83,8 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		}
 		expr := call.Args[0]
 
-		a, _, ok1 := isStrictComparisonWith(pass, expr, p(isNotZero), token.LSS, p(isZero)) // a < 0
-		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZero), token.GTR, p(isNotZero)) // 0 > a
+		a, _, ok1 := isStrictComparisonWith(pass, expr, p(isNotZeroValue), token.LSS, p(isZeroValue)) // a < 0
+		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZeroValue), token.GTR, p(isNotZeroValue)) // 0 > a
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
@@ -95,8 +97,8 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		}
 		expr := call.Args[0]
 
-		a, _, ok1 := isStrictComparisonWith(pass, expr, p(isNotZero), token.GEQ, p(isZero)) // a >= 0
-		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZero), token.LEQ, p(isNotZero)) // 0 <= a
+		a, _, ok1 := isStrictComparisonWith(pass, expr, p(isNotZeroValue), token.GEQ, p(isZeroValue)) // a >= 0
+		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZeroValue), token.LEQ, p(isNotZeroValue)) // 0 <= a
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
@@ -125,7 +127,7 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 		}
 		a, b := call.Args[0], call.Args[1]
 
-		if isNotZero(a) && isZero(b) {
+		if !isZeroValue(a) && isZeroValue(b) {
 			return newUsePositiveDiagnostic(a.Pos(), b.End(), a)
 		}
 
@@ -135,7 +137,7 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 		}
 		a, b := call.Args[0], call.Args[1]
 
-		if isZero(a) && isNotZero(b) {
+		if isZeroValue(a) && !isZeroValue(b) {
 			return newUsePositiveDiagnostic(a.Pos(), b.End(), b)
 		}
 
@@ -145,8 +147,8 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 		}
 		expr := call.Args[0]
 
-		a, _, ok1 := isStrictComparisonWith(pass, expr, p(isNotZero), token.GTR, p(isZero)) // a > 0
-		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZero), token.LSS, p(isNotZero)) // 0 < a
+		a, _, ok1 := isStrictComparisonWith(pass, expr, p(isNotZeroValue), token.GTR, p(isZeroValue)) // a > 0
+		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZeroValue), token.LSS, p(isNotZeroValue)) // 0 < a
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
@@ -159,8 +161,8 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 		}
 		expr := call.Args[0]
 
-		a, _, ok1 := isStrictComparisonWith(pass, expr, p(isNotZero), token.LEQ, p(isZero)) // a <= 0
-		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZero), token.GEQ, p(isNotZero)) // 0 >= a
+		a, _, ok1 := isStrictComparisonWith(pass, expr, p(isNotZeroValue), token.LEQ, p(isZeroValue)) // a <= 0
+		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZeroValue), token.GEQ, p(isNotZeroValue)) // 0 >= a
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
