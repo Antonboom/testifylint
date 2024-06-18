@@ -54,6 +54,8 @@ $ testifylint --fix ./...
 Fixing with `golangci-lint` is currently **unavailable** due to
 [golangci/golangci-lint#1779](https://github.com/golangci/golangci-lint/issues/1779).
 
+Be aware that there may be unused imports after the fix, run `go fmt`.
+
 ## Configuring
 
 ### CLI
