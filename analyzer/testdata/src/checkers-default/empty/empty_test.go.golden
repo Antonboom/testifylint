@@ -9,7 +9,11 @@ import (
 )
 
 func TestEmptyChecker(t *testing.T) {
-	var elems []string
+	var (
+		elems []any
+		str   string
+		b     []byte
+	)
 
 	// assert.Empty cases.
 	{
@@ -40,6 +44,30 @@ func TestEmptyChecker(t *testing.T) {
 		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
 		assert.Empty(t, elems)                                   // want "empty: use assert\\.Empty"
 		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, b)                                       // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, b, "msg with args %d %s", 42, "42")     // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, b)                                       // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, b, "msg with args %d %s", 42, "42")     // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, b)                                       // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, b, "msg with args %d %s", 42, "42")     // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, str)                                     // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, str, "msg with args %d %s", 42, "42")   // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, b)                                       // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, b, "msg with args %d %s", 42, "42")     // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, b)                                       // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, b, "msg with args %d %s", 42, "42")     // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, str)                                     // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, str, "msg with args %d %s", 42, "42")   // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, b)                                       // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, b, "msg with args %d %s", 42, "42")     // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, str)                                     // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, str, "msg with args %d %s", 42, "42")   // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, b)                                       // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, b, "msg with args %d %s", 42, "42")     // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, str)                                     // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, str, "msg with args %d %s", 42, "42")   // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, b)                                       // want "empty: use assert\\.Empty"
+		assert.Emptyf(t, b, "msg with args %d %s", 42, "42")     // want "empty: use assert\\.Emptyf"
 		assert.Empty(t, elems)                                   // want "empty: use assert\\.Empty"
 		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
 		assert.Empty(t, elems)                                   // want "empty: use assert\\.Empty"
@@ -75,6 +103,24 @@ func TestEmptyChecker(t *testing.T) {
 		assert.NotEmptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.NotEmptyf"
 		assert.NotEmpty(t, elems)                                   // want "empty: use assert\\.NotEmpty"
 		assert.NotEmptyf(t, elems, "msg with args %d %s", 42, "42") // want "empty: use assert\\.NotEmptyf"
+		assert.NotEmpty(t, str)                                     // want "empty: use assert\\.NotEmpty"
+		assert.NotEmptyf(t, str, "msg with args %d %s", 42, "42")   // want "empty: use assert\\.NotEmptyf"
+		assert.NotEmpty(t, str)                                     // want "empty: use assert\\.NotEmpty"
+		assert.NotEmptyf(t, str, "msg with args %d %s", 42, "42")   // want "empty: use assert\\.NotEmptyf"
+		assert.NotEmpty(t, b)                                       // want "empty: use assert\\.NotEmpty"
+		assert.NotEmptyf(t, b, "msg with args %d %s", 42, "42")     // want "empty: use assert\\.NotEmptyf"
+		assert.NotEmpty(t, b)                                       // want "empty: use assert\\.NotEmpty"
+		assert.NotEmptyf(t, b, "msg with args %d %s", 42, "42")     // want "empty: use assert\\.NotEmptyf"
+		assert.NotEmpty(t, b)                                       // want "empty: use assert\\.NotEmpty"
+		assert.NotEmptyf(t, b, "msg with args %d %s", 42, "42")     // want "empty: use assert\\.NotEmptyf"
+		assert.NotEmpty(t, str)                                     // want "empty: use assert\\.NotEmpty"
+		assert.NotEmptyf(t, str, "msg with args %d %s", 42, "42")   // want "empty: use assert\\.NotEmptyf"
+		assert.NotEmpty(t, b)                                       // want "empty: use assert\\.NotEmpty"
+		assert.NotEmptyf(t, b, "msg with args %d %s", 42, "42")     // want "empty: use assert\\.NotEmptyf"
+		assert.NotEmpty(t, str)                                     // want "empty: use assert\\.NotEmpty"
+		assert.NotEmptyf(t, str, "msg with args %d %s", 42, "42")   // want "empty: use assert\\.NotEmptyf"
+		assert.NotEmpty(t, b)                                       // want "empty: use assert\\.NotEmpty"
+		assert.NotEmptyf(t, b, "msg with args %d %s", 42, "42")     // want "empty: use assert\\.NotEmptyf"
 
 		// Valid.
 		assert.NotEmpty(t, elems)
@@ -84,24 +130,32 @@ func TestEmptyChecker(t *testing.T) {
 
 func TestEmptyChecker_LenVarIndependence(t *testing.T) {
 	var (
+		elems  []any
 		arr    [0]int
 		arrPtr *[0]int
 		sl     []int
 		mp     map[int]int
 		str    string
+		b      []byte
 		ch     chan int
 	)
 
+	assert.Empty(t, elems)  // want "empty: use assert\\.Empty"
 	assert.Empty(t, arr)    // want "empty: use assert\\.Empty"
 	assert.Empty(t, arrPtr) // want "empty: use assert\\.Empty"
 	assert.Empty(t, sl)     // want "empty: use assert\\.Empty"
 	assert.Empty(t, mp)     // want "empty: use assert\\.Empty"
 	assert.Empty(t, str)    // want "empty: use assert\\.Empty"
 	assert.Empty(t, ch)     // want "empty: use assert\\.Empty"
+	assert.Empty(t, b)      // want "empty: use assert\\.Empty"
 }
 
 func TestEmptyChecker_Ignored(t *testing.T) {
-	var elems []string
+	var (
+		elems []any
+		str   string
+		b     []byte
+	)
 
 	assert.Len(t, elems, len(elems))
 	assert.Lenf(t, elems, len(elems), "msg with args %d %s", 42, "42")
@@ -147,6 +201,12 @@ func TestEmptyChecker_Ignored(t *testing.T) {
 	assert.LessOrEqualf(t, len(elems), 2, "msg with args %d %s", 42, "42")
 	assert.LessOrEqual(t, 2, len(elems))
 	assert.LessOrEqualf(t, 2, len(elems), "msg with args %d %s", 42, "42")
+	assert.Zero(t, elems)
+	assert.Zerof(t, elems, "msg with args %d %s", 42, "42")
+	assert.Zero(t, str)
+	assert.Zerof(t, str, "msg with args %d %s", 42, "42")
+	assert.Zero(t, string(b))
+	assert.Zerof(t, string(b), "msg with args %d %s", 42, "42")
 	assert.Greater(t, len(elems), 1)
 	assert.Greaterf(t, len(elems), 1, "msg with args %d %s", 42, "42")
 	assert.Less(t, 1, len(elems))

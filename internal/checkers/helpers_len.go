@@ -49,6 +49,10 @@ func isBuiltinLenCall(pass *analysis.Pass, e ast.Expr) (ast.Expr, bool) {
 	}
 
 	if analysisutil.IsObj(pass.TypesInfo, ce.Fun, lenObj) && len(ce.Args) == 1 {
+		if simplified, ok := isStringConversion(ce.Args[0]); ok {
+			return simplified, true
+		}
+
 		return ce.Args[0], true
 	}
 	return nil, false

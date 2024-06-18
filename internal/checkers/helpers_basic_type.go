@@ -59,3 +59,25 @@ func isPointer(pass *analysis.Pass, expr ast.Expr) bool {
 	_, ok := pass.TypesInfo.TypeOf(expr).(*types.Pointer)
 	return ok
 }
+
+func isEmptyString(expr ast.Expr) bool {
+	bl, ok := expr.(*ast.BasicLit)
+	return ok && bl.Kind == token.STRING && bl.Value == `""`
+}
+
+func isStringConversion(e ast.Expr) (ast.Expr, bool) {
+	ce, ok := e.(*ast.CallExpr)
+	if !ok || len(ce.Args) != 1 {
+		return nil, false
+	}
+
+	fn, ok := ce.Fun.(*ast.Ident)
+	if !ok {
+		return nil, false
+	}
+
+	if fn.Name != "string" {
+		return nil, false
+	}
+	return ce.Args[0], true
+}

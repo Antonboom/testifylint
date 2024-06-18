@@ -219,35 +219,39 @@ due to the inappropriate recursive nature of `assert.Equal` (based on
 
 ```go
 ❌
-assert.Len(t, arr, 0)
-assert.Equal(t, 0, len(arr))
-assert.EqualValues(t, 0, len(arr))
-assert.Exactly(t, 0, len(arr))
-assert.LessOrEqual(t, len(arr), 0)
-assert.GreaterOrEqual(t, 0, len(arr))
-assert.Less(t, len(arr), 0)
-assert.Greater(t, 0, len(arr))
-assert.Less(t, len(arr), 1)
-assert.Greater(t, 1, len(arr))
-assert.Zero(t, len(arr))
-assert.Empty(t, len(arr))
+assert.Len(t, a, 0)
+assert.Equal(t, 0, len(a))
+assert.EqualValues(t, 0, len(a))
+assert.Exactly(t, 0, len(a))
+assert.LessOrEqual(t, len(a), 0)
+assert.GreaterOrEqual(t, 0, len(a))
+assert.Less(t, len(a), 0)
+assert.Greater(t, 0, len(a))
+assert.Less(t, len(a), 1)
+assert.Greater(t, 1, len(a))
+assert.Zero(t, len(a))
+assert.Empty(t, len(a))
+assert.Empty(t, string(a))
 
-assert.NotEqual(t, 0, len(arr))
-assert.NotEqualValues(t, 0, len(arr))
-assert.Less(t, 0, len(arr))
-assert.Greater(t, len(arr), 0)
-assert.Positive(t, len(arr))
-assert.NotZero(t, len(arr))
-assert.NotEmpty(t, len(arr))
+assert.NotEqual(t, 0, len(a))
+assert.NotEqualValues(t, 0, len(a))
+assert.Less(t, 0, len(a))
+assert.Greater(t, len(a), 0)
+assert.Positive(t, len(a))
+assert.NotZero(t, len(a))
+assert.NotEmpty(t, len(a))
+assert.NotEmpty(t, string(a))
 
 ✅
-assert.Empty(t, arr)
-assert.NotEmpty(t, err)
+assert.Empty(t, a)
+assert.NotEmpty(t, a)
 ```
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
+
+String conversion (like `assert.Len(t, string(b), 0)`) are also supported.
 
 ---
 
