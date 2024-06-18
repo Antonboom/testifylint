@@ -38,7 +38,7 @@ func (g EmptyTestsGenerator) TemplateData() any {
 	}{
 		CheckerName: CheckerName(checker),
 		LenTest: lenTest{
-			Vars:  []string{"arr", "arrPtr", "sl", "mp", "str", "ch"},
+			Vars:  []string{"elems", "arr", "arrPtr", "sl", "mp", "str", "ch", "b"},
 			Assrn: Assertion{Fn: "Equal", Argsf: "0, len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
 		},
 		Tests: []test{
@@ -61,6 +61,18 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					{Fn: "Greater", Argsf: "1, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 					{Fn: "Zero", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 					{Fn: "Empty", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Zero", Argsf: "len(string(b))", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
+					{Fn: "Empty", Argsf: "len(string(b))", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
+					{Fn: "Empty", Argsf: "string(b)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
+					{Fn: "Len", Argsf: "str, 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Len", Argsf: "b, 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
+					{Fn: "Len", Argsf: "string(b), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
+					{Fn: "Equal", Argsf: `"", str`, ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Equal", Argsf: `"", string(b)`, ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
+					{Fn: "EqualValues", Argsf: `"", str`, ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "EqualValues", Argsf: `"", string(b)`, ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
+					{Fn: "Exactly", Argsf: `"", str`, ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Exactly", Argsf: `"", string(b)`, ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
 
 					// Bullshit, but supported by the checker:
 					// n < 0, n <= 0
@@ -82,13 +94,22 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					// 0 != n, 0 < n
 					{Fn: "NotEqual", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "NotEqual", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "NotEqualValues", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "NotEqualValues", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "Less", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "Greater", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "Positive", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "NotZero", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "NotEmpty", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotZero", Argsf: "len(str)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotEmpty", Argsf: "len(str)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotZero", Argsf: "len(string(b))", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "b"},
+					{Fn: "NotEmpty", Argsf: "len(string(b))", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "b"},
+					{Fn: "NotEmpty", Argsf: "string(b)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "b"},
+					{Fn: "NotEqual", Argsf: `"", str`, ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotEqual", Argsf: `"", string(b)`, ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "b"},
+					{Fn: "NotEqualValues", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotEqualValues", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotEqualValues", Argsf: `"", str`, ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotEqualValues", Argsf: `"", string(b)`, ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "b"},
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "NotEmpty", Argsf: "elems"},
@@ -125,6 +146,17 @@ func (g EmptyTestsGenerator) TemplateData() any {
 			{Fn: "LessOrEqual", Argsf: "len(elems), 2"},
 			{Fn: "LessOrEqual", Argsf: "2, len(elems)"},
 
+			// these one are not supported because Zero and Empty are almost equivalent
+			// It's not the role of empty checker to deal with this one
+			{Fn: "Equal", Argsf: "0, i"},
+			{Fn: "Zero", Argsf: "elems"},
+			{Fn: "Zero", Argsf: "str"},
+			{Fn: "Zero", Argsf: "string(b)"},
+			{Fn: "NotEqual", Argsf: "0, i"},
+			{Fn: "NotZero", Argsf: "elems"},
+			{Fn: "NotZero", Argsf: "str"},
+			{Fn: "NotZero", Argsf: "string(b)"},
+
 			// The linter ignores n > 1 case, because it is not exactly equivalent of NotEmpty.
 			{Fn: "Greater", Argsf: "len(elems), 1"},
 			{Fn: "Less", Argsf: "1, len(elems)"},
@@ -158,7 +190,11 @@ import (
 )
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
-	var elems []string
+	var (
+		elems []any
+		str   string
+		b     []byte
+	)
 	{{ range $ti, $test := $.Tests }}
 		// {{ $test.Name }}.
 		{
@@ -177,11 +213,13 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 
 func {{ .CheckerName.AsTestName }}_LenVarIndependence(t *testing.T) {
 	var (
+		elems []any
 		arr    [0]int
 		arrPtr *[0]int
 		sl     []int
 		mp     map[int]int
 		str    string
+		b      []byte
 		ch     chan int
 	)
 	{{ range $vi, $var := $.LenTest.Vars }}
@@ -190,7 +228,12 @@ func {{ .CheckerName.AsTestName }}_LenVarIndependence(t *testing.T) {
 }
 
 func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
-	var elems []string
+	var (
+		elems []any
+		str   string
+		b     []byte
+		i   int
+	)
 
 	{{ range $ai, $assrn := $.IgnoredAssertions }}
 		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
