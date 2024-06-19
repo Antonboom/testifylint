@@ -13,12 +13,12 @@ func isZero(e ast.Expr) bool { return isIntNumber(e, 0) }
 
 func isOne(e ast.Expr) bool { return isIntNumber(e, 1) }
 
-func isZeroValue(e ast.Expr) bool {
-	return isZero(e) || isTypedIntNumber(e, 0)
+func isSignedZero(e ast.Expr) bool {
+	return isIntNumber(e, 0) || isTypedSignedIntNumber(e, 0)
 }
 
-func isNotZeroValue(e ast.Expr) bool {
-	return !isZeroValue(e)
+func isSignedNotZero(pass *analysis.Pass, e ast.Expr) bool {
+	return !isUnsigned(pass, e) && !isSignedZero(e)
 }
 
 func isIntNumber(e ast.Expr, v int) bool {
@@ -26,7 +26,7 @@ func isIntNumber(e ast.Expr, v int) bool {
 	return ok && bl.Kind == token.INT && bl.Value == fmt.Sprintf("%d", v)
 }
 
-func isTypedIntNumber(e ast.Expr, v int) bool {
+func isTypedSignedIntNumber(e ast.Expr, v int) bool {
 	ce, ok := e.(*ast.CallExpr)
 	if !ok || len(ce.Args) != 1 {
 		return false
@@ -38,7 +38,7 @@ func isTypedIntNumber(e ast.Expr, v int) bool {
 	}
 
 	switch fn.Name {
-	case "int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32", "uint64":
+	case "int", "int8", "int16", "int32", "int64":
 		return isIntNumber(ce.Args[0], v)
 	}
 
@@ -55,32 +55,34 @@ func isIntBasicLit(e ast.Expr) bool {
 	return ok && bl.Kind == token.INT
 }
 
-func isUntypedConst(p *analysis.Pass, e ast.Expr) bool {
-	t := p.TypesInfo.TypeOf(e)
-	if t == nil {
-		return false
-	}
-
-	b, ok := t.(*types.Basic)
-	return ok && b.Info()&types.IsUntyped > 0
+func isUntypedConst(pass *analysis.Pass, e ast.Expr) bool {
+	return isUnderlying(pass, e, types.IsUntyped)
 }
 
-func isTypedConst(p *analysis.Pass, e ast.Expr) bool {
-	tt, ok := p.TypesInfo.Types[e]
+func isTypedConst(pass *analysis.Pass, e ast.Expr) bool {
+	tt, ok := pass.TypesInfo.Types[e]
 	return ok && tt.IsValue() && tt.Value != nil
 }
 
-func isFloat(pass *analysis.Pass, expr ast.Expr) bool {
-	t := pass.TypesInfo.TypeOf(expr)
+func isFloat(pass *analysis.Pass, e ast.Expr) bool {
+	return isUnderlying(pass, e, types.IsFloat)
+}
+
+func isUnsigned(pass *analysis.Pass, e ast.Expr) bool {
+	return isUnderlying(pass, e, types.IsUnsigned)
+}
+
+func isUnderlying(pass *analysis.Pass, e ast.Expr, flag types.BasicInfo) bool {
+	t := pass.TypesInfo.TypeOf(e)
 	if t == nil {
 		return false
 	}
 
 	bt, ok := t.Underlying().(*types.Basic)
-	return ok && (bt.Info()&types.IsFloat > 0)
+	return ok && (bt.Info()&flag > 0)
 }
 
-func isPointer(pass *analysis.Pass, expr ast.Expr) bool {
-	_, ok := pass.TypesInfo.TypeOf(expr).(*types.Pointer)
+func isPointer(pass *analysis.Pass, e ast.Expr) bool {
+	_, ok := pass.TypesInfo.TypeOf(e).(*types.Pointer)
 	return ok
 }

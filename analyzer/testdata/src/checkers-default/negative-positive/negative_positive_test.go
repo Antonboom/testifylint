@@ -9,285 +9,154 @@ import (
 )
 
 func TestNegativePositiveChecker(t *testing.T) {
-	var (
-		a       int
-		int8A   int8
-		int16A  int16
-		int32A  int32
-		int64A  int64
-		uintA   uint
-		uint8A  uint8
-		uint16A uint16
-		uint32A uint32
-		uint64A uint64
-	)
+	var a int
 
 	// Invalid.
 	{
-		assert.False(t, 0 <= a)                                                 // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, 0 <= a, "msg with args %d %s", 42, "42")               // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, 0 >= a)                                                 // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, 0 >= a, "msg with args %d %s", 42, "42")               // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, a <= 0)                                                 // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, a <= 0, "msg with args %d %s", 42, "42")               // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, a <= int(0))                                            // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, a <= int(0), "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, a >= 0)                                                 // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, a >= 0, "msg with args %d %s", 42, "42")               // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, a >= int(0))                                            // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, a >= int(0), "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, int(0) <= a)                                            // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, int(0) <= a, "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, int(0) >= a)                                            // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, int(0) >= a, "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, int16(0) <= int16A)                                     // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, int16(0) <= int16A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, int16(0) >= int16A)                                     // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, int16(0) >= int16A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, int16A <= int16(0))                                     // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, int16A <= int16(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, int16A >= int16(0))                                     // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, int16A >= int16(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, int32(0) <= int32A)                                     // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, int32(0) <= int32A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, int32(0) >= int32A)                                     // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, int32(0) >= int32A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, int32A <= int32(0))                                     // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, int32A <= int32(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, int32A >= int32(0))                                     // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, int32A >= int32(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, int64(0) <= int64A)                                     // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, int64(0) <= int64A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, int64(0) >= int64A)                                     // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, int64(0) >= int64A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, int64A <= int64(0))                                     // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, int64A <= int64(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, int64A >= int64(0))                                     // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, int64A >= int64(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, int8(0) <= int8A)                                       // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, int8(0) <= int8A, "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, int8(0) >= int8A)                                       // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, int8(0) >= int8A, "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, int8A <= int8(0))                                       // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, int8A <= int8(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, int8A >= int8(0))                                       // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, int8A >= int8(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, uint(0) <= uintA)                                       // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, uint(0) <= uintA, "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, uint(0) >= uintA)                                       // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, uint(0) >= uintA, "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, uint16(0) <= uint16A)                                   // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, uint16(0) <= uint16A, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, uint16(0) >= uint16A)                                   // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, uint16(0) >= uint16A, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, uint16A <= uint16(0))                                   // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, uint16A <= uint16(0), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, uint16A >= uint16(0))                                   // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, uint16A >= uint16(0), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, uint32(0) <= uint32A)                                   // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, uint32(0) <= uint32A, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, uint32(0) >= uint32A)                                   // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, uint32(0) >= uint32A, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, uint32A <= uint32(0))                                   // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, uint32A <= uint32(0), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, uint32A >= uint32(0))                                   // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, uint32A >= uint32(0), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, uint64(0) <= uint64A)                                   // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, uint64(0) <= uint64A, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, uint64(0) >= uint64A)                                   // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, uint64(0) >= uint64A, "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, uint64A <= uint64(0))                                   // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, uint64A <= uint64(0), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, uint64A >= uint64(0))                                   // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, uint64A >= uint64(0), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, uint8(0) <= uint8A)                                     // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, uint8(0) <= uint8A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, uint8(0) >= uint8A)                                     // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, uint8(0) >= uint8A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, uint8A <= uint8(0))                                     // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, uint8A <= uint8(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, uint8A >= uint8(0))                                     // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, uint8A >= uint8(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.False(t, uintA <= uint(0))                                       // want "negative-positive: use assert\\.Positive"
-		assert.Falsef(t, uintA <= uint(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
-		assert.False(t, uintA >= uint(0))                                       // want "negative-positive: use assert\\.Negative"
-		assert.Falsef(t, uintA >= uint(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
-		assert.Greater(t, 0, a)                                                 // want "negative-positive: use assert\\.Negative"
-		assert.Greaterf(t, 0, a, "msg with args %d %s", 42, "42")               // want "negative-positive: use assert\\.Negativef"
-		assert.Greater(t, a, 0)                                                 // want "negative-positive: use assert\\.Positive"
-		assert.Greaterf(t, a, 0, "msg with args %d %s", 42, "42")               // want "negative-positive: use assert\\.Positivef"
-		assert.Greater(t, a, int(0))                                            // want "negative-positive: use assert\\.Positive"
-		assert.Greaterf(t, a, int(0), "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Positivef"
-		assert.Greater(t, a, int16(0))                                          // want "negative-positive: use assert\\.Positive"
-		assert.Greaterf(t, a, int16(0), "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Positivef"
-		assert.Greater(t, a, int32(0))                                          // want "negative-positive: use assert\\.Positive"
-		assert.Greaterf(t, a, int32(0), "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Positivef"
-		assert.Greater(t, a, int64(0))                                          // want "negative-positive: use assert\\.Positive"
-		assert.Greaterf(t, a, int64(0), "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Positivef"
-		assert.Greater(t, a, int8(0))                                           // want "negative-positive: use assert\\.Positive"
-		assert.Greaterf(t, a, int8(0), "msg with args %d %s", 42, "42")         // want "negative-positive: use assert\\.Positivef"
-		assert.Greater(t, a, uint(0))                                           // want "negative-positive: use assert\\.Positive"
-		assert.Greaterf(t, a, uint(0), "msg with args %d %s", 42, "42")         // want "negative-positive: use assert\\.Positivef"
-		assert.Greater(t, a, uint16(0))                                         // want "negative-positive: use assert\\.Positive"
-		assert.Greaterf(t, a, uint16(0), "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Positivef"
-		assert.Greater(t, a, uint32(0))                                         // want "negative-positive: use assert\\.Positive"
-		assert.Greaterf(t, a, uint32(0), "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Positivef"
-		assert.Greater(t, a, uint64(0))                                         // want "negative-positive: use assert\\.Positive"
-		assert.Greaterf(t, a, uint64(0), "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Positivef"
-		assert.Greater(t, a, uint8(0))                                          // want "negative-positive: use assert\\.Positive"
-		assert.Greaterf(t, a, uint8(0), "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Positivef"
-		assert.Greater(t, int(0), a)                                            // want "negative-positive: use assert\\.Negative"
-		assert.Greaterf(t, int(0), a, "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Negativef"
-		assert.Greater(t, int16(0), a)                                          // want "negative-positive: use assert\\.Negative"
-		assert.Greaterf(t, int16(0), a, "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Negativef"
-		assert.Greater(t, int32(0), a)                                          // want "negative-positive: use assert\\.Negative"
-		assert.Greaterf(t, int32(0), a, "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Negativef"
-		assert.Greater(t, int64(0), a)                                          // want "negative-positive: use assert\\.Negative"
-		assert.Greaterf(t, int64(0), a, "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Negativef"
-		assert.Greater(t, int8(0), a)                                           // want "negative-positive: use assert\\.Negative"
-		assert.Greaterf(t, int8(0), a, "msg with args %d %s", 42, "42")         // want "negative-positive: use assert\\.Negativef"
-		assert.Greater(t, uint(0), a)                                           // want "negative-positive: use assert\\.Negative"
-		assert.Greaterf(t, uint(0), a, "msg with args %d %s", 42, "42")         // want "negative-positive: use assert\\.Negativef"
-		assert.Greater(t, uint16(0), a)                                         // want "negative-positive: use assert\\.Negative"
-		assert.Greaterf(t, uint16(0), a, "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Negativef"
-		assert.Greater(t, uint32(0), a)                                         // want "negative-positive: use assert\\.Negative"
-		assert.Greaterf(t, uint32(0), a, "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Negativef"
-		assert.Greater(t, uint64(0), a)                                         // want "negative-positive: use assert\\.Negative"
-		assert.Greaterf(t, uint64(0), a, "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Negativef"
-		assert.Greater(t, uint8(0), a)                                          // want "negative-positive: use assert\\.Negative"
-		assert.Greaterf(t, uint8(0), a, "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Negativef"
-		assert.Less(t, 0, a)                                                    // want "negative-positive: use assert\\.Positive"
-		assert.Lessf(t, 0, a, "msg with args %d %s", 42, "42")                  // want "negative-positive: use assert\\.Positivef"
 		assert.Less(t, a, 0)                                                    // want "negative-positive: use assert\\.Negative"
 		assert.Lessf(t, a, 0, "msg with args %d %s", 42, "42")                  // want "negative-positive: use assert\\.Negativef"
-		assert.Less(t, a, int(0))                                               // want "negative-positive: use assert\\.Negative"
-		assert.Lessf(t, a, int(0), "msg with args %d %s", 42, "42")             // want "negative-positive: use assert\\.Negativef"
-		assert.Less(t, a, int16(0))                                             // want "negative-positive: use assert\\.Negative"
-		assert.Lessf(t, a, int16(0), "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Negativef"
-		assert.Less(t, a, int32(0))                                             // want "negative-positive: use assert\\.Negative"
-		assert.Lessf(t, a, int32(0), "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Negativef"
-		assert.Less(t, a, int64(0))                                             // want "negative-positive: use assert\\.Negative"
-		assert.Lessf(t, a, int64(0), "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Negativef"
-		assert.Less(t, a, int8(0))                                              // want "negative-positive: use assert\\.Negative"
-		assert.Lessf(t, a, int8(0), "msg with args %d %s", 42, "42")            // want "negative-positive: use assert\\.Negativef"
-		assert.Less(t, a, uint(0))                                              // want "negative-positive: use assert\\.Negative"
-		assert.Lessf(t, a, uint(0), "msg with args %d %s", 42, "42")            // want "negative-positive: use assert\\.Negativef"
-		assert.Less(t, a, uint16(0))                                            // want "negative-positive: use assert\\.Negative"
-		assert.Lessf(t, a, uint16(0), "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Negativef"
-		assert.Less(t, a, uint32(0))                                            // want "negative-positive: use assert\\.Negative"
-		assert.Lessf(t, a, uint32(0), "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Negativef"
-		assert.Less(t, a, uint64(0))                                            // want "negative-positive: use assert\\.Negative"
-		assert.Lessf(t, a, uint64(0), "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Negativef"
-		assert.Less(t, a, uint8(0))                                             // want "negative-positive: use assert\\.Negative"
-		assert.Lessf(t, a, uint8(0), "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Negativef"
-		assert.Less(t, int(0), a)                                               // want "negative-positive: use assert\\.Positive"
-		assert.Lessf(t, int(0), a, "msg with args %d %s", 42, "42")             // want "negative-positive: use assert\\.Positivef"
-		assert.Less(t, int16(0), a)                                             // want "negative-positive: use assert\\.Positive"
-		assert.Lessf(t, int16(0), a, "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Positivef"
-		assert.Less(t, int32(0), a)                                             // want "negative-positive: use assert\\.Positive"
-		assert.Lessf(t, int32(0), a, "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Positivef"
-		assert.Less(t, int64(0), a)                                             // want "negative-positive: use assert\\.Positive"
-		assert.Lessf(t, int64(0), a, "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Positivef"
-		assert.Less(t, int8(0), a)                                              // want "negative-positive: use assert\\.Positive"
-		assert.Lessf(t, int8(0), a, "msg with args %d %s", 42, "42")            // want "negative-positive: use assert\\.Positivef"
-		assert.Less(t, uint(0), a)                                              // want "negative-positive: use assert\\.Positive"
-		assert.Lessf(t, uint(0), a, "msg with args %d %s", 42, "42")            // want "negative-positive: use assert\\.Positivef"
-		assert.Less(t, uint16(0), a)                                            // want "negative-positive: use assert\\.Positive"
-		assert.Lessf(t, uint16(0), a, "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Positivef"
-		assert.Less(t, uint32(0), a)                                            // want "negative-positive: use assert\\.Positive"
-		assert.Lessf(t, uint32(0), a, "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Positivef"
-		assert.Less(t, uint64(0), a)                                            // want "negative-positive: use assert\\.Positive"
-		assert.Lessf(t, uint64(0), a, "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Positivef"
-		assert.Less(t, uint8(0), a)                                             // want "negative-positive: use assert\\.Positive"
-		assert.Lessf(t, uint8(0), a, "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, 0 < a)                                                   // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, 0 < a, "msg with args %d %s", 42, "42")                 // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, 0 > a)                                                   // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, 0 > a, "msg with args %d %s", 42, "42")                 // want "negative-positive: use assert\\.Negativef"
+		assert.Greater(t, 0, a)                                                 // want "negative-positive: use assert\\.Negative"
+		assert.Greaterf(t, 0, a, "msg with args %d %s", 42, "42")               // want "negative-positive: use assert\\.Negativef"
 		assert.True(t, a < 0)                                                   // want "negative-positive: use assert\\.Negative"
 		assert.Truef(t, a < 0, "msg with args %d %s", 42, "42")                 // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, a < int(0))                                              // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, a < int(0), "msg with args %d %s", 42, "42")            // want "negative-positive: use assert\\.Negativef"
+		assert.True(t, 0 > a)                                                   // want "negative-positive: use assert\\.Negative"
+		assert.Truef(t, 0 > a, "msg with args %d %s", 42, "42")                 // want "negative-positive: use assert\\.Negativef"
+		assert.False(t, a >= 0)                                                 // want "negative-positive: use assert\\.Negative"
+		assert.Falsef(t, a >= 0, "msg with args %d %s", 42, "42")               // want "negative-positive: use assert\\.Negativef"
+		assert.False(t, 0 <= a)                                                 // want "negative-positive: use assert\\.Negative"
+		assert.Falsef(t, 0 <= a, "msg with args %d %s", 42, "42")               // want "negative-positive: use assert\\.Negativef"
+		assert.Greater(t, a, 0)                                                 // want "negative-positive: use assert\\.Positive"
+		assert.Greaterf(t, a, 0, "msg with args %d %s", 42, "42")               // want "negative-positive: use assert\\.Positivef"
+		assert.Less(t, 0, a)                                                    // want "negative-positive: use assert\\.Positive"
+		assert.Lessf(t, 0, a, "msg with args %d %s", 42, "42")                  // want "negative-positive: use assert\\.Positivef"
 		assert.True(t, a > 0)                                                   // want "negative-positive: use assert\\.Positive"
 		assert.Truef(t, a > 0, "msg with args %d %s", 42, "42")                 // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, a > int(0))                                              // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, a > int(0), "msg with args %d %s", 42, "42")            // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, int(0) < a)                                              // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, int(0) < a, "msg with args %d %s", 42, "42")            // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, int(0) > a)                                              // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, int(0) > a, "msg with args %d %s", 42, "42")            // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, int16(0) < int16A)                                       // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, int16(0) < int16A, "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, int16(0) > int16A)                                       // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, int16(0) > int16A, "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, int16A < int16(0))                                       // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, int16A < int16(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, int16A > int16(0))                                       // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, int16A > int16(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, int32(0) < int32A)                                       // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, int32(0) < int32A, "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, int32(0) > int32A)                                       // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, int32(0) > int32A, "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, int32A < int32(0))                                       // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, int32A < int32(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, int32A > int32(0))                                       // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, int32A > int32(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, int64(0) < int64A)                                       // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, int64(0) < int64A, "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, int64(0) > int64A)                                       // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, int64(0) > int64A, "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, int64A < int64(0))                                       // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, int64A < int64(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, int64A > int64(0))                                       // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, int64A > int64(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, int8(0) < int8A)                                         // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, int8(0) < int8A, "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, int8(0) > int8A)                                         // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, int8(0) > int8A, "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, int8A < int8(0))                                         // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, int8A < int8(0), "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, int8A > int8(0))                                         // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, int8A > int8(0), "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, uint(0) < uintA)                                         // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, uint(0) < uintA, "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, uint(0) > uintA)                                         // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, uint(0) > uintA, "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, uint16(0) < uint16A)                                     // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, uint16(0) < uint16A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, uint16(0) > uint16A)                                     // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, uint16(0) > uint16A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, uint16A < uint16(0))                                     // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, uint16A < uint16(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, uint16A > uint16(0))                                     // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, uint16A > uint16(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, uint32(0) < uint32A)                                     // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, uint32(0) < uint32A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, uint32(0) > uint32A)                                     // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, uint32(0) > uint32A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, uint32A < uint32(0))                                     // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, uint32A < uint32(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, uint32A > uint32(0))                                     // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, uint32A > uint32(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, uint64(0) < uint64A)                                     // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, uint64(0) < uint64A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, uint64(0) > uint64A)                                     // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, uint64(0) > uint64A, "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, uint64A < uint64(0))                                     // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, uint64A < uint64(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, uint64A > uint64(0))                                     // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, uint64A > uint64(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, uint8(0) < uint8A)                                       // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, uint8(0) < uint8A, "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, uint8(0) > uint8A)                                       // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, uint8(0) > uint8A, "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, uint8A < uint8(0))                                       // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, uint8A < uint8(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, uint8A > uint8(0))                                       // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, uint8A > uint8(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
-		assert.True(t, uintA < uint(0))                                         // want "negative-positive: use assert\\.Negative"
-		assert.Truef(t, uintA < uint(0), "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Negativef"
-		assert.True(t, uintA > uint(0))                                         // want "negative-positive: use assert\\.Positive"
-		assert.Truef(t, uintA > uint(0), "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Positivef"
+		assert.True(t, 0 < a)                                                   // want "negative-positive: use assert\\.Positive"
+		assert.Truef(t, 0 < a, "msg with args %d %s", 42, "42")                 // want "negative-positive: use assert\\.Positivef"
+		assert.False(t, a <= 0)                                                 // want "negative-positive: use assert\\.Positive"
+		assert.Falsef(t, a <= 0, "msg with args %d %s", 42, "42")               // want "negative-positive: use assert\\.Positivef"
+		assert.False(t, 0 >= a)                                                 // want "negative-positive: use assert\\.Positive"
+		assert.Falsef(t, 0 >= a, "msg with args %d %s", 42, "42")               // want "negative-positive: use assert\\.Positivef"
+		assert.Less(t, a, int(0))                                               // want "negative-positive: use assert\\.Negative"
+		assert.Lessf(t, a, int(0), "msg with args %d %s", 42, "42")             // want "negative-positive: use assert\\.Negativef"
+		assert.Greater(t, int(0), a)                                            // want "negative-positive: use assert\\.Negative"
+		assert.Greaterf(t, int(0), a, "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Negativef"
+		assert.True(t, int(a) < int(0))                                         // want "negative-positive: use assert\\.Negative"
+		assert.Truef(t, int(a) < int(0), "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Negativef"
+		assert.True(t, int(0) > int(a))                                         // want "negative-positive: use assert\\.Negative"
+		assert.Truef(t, int(0) > int(a), "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Negativef"
+		assert.False(t, int(a) >= int(0))                                       // want "negative-positive: use assert\\.Negative"
+		assert.Falsef(t, int(a) >= int(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
+		assert.False(t, int(0) <= int(a))                                       // want "negative-positive: use assert\\.Negative"
+		assert.Falsef(t, int(0) <= int(a), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
+		assert.Greater(t, a, int(0))                                            // want "negative-positive: use assert\\.Positive"
+		assert.Greaterf(t, a, int(0), "msg with args %d %s", 42, "42")          // want "negative-positive: use assert\\.Positivef"
+		assert.Less(t, int(0), a)                                               // want "negative-positive: use assert\\.Positive"
+		assert.Lessf(t, int(0), a, "msg with args %d %s", 42, "42")             // want "negative-positive: use assert\\.Positivef"
+		assert.True(t, int(a) > int(0))                                         // want "negative-positive: use assert\\.Positive"
+		assert.Truef(t, int(a) > int(0), "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Positivef"
+		assert.True(t, int(0) < int(a))                                         // want "negative-positive: use assert\\.Positive"
+		assert.Truef(t, int(0) < int(a), "msg with args %d %s", 42, "42")       // want "negative-positive: use assert\\.Positivef"
+		assert.False(t, int(a) <= int(0))                                       // want "negative-positive: use assert\\.Positive"
+		assert.Falsef(t, int(a) <= int(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
+		assert.False(t, int(0) >= int(a))                                       // want "negative-positive: use assert\\.Positive"
+		assert.Falsef(t, int(0) >= int(a), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
+		assert.Less(t, a, int8(0))                                              // want "negative-positive: use assert\\.Negative"
+		assert.Lessf(t, a, int8(0), "msg with args %d %s", 42, "42")            // want "negative-positive: use assert\\.Negativef"
+		assert.Greater(t, int8(0), a)                                           // want "negative-positive: use assert\\.Negative"
+		assert.Greaterf(t, int8(0), a, "msg with args %d %s", 42, "42")         // want "negative-positive: use assert\\.Negativef"
+		assert.True(t, int8(a) < int8(0))                                       // want "negative-positive: use assert\\.Negative"
+		assert.Truef(t, int8(a) < int8(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
+		assert.True(t, int8(0) > int8(a))                                       // want "negative-positive: use assert\\.Negative"
+		assert.Truef(t, int8(0) > int8(a), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Negativef"
+		assert.False(t, int8(a) >= int8(0))                                     // want "negative-positive: use assert\\.Negative"
+		assert.Falsef(t, int8(a) >= int8(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
+		assert.False(t, int8(0) <= int8(a))                                     // want "negative-positive: use assert\\.Negative"
+		assert.Falsef(t, int8(0) <= int8(a), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
+		assert.Greater(t, a, int8(0))                                           // want "negative-positive: use assert\\.Positive"
+		assert.Greaterf(t, a, int8(0), "msg with args %d %s", 42, "42")         // want "negative-positive: use assert\\.Positivef"
+		assert.Less(t, int8(0), a)                                              // want "negative-positive: use assert\\.Positive"
+		assert.Lessf(t, int8(0), a, "msg with args %d %s", 42, "42")            // want "negative-positive: use assert\\.Positivef"
+		assert.True(t, int8(a) > int8(0))                                       // want "negative-positive: use assert\\.Positive"
+		assert.Truef(t, int8(a) > int8(0), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
+		assert.True(t, int8(0) < int8(a))                                       // want "negative-positive: use assert\\.Positive"
+		assert.Truef(t, int8(0) < int8(a), "msg with args %d %s", 42, "42")     // want "negative-positive: use assert\\.Positivef"
+		assert.False(t, int8(a) <= int8(0))                                     // want "negative-positive: use assert\\.Positive"
+		assert.Falsef(t, int8(a) <= int8(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
+		assert.False(t, int8(0) >= int8(a))                                     // want "negative-positive: use assert\\.Positive"
+		assert.Falsef(t, int8(0) >= int8(a), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
+		assert.Less(t, a, int16(0))                                             // want "negative-positive: use assert\\.Negative"
+		assert.Lessf(t, a, int16(0), "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Negativef"
+		assert.Greater(t, int16(0), a)                                          // want "negative-positive: use assert\\.Negative"
+		assert.Greaterf(t, int16(0), a, "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Negativef"
+		assert.True(t, int16(a) < int16(0))                                     // want "negative-positive: use assert\\.Negative"
+		assert.Truef(t, int16(a) < int16(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
+		assert.True(t, int16(0) > int16(a))                                     // want "negative-positive: use assert\\.Negative"
+		assert.Truef(t, int16(0) > int16(a), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
+		assert.False(t, int16(a) >= int16(0))                                   // want "negative-positive: use assert\\.Negative"
+		assert.Falsef(t, int16(a) >= int16(0), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
+		assert.False(t, int16(0) <= int16(a))                                   // want "negative-positive: use assert\\.Negative"
+		assert.Falsef(t, int16(0) <= int16(a), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
+		assert.Greater(t, a, int16(0))                                          // want "negative-positive: use assert\\.Positive"
+		assert.Greaterf(t, a, int16(0), "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Positivef"
+		assert.Less(t, int16(0), a)                                             // want "negative-positive: use assert\\.Positive"
+		assert.Lessf(t, int16(0), a, "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Positivef"
+		assert.True(t, int16(a) > int16(0))                                     // want "negative-positive: use assert\\.Positive"
+		assert.Truef(t, int16(a) > int16(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
+		assert.True(t, int16(0) < int16(a))                                     // want "negative-positive: use assert\\.Positive"
+		assert.Truef(t, int16(0) < int16(a), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
+		assert.False(t, int16(a) <= int16(0))                                   // want "negative-positive: use assert\\.Positive"
+		assert.Falsef(t, int16(a) <= int16(0), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
+		assert.False(t, int16(0) >= int16(a))                                   // want "negative-positive: use assert\\.Positive"
+		assert.Falsef(t, int16(0) >= int16(a), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
+		assert.Less(t, a, int32(0))                                             // want "negative-positive: use assert\\.Negative"
+		assert.Lessf(t, a, int32(0), "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Negativef"
+		assert.Greater(t, int32(0), a)                                          // want "negative-positive: use assert\\.Negative"
+		assert.Greaterf(t, int32(0), a, "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Negativef"
+		assert.True(t, int32(a) < int32(0))                                     // want "negative-positive: use assert\\.Negative"
+		assert.Truef(t, int32(a) < int32(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
+		assert.True(t, int32(0) > int32(a))                                     // want "negative-positive: use assert\\.Negative"
+		assert.Truef(t, int32(0) > int32(a), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
+		assert.False(t, int32(a) >= int32(0))                                   // want "negative-positive: use assert\\.Negative"
+		assert.Falsef(t, int32(a) >= int32(0), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
+		assert.False(t, int32(0) <= int32(a))                                   // want "negative-positive: use assert\\.Negative"
+		assert.Falsef(t, int32(0) <= int32(a), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
+		assert.Greater(t, a, int32(0))                                          // want "negative-positive: use assert\\.Positive"
+		assert.Greaterf(t, a, int32(0), "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Positivef"
+		assert.Less(t, int32(0), a)                                             // want "negative-positive: use assert\\.Positive"
+		assert.Lessf(t, int32(0), a, "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Positivef"
+		assert.True(t, int32(a) > int32(0))                                     // want "negative-positive: use assert\\.Positive"
+		assert.Truef(t, int32(a) > int32(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
+		assert.True(t, int32(0) < int32(a))                                     // want "negative-positive: use assert\\.Positive"
+		assert.Truef(t, int32(0) < int32(a), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
+		assert.False(t, int32(a) <= int32(0))                                   // want "negative-positive: use assert\\.Positive"
+		assert.Falsef(t, int32(a) <= int32(0), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
+		assert.False(t, int32(0) >= int32(a))                                   // want "negative-positive: use assert\\.Positive"
+		assert.Falsef(t, int32(0) >= int32(a), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
+		assert.Less(t, a, int64(0))                                             // want "negative-positive: use assert\\.Negative"
+		assert.Lessf(t, a, int64(0), "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Negativef"
+		assert.Greater(t, int64(0), a)                                          // want "negative-positive: use assert\\.Negative"
+		assert.Greaterf(t, int64(0), a, "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Negativef"
+		assert.True(t, int64(a) < int64(0))                                     // want "negative-positive: use assert\\.Negative"
+		assert.Truef(t, int64(a) < int64(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
+		assert.True(t, int64(0) > int64(a))                                     // want "negative-positive: use assert\\.Negative"
+		assert.Truef(t, int64(0) > int64(a), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Negativef"
+		assert.False(t, int64(a) >= int64(0))                                   // want "negative-positive: use assert\\.Negative"
+		assert.Falsef(t, int64(a) >= int64(0), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
+		assert.False(t, int64(0) <= int64(a))                                   // want "negative-positive: use assert\\.Negative"
+		assert.Falsef(t, int64(0) <= int64(a), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Negativef"
+		assert.Greater(t, a, int64(0))                                          // want "negative-positive: use assert\\.Positive"
+		assert.Greaterf(t, a, int64(0), "msg with args %d %s", 42, "42")        // want "negative-positive: use assert\\.Positivef"
+		assert.Less(t, int64(0), a)                                             // want "negative-positive: use assert\\.Positive"
+		assert.Lessf(t, int64(0), a, "msg with args %d %s", 42, "42")           // want "negative-positive: use assert\\.Positivef"
+		assert.True(t, int64(a) > int64(0))                                     // want "negative-positive: use assert\\.Positive"
+		assert.Truef(t, int64(a) > int64(0), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
+		assert.True(t, int64(0) < int64(a))                                     // want "negative-positive: use assert\\.Positive"
+		assert.Truef(t, int64(0) < int64(a), "msg with args %d %s", 42, "42")   // want "negative-positive: use assert\\.Positivef"
+		assert.False(t, int64(a) <= int64(0))                                   // want "negative-positive: use assert\\.Positive"
+		assert.Falsef(t, int64(a) <= int64(0), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
+		assert.False(t, int64(0) >= int64(a))                                   // want "negative-positive: use assert\\.Positive"
+		assert.Falsef(t, int64(0) >= int64(a), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
 	}
 
 	// Valid.
@@ -324,14 +193,6 @@ func TestNegativePositiveChecker(t *testing.T) {
 		assert.NotEqualf(t, 1, a, "msg with args %d %s", 42, "42")
 		assert.NotEqual(t, a, 1)
 		assert.NotEqualf(t, a, 1, "msg with args %d %s", 42, "42")
-		assert.Greater(t, -1, a)
-		assert.Greaterf(t, -1, a, "msg with args %d %s", 42, "42")
-		assert.Greater(t, a, -1)
-		assert.Greaterf(t, a, -1, "msg with args %d %s", 42, "42")
-		assert.Greater(t, a, 1)
-		assert.Greaterf(t, a, 1, "msg with args %d %s", 42, "42")
-		assert.Greater(t, 1, a)
-		assert.Greaterf(t, 1, a, "msg with args %d %s", 42, "42")
 		assert.GreaterOrEqual(t, -1, a)
 		assert.GreaterOrEqualf(t, -1, a, "msg with args %d %s", 42, "42")
 		assert.GreaterOrEqual(t, a, -1)
@@ -344,14 +205,6 @@ func TestNegativePositiveChecker(t *testing.T) {
 		assert.GreaterOrEqualf(t, 1, a, "msg with args %d %s", 42, "42")
 		assert.GreaterOrEqual(t, a, 1)
 		assert.GreaterOrEqualf(t, a, 1, "msg with args %d %s", 42, "42")
-		assert.Less(t, -1, a)
-		assert.Lessf(t, -1, a, "msg with args %d %s", 42, "42")
-		assert.Less(t, a, -1)
-		assert.Lessf(t, a, -1, "msg with args %d %s", 42, "42")
-		assert.Less(t, 1, a)
-		assert.Lessf(t, 1, a, "msg with args %d %s", 42, "42")
-		assert.Less(t, a, 1)
-		assert.Lessf(t, a, 1, "msg with args %d %s", 42, "42")
 		assert.LessOrEqual(t, -1, a)
 		assert.LessOrEqualf(t, -1, a, "msg with args %d %s", 42, "42")
 		assert.LessOrEqual(t, a, -1)
@@ -364,134 +217,822 @@ func TestNegativePositiveChecker(t *testing.T) {
 		assert.LessOrEqualf(t, 1, a, "msg with args %d %s", 42, "42")
 		assert.LessOrEqual(t, a, 1)
 		assert.LessOrEqualf(t, a, 1, "msg with args %d %s", 42, "42")
+		assert.Equal(t, int(0), int(a))
+		assert.Equalf(t, int(0), int(a), "msg with args %d %s", 42, "42")
+		assert.Equal(t, int(a), int(0))
+		assert.Equalf(t, int(a), int(0), "msg with args %d %s", 42, "42")
+		assert.Equal(t, int8(0), int8(a))
+		assert.Equalf(t, int8(0), int8(a), "msg with args %d %s", 42, "42")
+		assert.Equal(t, int8(a), int8(0))
+		assert.Equalf(t, int8(a), int8(0), "msg with args %d %s", 42, "42")
+		assert.Equal(t, int16(0), int16(a))
+		assert.Equalf(t, int16(0), int16(a), "msg with args %d %s", 42, "42")
+		assert.Equal(t, int16(a), int16(0))
+		assert.Equalf(t, int16(a), int16(0), "msg with args %d %s", 42, "42")
+		assert.Equal(t, int32(0), int32(a))
+		assert.Equalf(t, int32(0), int32(a), "msg with args %d %s", 42, "42")
+		assert.Equal(t, int32(a), int32(0))
+		assert.Equalf(t, int32(a), int32(0), "msg with args %d %s", 42, "42")
+		assert.Equal(t, int64(0), int64(a))
+		assert.Equalf(t, int64(0), int64(a), "msg with args %d %s", 42, "42")
+		assert.Equal(t, int64(a), int64(0))
+		assert.Equalf(t, int64(a), int64(0), "msg with args %d %s", 42, "42")
+		assert.Equal(t, uint(0), uint(a))
+		assert.Equalf(t, uint(0), uint(a), "msg with args %d %s", 42, "42")
+		assert.Equal(t, uint(a), uint(0))
+		assert.Equalf(t, uint(a), uint(0), "msg with args %d %s", 42, "42")
+		assert.Equal(t, uint8(0), uint8(a))
+		assert.Equalf(t, uint8(0), uint8(a), "msg with args %d %s", 42, "42")
+		assert.Equal(t, uint8(a), uint8(0))
+		assert.Equalf(t, uint8(a), uint8(0), "msg with args %d %s", 42, "42")
+		assert.Equal(t, uint16(0), uint16(a))
+		assert.Equalf(t, uint16(0), uint16(a), "msg with args %d %s", 42, "42")
+		assert.Equal(t, uint16(a), uint16(0))
+		assert.Equalf(t, uint16(a), uint16(0), "msg with args %d %s", 42, "42")
+		assert.Equal(t, uint32(0), uint32(a))
+		assert.Equalf(t, uint32(0), uint32(a), "msg with args %d %s", 42, "42")
+		assert.Equal(t, uint32(a), uint32(0))
+		assert.Equalf(t, uint32(a), uint32(0), "msg with args %d %s", 42, "42")
+		assert.Equal(t, uint64(0), uint64(a))
+		assert.Equalf(t, uint64(0), uint64(a), "msg with args %d %s", 42, "42")
+		assert.Equal(t, uint64(a), uint64(0))
+		assert.Equalf(t, uint64(a), uint64(0), "msg with args %d %s", 42, "42")
+		assert.Equal(t, CustomInt16(0), CustomInt16(a))
+		assert.Equalf(t, CustomInt16(0), CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.Equal(t, CustomInt16(a), CustomInt16(0))
+		assert.Equalf(t, CustomInt16(a), CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, int(0), int(a))
+		assert.NotEqualf(t, int(0), int(a), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, int(a), int(0))
+		assert.NotEqualf(t, int(a), int(0), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, int8(0), int8(a))
+		assert.NotEqualf(t, int8(0), int8(a), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, int8(a), int8(0))
+		assert.NotEqualf(t, int8(a), int8(0), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, int16(0), int16(a))
+		assert.NotEqualf(t, int16(0), int16(a), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, int16(a), int16(0))
+		assert.NotEqualf(t, int16(a), int16(0), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, int32(0), int32(a))
+		assert.NotEqualf(t, int32(0), int32(a), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, int32(a), int32(0))
+		assert.NotEqualf(t, int32(a), int32(0), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, int64(0), int64(a))
+		assert.NotEqualf(t, int64(0), int64(a), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, int64(a), int64(0))
+		assert.NotEqualf(t, int64(a), int64(0), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, uint(0), uint(a))
+		assert.NotEqualf(t, uint(0), uint(a), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, uint(a), uint(0))
+		assert.NotEqualf(t, uint(a), uint(0), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, uint8(0), uint8(a))
+		assert.NotEqualf(t, uint8(0), uint8(a), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, uint8(a), uint8(0))
+		assert.NotEqualf(t, uint8(a), uint8(0), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, uint16(0), uint16(a))
+		assert.NotEqualf(t, uint16(0), uint16(a), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, uint16(a), uint16(0))
+		assert.NotEqualf(t, uint16(a), uint16(0), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, uint32(0), uint32(a))
+		assert.NotEqualf(t, uint32(0), uint32(a), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, uint32(a), uint32(0))
+		assert.NotEqualf(t, uint32(a), uint32(0), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, uint64(0), uint64(a))
+		assert.NotEqualf(t, uint64(0), uint64(a), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, uint64(a), uint64(0))
+		assert.NotEqualf(t, uint64(a), uint64(0), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, CustomInt16(0), CustomInt16(a))
+		assert.NotEqualf(t, CustomInt16(0), CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, CustomInt16(a), CustomInt16(0))
+		assert.NotEqualf(t, CustomInt16(a), CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, int(0), int(a))
+		assert.GreaterOrEqualf(t, int(0), int(a), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, int(a), int(0))
+		assert.GreaterOrEqualf(t, int(a), int(0), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, int8(0), int8(a))
+		assert.GreaterOrEqualf(t, int8(0), int8(a), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, int8(a), int8(0))
+		assert.GreaterOrEqualf(t, int8(a), int8(0), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, int16(0), int16(a))
+		assert.GreaterOrEqualf(t, int16(0), int16(a), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, int16(a), int16(0))
+		assert.GreaterOrEqualf(t, int16(a), int16(0), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, int32(0), int32(a))
+		assert.GreaterOrEqualf(t, int32(0), int32(a), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, int32(a), int32(0))
+		assert.GreaterOrEqualf(t, int32(a), int32(0), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, int64(0), int64(a))
+		assert.GreaterOrEqualf(t, int64(0), int64(a), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, int64(a), int64(0))
+		assert.GreaterOrEqualf(t, int64(a), int64(0), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, uint(0), uint(a))
+		assert.GreaterOrEqualf(t, uint(0), uint(a), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, uint(a), uint(0))
+		assert.GreaterOrEqualf(t, uint(a), uint(0), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, uint8(0), uint8(a))
+		assert.GreaterOrEqualf(t, uint8(0), uint8(a), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, uint8(a), uint8(0))
+		assert.GreaterOrEqualf(t, uint8(a), uint8(0), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, uint16(0), uint16(a))
+		assert.GreaterOrEqualf(t, uint16(0), uint16(a), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, uint16(a), uint16(0))
+		assert.GreaterOrEqualf(t, uint16(a), uint16(0), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, uint32(0), uint32(a))
+		assert.GreaterOrEqualf(t, uint32(0), uint32(a), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, uint32(a), uint32(0))
+		assert.GreaterOrEqualf(t, uint32(a), uint32(0), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, uint64(0), uint64(a))
+		assert.GreaterOrEqualf(t, uint64(0), uint64(a), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, uint64(a), uint64(0))
+		assert.GreaterOrEqualf(t, uint64(a), uint64(0), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, CustomInt16(0), CustomInt16(a))
+		assert.GreaterOrEqualf(t, CustomInt16(0), CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.GreaterOrEqual(t, CustomInt16(a), CustomInt16(0))
+		assert.GreaterOrEqualf(t, CustomInt16(a), CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, int(0), int(a))
+		assert.LessOrEqualf(t, int(0), int(a), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, int(a), int(0))
+		assert.LessOrEqualf(t, int(a), int(0), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, int8(0), int8(a))
+		assert.LessOrEqualf(t, int8(0), int8(a), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, int8(a), int8(0))
+		assert.LessOrEqualf(t, int8(a), int8(0), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, int16(0), int16(a))
+		assert.LessOrEqualf(t, int16(0), int16(a), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, int16(a), int16(0))
+		assert.LessOrEqualf(t, int16(a), int16(0), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, int32(0), int32(a))
+		assert.LessOrEqualf(t, int32(0), int32(a), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, int32(a), int32(0))
+		assert.LessOrEqualf(t, int32(a), int32(0), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, int64(0), int64(a))
+		assert.LessOrEqualf(t, int64(0), int64(a), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, int64(a), int64(0))
+		assert.LessOrEqualf(t, int64(a), int64(0), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, uint(0), uint(a))
+		assert.LessOrEqualf(t, uint(0), uint(a), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, uint(a), uint(0))
+		assert.LessOrEqualf(t, uint(a), uint(0), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, uint8(0), uint8(a))
+		assert.LessOrEqualf(t, uint8(0), uint8(a), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, uint8(a), uint8(0))
+		assert.LessOrEqualf(t, uint8(a), uint8(0), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, uint16(0), uint16(a))
+		assert.LessOrEqualf(t, uint16(0), uint16(a), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, uint16(a), uint16(0))
+		assert.LessOrEqualf(t, uint16(a), uint16(0), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, uint32(0), uint32(a))
+		assert.LessOrEqualf(t, uint32(0), uint32(a), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, uint32(a), uint32(0))
+		assert.LessOrEqualf(t, uint32(a), uint32(0), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, uint64(0), uint64(a))
+		assert.LessOrEqualf(t, uint64(0), uint64(a), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, uint64(a), uint64(0))
+		assert.LessOrEqualf(t, uint64(a), uint64(0), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, CustomInt16(0), CustomInt16(a))
+		assert.LessOrEqualf(t, CustomInt16(0), CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, CustomInt16(a), CustomInt16(0))
+		assert.LessOrEqualf(t, CustomInt16(a), CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.Greater(t, -1, a)
+		assert.Greaterf(t, -1, a, "msg with args %d %s", 42, "42")
+		assert.Greater(t, a, -1)
+		assert.Greaterf(t, a, -1, "msg with args %d %s", 42, "42")
+		assert.Greater(t, 1, a)
+		assert.Greaterf(t, 1, a, "msg with args %d %s", 42, "42")
+		assert.Greater(t, a, 1)
+		assert.Greaterf(t, a, 1, "msg with args %d %s", 42, "42")
+		assert.Less(t, -1, a)
+		assert.Lessf(t, -1, a, "msg with args %d %s", 42, "42")
+		assert.Less(t, a, -1)
+		assert.Lessf(t, a, -1, "msg with args %d %s", 42, "42")
+		assert.Less(t, 1, a)
+		assert.Lessf(t, 1, a, "msg with args %d %s", 42, "42")
+		assert.Less(t, a, 1)
+		assert.Lessf(t, a, 1, "msg with args %d %s", 42, "42")
+		assert.Greater(t, uint(0), uint(a))
+		assert.Greaterf(t, uint(0), uint(a), "msg with args %d %s", 42, "42")
+		assert.Greater(t, uint(a), uint(0))
+		assert.Greaterf(t, uint(a), uint(0), "msg with args %d %s", 42, "42")
+		assert.Greater(t, uint8(0), uint8(a))
+		assert.Greaterf(t, uint8(0), uint8(a), "msg with args %d %s", 42, "42")
+		assert.Greater(t, uint8(a), uint8(0))
+		assert.Greaterf(t, uint8(a), uint8(0), "msg with args %d %s", 42, "42")
+		assert.Greater(t, uint16(0), uint16(a))
+		assert.Greaterf(t, uint16(0), uint16(a), "msg with args %d %s", 42, "42")
+		assert.Greater(t, uint16(a), uint16(0))
+		assert.Greaterf(t, uint16(a), uint16(0), "msg with args %d %s", 42, "42")
+		assert.Greater(t, uint32(0), uint32(a))
+		assert.Greaterf(t, uint32(0), uint32(a), "msg with args %d %s", 42, "42")
+		assert.Greater(t, uint32(a), uint32(0))
+		assert.Greaterf(t, uint32(a), uint32(0), "msg with args %d %s", 42, "42")
+		assert.Greater(t, uint64(0), uint64(a))
+		assert.Greaterf(t, uint64(0), uint64(a), "msg with args %d %s", 42, "42")
+		assert.Greater(t, uint64(a), uint64(0))
+		assert.Greaterf(t, uint64(a), uint64(0), "msg with args %d %s", 42, "42")
+		assert.Greater(t, CustomInt16(0), CustomInt16(a))
+		assert.Greaterf(t, CustomInt16(0), CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.Greater(t, CustomInt16(a), CustomInt16(0))
+		assert.Greaterf(t, CustomInt16(a), CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.Less(t, uint(0), uint(a))
+		assert.Lessf(t, uint(0), uint(a), "msg with args %d %s", 42, "42")
+		assert.Less(t, uint(a), uint(0))
+		assert.Lessf(t, uint(a), uint(0), "msg with args %d %s", 42, "42")
+		assert.Less(t, uint8(0), uint8(a))
+		assert.Lessf(t, uint8(0), uint8(a), "msg with args %d %s", 42, "42")
+		assert.Less(t, uint8(a), uint8(0))
+		assert.Lessf(t, uint8(a), uint8(0), "msg with args %d %s", 42, "42")
+		assert.Less(t, uint16(0), uint16(a))
+		assert.Lessf(t, uint16(0), uint16(a), "msg with args %d %s", 42, "42")
+		assert.Less(t, uint16(a), uint16(0))
+		assert.Lessf(t, uint16(a), uint16(0), "msg with args %d %s", 42, "42")
+		assert.Less(t, uint32(0), uint32(a))
+		assert.Lessf(t, uint32(0), uint32(a), "msg with args %d %s", 42, "42")
+		assert.Less(t, uint32(a), uint32(0))
+		assert.Lessf(t, uint32(a), uint32(0), "msg with args %d %s", 42, "42")
+		assert.Less(t, uint64(0), uint64(a))
+		assert.Lessf(t, uint64(0), uint64(a), "msg with args %d %s", 42, "42")
+		assert.Less(t, uint64(a), uint64(0))
+		assert.Lessf(t, uint64(a), uint64(0), "msg with args %d %s", 42, "42")
+		assert.Less(t, CustomInt16(0), CustomInt16(a))
+		assert.Lessf(t, CustomInt16(0), CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.Less(t, CustomInt16(a), CustomInt16(0))
+		assert.Lessf(t, CustomInt16(a), CustomInt16(0), "msg with args %d %s", 42, "42")
 		assert.True(t, a > -1)
 		assert.Truef(t, a > -1, "msg with args %d %s", 42, "42")
-		assert.True(t, a < -1)
-		assert.Truef(t, a < -1, "msg with args %d %s", 42, "42")
-		assert.True(t, a >= -1)
-		assert.Truef(t, a >= -1, "msg with args %d %s", 42, "42")
-		assert.True(t, a <= -1)
-		assert.Truef(t, a <= -1, "msg with args %d %s", 42, "42")
-		assert.True(t, a == -1)
-		assert.Truef(t, a == -1, "msg with args %d %s", 42, "42")
-		assert.True(t, a != -1)
-		assert.Truef(t, a != -1, "msg with args %d %s", 42, "42")
 		assert.True(t, -1 > a)
 		assert.Truef(t, -1 > a, "msg with args %d %s", 42, "42")
+		assert.True(t, a < -1)
+		assert.Truef(t, a < -1, "msg with args %d %s", 42, "42")
 		assert.True(t, -1 < a)
 		assert.Truef(t, -1 < a, "msg with args %d %s", 42, "42")
+		assert.True(t, a >= -1)
+		assert.Truef(t, a >= -1, "msg with args %d %s", 42, "42")
 		assert.True(t, -1 >= a)
 		assert.Truef(t, -1 >= a, "msg with args %d %s", 42, "42")
+		assert.True(t, a <= -1)
+		assert.Truef(t, a <= -1, "msg with args %d %s", 42, "42")
 		assert.True(t, -1 <= a)
 		assert.Truef(t, -1 <= a, "msg with args %d %s", 42, "42")
+		assert.True(t, a == -1)
+		assert.Truef(t, a == -1, "msg with args %d %s", 42, "42")
 		assert.True(t, -1 == a)
 		assert.Truef(t, -1 == a, "msg with args %d %s", 42, "42")
+		assert.True(t, a != -1)
+		assert.Truef(t, a != -1, "msg with args %d %s", 42, "42")
 		assert.True(t, -1 != a)
 		assert.Truef(t, -1 != a, "msg with args %d %s", 42, "42")
-		assert.True(t, a >= 0)
-		assert.Truef(t, a >= 0, "msg with args %d %s", 42, "42")
-		assert.True(t, a <= 0)
-		assert.Truef(t, a <= 0, "msg with args %d %s", 42, "42")
-		assert.True(t, a == 0)
-		assert.Truef(t, a == 0, "msg with args %d %s", 42, "42")
-		assert.True(t, a != 0)
-		assert.Truef(t, a != 0, "msg with args %d %s", 42, "42")
-		assert.True(t, 0 >= a)
-		assert.Truef(t, 0 >= a, "msg with args %d %s", 42, "42")
-		assert.True(t, 0 <= a)
-		assert.Truef(t, 0 <= a, "msg with args %d %s", 42, "42")
-		assert.True(t, 0 == a)
-		assert.Truef(t, 0 == a, "msg with args %d %s", 42, "42")
-		assert.True(t, 0 != a)
-		assert.Truef(t, 0 != a, "msg with args %d %s", 42, "42")
 		assert.True(t, a > 1)
 		assert.Truef(t, a > 1, "msg with args %d %s", 42, "42")
-		assert.True(t, a < 1)
-		assert.Truef(t, a < 1, "msg with args %d %s", 42, "42")
-		assert.True(t, a >= 1)
-		assert.Truef(t, a >= 1, "msg with args %d %s", 42, "42")
-		assert.True(t, a <= 1)
-		assert.Truef(t, a <= 1, "msg with args %d %s", 42, "42")
-		assert.True(t, a == 1)
-		assert.Truef(t, a == 1, "msg with args %d %s", 42, "42")
-		assert.True(t, a != 1)
-		assert.Truef(t, a != 1, "msg with args %d %s", 42, "42")
 		assert.True(t, 1 > a)
 		assert.Truef(t, 1 > a, "msg with args %d %s", 42, "42")
+		assert.True(t, a < 1)
+		assert.Truef(t, a < 1, "msg with args %d %s", 42, "42")
 		assert.True(t, 1 < a)
 		assert.Truef(t, 1 < a, "msg with args %d %s", 42, "42")
+		assert.True(t, a >= 1)
+		assert.Truef(t, a >= 1, "msg with args %d %s", 42, "42")
 		assert.True(t, 1 >= a)
 		assert.Truef(t, 1 >= a, "msg with args %d %s", 42, "42")
+		assert.True(t, a <= 1)
+		assert.Truef(t, a <= 1, "msg with args %d %s", 42, "42")
 		assert.True(t, 1 <= a)
 		assert.Truef(t, 1 <= a, "msg with args %d %s", 42, "42")
+		assert.True(t, a == 1)
+		assert.Truef(t, a == 1, "msg with args %d %s", 42, "42")
 		assert.True(t, 1 == a)
 		assert.Truef(t, 1 == a, "msg with args %d %s", 42, "42")
+		assert.True(t, a != 1)
+		assert.Truef(t, a != 1, "msg with args %d %s", 42, "42")
 		assert.True(t, 1 != a)
 		assert.Truef(t, 1 != a, "msg with args %d %s", 42, "42")
 		assert.False(t, a > -1)
 		assert.Falsef(t, a > -1, "msg with args %d %s", 42, "42")
-		assert.False(t, a < -1)
-		assert.Falsef(t, a < -1, "msg with args %d %s", 42, "42")
-		assert.False(t, a >= -1)
-		assert.Falsef(t, a >= -1, "msg with args %d %s", 42, "42")
-		assert.False(t, a <= -1)
-		assert.Falsef(t, a <= -1, "msg with args %d %s", 42, "42")
-		assert.False(t, a == -1)
-		assert.Falsef(t, a == -1, "msg with args %d %s", 42, "42")
-		assert.False(t, a != -1)
-		assert.Falsef(t, a != -1, "msg with args %d %s", 42, "42")
 		assert.False(t, -1 > a)
 		assert.Falsef(t, -1 > a, "msg with args %d %s", 42, "42")
+		assert.False(t, a < -1)
+		assert.Falsef(t, a < -1, "msg with args %d %s", 42, "42")
 		assert.False(t, -1 < a)
 		assert.Falsef(t, -1 < a, "msg with args %d %s", 42, "42")
+		assert.False(t, a >= -1)
+		assert.Falsef(t, a >= -1, "msg with args %d %s", 42, "42")
 		assert.False(t, -1 >= a)
 		assert.Falsef(t, -1 >= a, "msg with args %d %s", 42, "42")
+		assert.False(t, a <= -1)
+		assert.Falsef(t, a <= -1, "msg with args %d %s", 42, "42")
 		assert.False(t, -1 <= a)
 		assert.Falsef(t, -1 <= a, "msg with args %d %s", 42, "42")
+		assert.False(t, a == -1)
+		assert.Falsef(t, a == -1, "msg with args %d %s", 42, "42")
 		assert.False(t, -1 == a)
 		assert.Falsef(t, -1 == a, "msg with args %d %s", 42, "42")
+		assert.False(t, a != -1)
+		assert.Falsef(t, a != -1, "msg with args %d %s", 42, "42")
 		assert.False(t, -1 != a)
 		assert.Falsef(t, -1 != a, "msg with args %d %s", 42, "42")
-		assert.False(t, a > 0)
-		assert.Falsef(t, a > 0, "msg with args %d %s", 42, "42")
-		assert.False(t, a < 0)
-		assert.Falsef(t, a < 0, "msg with args %d %s", 42, "42")
-		assert.False(t, a == 0)
-		assert.Falsef(t, a == 0, "msg with args %d %s", 42, "42")
-		assert.False(t, a != 0)
-		assert.Falsef(t, a != 0, "msg with args %d %s", 42, "42")
-		assert.False(t, 0 > a)
-		assert.Falsef(t, 0 > a, "msg with args %d %s", 42, "42")
-		assert.False(t, 0 < a)
-		assert.Falsef(t, 0 < a, "msg with args %d %s", 42, "42")
-		assert.False(t, 0 == a)
-		assert.Falsef(t, 0 == a, "msg with args %d %s", 42, "42")
-		assert.False(t, 0 != a)
-		assert.Falsef(t, 0 != a, "msg with args %d %s", 42, "42")
 		assert.False(t, a > 1)
 		assert.Falsef(t, a > 1, "msg with args %d %s", 42, "42")
-		assert.False(t, a < 1)
-		assert.Falsef(t, a < 1, "msg with args %d %s", 42, "42")
-		assert.False(t, a >= 1)
-		assert.Falsef(t, a >= 1, "msg with args %d %s", 42, "42")
-		assert.False(t, a <= 1)
-		assert.Falsef(t, a <= 1, "msg with args %d %s", 42, "42")
-		assert.False(t, a == 1)
-		assert.Falsef(t, a == 1, "msg with args %d %s", 42, "42")
-		assert.False(t, a != 1)
-		assert.Falsef(t, a != 1, "msg with args %d %s", 42, "42")
 		assert.False(t, 1 > a)
 		assert.Falsef(t, 1 > a, "msg with args %d %s", 42, "42")
+		assert.False(t, a < 1)
+		assert.Falsef(t, a < 1, "msg with args %d %s", 42, "42")
 		assert.False(t, 1 < a)
 		assert.Falsef(t, 1 < a, "msg with args %d %s", 42, "42")
+		assert.False(t, a >= 1)
+		assert.Falsef(t, a >= 1, "msg with args %d %s", 42, "42")
 		assert.False(t, 1 >= a)
 		assert.Falsef(t, 1 >= a, "msg with args %d %s", 42, "42")
+		assert.False(t, a <= 1)
+		assert.Falsef(t, a <= 1, "msg with args %d %s", 42, "42")
 		assert.False(t, 1 <= a)
 		assert.Falsef(t, 1 <= a, "msg with args %d %s", 42, "42")
+		assert.False(t, a == 1)
+		assert.Falsef(t, a == 1, "msg with args %d %s", 42, "42")
 		assert.False(t, 1 == a)
 		assert.Falsef(t, 1 == a, "msg with args %d %s", 42, "42")
+		assert.False(t, a != 1)
+		assert.Falsef(t, a != 1, "msg with args %d %s", 42, "42")
 		assert.False(t, 1 != a)
 		assert.Falsef(t, 1 != a, "msg with args %d %s", 42, "42")
+		assert.True(t, a >= 0)
+		assert.Truef(t, a >= 0, "msg with args %d %s", 42, "42")
+		assert.True(t, 0 >= a)
+		assert.Truef(t, 0 >= a, "msg with args %d %s", 42, "42")
+		assert.True(t, a <= 0)
+		assert.Truef(t, a <= 0, "msg with args %d %s", 42, "42")
+		assert.True(t, 0 <= a)
+		assert.Truef(t, 0 <= a, "msg with args %d %s", 42, "42")
+		assert.True(t, a == 0)
+		assert.Truef(t, a == 0, "msg with args %d %s", 42, "42")
+		assert.True(t, 0 == a)
+		assert.Truef(t, 0 == a, "msg with args %d %s", 42, "42")
+		assert.True(t, a != 0)
+		assert.Truef(t, a != 0, "msg with args %d %s", 42, "42")
+		assert.True(t, 0 != a)
+		assert.Truef(t, 0 != a, "msg with args %d %s", 42, "42")
+		assert.True(t, int(a) >= int(0))
+		assert.Truef(t, int(a) >= int(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int(0) >= int(a))
+		assert.Truef(t, int(0) >= int(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int(a) <= int(0))
+		assert.Truef(t, int(a) <= int(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int(0) <= int(a))
+		assert.Truef(t, int(0) <= int(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int(a) == int(0))
+		assert.Truef(t, int(a) == int(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int(0) == int(a))
+		assert.Truef(t, int(0) == int(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int(a) != int(0))
+		assert.Truef(t, int(a) != int(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int(0) != int(a))
+		assert.Truef(t, int(0) != int(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int8(a) >= int8(0))
+		assert.Truef(t, int8(a) >= int8(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int8(0) >= int8(a))
+		assert.Truef(t, int8(0) >= int8(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int8(a) <= int8(0))
+		assert.Truef(t, int8(a) <= int8(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int8(0) <= int8(a))
+		assert.Truef(t, int8(0) <= int8(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int8(a) == int8(0))
+		assert.Truef(t, int8(a) == int8(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int8(0) == int8(a))
+		assert.Truef(t, int8(0) == int8(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int8(a) != int8(0))
+		assert.Truef(t, int8(a) != int8(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int8(0) != int8(a))
+		assert.Truef(t, int8(0) != int8(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int16(a) >= int16(0))
+		assert.Truef(t, int16(a) >= int16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int16(0) >= int16(a))
+		assert.Truef(t, int16(0) >= int16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int16(a) <= int16(0))
+		assert.Truef(t, int16(a) <= int16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int16(0) <= int16(a))
+		assert.Truef(t, int16(0) <= int16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int16(a) == int16(0))
+		assert.Truef(t, int16(a) == int16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int16(0) == int16(a))
+		assert.Truef(t, int16(0) == int16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int16(a) != int16(0))
+		assert.Truef(t, int16(a) != int16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int16(0) != int16(a))
+		assert.Truef(t, int16(0) != int16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int32(a) >= int32(0))
+		assert.Truef(t, int32(a) >= int32(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int32(0) >= int32(a))
+		assert.Truef(t, int32(0) >= int32(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int32(a) <= int32(0))
+		assert.Truef(t, int32(a) <= int32(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int32(0) <= int32(a))
+		assert.Truef(t, int32(0) <= int32(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int32(a) == int32(0))
+		assert.Truef(t, int32(a) == int32(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int32(0) == int32(a))
+		assert.Truef(t, int32(0) == int32(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int32(a) != int32(0))
+		assert.Truef(t, int32(a) != int32(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int32(0) != int32(a))
+		assert.Truef(t, int32(0) != int32(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int64(a) >= int64(0))
+		assert.Truef(t, int64(a) >= int64(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int64(0) >= int64(a))
+		assert.Truef(t, int64(0) >= int64(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int64(a) <= int64(0))
+		assert.Truef(t, int64(a) <= int64(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int64(0) <= int64(a))
+		assert.Truef(t, int64(0) <= int64(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int64(a) == int64(0))
+		assert.Truef(t, int64(a) == int64(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int64(0) == int64(a))
+		assert.Truef(t, int64(0) == int64(a), "msg with args %d %s", 42, "42")
+		assert.True(t, int64(a) != int64(0))
+		assert.Truef(t, int64(a) != int64(0), "msg with args %d %s", 42, "42")
+		assert.True(t, int64(0) != int64(a))
+		assert.Truef(t, int64(0) != int64(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint(a) >= uint(0))
+		assert.Truef(t, uint(a) >= uint(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint(0) >= uint(a))
+		assert.Truef(t, uint(0) >= uint(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint(a) <= uint(0))
+		assert.Truef(t, uint(a) <= uint(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint(0) <= uint(a))
+		assert.Truef(t, uint(0) <= uint(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint(a) == uint(0))
+		assert.Truef(t, uint(a) == uint(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint(0) == uint(a))
+		assert.Truef(t, uint(0) == uint(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint(a) != uint(0))
+		assert.Truef(t, uint(a) != uint(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint(0) != uint(a))
+		assert.Truef(t, uint(0) != uint(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint8(a) >= uint8(0))
+		assert.Truef(t, uint8(a) >= uint8(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint8(0) >= uint8(a))
+		assert.Truef(t, uint8(0) >= uint8(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint8(a) <= uint8(0))
+		assert.Truef(t, uint8(a) <= uint8(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint8(0) <= uint8(a))
+		assert.Truef(t, uint8(0) <= uint8(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint8(a) == uint8(0))
+		assert.Truef(t, uint8(a) == uint8(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint8(0) == uint8(a))
+		assert.Truef(t, uint8(0) == uint8(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint8(a) != uint8(0))
+		assert.Truef(t, uint8(a) != uint8(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint8(0) != uint8(a))
+		assert.Truef(t, uint8(0) != uint8(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint16(a) >= uint16(0))
+		assert.Truef(t, uint16(a) >= uint16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint16(0) >= uint16(a))
+		assert.Truef(t, uint16(0) >= uint16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint16(a) <= uint16(0))
+		assert.Truef(t, uint16(a) <= uint16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint16(0) <= uint16(a))
+		assert.Truef(t, uint16(0) <= uint16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint16(a) == uint16(0))
+		assert.Truef(t, uint16(a) == uint16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint16(0) == uint16(a))
+		assert.Truef(t, uint16(0) == uint16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint16(a) != uint16(0))
+		assert.Truef(t, uint16(a) != uint16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint16(0) != uint16(a))
+		assert.Truef(t, uint16(0) != uint16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint32(a) >= uint32(0))
+		assert.Truef(t, uint32(a) >= uint32(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint32(0) >= uint32(a))
+		assert.Truef(t, uint32(0) >= uint32(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint32(a) <= uint32(0))
+		assert.Truef(t, uint32(a) <= uint32(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint32(0) <= uint32(a))
+		assert.Truef(t, uint32(0) <= uint32(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint32(a) == uint32(0))
+		assert.Truef(t, uint32(a) == uint32(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint32(0) == uint32(a))
+		assert.Truef(t, uint32(0) == uint32(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint32(a) != uint32(0))
+		assert.Truef(t, uint32(a) != uint32(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint32(0) != uint32(a))
+		assert.Truef(t, uint32(0) != uint32(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint64(a) >= uint64(0))
+		assert.Truef(t, uint64(a) >= uint64(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint64(0) >= uint64(a))
+		assert.Truef(t, uint64(0) >= uint64(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint64(a) <= uint64(0))
+		assert.Truef(t, uint64(a) <= uint64(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint64(0) <= uint64(a))
+		assert.Truef(t, uint64(0) <= uint64(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint64(a) == uint64(0))
+		assert.Truef(t, uint64(a) == uint64(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint64(0) == uint64(a))
+		assert.Truef(t, uint64(0) == uint64(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint64(a) != uint64(0))
+		assert.Truef(t, uint64(a) != uint64(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint64(0) != uint64(a))
+		assert.Truef(t, uint64(0) != uint64(a), "msg with args %d %s", 42, "42")
+		assert.True(t, CustomInt16(a) >= CustomInt16(0))
+		assert.Truef(t, CustomInt16(a) >= CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, CustomInt16(0) >= CustomInt16(a))
+		assert.Truef(t, CustomInt16(0) >= CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, CustomInt16(a) <= CustomInt16(0))
+		assert.Truef(t, CustomInt16(a) <= CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, CustomInt16(0) <= CustomInt16(a))
+		assert.Truef(t, CustomInt16(0) <= CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, CustomInt16(a) == CustomInt16(0))
+		assert.Truef(t, CustomInt16(a) == CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, CustomInt16(0) == CustomInt16(a))
+		assert.Truef(t, CustomInt16(0) == CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, CustomInt16(a) != CustomInt16(0))
+		assert.Truef(t, CustomInt16(a) != CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, CustomInt16(0) != CustomInt16(a))
+		assert.Truef(t, CustomInt16(0) != CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint(a) > uint(0))
+		assert.Truef(t, uint(a) > uint(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint(0) > uint(a))
+		assert.Truef(t, uint(0) > uint(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint(a) < uint(0))
+		assert.Truef(t, uint(a) < uint(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint(0) < uint(a))
+		assert.Truef(t, uint(0) < uint(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint8(a) > uint8(0))
+		assert.Truef(t, uint8(a) > uint8(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint8(0) > uint8(a))
+		assert.Truef(t, uint8(0) > uint8(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint8(a) < uint8(0))
+		assert.Truef(t, uint8(a) < uint8(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint8(0) < uint8(a))
+		assert.Truef(t, uint8(0) < uint8(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint16(a) > uint16(0))
+		assert.Truef(t, uint16(a) > uint16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint16(0) > uint16(a))
+		assert.Truef(t, uint16(0) > uint16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint16(a) < uint16(0))
+		assert.Truef(t, uint16(a) < uint16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint16(0) < uint16(a))
+		assert.Truef(t, uint16(0) < uint16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint32(a) > uint32(0))
+		assert.Truef(t, uint32(a) > uint32(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint32(0) > uint32(a))
+		assert.Truef(t, uint32(0) > uint32(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint32(a) < uint32(0))
+		assert.Truef(t, uint32(a) < uint32(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint32(0) < uint32(a))
+		assert.Truef(t, uint32(0) < uint32(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint64(a) > uint64(0))
+		assert.Truef(t, uint64(a) > uint64(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint64(0) > uint64(a))
+		assert.Truef(t, uint64(0) > uint64(a), "msg with args %d %s", 42, "42")
+		assert.True(t, uint64(a) < uint64(0))
+		assert.Truef(t, uint64(a) < uint64(0), "msg with args %d %s", 42, "42")
+		assert.True(t, uint64(0) < uint64(a))
+		assert.Truef(t, uint64(0) < uint64(a), "msg with args %d %s", 42, "42")
+		assert.True(t, CustomInt16(a) > CustomInt16(0))
+		assert.Truef(t, CustomInt16(a) > CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, CustomInt16(0) > CustomInt16(a))
+		assert.Truef(t, CustomInt16(0) > CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.True(t, CustomInt16(a) < CustomInt16(0))
+		assert.Truef(t, CustomInt16(a) < CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.True(t, CustomInt16(0) < CustomInt16(a))
+		assert.Truef(t, CustomInt16(0) < CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, a > 0)
+		assert.Falsef(t, a > 0, "msg with args %d %s", 42, "42")
+		assert.False(t, 0 > a)
+		assert.Falsef(t, 0 > a, "msg with args %d %s", 42, "42")
+		assert.False(t, a < 0)
+		assert.Falsef(t, a < 0, "msg with args %d %s", 42, "42")
+		assert.False(t, 0 < a)
+		assert.Falsef(t, 0 < a, "msg with args %d %s", 42, "42")
+		assert.False(t, a == 0)
+		assert.Falsef(t, a == 0, "msg with args %d %s", 42, "42")
+		assert.False(t, 0 == a)
+		assert.Falsef(t, 0 == a, "msg with args %d %s", 42, "42")
+		assert.False(t, a != 0)
+		assert.Falsef(t, a != 0, "msg with args %d %s", 42, "42")
+		assert.False(t, 0 != a)
+		assert.Falsef(t, 0 != a, "msg with args %d %s", 42, "42")
+		assert.False(t, int(a) > int(0))
+		assert.Falsef(t, int(a) > int(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int(0) > int(a))
+		assert.Falsef(t, int(0) > int(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int(a) < int(0))
+		assert.Falsef(t, int(a) < int(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int(0) < int(a))
+		assert.Falsef(t, int(0) < int(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int(a) == int(0))
+		assert.Falsef(t, int(a) == int(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int(0) == int(a))
+		assert.Falsef(t, int(0) == int(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int(a) != int(0))
+		assert.Falsef(t, int(a) != int(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int(0) != int(a))
+		assert.Falsef(t, int(0) != int(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int8(a) > int8(0))
+		assert.Falsef(t, int8(a) > int8(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int8(0) > int8(a))
+		assert.Falsef(t, int8(0) > int8(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int8(a) < int8(0))
+		assert.Falsef(t, int8(a) < int8(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int8(0) < int8(a))
+		assert.Falsef(t, int8(0) < int8(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int8(a) == int8(0))
+		assert.Falsef(t, int8(a) == int8(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int8(0) == int8(a))
+		assert.Falsef(t, int8(0) == int8(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int8(a) != int8(0))
+		assert.Falsef(t, int8(a) != int8(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int8(0) != int8(a))
+		assert.Falsef(t, int8(0) != int8(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int16(a) > int16(0))
+		assert.Falsef(t, int16(a) > int16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int16(0) > int16(a))
+		assert.Falsef(t, int16(0) > int16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int16(a) < int16(0))
+		assert.Falsef(t, int16(a) < int16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int16(0) < int16(a))
+		assert.Falsef(t, int16(0) < int16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int16(a) == int16(0))
+		assert.Falsef(t, int16(a) == int16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int16(0) == int16(a))
+		assert.Falsef(t, int16(0) == int16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int16(a) != int16(0))
+		assert.Falsef(t, int16(a) != int16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int16(0) != int16(a))
+		assert.Falsef(t, int16(0) != int16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int32(a) > int32(0))
+		assert.Falsef(t, int32(a) > int32(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int32(0) > int32(a))
+		assert.Falsef(t, int32(0) > int32(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int32(a) < int32(0))
+		assert.Falsef(t, int32(a) < int32(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int32(0) < int32(a))
+		assert.Falsef(t, int32(0) < int32(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int32(a) == int32(0))
+		assert.Falsef(t, int32(a) == int32(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int32(0) == int32(a))
+		assert.Falsef(t, int32(0) == int32(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int32(a) != int32(0))
+		assert.Falsef(t, int32(a) != int32(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int32(0) != int32(a))
+		assert.Falsef(t, int32(0) != int32(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int64(a) > int64(0))
+		assert.Falsef(t, int64(a) > int64(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int64(0) > int64(a))
+		assert.Falsef(t, int64(0) > int64(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int64(a) < int64(0))
+		assert.Falsef(t, int64(a) < int64(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int64(0) < int64(a))
+		assert.Falsef(t, int64(0) < int64(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int64(a) == int64(0))
+		assert.Falsef(t, int64(a) == int64(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int64(0) == int64(a))
+		assert.Falsef(t, int64(0) == int64(a), "msg with args %d %s", 42, "42")
+		assert.False(t, int64(a) != int64(0))
+		assert.Falsef(t, int64(a) != int64(0), "msg with args %d %s", 42, "42")
+		assert.False(t, int64(0) != int64(a))
+		assert.Falsef(t, int64(0) != int64(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint(a) > uint(0))
+		assert.Falsef(t, uint(a) > uint(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint(0) > uint(a))
+		assert.Falsef(t, uint(0) > uint(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint(a) < uint(0))
+		assert.Falsef(t, uint(a) < uint(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint(0) < uint(a))
+		assert.Falsef(t, uint(0) < uint(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint(a) == uint(0))
+		assert.Falsef(t, uint(a) == uint(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint(0) == uint(a))
+		assert.Falsef(t, uint(0) == uint(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint(a) != uint(0))
+		assert.Falsef(t, uint(a) != uint(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint(0) != uint(a))
+		assert.Falsef(t, uint(0) != uint(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint8(a) > uint8(0))
+		assert.Falsef(t, uint8(a) > uint8(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint8(0) > uint8(a))
+		assert.Falsef(t, uint8(0) > uint8(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint8(a) < uint8(0))
+		assert.Falsef(t, uint8(a) < uint8(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint8(0) < uint8(a))
+		assert.Falsef(t, uint8(0) < uint8(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint8(a) == uint8(0))
+		assert.Falsef(t, uint8(a) == uint8(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint8(0) == uint8(a))
+		assert.Falsef(t, uint8(0) == uint8(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint8(a) != uint8(0))
+		assert.Falsef(t, uint8(a) != uint8(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint8(0) != uint8(a))
+		assert.Falsef(t, uint8(0) != uint8(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint16(a) > uint16(0))
+		assert.Falsef(t, uint16(a) > uint16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint16(0) > uint16(a))
+		assert.Falsef(t, uint16(0) > uint16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint16(a) < uint16(0))
+		assert.Falsef(t, uint16(a) < uint16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint16(0) < uint16(a))
+		assert.Falsef(t, uint16(0) < uint16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint16(a) == uint16(0))
+		assert.Falsef(t, uint16(a) == uint16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint16(0) == uint16(a))
+		assert.Falsef(t, uint16(0) == uint16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint16(a) != uint16(0))
+		assert.Falsef(t, uint16(a) != uint16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint16(0) != uint16(a))
+		assert.Falsef(t, uint16(0) != uint16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint32(a) > uint32(0))
+		assert.Falsef(t, uint32(a) > uint32(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint32(0) > uint32(a))
+		assert.Falsef(t, uint32(0) > uint32(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint32(a) < uint32(0))
+		assert.Falsef(t, uint32(a) < uint32(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint32(0) < uint32(a))
+		assert.Falsef(t, uint32(0) < uint32(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint32(a) == uint32(0))
+		assert.Falsef(t, uint32(a) == uint32(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint32(0) == uint32(a))
+		assert.Falsef(t, uint32(0) == uint32(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint32(a) != uint32(0))
+		assert.Falsef(t, uint32(a) != uint32(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint32(0) != uint32(a))
+		assert.Falsef(t, uint32(0) != uint32(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint64(a) > uint64(0))
+		assert.Falsef(t, uint64(a) > uint64(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint64(0) > uint64(a))
+		assert.Falsef(t, uint64(0) > uint64(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint64(a) < uint64(0))
+		assert.Falsef(t, uint64(a) < uint64(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint64(0) < uint64(a))
+		assert.Falsef(t, uint64(0) < uint64(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint64(a) == uint64(0))
+		assert.Falsef(t, uint64(a) == uint64(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint64(0) == uint64(a))
+		assert.Falsef(t, uint64(0) == uint64(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint64(a) != uint64(0))
+		assert.Falsef(t, uint64(a) != uint64(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint64(0) != uint64(a))
+		assert.Falsef(t, uint64(0) != uint64(a), "msg with args %d %s", 42, "42")
+		assert.False(t, CustomInt16(a) > CustomInt16(0))
+		assert.Falsef(t, CustomInt16(a) > CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, CustomInt16(0) > CustomInt16(a))
+		assert.Falsef(t, CustomInt16(0) > CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, CustomInt16(a) < CustomInt16(0))
+		assert.Falsef(t, CustomInt16(a) < CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, CustomInt16(0) < CustomInt16(a))
+		assert.Falsef(t, CustomInt16(0) < CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, CustomInt16(a) == CustomInt16(0))
+		assert.Falsef(t, CustomInt16(a) == CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, CustomInt16(0) == CustomInt16(a))
+		assert.Falsef(t, CustomInt16(0) == CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, CustomInt16(a) != CustomInt16(0))
+		assert.Falsef(t, CustomInt16(a) != CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, CustomInt16(0) != CustomInt16(a))
+		assert.Falsef(t, CustomInt16(0) != CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint(a) >= uint(0))
+		assert.Falsef(t, uint(a) >= uint(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint(0) >= uint(a))
+		assert.Falsef(t, uint(0) >= uint(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint(a) <= uint(0))
+		assert.Falsef(t, uint(a) <= uint(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint(0) <= uint(a))
+		assert.Falsef(t, uint(0) <= uint(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint8(a) >= uint8(0))
+		assert.Falsef(t, uint8(a) >= uint8(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint8(0) >= uint8(a))
+		assert.Falsef(t, uint8(0) >= uint8(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint8(a) <= uint8(0))
+		assert.Falsef(t, uint8(a) <= uint8(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint8(0) <= uint8(a))
+		assert.Falsef(t, uint8(0) <= uint8(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint16(a) >= uint16(0))
+		assert.Falsef(t, uint16(a) >= uint16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint16(0) >= uint16(a))
+		assert.Falsef(t, uint16(0) >= uint16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint16(a) <= uint16(0))
+		assert.Falsef(t, uint16(a) <= uint16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint16(0) <= uint16(a))
+		assert.Falsef(t, uint16(0) <= uint16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint32(a) >= uint32(0))
+		assert.Falsef(t, uint32(a) >= uint32(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint32(0) >= uint32(a))
+		assert.Falsef(t, uint32(0) >= uint32(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint32(a) <= uint32(0))
+		assert.Falsef(t, uint32(a) <= uint32(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint32(0) <= uint32(a))
+		assert.Falsef(t, uint32(0) <= uint32(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint64(a) >= uint64(0))
+		assert.Falsef(t, uint64(a) >= uint64(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint64(0) >= uint64(a))
+		assert.Falsef(t, uint64(0) >= uint64(a), "msg with args %d %s", 42, "42")
+		assert.False(t, uint64(a) <= uint64(0))
+		assert.Falsef(t, uint64(a) <= uint64(0), "msg with args %d %s", 42, "42")
+		assert.False(t, uint64(0) <= uint64(a))
+		assert.Falsef(t, uint64(0) <= uint64(a), "msg with args %d %s", 42, "42")
+		assert.False(t, CustomInt16(a) >= CustomInt16(0))
+		assert.Falsef(t, CustomInt16(a) >= CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, CustomInt16(0) >= CustomInt16(a))
+		assert.Falsef(t, CustomInt16(0) >= CustomInt16(a), "msg with args %d %s", 42, "42")
+		assert.False(t, CustomInt16(a) <= CustomInt16(0))
+		assert.Falsef(t, CustomInt16(a) <= CustomInt16(0), "msg with args %d %s", 42, "42")
+		assert.False(t, CustomInt16(0) <= CustomInt16(a))
+		assert.Falsef(t, CustomInt16(0) <= CustomInt16(a), "msg with args %d %s", 42, "42")
 		assert.Equal(t, 0, 0)
 		assert.Equalf(t, 0, 0, "msg with args %d %s", 42, "42")
 		assert.Equal(t, a, a)
@@ -540,5 +1081,15 @@ func TestNegativePositiveChecker(t *testing.T) {
 		assert.Falsef(t, -1 == -1, "msg with args %d %s", 42, "42")
 		assert.False(t, -1 != -1)
 		assert.Falsef(t, -1 != -1, "msg with args %d %s", 42, "42")
+		assert.Positive(t, uint(a))
+		assert.Positivef(t, uint(a), "msg with args %d %s", 42, "42")
+		assert.Negative(t, uint(a))
+		assert.Negativef(t, uint(a), "msg with args %d %s", 42, "42")
+		assert.Greater(t, uint(a), 0)
+		assert.Greaterf(t, uint(a), 0, "msg with args %d %s", 42, "42")
+		assert.Less(t, uint(a), 0)
+		assert.Lessf(t, uint(a), 0, "msg with args %d %s", 42, "42")
 	}
 }
+
+type CustomInt16 int16

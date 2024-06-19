@@ -22,47 +22,196 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 
 	var invalidAssertions []Assertion
 
-	for _, zero := range []string{
-		"0",
-		"int(0)", "int8(0)", "int16(0)", "int32(0)", "int64(0)",
-		"uint(0)", "uint8(0)", "uint16(0)", "uint32(0)", "uint64(0)",
-	} {
-		invalidAssertions = append(invalidAssertions,
-			Assertion{Fn: "Less", Argsf: fmt.Sprintf("a, %s", zero), ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
-			Assertion{Fn: "Greater", Argsf: fmt.Sprintf("%s, a", zero), ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+	for _, zeroType := range []string{"", "int", "int8", "int16", "int32", "int64"} {
+		v := fmt.Sprintf("%s(a)", zeroType)
+		zero := fmt.Sprintf("%s(0)", zeroType)
 
-			Assertion{Fn: "Greater", Argsf: fmt.Sprintf("a, %s", zero), ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			Assertion{Fn: "Less", Argsf: fmt.Sprintf("%s, a", zero), ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+		if zeroType == "" {
+			v, zero = "a", "0"
+		}
+
+		invalidAssertions = append(invalidAssertions,
+			Assertion{Fn: "Less", Argsf: "a, " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+			Assertion{Fn: "Greater", Argsf: zero + ", a", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+			Assertion{Fn: "True", Argsf: v + " < " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
+			Assertion{Fn: "True", Argsf: zero + " > " + v, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
+			Assertion{Fn: "False", Argsf: v + " >= " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
+			Assertion{Fn: "False", Argsf: zero + " <= " + v, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
+
+			Assertion{Fn: "Greater", Argsf: "a, " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			Assertion{Fn: "Less", Argsf: zero + ", a", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			Assertion{Fn: "True", Argsf: v + " > " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
+			Assertion{Fn: "True", Argsf: zero + " < " + v, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
+			Assertion{Fn: "False", Argsf: v + " <= " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
+			Assertion{Fn: "False", Argsf: zero + " >= " + v, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
 		)
 	}
 
-	for zero, a := range map[string]string{
-		"0":         "a",
-		"int(0)":    "a",
-		"int8(0)":   "int8A",
-		"int16(0)":  "int16A",
-		"int32(0)":  "int32A",
-		"int64(0)":  "int64A",
-		"uint(0)":   "uintA",
-		"uint8(0)":  "uint8A",
-		"uint16(0)": "uint16A",
-		"uint32(0)": "uint32A",
-		"uint64(0)": "uint64A",
-	} {
-		invalidAssertions = append(invalidAssertions,
-			Assertion{Fn: "True", Argsf: fmt.Sprintf("%s < %s", a, zero), ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: a},
-			Assertion{Fn: "True", Argsf: fmt.Sprintf("%s > %s", zero, a), ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: a},
-			Assertion{Fn: "False", Argsf: fmt.Sprintf("%s >= %s", a, zero), ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: a},
-			Assertion{Fn: "False", Argsf: fmt.Sprintf("%s <= %s", zero, a), ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: a},
+	var ignoredAssertions []Assertion
 
-			Assertion{Fn: "True", Argsf: fmt.Sprintf("%s > %s", a, zero), ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: a},
-			Assertion{Fn: "True", Argsf: fmt.Sprintf("%s < %s", zero, a), ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: a},
-			Assertion{Fn: "False", Argsf: fmt.Sprintf("%s <= %s", a, zero), ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: a},
-			Assertion{Fn: "False", Argsf: fmt.Sprintf("%s >= %s", zero, a), ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: a},
-		)
+	for _, fn := range []string{"Equal", "NotEqual", "GreaterOrEqual", "LessOrEqual"} {
+		for _, arg := range []string{"-1", "0", "1"} {
+			ignoredAssertions = append(ignoredAssertions,
+				Assertion{Fn: fn, Argsf: arg + ", a"},
+				Assertion{Fn: fn, Argsf: "a, " + arg},
+			)
+		}
+	}
+	for _, fn := range []string{"Equal", "NotEqual", "GreaterOrEqual", "LessOrEqual"} {
+		for _, zeroType := range []string{
+			"int", "int8", "int16", "int32", "int64",
+			"uint", "uint8", "uint16", "uint32", "uint64",
+			"CustomInt16",
+		} {
+			v := fmt.Sprintf("%s(a)", zeroType)
+			zero := fmt.Sprintf("%s(0)", zeroType)
+
+			ignoredAssertions = append(ignoredAssertions,
+				Assertion{Fn: fn, Argsf: zero + ", " + v},
+				Assertion{Fn: fn, Argsf: v + ", " + zero},
+			)
+		}
 	}
 
-	sortAssertions(invalidAssertions)
+	for _, fn := range []string{"Greater", "Less"} {
+		for _, arg := range []string{"-1", "1"} {
+			ignoredAssertions = append(ignoredAssertions,
+				Assertion{Fn: fn, Argsf: arg + ", a"},
+				Assertion{Fn: fn, Argsf: "a, " + arg},
+			)
+		}
+	}
+	for _, fn := range []string{"Greater", "Less"} {
+		for _, zeroType := range []string{
+			"uint", "uint8", "uint16", "uint32", "uint64",
+			"CustomInt16",
+		} {
+			v := fmt.Sprintf("%s(a)", zeroType)
+			zero := fmt.Sprintf("%s(0)", zeroType)
+
+			ignoredAssertions = append(ignoredAssertions,
+				Assertion{Fn: fn, Argsf: zero + ", " + v},
+				Assertion{Fn: fn, Argsf: v + ", " + zero},
+			)
+		}
+	}
+
+	for _, fn := range []string{"True", "False"} {
+		for _, arg := range []string{"-1", "1"} {
+			for _, op := range []string{">", "<", ">=", "<=", "==", "!="} {
+				ignoredAssertions = append(ignoredAssertions,
+					Assertion{Fn: fn, Argsf: fmt.Sprintf("a %s %s", op, arg)},
+					Assertion{Fn: fn, Argsf: fmt.Sprintf("%s %s a", arg, op)},
+				)
+			}
+		}
+	}
+
+	for _, zeroType := range []string{
+		"",
+		"int", "int8", "int16", "int32", "int64",
+		"uint", "uint8", "uint16", "uint32", "uint64",
+		"CustomInt16",
+	} {
+		v := fmt.Sprintf("%s(a)", zeroType)
+		zero := fmt.Sprintf("%s(0)", zeroType)
+
+		if zeroType == "" {
+			v, zero = "a", "0"
+		}
+
+		for _, op := range []string{">=", "<=", "==", "!="} {
+			ignoredAssertions = append(ignoredAssertions,
+				Assertion{Fn: "True", Argsf: fmt.Sprintf("%s %s %s", v, op, zero)},
+				Assertion{Fn: "True", Argsf: fmt.Sprintf("%s %s %s", zero, op, v)},
+			)
+		}
+	}
+	for _, zeroType := range []string{
+		"uint", "uint8", "uint16", "uint32", "uint64",
+		"CustomInt16",
+	} {
+		v := fmt.Sprintf("%s(a)", zeroType)
+		zero := fmt.Sprintf("%s(0)", zeroType)
+
+		for _, op := range []string{">", "<"} {
+			ignoredAssertions = append(ignoredAssertions,
+				Assertion{Fn: "True", Argsf: fmt.Sprintf("%s %s %s", v, op, zero)},
+				Assertion{Fn: "True", Argsf: fmt.Sprintf("%s %s %s", zero, op, v)},
+			)
+		}
+	}
+
+	for _, zeroType := range []string{
+		"",
+		"int", "int8", "int16", "int32", "int64",
+		"uint", "uint8", "uint16", "uint32", "uint64",
+		"CustomInt16",
+	} {
+		v := fmt.Sprintf("%s(a)", zeroType)
+		zero := fmt.Sprintf("%s(0)", zeroType)
+
+		if zeroType == "" {
+			v, zero = "a", "0"
+		}
+
+		for _, op := range []string{">", "<", "==", "!="} {
+			ignoredAssertions = append(ignoredAssertions,
+				Assertion{Fn: "False", Argsf: fmt.Sprintf("%s %s %s", v, op, zero)},
+				Assertion{Fn: "False", Argsf: fmt.Sprintf("%s %s %s", zero, op, v)},
+			)
+		}
+	}
+	for _, zeroType := range []string{
+		"uint", "uint8", "uint16", "uint32", "uint64",
+		"CustomInt16",
+	} {
+		v := fmt.Sprintf("%s(a)", zeroType)
+		zero := fmt.Sprintf("%s(0)", zeroType)
+
+		for _, op := range []string{">=", "<="} {
+			ignoredAssertions = append(ignoredAssertions,
+				Assertion{Fn: "False", Argsf: fmt.Sprintf("%s %s %s", v, op, zero)},
+				Assertion{Fn: "False", Argsf: fmt.Sprintf("%s %s %s", zero, op, v)},
+			)
+		}
+	}
+
+	// These one will be reported by useless-assert.
+	ignoredAssertions = append(ignoredAssertions,
+		Assertion{Fn: "Equal", Argsf: "0, 0"},
+		Assertion{Fn: "Equal", Argsf: "a, a"},
+		Assertion{Fn: "NotEqual", Argsf: "0, 0"},
+		Assertion{Fn: "NotEqual", Argsf: "a, a"},
+		Assertion{Fn: "Greater", Argsf: "0, 0"},
+		Assertion{Fn: "Greater", Argsf: "a, a"},
+		Assertion{Fn: "GreaterOrEqual", Argsf: "0, 0"},
+		Assertion{Fn: "GreaterOrEqual", Argsf: "a, a"},
+		Assertion{Fn: "Less", Argsf: "0, 0"},
+		Assertion{Fn: "Less", Argsf: "a, a"},
+		Assertion{Fn: "LessOrEqual", Argsf: "0, 0"},
+		Assertion{Fn: "LessOrEqual", Argsf: "a, a"},
+		Assertion{Fn: "True", Argsf: "a > a"},
+		Assertion{Fn: "True", Argsf: "a < a"},
+		Assertion{Fn: "True", Argsf: "a >= a"},
+		Assertion{Fn: "True", Argsf: "a <= a"},
+		Assertion{Fn: "True", Argsf: "a == a"},
+		Assertion{Fn: "True", Argsf: "a != a"},
+		Assertion{Fn: "False", Argsf: "-1 > -1"},
+		Assertion{Fn: "False", Argsf: "-1 < -1"},
+		Assertion{Fn: "False", Argsf: "-1 >= -1"},
+		Assertion{Fn: "False", Argsf: "-1 <= -1"},
+		Assertion{Fn: "False", Argsf: "-1 == -1"},
+		Assertion{Fn: "False", Argsf: "-1 != -1"},
+	)
+
+	// These one will be reported by incorrect-assert.
+	ignoredAssertions = append(ignoredAssertions,
+		Assertion{Fn: "Positive", Argsf: "uint(a)"},
+		Assertion{Fn: "Negative", Argsf: "uint(a)"},
+		Assertion{Fn: "Greater", Argsf: "uint(a), 0"},
+		Assertion{Fn: "Less", Argsf: "uint(a), 0"},
+	)
 
 	return struct {
 		CheckerName       CheckerName
@@ -76,141 +225,7 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 			{Fn: "Negative", Argsf: "a"},
 			{Fn: "Positive", Argsf: "a"},
 		},
-		IgnoredAssertions: []Assertion{
-			{Fn: "Equal", Argsf: "-1, a"},
-			{Fn: "Equal", Argsf: "a, -1"},
-			{Fn: "Equal", Argsf: "0, a"},
-			{Fn: "Equal", Argsf: "a, 0"},
-			{Fn: "Equal", Argsf: "1, a"},
-			{Fn: "Equal", Argsf: "a, 1"},
-
-			{Fn: "NotEqual", Argsf: "-1, a"},
-			{Fn: "NotEqual", Argsf: "a, -1"},
-			{Fn: "NotEqual", Argsf: "0, a"},
-			{Fn: "NotEqual", Argsf: "a, 0"},
-			{Fn: "NotEqual", Argsf: "1, a"},
-			{Fn: "NotEqual", Argsf: "a, 1"},
-
-			{Fn: "Greater", Argsf: "-1, a"},
-			{Fn: "Greater", Argsf: "a, -1"},
-			{Fn: "Greater", Argsf: "a, 1"},
-			{Fn: "Greater", Argsf: "1, a"},
-
-			{Fn: "GreaterOrEqual", Argsf: "-1, a"},
-			{Fn: "GreaterOrEqual", Argsf: "a, -1"},
-			{Fn: "GreaterOrEqual", Argsf: "0, a"},
-			{Fn: "GreaterOrEqual", Argsf: "a, 0"},
-			{Fn: "GreaterOrEqual", Argsf: "1, a"},
-			{Fn: "GreaterOrEqual", Argsf: "a, 1"},
-
-			{Fn: "Less", Argsf: "-1, a"},
-			{Fn: "Less", Argsf: "a, -1"},
-			{Fn: "Less", Argsf: "1, a"},
-			{Fn: "Less", Argsf: "a, 1"},
-
-			{Fn: "LessOrEqual", Argsf: "-1, a"},
-			{Fn: "LessOrEqual", Argsf: "a, -1"},
-			{Fn: "LessOrEqual", Argsf: "0, a"},
-			{Fn: "LessOrEqual", Argsf: "a, 0"},
-			{Fn: "LessOrEqual", Argsf: "1, a"},
-			{Fn: "LessOrEqual", Argsf: "a, 1"},
-
-			{Fn: "True", Argsf: "a > -1"},
-			{Fn: "True", Argsf: "a < -1"},
-			{Fn: "True", Argsf: "a >= -1"},
-			{Fn: "True", Argsf: "a <= -1"},
-			{Fn: "True", Argsf: "a == -1"},
-			{Fn: "True", Argsf: "a != -1"},
-			{Fn: "True", Argsf: "-1 > a"},
-			{Fn: "True", Argsf: "-1 < a"},
-			{Fn: "True", Argsf: "-1 >= a"},
-			{Fn: "True", Argsf: "-1 <= a"},
-			{Fn: "True", Argsf: "-1 == a"},
-			{Fn: "True", Argsf: "-1 != a"},
-
-			{Fn: "True", Argsf: "a >= 0"},
-			{Fn: "True", Argsf: "a <= 0"},
-			{Fn: "True", Argsf: "a == 0"},
-			{Fn: "True", Argsf: "a != 0"},
-			{Fn: "True", Argsf: "0 >= a"},
-			{Fn: "True", Argsf: "0 <= a"},
-			{Fn: "True", Argsf: "0 == a"},
-			{Fn: "True", Argsf: "0 != a"},
-
-			{Fn: "True", Argsf: "a > 1"},
-			{Fn: "True", Argsf: "a < 1"},
-			{Fn: "True", Argsf: "a >= 1"},
-			{Fn: "True", Argsf: "a <= 1"},
-			{Fn: "True", Argsf: "a == 1"},
-			{Fn: "True", Argsf: "a != 1"},
-			{Fn: "True", Argsf: "1 > a"},
-			{Fn: "True", Argsf: "1 < a"},
-			{Fn: "True", Argsf: "1 >= a"},
-			{Fn: "True", Argsf: "1 <= a"},
-			{Fn: "True", Argsf: "1 == a"},
-			{Fn: "True", Argsf: "1 != a"},
-
-			{Fn: "False", Argsf: "a > -1"},
-			{Fn: "False", Argsf: "a < -1"},
-			{Fn: "False", Argsf: "a >= -1"},
-			{Fn: "False", Argsf: "a <= -1"},
-			{Fn: "False", Argsf: "a == -1"},
-			{Fn: "False", Argsf: "a != -1"},
-			{Fn: "False", Argsf: "-1 > a"},
-			{Fn: "False", Argsf: "-1 < a"},
-			{Fn: "False", Argsf: "-1 >= a"},
-			{Fn: "False", Argsf: "-1 <= a"},
-			{Fn: "False", Argsf: "-1 == a"},
-			{Fn: "False", Argsf: "-1 != a"},
-
-			{Fn: "False", Argsf: "a > 0"},
-			{Fn: "False", Argsf: "a < 0"},
-			{Fn: "False", Argsf: "a == 0"},
-			{Fn: "False", Argsf: "a != 0"},
-			{Fn: "False", Argsf: "0 > a"},
-			{Fn: "False", Argsf: "0 < a"},
-			{Fn: "False", Argsf: "0 == a"},
-			{Fn: "False", Argsf: "0 != a"},
-
-			{Fn: "False", Argsf: "a > 1"},
-			{Fn: "False", Argsf: "a < 1"},
-			{Fn: "False", Argsf: "a >= 1"},
-			{Fn: "False", Argsf: "a <= 1"},
-			{Fn: "False", Argsf: "a == 1"},
-			{Fn: "False", Argsf: "a != 1"},
-			{Fn: "False", Argsf: "1 > a"},
-			{Fn: "False", Argsf: "1 < a"},
-			{Fn: "False", Argsf: "1 >= a"},
-			{Fn: "False", Argsf: "1 <= a"},
-			{Fn: "False", Argsf: "1 == a"},
-			{Fn: "False", Argsf: "1 != a"},
-
-			// These one will be reported by useless-assert.
-			{Fn: "Equal", Argsf: "0, 0"},
-			{Fn: "Equal", Argsf: "a, a"},
-			{Fn: "NotEqual", Argsf: "0, 0"},
-			{Fn: "NotEqual", Argsf: "a, a"},
-			{Fn: "Greater", Argsf: "0, 0"},
-			{Fn: "Greater", Argsf: "a, a"},
-			{Fn: "GreaterOrEqual", Argsf: "0, 0"},
-			{Fn: "GreaterOrEqual", Argsf: "a, a"},
-			{Fn: "Less", Argsf: "0, 0"},
-			{Fn: "Less", Argsf: "a, a"},
-			{Fn: "LessOrEqual", Argsf: "0, 0"},
-			{Fn: "LessOrEqual", Argsf: "a, a"},
-			{Fn: "True", Argsf: "a > a"},
-			{Fn: "True", Argsf: "a < a"},
-			{Fn: "True", Argsf: "a >= a"},
-			{Fn: "True", Argsf: "a <= a"},
-			{Fn: "True", Argsf: "a == a"},
-			{Fn: "True", Argsf: "a != a"},
-			{Fn: "False", Argsf: "-1 > -1"},
-			{Fn: "False", Argsf: "-1 < -1"},
-			{Fn: "False", Argsf: "-1 >= -1"},
-			{Fn: "False", Argsf: "-1 <= -1"},
-			{Fn: "False", Argsf: "-1 == -1"},
-			{Fn: "False", Argsf: "-1 != -1"},
-		},
+		IgnoredAssertions: ignoredAssertions,
 	}
 }
 
@@ -237,18 +252,7 @@ import (
 )
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
-	var (
-		a       int
-		int8A   int8
-		int16A  int16
-		int32A  int32
-		int64A  int64
-		uintA   uint
-		uint8A  uint8
-		uint16A uint16
-		uint32A uint32
-		uint64A uint64
-	)
+	var a int
 
 	// Invalid.
 	{
@@ -271,4 +275,6 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 		{{- end }}
 	}
 }
+
+type CustomInt16 int16
 `
