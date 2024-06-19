@@ -58,6 +58,11 @@ tasks:
       - echo "Generate analyzer tests..."
       - go run ./internal/testgen
 
+  # task test:checker -- negative-positive
+  test:checker:
+    cmds:
+      - go test -count 1 -run TestTestifyLint_CheckersDefault/{{.CLI_ARGS}} ./analyzer
+
   profile:
     cmds:
       - echo "Do profiling..."

@@ -17,6 +17,9 @@ func TestNegativeReplacements(t *testing.T) {
 		func(v int) bool { return assert.True(tm, 0 > v) },
 		func(v int) bool { return assert.False(tm, v >= 0) },
 		func(v int) bool { return assert.False(tm, 0 <= v) },
+
+		func(v int) bool { return assert.Less(tm, int64(v), int64(0)) },
+		func(v int) bool { return assert.Greater(tm, uint8(0), uint8(v)) },
 	}
 
 	t.Run("assert.Negative", func(t *testing.T) {
@@ -41,6 +44,9 @@ func TestPositiveReplacements(t *testing.T) {
 		func(v int) bool { return assert.True(tm, 0 < v) },
 		func(v int) bool { return assert.False(tm, v <= 0) },
 		func(v int) bool { return assert.False(tm, 0 >= v) },
+
+		func(v int) bool { return assert.Greater(tm, int8(v), int8(0)) },
+		func(v int) bool { return assert.Less(tm, uint64(0), uint64(v)) },
 	}
 
 	t.Run("assert.Positive", func(t *testing.T) {

@@ -25,12 +25,12 @@ import (
 //	assert.False(t, a <= 0)
 //	assert.False(t, 0 >= a)
 //
-// Typed zeros (like `int(0)`, `int(8)`, … `uint(64)`) are also supported.
-//
 // and requires
 //
 //	assert.Negative(t, value)
 //	assert.Positive(t, value)
+//
+// Typed signed zeros (like `int(0)`, `int8(0)`, ..., `int64(0)`) are also supported.
 type NegativePositive struct{}
 
 // NewNegativePositive constructs NegativePositive checker.
@@ -63,7 +63,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		}
 		a, b := call.Args[0], call.Args[1]
 
-		if !isZeroValue(a) && isZeroValue(b) {
+		if isSignedNotZero(pass, a) && isSignedZero(b) {
 			return newUseNegativeDiagnostic(a.Pos(), b.End(), a)
 		}
 
@@ -73,7 +73,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		}
 		a, b := call.Args[0], call.Args[1]
 
-		if isZeroValue(a) && !isZeroValue(b) {
+		if isSignedZero(a) && isSignedNotZero(pass, b) {
 			return newUseNegativeDiagnostic(a.Pos(), b.End(), b)
 		}
 
@@ -83,8 +83,8 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		}
 		expr := call.Args[0]
 
-		a, _, ok1 := isStrictComparisonWith(pass, expr, p(isNotZeroValue), token.LSS, p(isZeroValue)) // a < 0
-		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZeroValue), token.GTR, p(isNotZeroValue)) // 0 > a
+		a, _, ok1 := isStrictComparisonWith(pass, expr, isSignedNotZero, token.LSS, p(isSignedZero)) // a < 0
+		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isSignedZero), token.GTR, isSignedNotZero) // 0 > a
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
@@ -97,8 +97,8 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		}
 		expr := call.Args[0]
 
-		a, _, ok1 := isStrictComparisonWith(pass, expr, p(isNotZeroValue), token.GEQ, p(isZeroValue)) // a >= 0
-		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZeroValue), token.LEQ, p(isNotZeroValue)) // 0 <= a
+		a, _, ok1 := isStrictComparisonWith(pass, expr, isSignedNotZero, token.GEQ, p(isSignedZero)) // a >= 0
+		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isSignedZero), token.LEQ, isSignedNotZero) // 0 <= a
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
@@ -127,7 +127,7 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 		}
 		a, b := call.Args[0], call.Args[1]
 
-		if !isZeroValue(a) && isZeroValue(b) {
+		if isSignedNotZero(pass, a) && isSignedZero(b) {
 			return newUsePositiveDiagnostic(a.Pos(), b.End(), a)
 		}
 
@@ -137,7 +137,7 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 		}
 		a, b := call.Args[0], call.Args[1]
 
-		if isZeroValue(a) && !isZeroValue(b) {
+		if isSignedZero(a) && isSignedNotZero(pass, b) {
 			return newUsePositiveDiagnostic(a.Pos(), b.End(), b)
 		}
 
@@ -147,8 +147,8 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 		}
 		expr := call.Args[0]
 
-		a, _, ok1 := isStrictComparisonWith(pass, expr, p(isNotZeroValue), token.GTR, p(isZeroValue)) // a > 0
-		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZeroValue), token.LSS, p(isNotZeroValue)) // 0 < a
+		a, _, ok1 := isStrictComparisonWith(pass, expr, isSignedNotZero, token.GTR, p(isSignedZero)) // a > 0
+		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isSignedZero), token.LSS, isSignedNotZero) // 0 < a
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
@@ -161,8 +161,8 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 		}
 		expr := call.Args[0]
 
-		a, _, ok1 := isStrictComparisonWith(pass, expr, p(isNotZeroValue), token.LEQ, p(isZeroValue)) // a <= 0
-		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZeroValue), token.GEQ, p(isNotZeroValue)) // 0 >= a
+		a, _, ok1 := isStrictComparisonWith(pass, expr, isSignedNotZero, token.LEQ, p(isSignedZero)) // a <= 0
+		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isSignedZero), token.GEQ, isSignedNotZero) // 0 >= a
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {

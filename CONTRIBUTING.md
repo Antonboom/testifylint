@@ -30,7 +30,7 @@ type TimeCompare struct{}
 
 // NewTimeCompare constructs TimeCompare checker.
 func NewTimeCompare() TimeCompare { return TimeCompare{} }
-func (TimeCompare) Name() string  { return "TimeCompare" }
+func (TimeCompare) Name() string  { return "time-compare" }
 ```
 
 The above code is enough to satisfy the `checkers.Checker` interface.
@@ -120,6 +120,12 @@ Install...
 ```
 
 Fix linter issues and broken tests (probably related to the checkers registry).
+
+To run checker default tests you can use `task test:checker -- {checker-name}`, e.g.
+
+```bash
+$ task test:checker -- time-compare
+```
 
 ### 10) Update `README.md`, commit the changes and submit a pull request 🔥
 
