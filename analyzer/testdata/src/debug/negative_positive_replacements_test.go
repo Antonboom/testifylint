@@ -10,21 +10,38 @@ import (
 func TestNegativeReplacements(t *testing.T) {
 	var tm tMock
 
-	negativeAssertions := []func(v int) bool{
+	negativeAssertionsInt := []func(v int) bool{
 		func(v int) bool { return assert.Less(tm, v, 0) },
 		func(v int) bool { return assert.Greater(tm, 0, v) },
 		func(v int) bool { return assert.True(tm, v < 0) },
 		func(v int) bool { return assert.True(tm, 0 > v) },
 		func(v int) bool { return assert.False(tm, v >= 0) },
 		func(v int) bool { return assert.False(tm, 0 <= v) },
-
-		func(v int) bool { return assert.Less(tm, int64(v), int64(0)) },
-		func(v int) bool { return assert.Greater(tm, uint8(0), uint8(v)) },
 	}
 
-	t.Run("assert.Negative", func(t *testing.T) {
-		for i, original := range negativeAssertions {
+	t.Run("int", func(t *testing.T) {
+		for i, original := range negativeAssertionsInt {
 			for _, v := range []int{-1, 0, 1} {
+				t.Run(fmt.Sprintf("%d_%d", i, v), func(t *testing.T) {
+					replacement := assert.Negative(tm, v)
+					assert.Equal(t, original(v), replacement, "not an equivalent replacement")
+				})
+			}
+		}
+	})
+
+	negativeAssertionsUint := []func(v uint8) bool{
+		func(v uint8) bool { return assert.Less(tm, v, uint8(0)) },
+		func(v uint8) bool { return assert.Greater(tm, uint8(0), v) },
+		func(v uint8) bool { return assert.True(tm, v < uint8(0)) },
+		func(v uint8) bool { return assert.True(tm, uint8(0) > v) },
+		func(v uint8) bool { return assert.False(tm, v >= uint8(0)) },
+		func(v uint8) bool { return assert.False(tm, uint8(0) <= v) },
+	}
+
+	t.Run("uint", func(t *testing.T) {
+		for i, original := range negativeAssertionsUint {
+			for _, v := range []uint8{ /* -1, */ 0, 1} { // constant -1 overflows uint8
 				t.Run(fmt.Sprintf("%d_%d", i, v), func(t *testing.T) {
 					replacement := assert.Negative(tm, v)
 					assert.Equal(t, original(v), replacement, "not an equivalent replacement")
@@ -37,21 +54,38 @@ func TestNegativeReplacements(t *testing.T) {
 func TestPositiveReplacements(t *testing.T) {
 	var tm tMock
 
-	positiveAssertions := []func(v int) bool{
+	positiveAssertionsInt := []func(v int) bool{
 		func(v int) bool { return assert.Greater(tm, v, 0) },
 		func(v int) bool { return assert.Less(tm, 0, v) },
 		func(v int) bool { return assert.True(tm, v > 0) },
 		func(v int) bool { return assert.True(tm, 0 < v) },
 		func(v int) bool { return assert.False(tm, v <= 0) },
 		func(v int) bool { return assert.False(tm, 0 >= v) },
-
-		func(v int) bool { return assert.Greater(tm, int8(v), int8(0)) },
-		func(v int) bool { return assert.Less(tm, uint64(0), uint64(v)) },
 	}
 
-	t.Run("assert.Positive", func(t *testing.T) {
-		for i, original := range positiveAssertions {
+	t.Run("int", func(t *testing.T) {
+		for i, original := range positiveAssertionsInt {
 			for _, v := range []int{-1, 0, 1} {
+				t.Run(fmt.Sprintf("%d_%d", i, v), func(t *testing.T) {
+					replacement := assert.Positive(tm, v)
+					assert.Equal(t, original(v), replacement, "not an equivalent replacement")
+				})
+			}
+		}
+	})
+
+	positiveAssertionsUint := []func(v uint8) bool{
+		func(v uint8) bool { return assert.Greater(tm, v, uint8(0)) },
+		func(v uint8) bool { return assert.Less(tm, uint8(0), v) },
+		func(v uint8) bool { return assert.True(tm, v > uint8(0)) },
+		func(v uint8) bool { return assert.True(tm, uint8(0) < v) },
+		func(v uint8) bool { return assert.False(tm, v <= uint8(0)) },
+		func(v uint8) bool { return assert.False(tm, uint8(0) >= v) },
+	}
+
+	t.Run("uint", func(t *testing.T) {
+		for i, original := range positiveAssertionsUint {
+			for _, v := range []uint8{ /* -1, */ 0, 1} { // constant -1 overflows uint8
 				t.Run(fmt.Sprintf("%d_%d", i, v), func(t *testing.T) {
 					replacement := assert.Positive(tm, v)
 					assert.Equal(t, original(v), replacement, "not an equivalent replacement")
