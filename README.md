@@ -589,7 +589,7 @@ assert.Positive(t, a)
 **Enabled by default**: true <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
 
-Typed signed zeros (like `int(0)`, `int8(0)`, ..., `int64(0)`) are also supported.
+Typed zeros (like `int8(0)`, ..., `uint64(0)`) are also supported.
 
 ---
 

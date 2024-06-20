@@ -22,7 +22,9 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 
 	var invalidAssertions []Assertion
 
-	for _, zeroType := range []string{"", "int", "int8", "int16", "int32", "int64"} {
+	for _, zeroType := range []string{
+		"", "int", "int8", "int16", "int32", "int64",
+	} {
 		v := fmt.Sprintf("%s(a)", zeroType)
 		zero := fmt.Sprintf("%s(0)", zeroType)
 
@@ -33,17 +35,31 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		invalidAssertions = append(invalidAssertions,
 			Assertion{Fn: "Less", Argsf: "a, " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
 			Assertion{Fn: "Greater", Argsf: zero + ", a", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
-			Assertion{Fn: "True", Argsf: v + " < " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
-			Assertion{Fn: "True", Argsf: zero + " > " + v, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
-			Assertion{Fn: "False", Argsf: v + " >= " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
-			Assertion{Fn: "False", Argsf: zero + " <= " + v, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
+			Assertion{Fn: "True", Argsf: v + " < " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+			Assertion{Fn: "True", Argsf: zero + " > " + v, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+			Assertion{Fn: "False", Argsf: v + " >= " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+			Assertion{Fn: "False", Argsf: zero + " <= " + v, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+		)
+	}
 
+	for _, zeroType := range []string{
+		"", "int", "int8", "int16", "int32", "int64",
+		"uint", "uint8", "uint16", "uint32", "uint64",
+	} {
+		v := fmt.Sprintf("%s(a)", zeroType)
+		zero := fmt.Sprintf("%s(0)", zeroType)
+
+		if zeroType == "" {
+			v, zero = "a", "0"
+		}
+
+		invalidAssertions = append(invalidAssertions,
 			Assertion{Fn: "Greater", Argsf: "a, " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
 			Assertion{Fn: "Less", Argsf: zero + ", a", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			Assertion{Fn: "True", Argsf: v + " > " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
-			Assertion{Fn: "True", Argsf: zero + " < " + v, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
-			Assertion{Fn: "False", Argsf: v + " <= " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
-			Assertion{Fn: "False", Argsf: zero + " >= " + v, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
+			Assertion{Fn: "True", Argsf: v + " > " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			Assertion{Fn: "True", Argsf: zero + " < " + v, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			Assertion{Fn: "False", Argsf: v + " <= " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			Assertion{Fn: "False", Argsf: zero + " >= " + v, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
 		)
 	}
 
@@ -56,8 +72,7 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 				Assertion{Fn: fn, Argsf: "a, " + arg},
 			)
 		}
-	}
-	for _, fn := range []string{"Equal", "NotEqual", "GreaterOrEqual", "LessOrEqual"} {
+
 		for _, zeroType := range []string{
 			"int", "int8", "int16", "int32", "int64",
 			"uint", "uint8", "uint16", "uint32", "uint64",
@@ -74,24 +89,10 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 	}
 
 	for _, fn := range []string{"Greater", "Less"} {
-		for _, arg := range []string{"-1", "1"} {
+		for _, arg := range []string{"-1", "CustomInt16(0)", "1"} {
 			ignoredAssertions = append(ignoredAssertions,
 				Assertion{Fn: fn, Argsf: arg + ", a"},
 				Assertion{Fn: fn, Argsf: "a, " + arg},
-			)
-		}
-	}
-	for _, fn := range []string{"Greater", "Less"} {
-		for _, zeroType := range []string{
-			"uint", "uint8", "uint16", "uint32", "uint64",
-			"CustomInt16",
-		} {
-			v := fmt.Sprintf("%s(a)", zeroType)
-			zero := fmt.Sprintf("%s(0)", zeroType)
-
-			ignoredAssertions = append(ignoredAssertions,
-				Assertion{Fn: fn, Argsf: zero + ", " + v},
-				Assertion{Fn: fn, Argsf: v + ", " + zero},
 			)
 		}
 	}
@@ -106,7 +107,6 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 			}
 		}
 	}
-
 	for _, zeroType := range []string{
 		"",
 		"int", "int8", "int16", "int32", "int64",
@@ -128,21 +128,6 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		}
 	}
 	for _, zeroType := range []string{
-		"uint", "uint8", "uint16", "uint32", "uint64",
-		"CustomInt16",
-	} {
-		v := fmt.Sprintf("%s(a)", zeroType)
-		zero := fmt.Sprintf("%s(0)", zeroType)
-
-		for _, op := range []string{">", "<"} {
-			ignoredAssertions = append(ignoredAssertions,
-				Assertion{Fn: "True", Argsf: fmt.Sprintf("%s %s %s", v, op, zero)},
-				Assertion{Fn: "True", Argsf: fmt.Sprintf("%s %s %s", zero, op, v)},
-			)
-		}
-	}
-
-	for _, zeroType := range []string{
 		"",
 		"int", "int8", "int16", "int32", "int64",
 		"uint", "uint8", "uint16", "uint32", "uint64",
@@ -162,6 +147,8 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 			)
 		}
 	}
+
+	// assert.Negative only cases.
 	for _, zeroType := range []string{
 		"uint", "uint8", "uint16", "uint32", "uint64",
 		"CustomInt16",
@@ -169,12 +156,14 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		v := fmt.Sprintf("%s(a)", zeroType)
 		zero := fmt.Sprintf("%s(0)", zeroType)
 
-		for _, op := range []string{">=", "<="} {
-			ignoredAssertions = append(ignoredAssertions,
-				Assertion{Fn: "False", Argsf: fmt.Sprintf("%s %s %s", v, op, zero)},
-				Assertion{Fn: "False", Argsf: fmt.Sprintf("%s %s %s", zero, op, v)},
-			)
-		}
+		ignoredAssertions = append(ignoredAssertions,
+			Assertion{Fn: "Less", Argsf: v + ", " + zero},
+			Assertion{Fn: "Greater", Argsf: zero + ", " + v},
+			Assertion{Fn: "True", Argsf: v + " < " + zero},
+			Assertion{Fn: "True", Argsf: zero + " > " + v},
+			Assertion{Fn: "False", Argsf: v + " >= " + zero},
+			Assertion{Fn: "False", Argsf: zero + " <= " + v},
+		)
 	}
 
 	// These one will be reported by useless-assert.
@@ -207,17 +196,20 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 
 	// These one will be reported by incorrect-assert.
 	ignoredAssertions = append(ignoredAssertions,
-		Assertion{Fn: "Positive", Argsf: "uint(a)"},
 		Assertion{Fn: "Negative", Argsf: "uint(a)"},
-		Assertion{Fn: "Greater", Argsf: "uint(a), 0"},
 		Assertion{Fn: "Less", Argsf: "uint(a), 0"},
+		Assertion{Fn: "True", Argsf: "uint(a) < 0"},
+		Assertion{Fn: "True", Argsf: "0 > uint(a)"},
+		Assertion{Fn: "False", Argsf: "uint(a) >= 0"},
+		Assertion{Fn: "False", Argsf: "0 <= uint(a)"},
 	)
 
 	return struct {
-		CheckerName       CheckerName
-		InvalidAssertions []Assertion
-		ValidAssertions   []Assertion
-		IgnoredAssertions []Assertion
+		CheckerName          CheckerName
+		InvalidAssertions    []Assertion
+		ValidAssertions      []Assertion
+		IgnoredAssertions    []Assertion
+		RealLifeUintExamples []Assertion
 	}{
 		CheckerName:       CheckerName(checker),
 		InvalidAssertions: invalidAssertions,
@@ -226,6 +218,34 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 			{Fn: "Positive", Argsf: "a"},
 		},
 		IgnoredAssertions: ignoredAssertions,
+		RealLifeUintExamples: []Assertion{
+			{
+				Fn: "Less", Argsf: "uint64(0), e.VideoMinutes",
+				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "e.VideoMinutes",
+			},
+			{
+				Fn: "Less", Argsf: "uint32(0), c.stats.Rto",
+				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "c.stats.Rto",
+			},
+			{
+				Fn: "Less", Argsf: "uint32(0), c.stats.Ato",
+				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "c.stats.Ato",
+			},
+			{
+				Fn: "Less", Argsf: "uint64(0), baseLineHeap",
+				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "baseLineHeap",
+			},
+			{
+				Fn: "Greater", Argsf: "uint64(state.LastUpdatedEpoch), uint64(0)",
+				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "state.LastUpdatedEpoch",
+			},
+			{
+				Fn: "True", Argsf: `uint64(0) < prod["last_claim_time"].(uint64)`,
+				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: `prod["last_claim_time"].(uint64)`,
+			},
+
+			{Fn: "Greater", Argsf: "uint64(result.GasUsed), minGasExpected"},
+		},
 	}
 }
 
@@ -276,5 +296,19 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	}
 }
 
+func {{ .CheckerName.AsTestName }}_RealLifeUintExamples(t *testing.T) {
+	var e struct{ VideoMinutes uint64 }
+	var c struct{ stats struct{ Rto, Ato uint64 } }
+	var baseLineHeap, minGasExpected uint64
+	var result struct{ GasUsed int }
+	var state struct{ LastUpdatedEpoch ChainEpoch }
+	var prod map[string]any
+
+	{{ range $ai, $assrn := $.RealLifeUintExamples }}
+		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+	{{- end }}
+}
+
 type CustomInt16 int16
+type ChainEpoch int64
 `

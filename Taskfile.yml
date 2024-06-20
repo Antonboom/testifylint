@@ -46,6 +46,12 @@ tasks:
       - echo "Test..."
       - go test ./...
 
+  # task test:checker -- negative-positive
+  test:checker:
+    deps: [ test:gen ]
+    cmds:
+      - go test -count 1 -run TestTestifyLint_CheckersDefault/{{.CLI_ARGS}} ./analyzer
+
   test:coverage:
     env:
       GOEXPERIMENT: nocoverageredesign # https://github.com/golang/go/issues/65653#issuecomment-1955872134
@@ -57,11 +63,6 @@ tasks:
     cmds:
       - echo "Generate analyzer tests..."
       - go run ./internal/testgen
-
-  # task test:checker -- negative-positive
-  test:checker:
-    cmds:
-      - go test -count 1 -run TestTestifyLint_CheckersDefault/{{.CLI_ARGS}} ./analyzer
 
   profile:
     cmds:
