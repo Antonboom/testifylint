@@ -33,10 +33,10 @@ jobs:
       pull-requests: read  # for golangci/golangci-lint-action to fetch pull requests
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
-      - uses: actions/checkout@v4
       - uses: golangci/golangci-lint-action@v6
         with:
           version: ${{ env.GOLANGCI_LINT_VERSION }}
@@ -48,10 +48,10 @@ jobs:
       contents: read  # for actions/checkout to fetch code
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
-      - uses: actions/checkout@v4
       - run: go test -coverpkg=./analyzer,./internal/analysisutil,./internal/checkers,./internal/config -coverprofile=coverage.out ./...
         env:
           GOEXPERIMENT: nocoverageredesign # https://github.com/golang/go/issues/65653#issuecomment-1955872134
