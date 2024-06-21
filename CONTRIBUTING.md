@@ -208,7 +208,8 @@ func (s *ServiceIntegrationSuite) TearDownTest() {
 
 **Autofix**: false. <br>
 **Enabled by default**: false. <br>
-**Reason**: Possible resource leaks, because `require` finishes the current goroutine.
+**Reason**: Possible resource leaks, because `require` finishes the current goroutine. <br>
+**Related issues**: [#142](https://github.com/Antonboom/testifylint/issues/142)
 
 ---
 
@@ -280,7 +281,8 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
-**Reason**: Is similar to the [usestdlibvars](https://golangci-lint.run/usage/linters/#usestdlibvars) linter.
+**Reason**: Is similar to the [usestdlibvars](https://golangci-lint.run/usage/linters/#usestdlibvars) linter. <br>
+**Related issues**: [#141](https://github.com/Antonboom/testifylint/issues/141)
 
 ---
 
@@ -302,7 +304,8 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 
 **Autofix**: true. <br>
 **Enabled by default**: maybe? <br>
-**Reason**: Code simplification.
+**Reason**: Code simplification. <br>
+**Related issues**: [#140](https://github.com/Antonboom/testifylint/issues/140)
 
 ---
 
