@@ -26,16 +26,37 @@ func newRemoveSprintfDiagnostic(
 	pass *analysis.Pass,
 	checker string,
 	call *CallMeta,
-	sprintfPos analysis.Range,
-	sprintfArgs []ast.Expr,
+	fnPos analysis.Range,
+	fnArgs []ast.Expr,
 ) *analysis.Diagnostic {
-	return newDiagnostic(checker, call, "remove unnecessary fmt.Sprintf", &analysis.SuggestedFix{
-		Message: "Remove `fmt.Sprintf`",
+	return newRemoveFnDiagnostic(pass, checker, call, "fmt.Sprintf", fnPos, fnArgs...)
+}
+
+func newRemoveMustCompileDiagnostic(
+	pass *analysis.Pass,
+	checker string,
+	call *CallMeta,
+	fnPos analysis.Range,
+	fnArg ast.Expr,
+) *analysis.Diagnostic {
+	return newRemoveFnDiagnostic(pass, checker, call, "regexp.MustCompile", fnPos, fnArg)
+}
+
+func newRemoveFnDiagnostic(
+	pass *analysis.Pass,
+	checker string,
+	call *CallMeta,
+	fnName string,
+	fnPos analysis.Range,
+	fnArgs ...ast.Expr,
+) *analysis.Diagnostic {
+	return newDiagnostic(checker, call, "remove unnecessary "+fnName, &analysis.SuggestedFix{
+		Message: fmt.Sprintf("Remove `%s`", fnName),
 		TextEdits: []analysis.TextEdit{
 			{
-				Pos:     sprintfPos.Pos(),
-				End:     sprintfPos.End(),
-				NewText: formatAsCallArgs(pass, sprintfArgs...),
+				Pos:     fnPos.Pos(),
+				End:     fnPos.End(),
+				NewText: formatAsCallArgs(pass, fnArgs...),
 			},
 		},
 	})

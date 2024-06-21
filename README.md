@@ -104,6 +104,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [len](#len)                                         | ✅                  | ✅       |
 | [negative-positive](#negative-positive)             | ✅                  | ✅       |
 | [nil-compare](#nil-compare)                         | ✅                  | ✅       |
+| [regexp](#regexp)                                   | ✅                  | ✅       |
 | [require-error](#require-error)                     | ✅                  | ❌       |
 | [suite-broken-parallel](#suite-broken-parallel)     | ✅                  | ✅       |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
@@ -630,6 +631,24 @@ assert.NotEqual(t, (chan Event)(nil), eventsChan)
 But in the case of `Equal`, `NotEqual` and `Exactly` type casting approach still doesn't work for the function type.
 
 The best option here is to just use `Nil` / `NotNil` (see [details](https://github.com/stretchr/testify/issues/1524)).
+
+---
+
+### regexp
+
+```go
+❌
+assert.Regexp(t, regexp.MustCompile(`\[.*\] DEBUG \(.*TestNew.*\): message`), out)
+assert.NotRegexp(t, regexp.MustCompile(`\[.*\] TRACE message`), out)
+
+✅
+assert.Regexp(t, `\[.*\] DEBUG \(.*TestNew.*\): message`, out)
+assert.NotRegexp(t, `\[.*\] TRACE message`, out)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Code simplification.
 
 ---
 
