@@ -22,8 +22,10 @@ func NewRegexp() Regexp     { return Regexp{} }
 func (Regexp) Name() string { return "regexp" }
 
 func (checker Regexp) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	if n := call.Fn.NameFTrimmed; n != "Regexp" && n != "NotRegexp" {
+	switch call.Fn.NameFTrimmed {
+	default:
 		return nil
+	case "Regexp", "NotRegexp":
 	}
 
 	if len(call.Args) < 1 {
