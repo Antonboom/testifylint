@@ -12,6 +12,10 @@ func isRegexpMustCompileCall(pass *analysis.Pass, ce *ast.CallExpr) bool {
 	return isPkgFnCall(pass, ce, "regexp", "MustCompile")
 }
 
+func isStringsContainsCall(pass *analysis.Pass, ce *ast.CallExpr) bool {
+	return isPkgFnCall(pass, ce, "strings", "Contains")
+}
+
 func isPkgFnCall(pass *analysis.Pass, ce *ast.CallExpr, pkg, fn string) bool {
 	se, ok := ce.Fun.(*ast.SelectorExpr)
 	if !ok {

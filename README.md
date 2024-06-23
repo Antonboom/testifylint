@@ -94,6 +94,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [blank-import](#blank-import)                       | ✅                  | ❌       |
 | [bool-compare](#bool-compare)                       | ✅                  | ✅       |
 | [compares](#compares)                               | ✅                  | ✅       |
+| [contains](#contains)                               | ✅                  | ✅       |
 | [empty](#empty)                                     | ✅                  | ✅       |
 | [error-is-as](#error-is-as)                         | ✅                  | 🤏      |
 | [error-nil](#error-nil)                             | ✅                  | ✅       |
@@ -213,6 +214,28 @@ assert.LessOrEqual(t, a, b)
 If `a` and `b` are pointers then `assert.Same`/`NotSame` is required instead,
 due to the inappropriate recursive nature of `assert.Equal` (based on
 [reflect.DeepEqual](https://pkg.go.dev/reflect#DeepEqual)).
+
+---
+
+### contains
+
+```go
+❌
+assert.True(t, strings.Contains(a, "abc123"))
+assert.False(t, strings.Contains(a, "456"))
+assert.True(t, strings.Contains(string(b), "abc123"))
+assert.False(t, strings.Contains(string(b), "456"))
+
+✅
+assert.Contains(t, a, "abc123")
+assert.NotContains(t, a, "456")
+assert.Contains(t, string(b), "abc123")
+assert.NotContains(t, string(b), "456")
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: More appropriate `testify` API with clearer failure message.
 
 ---
 
