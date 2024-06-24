@@ -19,6 +19,14 @@ func TestErrorNilChecker(t *testing.T) {
 		assert.Nilf(t, err, "msg with args %d %s", 42, "42")                 // want "error-nil: use assert\\.NoErrorf"
 		assert.NotNil(t, err)                                                // want "error-nil: use assert\\.Error"
 		assert.NotNilf(t, err, "msg with args %d %s", 42, "42")              // want "error-nil: use assert\\.Errorf"
+		assert.Empty(t, err)                                                 // want "error-nil: use assert\\.NoError"
+		assert.Emptyf(t, err, "msg with args %d %s", 42, "42")               // want "error-nil: use assert\\.NoErrorf"
+		assert.NotEmpty(t, err)                                              // want "error-nil: use assert\\.Error"
+		assert.NotEmptyf(t, err, "msg with args %d %s", 42, "42")            // want "error-nil: use assert\\.Errorf"
+		assert.Zero(t, err)                                                  // want "error-nil: use assert\\.NoError"
+		assert.Zerof(t, err, "msg with args %d %s", 42, "42")                // want "error-nil: use assert\\.NoErrorf"
+		assert.NotZero(t, err)                                               // want "error-nil: use assert\\.Error"
+		assert.NotZerof(t, err, "msg with args %d %s", 42, "42")             // want "error-nil: use assert\\.Errorf"
 		assert.Equal(t, err, nil)                                            // want "error-nil: use assert\\.NoError"
 		assert.Equalf(t, err, nil, "msg with args %d %s", 42, "42")          // want "error-nil: use assert\\.NoErrorf"
 		assert.Equal(t, nil, err)                                            // want "error-nil: use assert\\.NoError"
@@ -67,6 +75,14 @@ func TestErrorNilChecker(t *testing.T) {
 		assert.NotEqualf(t, err, err, "msg with args %d %s", 42, "42")
 		assert.NotEqual(t, nil, nil)
 		assert.NotEqualf(t, nil, nil, "msg with args %d %s", 42, "42")
+		assert.Empty(t, err.Error())
+		assert.Emptyf(t, err.Error(), "msg with args %d %s", 42, "42")
+		assert.NotEmpty(t, err.Error())
+		assert.NotEmptyf(t, err.Error(), "msg with args %d %s", 42, "42")
+		assert.Zero(t, err.Error())
+		assert.Zerof(t, err.Error(), "msg with args %d %s", 42, "42")
+		assert.NotZero(t, err.Error())
+		assert.NotZerof(t, err.Error(), "msg with args %d %s", 42, "42")
 	}
 }
 
