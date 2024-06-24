@@ -91,28 +91,29 @@ https://golangci-lint.run/usage/linters/#testifylint
 
 | Name                                                | Enabled By Default | Autofix |
 |-----------------------------------------------------|--------------------|---------|
-| [blank-import](#blank-import)                       | ✅                  | ❌       |
-| [bool-compare](#bool-compare)                       | ✅                  | ✅       |
-| [compares](#compares)                               | ✅                  | ✅       |
+| [blank-import](#blank-import)                       | ✅                 | ❌     |
+| [bool-compare](#bool-compare)                       | ✅                 | ✅     |
+| [compares](#compares)                               | ✅                 | ✅     |
 | [contains](#contains)                               | ✅                  | ✅       |
-| [empty](#empty)                                     | ✅                  | ✅       |
-| [error-is-as](#error-is-as)                         | ✅                  | 🤏      |
-| [error-nil](#error-nil)                             | ✅                  | ✅       |
-| [expected-actual](#expected-actual)                 | ✅                  | ✅       |
-| [float-compare](#float-compare)                     | ✅                  | ❌       |
-| [formatter](#formatter)                             | ✅                  | 🤏      |
-| [go-require](#go-require)                           | ✅                  | ❌       |
-| [len](#len)                                         | ✅                  | ✅       |
-| [negative-positive](#negative-positive)             | ✅                  | ✅       |
-| [nil-compare](#nil-compare)                         | ✅                  | ✅       |
-| [regexp](#regexp)                                   | ✅                  | ✅       |
-| [require-error](#require-error)                     | ✅                  | ❌       |
-| [suite-broken-parallel](#suite-broken-parallel)     | ✅                  | ✅       |
-| [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
-| [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
-| [suite-subtest-run](#suite-subtest-run)             | ✅                  | ❌       |
-| [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
-| [useless-assert](#useless-assert)                   | ✅                  | ❌       |
+| [empty](#empty)                                     | ✅                 | ✅     |
+| [error-is-as](#error-is-as)                         | ✅                 | 🤏     |
+| [error-nil](#error-nil)                             | ✅                 | ✅     |
+| [expected-actual](#expected-actual)                 | ✅                 | ✅     |
+| [float-compare](#float-compare)                     | ✅                 | ❌     |
+| [formatter](#formatter)                             | ✅                 | 🤏     |
+| [http-const](#http-const)                           | ✅                 | ✅     |
+| [go-require](#go-require)                           | ✅                 | ❌     |
+| [len](#len)                                         | ✅                 | ✅     |
+| [negative-positive](#negative-positive)             | ✅                 | ✅     |
+| [nil-compare](#nil-compare)                         | ✅                 | ✅     |
+| [regexp](#regexp)                                   | ✅                 | ✅     |
+| [require-error](#require-error)                     | ✅                 | ❌     |
+| [suite-broken-parallel](#suite-broken-parallel)     | ✅                 | ✅     |
+| [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                 | ✅     |
+| [suite-extra-assert-call](#suite-extra-assert-call) | ✅                 | ✅     |
+| [suite-subtest-run](#suite-subtest-run)             | ✅                 | ❌     |
+| [suite-thelper](#suite-thelper)                     | ❌                 | ✅     |
+| [useless-assert](#useless-assert)                   | ✅                 | ❌     |
 
 > ⚠️ Also look at open for contribution [checkers](CONTRIBUTING.md#open-for-contribution)
 
@@ -563,6 +564,24 @@ that services the HTTP connection. Terminating these goroutines can lead to unde
 tests. You can turn off the check using the `--go-require.ignore-http-handlers` flag.
 
 P.S. Look at [testify's issue](https://github.com/stretchr/testify/issues/772), related to assertions in the goroutines.
+
+---
+
+### http-const
+
+```go
+❌
+assert.HTTPStatusCode(t, handler, "GET", "/index", nil, 200)
+assert.HTTPBodyContains(t, handler, "GET", "/index", nil, "counter")
+
+✅
+assert.HTTPStatusCode(t, handler, http.MethodGet, "/index", nil, http.StatusOK)
+assert.HTTPBodyContains(t, handler, http.MethodGet, "/index", nil, "counter")
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Cleaner code, this ckecker is similar to the [usestdlibvars](https://golangci-lint.run/usage/linters/#usestdlibvars) linter. <br>
 
 ---
 
