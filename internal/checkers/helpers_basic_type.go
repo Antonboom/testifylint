@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	"go/token"
 	"go/types"
+	"strconv"
 
 	"golang.org/x/tools/go/analysis"
 )
@@ -56,9 +57,14 @@ func isTypedIntNumber(e ast.Expr, v int, types ...string) bool {
 	return false
 }
 
-func isIntNumber(e ast.Expr, v int) bool {
+func typeSafeBasicLit(e ast.Expr, typ token.Token) (*ast.BasicLit, bool) {
 	bl, ok := e.(*ast.BasicLit)
-	return ok && bl.Kind == token.INT && bl.Value == fmt.Sprintf("%d", v)
+	return bl, ok && bl.Kind == typ
+}
+
+func isIntNumber(e ast.Expr, v int) bool {
+	bl, ok := typeSafeBasicLit(e, token.INT)
+	return ok && bl.Value == fmt.Sprintf("%d", v)
 }
 
 func isBasicLit(e ast.Expr) bool {
@@ -67,8 +73,8 @@ func isBasicLit(e ast.Expr) bool {
 }
 
 func isIntBasicLit(e ast.Expr) bool {
-	bl, ok := e.(*ast.BasicLit)
-	return ok && bl.Kind == token.INT
+	_, ok := typeSafeBasicLit(e, token.INT)
+	return ok
 }
 
 func isUntypedConst(pass *analysis.Pass, e ast.Expr) bool {
@@ -110,4 +116,12 @@ func untype(e ast.Expr) ast.Expr {
 		return e
 	}
 	return ce.Args[0]
+}
+
+func unquoteBasicLitValue(basicLit *ast.BasicLit) (string, bool) {
+	value, err := strconv.Unquote(basicLit.Value)
+	if err != nil {
+		return "", false
+	}
+	return value, true
 }

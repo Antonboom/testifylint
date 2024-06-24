@@ -101,6 +101,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [expected-actual](#expected-actual)                 | ✅                  | ✅       |
 | [float-compare](#float-compare)                     | ✅                  | ❌       |
 | [formatter](#formatter)                             | ✅                  | 🤏      |
+| [http-const](#http-const)                           | ✅                  | ✅       |
 | [go-require](#go-require)                           | ✅                  | ❌       |
 | [len](#len)                                         | ✅                  | ✅       |
 | [negative-positive](#negative-positive)             | ✅                  | ✅       |
@@ -549,7 +550,7 @@ Typically, any assertions inside goroutines are a marker of poor test architectu
 Try to execute them in the main goroutine and distribute the data necessary for this into it
 ([example](https://github.com/ipfs/kubo/issues/2043#issuecomment-164136026)).
 
-Also a bad solution would be to simply replace all `require` in goroutines with `assert`
+Also, a bad solution would be to simply replace all `require` in goroutines with `assert`
 (like
 [here](https://github.com/gravitational/teleport/pull/22567/files#diff-9f5fd20913c5fe80c85263153fa9a0b28dbd1407e53da4ab5d09e13d2774c5dbR7377))
 – this will only mask the problem.
@@ -563,6 +564,24 @@ that services the HTTP connection. Terminating these goroutines can lead to unde
 tests. You can turn off the check using the `--go-require.ignore-http-handlers` flag.
 
 P.S. Look at [testify's issue](https://github.com/stretchr/testify/issues/772), related to assertions in the goroutines.
+
+---
+
+### http-const
+
+```go
+❌
+assert.HTTPStatusCode(t, handler, "GET", "/index", nil, 200)
+assert.HTTPBodyContains(t, handler, "GET", "/index", nil, "counter")
+
+✅
+assert.HTTPStatusCode(t, handler, http.MethodGet, "/index", nil, http.StatusOK)
+assert.HTTPBodyContains(t, handler, http.MethodGet, "/index", nil, "counter")
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Cleaner code and meaningful constants instead of magical numbers/identifiers. This checker is similar to the [usestdlibvars](https://golangci-lint.run/usage/linters/#usestdlibvars) linter. <br>
 
 ---
 
@@ -880,7 +899,7 @@ a [checkers.AdvancedChecker](https://github.com/Antonboom/testifylint/blob/67632
 
 ### useless-assert
 
-Currently the checker guards against assertion of the same variable:
+Currently, the checker guards against assertion of the same variable:
 
 ```go
 ❌
