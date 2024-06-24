@@ -52,6 +52,10 @@ func (g ErrorNilTestsGenerator) TemplateData() any {
 		InvalidAssertions: []Assertion{
 			{Fn: "Nil", Argsf: "err", ReportMsgf: report, ProposedFn: "NoError"},
 			{Fn: "NotNil", Argsf: "err", ReportMsgf: report, ProposedFn: "Error"},
+			{Fn: "Empty", Argsf: "err", ReportMsgf: report, ProposedFn: "NoError"},
+			{Fn: "NotEmpty", Argsf: "err", ReportMsgf: report, ProposedFn: "Error"},
+			{Fn: "Zero", Argsf: "err", ReportMsgf: report, ProposedFn: "NoError"},
+			{Fn: "NotZero", Argsf: "err", ReportMsgf: report, ProposedFn: "Error"},
 			{Fn: "Equal", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 			{Fn: "Equal", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 			{Fn: "EqualValues", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
@@ -76,6 +80,10 @@ func (g ErrorNilTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: "nil, nil"},
 			{Fn: "NotEqual", Argsf: "err, err"},
 			{Fn: "NotEqual", Argsf: "nil, nil"},
+			{Fn: "Empty", Argsf: "err.Error()"},    // Requested by https://github.com/Antonboom/testifylint/issues/138
+			{Fn: "NotEmpty", Argsf: "err.Error()"}, // Requested by https://github.com/Antonboom/testifylint/issues/138
+			{Fn: "Zero", Argsf: "err.Error()"},     // Requested by https://github.com/Antonboom/testifylint/issues/138
+			{Fn: "NotZero", Argsf: "err.Error()"},  // Requested by https://github.com/Antonboom/testifylint/issues/138
 		},
 	}
 }

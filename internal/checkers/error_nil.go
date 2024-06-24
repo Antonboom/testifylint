@@ -13,6 +13,10 @@ import (
 //
 //	assert.Nil(t, err)
 //	assert.NotNil(t, err)
+//	assert.Empty(t, err)
+//	assert.NotEmpty(t, err)
+//	assert.Zero(t, err)
+//	assert.NotZero(t, err)
 //	assert.Equal(t, nil, err)
 //	assert.EqualValues(t, nil, err)
 //	assert.Exactly(t, nil, err)
@@ -40,12 +44,12 @@ func (checker ErrorNil) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 
 	proposedFn, survivingArg, replacementEndPos := func() (string, ast.Expr, token.Pos) {
 		switch call.Fn.NameFTrimmed {
-		case "Nil":
+		case "Nil", "Empty", "Zero":
 			if len(call.Args) >= 1 && isError(pass, call.Args[0]) {
 				return noErrorFn, call.Args[0], call.Args[0].End()
 			}
 
-		case "NotNil":
+		case "NotNil", "NotEmpty", "NotZero":
 			if len(call.Args) >= 1 && isError(pass, call.Args[0]) {
 				return errorFn, call.Args[0], call.Args[0].End()
 			}
