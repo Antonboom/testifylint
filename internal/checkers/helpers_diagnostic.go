@@ -68,16 +68,26 @@ func newDiagnostic(
 	msg string,
 	fix *analysis.SuggestedFix,
 ) *analysis.Diagnostic {
-	d := analysis.Diagnostic{
-		Pos:      rng.Pos(),
-		End:      rng.End(),
-		Category: checker,
-		Message:  checker + ": " + msg,
-	}
+	var suggestedFixes []analysis.SuggestedFix
 	if fix != nil {
-		d.SuggestedFixes = []analysis.SuggestedFix{*fix}
+		suggestedFixes = append(suggestedFixes, *fix)
 	}
-	return &d
+	return newAnalysisDiagnostic(checker, rng, msg, suggestedFixes)
+}
+
+func newAnalysisDiagnostic(
+	checker string,
+	rng analysis.Range,
+	msg string,
+	suggestedFixes []analysis.SuggestedFix,
+) *analysis.Diagnostic {
+	return &analysis.Diagnostic{
+		Pos:            rng.Pos(),
+		End:            rng.End(),
+		Category:       checker,
+		Message:        checker + ": " + msg,
+		SuggestedFixes: suggestedFixes,
+	}
 }
 
 func newSuggestedFuncReplacement(
