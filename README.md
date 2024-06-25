@@ -222,20 +222,19 @@ due to the inappropriate recursive nature of `assert.Equal` (based on
 ```go
 ❌
 assert.True(t, strings.Contains(a, "abc123"))
-assert.False(t, strings.Contains(a, "456"))
-assert.True(t, strings.Contains(string(b), "abc123"))
-assert.False(t, strings.Contains(string(b), "456"))
+assert.False(t, !strings.Contains(a, "abc123"))
+
+assert.False(t, strings.Contains(a, "abc123"))
+assert.True(t, !strings.Contains(a, "abc123"))
 
 ✅
 assert.Contains(t, a, "abc123")
-assert.NotContains(t, a, "456")
-assert.Contains(t, string(b), "abc123")
-assert.NotContains(t, string(b), "456")
+assert.NotContains(t, a, "abc123")
 ```
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
-**Reason**: More appropriate `testify` API with clearer failure message.
+**Reason**: Code simplification and more appropriate `testify` API with clearer failure message.
 
 ---
 
