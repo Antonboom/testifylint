@@ -27,6 +27,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	BlankImportTestsGenerator{},
 	BoolCompareTestsGenerator{},
 	ComparesTestsGenerator{},
+	ContainsTestsGenerator{},
 	EmptyTestsGenerator{},
 	ErrorNilTestsGenerator{},
 	ErrorIsAsTestsGenerator{},
