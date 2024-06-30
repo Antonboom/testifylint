@@ -199,6 +199,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
 
 
 ✅   assert.ErrorIs(t, err, ErrUserNotFound)
+     assert.ErrorAs(t, err, &target)
 ```
 
 **Autofix**: false. <br>
