@@ -172,14 +172,15 @@ Describe a new checker in [checkers section](./README.md#checkers).
 ### error-compare
 
 ```go
-❌   assert.ErrorContains(t, err, "not found")
-     assert.EqualError(t, err, "user not found")
+❌   assert.Contains(t, err.Error(), "not found")
      assert.Equal(t, err.Error(), "user not found")
      assert.Equal(t, err, errSentinel) // Through `reflect.DeepEqual` causes error strings to be compared.
      assert.NotEqual(t, err, errSentinel)
      // etc.
 
-✅   assert.ErrorIs(t, err, ErrUserNotFound)
+✅   assert.ErrorContains(t, err, "not found")
+     assert.EqualError(t, err, "user not found")
+     assert.ErrorIs(t, err, ErrUserNotFound)
 ```
 
 **Autofix**: false. <br>
