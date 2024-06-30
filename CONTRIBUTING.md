@@ -143,7 +143,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [require-len](#require-len)
 - [suite-test-name](#suite-test-name)
 - [useless-assert](#useless-assert)
-
+- [unwrapped-error](#unwrapped-error)
 ---
 
 ### elements-match
@@ -169,22 +169,41 @@ Describe a new checker in [checkers section](./README.md#checkers).
 
 ---
 
+### unwrapped-error
+
+```go
+❌   assert.Contains(t, err.Error(), "not found")
+     assert.Equal(t, err.Error(), "user not found")
+
+✅   assert.ErrorContains(t, err, "not found")
+     assert.EqualError(t, err, "user not found")
+     assert.ErrorIs(t, err, ErrUserNotFound)
+     assert.NotErrorIs(t, err, errSentinel)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Using testify methods will avoid the risk of nil pointer exception that might happen with the use of the `Error()` method on the `error` interface. <br>
+**Related issues**: [#47](https://github.com/Antonboom/testifylint/issues/47)
+
+---
+
 ### error-compare
 
 ```go
 ❌   assert.ErrorContains(t, err, "not found")
      assert.EqualError(t, err, "user not found")
-     assert.Equal(t, err.Error(), "user not found")
      assert.Equal(t, err, errSentinel) // Through `reflect.DeepEqual` causes error strings to be compared.
      assert.NotEqual(t, err, errSentinel)
      // etc.
 
 ✅   assert.ErrorIs(t, err, ErrUserNotFound)
+     assert.ErrorAs(t, err, &target)
 ```
 
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
-**Reason**: The `Error()` method on the `error` interface exists for humans, not code. <br>
+**Reason**: The `assert.ErrorContains()` is commonly used as an anti-pattern. The code and tests often needs to be adapted to be able to use `assert.ErrorIs()` or `assert.ErrorAs()` methods. <br>
 **Related issues**: [#47](https://github.com/Antonboom/testifylint/issues/47)
 
 ---
