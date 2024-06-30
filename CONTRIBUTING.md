@@ -135,6 +135,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
 
 - [elements-match](#elements-match)
 - [error-compare](#error-compare)
+- [error-contains](#error-contains)
 - [equal-values](#equal-values)
 - [graceful-teardown](#graceful-teardown)
 - [float-compare](#float-compare)
@@ -187,6 +188,22 @@ Describe a new checker in [checkers section](./README.md#checkers).
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
 **Reason**: The `Error()` method on the `error` interface exists for humans, not code. <br>
+**Related issues**: [#47](https://github.com/Antonboom/testifylint/issues/47)
+
+---
+
+### error-contains
+
+```go
+❌   assert.ErrorContains(t, err, "not found")
+
+
+✅   assert.ErrorIs(t, err, ErrUserNotFound)
+```
+
+**Autofix**: false. <br>
+**Enabled by default**: true. <br>
+**Reason**: The `assert.ErrorContains()` is an anti-pattern. The test needs to be adapted to use `assert.ErrorIs()` or `assert.ErrorAs()` methods. <br>
 **Related issues**: [#47](https://github.com/Antonboom/testifylint/issues/47)
 
 ---
