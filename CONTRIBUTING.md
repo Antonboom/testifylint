@@ -185,7 +185,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
      assert.NotErrorIs(t, err, errSentinel)
 ```
 
-**Autofix**: false. <br>
+**Autofix**: true. <br>
 **Enabled by default**: true. <br>
 **Reason**: The `Error()` method on the `error` interface exists for humans, not code. <br>
 **Related issues**: [#47](https://github.com/Antonboom/testifylint/issues/47)
