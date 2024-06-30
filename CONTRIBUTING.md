@@ -181,6 +181,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
 ✅   assert.ErrorContains(t, err, "not found")
      assert.EqualError(t, err, "user not found")
      assert.ErrorIs(t, err, ErrUserNotFound)
+     assert.NotErrorIs(t, err, errSentinel)
 ```
 
 **Autofix**: false. <br>
