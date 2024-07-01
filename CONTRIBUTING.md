@@ -204,7 +204,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
 
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
-**Reason**: The `assert.ErrorContains()` is an anti-pattern. The test needs to be adapted to use `assert.ErrorIs()` or `assert.ErrorAs()` methods. <br>
+**Reason**: The `assert.ErrorContains()` is commonly used as an anti-pattern. The code and tests often needs to be adapted to be able to use `assert.ErrorIs()` or `assert.ErrorAs()` methods. <br>
 **Related issues**: [#47](https://github.com/Antonboom/testifylint/issues/47)
 
 ---
