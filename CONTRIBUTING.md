@@ -187,7 +187,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
-**Reason**: Using testify methods will avoid the risk of null pointer exception that might happen with the use of the `Error()` method on the `error` interface. <br>
+**Reason**: Using testify methods will avoid the risk of nil pointer exception that might happen with the use of the `Error()` method on the `error` interface. <br>
 **Related issues**: [#47](https://github.com/Antonboom/testifylint/issues/47)
 
 ---
