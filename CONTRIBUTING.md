@@ -197,7 +197,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
      assert.NotEqual(t, err, errSentinel)
      // etc.
 
-
 ✅   assert.ErrorIs(t, err, ErrUserNotFound)
      assert.ErrorAs(t, err, &target)
 ```
