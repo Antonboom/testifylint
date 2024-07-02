@@ -135,7 +135,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
 
 - [elements-match](#elements-match)
 - [error-compare](#error-compare)
-- [error-contains](#error-contains)
 - [equal-values](#equal-values)
 - [graceful-teardown](#graceful-teardown)
 - [float-compare](#float-compare)
@@ -144,7 +143,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [require-len](#require-len)
 - [suite-test-name](#suite-test-name)
 - [useless-assert](#useless-assert)
-
+- [unwrapped-error](#unwrapped-error)
 ---
 
 ### elements-match
@@ -170,14 +169,11 @@ Describe a new checker in [checkers section](./README.md#checkers).
 
 ---
 
-### error-compare
+### unwrapped-error
 
 ```go
 ❌   assert.Contains(t, err.Error(), "not found")
      assert.Equal(t, err.Error(), "user not found")
-     assert.Equal(t, err, errSentinel) // Through `reflect.DeepEqual` causes error strings to be compared.
-     assert.NotEqual(t, err, errSentinel)
-     // etc.
 
 ✅   assert.ErrorContains(t, err, "not found")
      assert.EqualError(t, err, "user not found")
@@ -192,10 +188,14 @@ Describe a new checker in [checkers section](./README.md#checkers).
 
 ---
 
-### error-contains
+### error-compare
 
 ```go
 ❌   assert.ErrorContains(t, err, "not found")
+     assert.EqualError(t, err, "user not found")
+     assert.Equal(t, err, errSentinel) // Through `reflect.DeepEqual` causes error strings to be compared.
+     assert.NotEqual(t, err, errSentinel)
+     // etc.
 
 
 ✅   assert.ErrorIs(t, err, ErrUserNotFound)
