@@ -307,6 +307,10 @@ logic, but without autofix.
 ❌
 assert.Nil(t, err)
 assert.NotNil(t, err)
+assert.Empty(t, err)
+assert.NotEmpty(t, err)
+assert.Zero(t, err)
+assert.NotZero(t, err)
 assert.Equal(t, nil, err)
 assert.EqualValues(t, nil, err)
 assert.Exactly(t, nil, err)
