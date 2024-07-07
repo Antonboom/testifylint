@@ -197,11 +197,10 @@ func findRootIf(stack []ast.Node) *ast.IfStmt {
 	nearestIf, i := findNearestNodeWithIdx[*ast.IfStmt](stack)
 	for ; i > 0; i-- {
 		parent, ok := stack[i-1].(*ast.IfStmt)
-		if ok {
-			nearestIf = parent
-		} else {
+		if !ok {
 			break
 		}
+		nearestIf = parent
 	}
 	return nearestIf
 }
