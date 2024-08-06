@@ -127,7 +127,12 @@ func isPrintfLikeCall(pass *analysis.Pass, call *CallMeta, sig *types.Signature)
 		return -1, false
 	}
 
-	fmtFn := analysisutil.ObjectOf(pass.Pkg, testify.AssertPkgPath, call.Fn.Name+"f")
+	pkgPath := testify.AssertPkgPath
+	if !call.IsAssert {
+		pkgPath = testify.RequirePkgPath
+	}
+
+	fmtFn := analysisutil.ObjectOf(pass.Pkg, pkgPath, call.Fn.Name+"f")
 	if fmtFn == nil {
 		// NOTE(a.telyshev): No formatted analogue of assertion.
 		return -1, false
