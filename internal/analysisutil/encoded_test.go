@@ -35,6 +35,14 @@ func TestIsJSONLike(t *testing.T) {
 			in:       `{"uuid": "b65b1a22-db6d-4f5a-9b3d-7302368a82e6"}`,
 			expected: true,
 		},
+		{
+			in:       `apiVersion: 3`,
+			expected: false,
+		},
+		{
+			in:       `[{}]`,
+			expected: false,
+		},
 	}
 
 	for _, tt := range cases {
