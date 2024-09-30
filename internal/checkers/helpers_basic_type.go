@@ -144,6 +144,28 @@ func isPointer(pass *analysis.Pass, e ast.Expr) (types.Type, bool) {
 	return ptr.Elem(), true
 }
 
+// isByteArray returns true if expression is `[]byte` itself.
+func isByteArray(e ast.Expr) bool {
+	at, ok := e.(*ast.ArrayType)
+	return ok && isIdentWithName("byte", at.Elt)
+}
+
+// hasBytesType returns true if the expression is of `[]byte` type.
+func hasBytesType(pass *analysis.Pass, e ast.Expr) bool {
+	t := pass.TypesInfo.TypeOf(e)
+	if t == nil {
+		return false
+	}
+
+	sl, ok := t.(*types.Slice)
+	if !ok {
+		return false
+	}
+
+	el, ok := sl.Elem().(*types.Basic)
+	return ok && el.Kind() == types.Uint8
+}
+
 // untype returns v from type(v) expression or v itself if there is no type cast.
 func untype(e ast.Expr) ast.Expr {
 	ce, ok := e.(*ast.CallExpr)

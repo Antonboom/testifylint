@@ -2,7 +2,6 @@ package checkers
 
 import (
 	"fmt"
-	"go/ast"
 	"go/types"
 	"strconv"
 
@@ -191,27 +190,4 @@ func getMsgPosition(sig *types.Signature) int {
 		}
 	}
 	return -1
-}
-
-func isFmtSprintfCall(pass *analysis.Pass, expr ast.Expr) ([]ast.Expr, bool) {
-	ce, ok := expr.(*ast.CallExpr)
-	if !ok {
-		return nil, false
-	}
-
-	se, ok := ce.Fun.(*ast.SelectorExpr)
-	if !ok {
-		return nil, false
-	}
-
-	sprintfObj := analysisutil.ObjectOf(pass.Pkg, "fmt", "Sprintf")
-	if sprintfObj == nil {
-		return nil, false
-	}
-
-	if !analysisutil.IsObj(pass.TypesInfo, se.Sel, sprintfObj) {
-		return nil, false
-	}
-
-	return ce.Args, true
 }

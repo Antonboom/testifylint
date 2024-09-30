@@ -96,6 +96,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [compares](#compares)                               | ✅                  | ✅       |
 | [contains](#contains)                               | ✅                  | ✅       |
 | [empty](#empty)                                     | ✅                  | ✅       |
+| [encoded-compare](#encoded-compare)                 | ✅                  | ✅       |
 | [error-is-as](#error-is-as)                         | ✅                  | 🤏      |
 | [error-nil](#error-nil)                             | ✅                  | ✅       |
 | [expected-actual](#expected-actual)                 | ✅                  | ✅       |
@@ -123,19 +124,19 @@ https://golangci-lint.run/usage/linters/#testifylint
 ```go
 ❌
 import (
-    "testing"
+"testing"
 
-    _ "github.com/stretchr/testify"
-    _ "github.com/stretchr/testify/assert"
-    _ "github.com/stretchr/testify/http"
-    _ "github.com/stretchr/testify/mock"
-    _ "github.com/stretchr/testify/require"
-    _ "github.com/stretchr/testify/suite"
+_ "github.com/stretchr/testify"
+_ "github.com/stretchr/testify/assert"
+_ "github.com/stretchr/testify/http"
+_ "github.com/stretchr/testify/mock"
+_ "github.com/stretchr/testify/require"
+_ "github.com/stretchr/testify/suite"
 )
 
 ✅
 import (
-    "testing"
+"testing"
 )
 ```
 
@@ -271,6 +272,38 @@ assert.NotEmpty(t, err)
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
+
+---
+
+### encoded-compare
+
+```go
+❌
+assert.Equal(t, `{"foo": "bar"}`, body)
+assert.EqualValues(t, `{"foo": "bar"}`, body)
+assert.Exactly(t, `{"foo": "bar"}`, body)
+assert.Equal(t, expectedJSON, resultJSON)
+assert.Equal(t, expBodyConst, w.Body.String())
+assert.Equal(t, fmt.Sprintf(`{"value":"%s"}`, hexString), result)
+assert.Equal(t, "{}", json.RawMessage(resp))
+assert.Equal(t, expJSON, strings.Trim(string(resultJSONBytes), "\n")) // + Replace, ReplaceAll, TrimSpace
+
+assert.Equal(t, expectedYML, conf)
+
+✅
+assert.JSONEq(t, `{"foo": "bar"}`, body)
+assert.YAMLEq(t, expectedYML, conf)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Protection from bugs and more appropriate `testify` API with clearer failure message.
+
+`encoded-compare` detects JSON-style string constants (usable in `fmt.Sprintf` also) and JSON-style/YAML-style named
+variables.
+
+When fixing, `encoded-compare` removes unnecessary casts to `[]byte`, `string`, `json.RawMessage` and calls of
+`strings.Replace`, `strings.ReplaceAll`, `strings.Trim`, `strings.TrimSpace`, and adds a `string` cast when needed.
 
 ---
 
@@ -460,9 +493,9 @@ about the following logger
 
 ```go
 if tc.wantErr {
-    // flag_test.go:61: possible formatting directive in Error call
-    assert.Error(t, err, "Parse(%v) should fail.", tc.args)
-    return
+// flag_test.go:61: possible formatting directive in Error call
+assert.Error(t, err, "Parse(%v) should fail.", tc.args)
+return
 }
 ```
 
@@ -475,9 +508,9 @@ but did not take into account its package, thereby reacting to everything that i
 ```go
 // isPrint records the unformatted-print functions.
 var isPrint = map[string]bool{
-    "error": true,
-    "fatal": true,
-    // ...
+"error": true,
+"fatal": true,
+// ...
 }
 ```
 
@@ -488,9 +521,9 @@ in Go 1.10 after a related [issue](https://github.com/golang/go/issues/22936):
 ```go
 // isPrint records the print functions.
 var isPrint = map[string]bool{
-    "fmt.Errorf": true,
-    "fmt.Fprint": true,
-    // ...
+"fmt.Errorf": true,
+"fmt.Fprint": true,
+// ...
 }
 ```
 
@@ -517,13 +550,13 @@ in `v2` of `testify`.
 ### go-require
 
 ```go
-go func() {
-    conn, err = lis.Accept()
-    require.NoError(t, err) ❌
+go func () {
+conn, err = lis.Accept()
+require.NoError(t, err) ❌
 
-    if assert.Error(err) {     ✅
-        assert.FailNow(t, msg) ❌
-    }
+if assert.Error(err) {     ✅
+assert.FailNow(t, msg) ❌
+}
 }()
 ```
 
@@ -639,7 +672,7 @@ assert.NotNil(t, value)
 Using untyped `nil` in the functions above along with a non-interface type does not make sense:
 
 ```go
-assert.Equal(t, nil, eventsChan)    // Always fail.
+assert.Equal(t, nil, eventsChan) // Always fail.
 assert.NotEqual(t, nil, eventsChan) // Always pass.
 ```
 
@@ -722,23 +755,23 @@ Also, to minimize false positives, `require-error` ignores:
 
 ```go
 func (s *MySuite) SetupTest() {
-    s.T().Parallel() ❌
+s.T().Parallel() ❌
 }
 
 // And other hooks...
 
 func (s *MySuite) TestSomething() {
-    s.T().Parallel() ❌
-    
-    for _, tt := range cases {
-        s.Run(tt.name, func() {
-            s.T().Parallel() ❌
-        })
-        
-        s.T().Run(tt.name, func(t *testing.T) {
-            t.Parallel() ❌
-        })
-    }
+s.T().Parallel() ❌
+
+for _, tt := range cases {
+s.Run(tt.name, func () {
+s.T().Parallel() ❌
+})
+
+s.T().Run(tt.name, func (t *testing.T) {
+t.Parallel() ❌
+})
+}
 }
 ```
 
@@ -774,8 +807,8 @@ So, `testify`'s maintainers recommend discourage parallel tests inside suite.
 
 ```go
 func (s *MySuite) TestSomething() {
-    ❌ assert.Equal(s.T(), 42, value)
-    ✅ s.Equal(42, value)
+❌ assert.Equal(s.T(), 42, value)
+✅ s.Equal(42, value)
 }
 ```
 
@@ -791,8 +824,8 @@ By default, the checker wants you to remove unnecessary `Assert()` calls:
 
 ```go
 func (s *MySuite) TestSomething() {
-    ❌ s.Assert().Equal(42, value)
-    ✅ s.Equal(42, value)
+❌ s.Assert().Equal(42, value)
+✅ s.Equal(42, value)
 }
 ```
 
@@ -800,15 +833,15 @@ But sometimes, on the contrary, people want consistency with `s.Assert()` and `s
 
 ```go
 func (s *MySuite) TestSomething() {
-    // ...
+// ...
 
-    ❌
-    s.Require().NoError(err)
-    s.Equal(42, value)
+❌
+s.Require().NoError(err)
+s.Equal(42, value)
 
-    ✅
-    s.Require().NoError(err)
-    s.Assert().Equal(42, value)
+✅
+s.Require().NoError(err)
+s.Assert().Equal(42, value)
 }
 ```
 
@@ -824,15 +857,15 @@ You can enable such behavior through `--suite-extra-assert-call.mode=require`.
 
 ```go
 func (s *MySuite) TestSomething() {
-    ❌
-    s.T().Run("subtest", func(t *testing.T) {
-        assert.Equal(t, 42, result)
-    })
-     
-    ✅
-    s.Run("subtest", func() {
-        s.Equal(42, result)
-    }) 
+❌
+s.T().Run("subtest", func (t *testing.T) {
+assert.Equal(t, 42, result)
+})
+
+✅
+s.Run("subtest", func() {
+s.Equal(42, result)
+})
 }
 ```
 
@@ -856,13 +889,13 @@ The checker is especially useful in combination with [suite-dont-use-pkg](#suite
 ```go
 ❌
 func (s *RoomSuite) assertRoomRound(roundID RoundID) {
-    s.Equal(roundID, s.getRoom().CurrentRound.ID)
+s.Equal(roundID, s.getRoom().CurrentRound.ID)
 }
 
 ✅
 func (s *RoomSuite) assertRoomRound(roundID RoundID) {
-    s.T().Helper()
-    s.Equal(roundID, s.getRoom().CurrentRound.ID)
+s.T().Helper()
+s.Equal(roundID, s.getRoom().CurrentRound.ID)
 }
 ```
 

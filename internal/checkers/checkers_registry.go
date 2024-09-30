@@ -17,6 +17,7 @@ var registry = checkersRegistry{
 	{factory: asCheckerFactory(NewErrorNil), enabledByDefault: true},
 	{factory: asCheckerFactory(NewNilCompare), enabledByDefault: true},
 	{factory: asCheckerFactory(NewErrorIsAs), enabledByDefault: true},
+	{factory: asCheckerFactory(NewEncodedCompare), enabledByDefault: true},
 	{factory: asCheckerFactory(NewExpectedActual), enabledByDefault: true},
 	{factory: asCheckerFactory(NewRegexp), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteExtraAssertCall), enabledByDefault: true},
