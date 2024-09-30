@@ -235,7 +235,7 @@ assert.NotContains(t, a, "abc123")
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
-**Reason**: Code simplification and more appropriate `testify` API with clearer failure message.	
+**Reason**: Code simplification and more appropriate `testify` API with clearer failure message.
 
 ---
 
