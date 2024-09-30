@@ -96,6 +96,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [compares](#compares)                               | ✅                  | ✅       |
 | [contains](#contains)                               | ✅                  | ✅       |
 | [empty](#empty)                                     | ✅                  | ✅       |
+| [encoded-compare](#encoded-compare)                 | ✅                  | ✅       |
 | [error-is-as](#error-is-as)                         | ✅                  | 🤏      |
 | [error-nil](#error-nil)                             | ✅                  | ✅       |
 | [expected-actual](#expected-actual)                 | ✅                  | ✅       |
@@ -219,21 +220,21 @@ due to the inappropriate recursive nature of `assert.Equal` (based on
 
 ### contains
 
-```go	
-❌	
-assert.True(t, strings.Contains(a, "abc123"))	
-assert.False(t, !strings.Contains(a, "abc123"))	
+```go
+❌
+assert.True(t, strings.Contains(a, "abc123"))
+assert.False(t, !strings.Contains(a, "abc123"))
 
-assert.False(t, strings.Contains(a, "abc123"))	
-assert.True(t, !strings.Contains(a, "abc123"))	
+assert.False(t, strings.Contains(a, "abc123"))
+assert.True(t, !strings.Contains(a, "abc123"))
 
-✅	
-assert.Contains(t, a, "abc123")	
-assert.NotContains(t, a, "abc123")	
+✅
+assert.Contains(t, a, "abc123")
+assert.NotContains(t, a, "abc123")
 ```
 
-**Autofix**: true. <br>	
-**Enabled by default**: true. <br>	
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
 **Reason**: Code simplification and more appropriate `testify` API with clearer failure message.	
 
 ---
@@ -271,6 +272,38 @@ assert.NotEmpty(t, err)
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
+
+---
+
+### encoded-compare
+
+```go
+❌
+assert.Equal(t, `{"foo": "bar"}`, body)
+assert.EqualValues(t, `{"foo": "bar"}`, body)
+assert.Exactly(t, `{"foo": "bar"}`, body)
+assert.Equal(t, expectedJSON, resultJSON)
+assert.Equal(t, expBodyConst, w.Body.String())
+assert.Equal(t, fmt.Sprintf(`{"value":"%s"}`, hexString), result)
+assert.Equal(t, "{}", json.RawMessage(resp))
+assert.Equal(t, expJSON, strings.Trim(string(resultJSONBytes), "\n")) // + Replace, ReplaceAll, TrimSpace
+
+assert.Equal(t, expectedYML, conf)
+
+✅
+assert.JSONEq(t, `{"foo": "bar"}`, body)
+assert.YAMLEq(t, expectedYML, conf)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Protection from bugs and more appropriate `testify` API with clearer failure message.
+
+`encoded-compare` detects JSON-style string constants (usable in `fmt.Sprintf` also) and JSON-style/YAML-style named
+variables.
+
+When fixing, `encoded-compare` removes unnecessary casts to `[]byte`, `string`, `json.RawMessage` and calls of
+`strings.Replace`, `strings.ReplaceAll`, `strings.Trim`, `strings.TrimSpace`, and adds a `string` cast when needed.
 
 ---
 
