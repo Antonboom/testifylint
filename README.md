@@ -880,22 +880,49 @@ a [checkers.AdvancedChecker](https://github.com/Antonboom/testifylint/blob/67632
 
 ### useless-assert
 
-Currently the checker guards against assertion of the same variable:
+The checker guards against assertion of the same variable:
 
 ```go
-❌
+assert.Contains(t, tt.value, tt.value)
+assert.ElementsMatch(t, tt.value, tt.value)
 assert.Equal(t, tt.value, tt.value)
-assert.ElementsMatch(t, users, users)
-// And so on...
+assert.EqualExportedValues(t, tt.value, tt.value)
+// And other assert-functions...
+
 assert.True(t, num > num)
+assert.True(t, num < num)
+assert.True(t, num >= num)
+assert.True(t, num <= num)
+assert.True(t, num == num)
+assert.True(t, num != num)
+
+assert.False(t, num > num)
+assert.False(t, num < num)
+assert.False(t, num >= num)
+assert.False(t, num <= num)
 assert.False(t, num == num)
+assert.False(t, num != num)
 ```
 
-More complex cases are [open for contribution](CONTRIBUTING.md#useless-assert).
+And against these meaningless assertions:
+```go
+assert.Empty(t, "")
+assert.False(t, false)
+assert.Implements(t, (*any)(nil), new(Conn))
+assert.Negative(t, -42)
+assert.Nil(t, nil)
+assert.NoError(t, nil)
+assert.NotEmpty(t, "value")
+assert.Positive(t, 42)
+assert.True(t, true)
+assert.Zero(t, 0)
+assert.Zero(t, "")
+assert.Zero(t, nil)
+```
 
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
-**Reason**: Protection from bugs and possible dead code.
+**Reason**: Protection from bugs and dead code.
 
 ---
 

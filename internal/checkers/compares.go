@@ -61,7 +61,9 @@ func (checker Compares) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 		return nil
 	}
 
-	if isPointer(pass, be.X) && isPointer(pass, be.Y) {
+	_, xp := isPointer(pass, be.X)
+	_, yp := isPointer(pass, be.Y)
+	if xp && yp {
 		switch proposedFn {
 		case "Equal":
 			proposedFn = "Same"
