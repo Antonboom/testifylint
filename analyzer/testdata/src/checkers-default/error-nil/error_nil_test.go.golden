@@ -12,21 +12,18 @@ import (
 
 func TestErrorNilChecker(t *testing.T) {
 	var err error
+	var errs []error
 
 	// Invalid.
 	{
 		assert.NoError(t, err)                                   // want "error-nil: use assert\\.NoError"
 		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.NoErrorf"
-		assert.Error(t, err)                                     // want "error-nil: use assert\\.Error"
-		assert.Errorf(t, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
 		assert.NoError(t, err)                                   // want "error-nil: use assert\\.NoError"
 		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.NoErrorf"
-		assert.Error(t, err)                                     // want "error-nil: use assert\\.Error"
-		assert.Errorf(t, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
 		assert.NoError(t, err)                                   // want "error-nil: use assert\\.NoError"
 		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.NoErrorf"
-		assert.Error(t, err)                                     // want "error-nil: use assert\\.Error"
-		assert.Errorf(t, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
+		assert.NoError(t, err)                                   // want "error-nil: use assert\\.NoError"
+		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.NoErrorf"
 		assert.NoError(t, err)                                   // want "error-nil: use assert\\.NoError"
 		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.NoErrorf"
 		assert.NoError(t, err)                                   // want "error-nil: use assert\\.NoError"
@@ -47,8 +44,12 @@ func TestErrorNilChecker(t *testing.T) {
 		assert.Errorf(t, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
 		assert.Error(t, err)                                     // want "error-nil: use assert\\.Error"
 		assert.Errorf(t, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
-		assert.NoError(t, err)                                   // want "error-nil: use assert\\.NoError"
-		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.NoErrorf"
+		assert.Error(t, err)                                     // want "error-nil: use assert\\.Error"
+		assert.Errorf(t, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
+		assert.Error(t, err)                                     // want "error-nil: use assert\\.Error"
+		assert.Errorf(t, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
+		assert.Error(t, err)                                     // want "error-nil: use assert\\.Error"
+		assert.Errorf(t, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
 		assert.Error(t, err)                                     // want "error-nil: use assert\\.Error"
 		assert.Errorf(t, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
 	}
@@ -83,6 +84,14 @@ func TestErrorNilChecker(t *testing.T) {
 		assert.Zerof(t, err.Error(), "msg with args %d %s", 42, "42")
 		assert.NotZero(t, err.Error())
 		assert.NotZerof(t, err.Error(), "msg with args %d %s", 42, "42")
+		assert.Empty(t, errs)
+		assert.Emptyf(t, errs, "msg with args %d %s", 42, "42")
+		assert.NotEmpty(t, errs)
+		assert.NotEmptyf(t, errs, "msg with args %d %s", 42, "42")
+		assert.Zero(t, errs)
+		assert.Zerof(t, errs, "msg with args %d %s", 42, "42")
+		assert.NotZero(t, errs)
+		assert.NotZerof(t, errs, "msg with args %d %s", 42, "42")
 	}
 }
 
