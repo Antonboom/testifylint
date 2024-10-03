@@ -53,12 +53,11 @@ func (checker Empty) checkEmpty(pass *analysis.Pass, call *CallMeta) *analysis.D
 	newUseEmptyDiagnostic := func(replaceStart, replaceEnd token.Pos, replaceWith ast.Expr) *analysis.Diagnostic {
 		const proposed = "Empty"
 		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
-			newSuggestedFuncReplacement(call, proposed, analysis.TextEdit{
+			analysis.TextEdit{
 				Pos:     replaceStart,
 				End:     replaceEnd,
 				NewText: analysisutil.NodeBytes(pass.Fset, replaceWith),
-			}),
-		)
+			})
 	}
 
 	if len(call.Args) == 0 {
@@ -124,12 +123,11 @@ func (checker Empty) checkNotEmpty(pass *analysis.Pass, call *CallMeta) *analysi
 	newUseNotEmptyDiagnostic := func(replaceStart, replaceEnd token.Pos, replaceWith ast.Expr) *analysis.Diagnostic {
 		const proposed = "NotEmpty"
 		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
-			newSuggestedFuncReplacement(call, proposed, analysis.TextEdit{
+			analysis.TextEdit{
 				Pos:     replaceStart,
 				End:     replaceEnd,
 				NewText: analysisutil.NodeBytes(pass.Fset, replaceWith),
-			}),
-		)
+			})
 	}
 
 	if len(call.Args) == 0 {

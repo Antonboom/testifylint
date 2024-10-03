@@ -63,10 +63,9 @@ func (checker Contains) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 	}
 
 	return newUseFunctionDiagnostic(checker.Name(), call, proposed,
-		newSuggestedFuncReplacement(call, proposed, analysis.TextEdit{
+		analysis.TextEdit{
 			Pos:     call.Args[0].Pos(),
 			End:     call.Args[0].End(),
 			NewText: formatAsCallArgs(pass, ce.Args[0], ce.Args[1]),
-		}),
-	)
+		})
 }

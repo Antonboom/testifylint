@@ -36,12 +36,11 @@ func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnost
 				return nil
 			}
 			return newUseFunctionDiagnostic(checker.Name(), call, proposedFn,
-				newSuggestedFuncReplacement(call, proposedFn, analysis.TextEdit{
+				analysis.TextEdit{
 					Pos:     a.Pos(),
 					End:     b.End(),
 					NewText: formatAsCallArgs(pass, lenArg, expectedLen),
-				}),
-			)
+				})
 		}
 
 	case "True":
@@ -55,12 +54,11 @@ func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnost
 				return nil
 			}
 			return newUseFunctionDiagnostic(checker.Name(), call, proposedFn,
-				newSuggestedFuncReplacement(call, proposedFn, analysis.TextEdit{
+				analysis.TextEdit{
 					Pos:     expr.Pos(),
 					End:     expr.End(),
 					NewText: formatAsCallArgs(pass, lenArg, expectedLen),
-				}),
-			)
+				})
 		}
 	}
 	return nil

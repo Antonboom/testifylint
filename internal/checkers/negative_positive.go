@@ -48,12 +48,11 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 	newUseNegativeDiagnostic := func(replaceStart, replaceEnd token.Pos, replaceWith ast.Expr) *analysis.Diagnostic {
 		const proposed = "Negative"
 		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
-			newSuggestedFuncReplacement(call, proposed, analysis.TextEdit{
+			analysis.TextEdit{
 				Pos:     replaceStart,
 				End:     replaceEnd,
 				NewText: analysisutil.NodeBytes(pass.Fset, replaceWith),
-			}),
-		)
+			})
 	}
 
 	// NOTE(a.telyshev): We ignore uint-asserts as being no sense for assert.Negative.
@@ -114,12 +113,11 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 	newUsePositiveDiagnostic := func(replaceStart, replaceEnd token.Pos, replaceWith ast.Expr) *analysis.Diagnostic {
 		const proposed = "Positive"
 		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
-			newSuggestedFuncReplacement(call, proposed, analysis.TextEdit{
+			analysis.TextEdit{
 				Pos:     replaceStart,
 				End:     replaceEnd,
 				NewText: analysisutil.NodeBytes(pass.Fset, replaceWith),
-			}),
-		)
+			})
 	}
 
 	switch call.Fn.NameFTrimmed {

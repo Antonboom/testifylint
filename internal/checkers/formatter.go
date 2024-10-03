@@ -77,7 +77,7 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 	}
 
 	if checker.requireFFuncs {
-		return newUseFunctionDiagnostic(checker.Name(), call, fFunc, newSuggestedFuncReplacement(call, fFunc))
+		return newUseFunctionDiagnostic(checker.Name(), call, fFunc)
 	}
 	return nil
 }

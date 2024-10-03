@@ -33,7 +33,7 @@ func newUseFunctionDiagnostic(
 	checker string,
 	call *CallMeta,
 	proposedFn string,
-	fixes ...analysis.SuggestedFix,
+	additionalEdits ...analysis.TextEdit,
 ) *analysis.Diagnostic {
 	f := proposedFn
 	if call.Fn.IsFmt {
@@ -41,7 +41,8 @@ func newUseFunctionDiagnostic(
 	}
 	msg := fmt.Sprintf("use %s.%s", call.SelectorXStr, f)
 
-	return newDiagnostic(checker, call, msg, fixes...)
+	return newDiagnostic(checker, call, msg,
+		newSuggestedFuncReplacement(call, proposedFn, additionalEdits...))
 }
 
 func newRemoveLenDiagnostic(
