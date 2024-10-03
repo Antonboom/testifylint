@@ -3,8 +3,6 @@ package checkers
 import (
 	"fmt"
 	"go/ast"
-	"slices"
-
 	"golang.org/x/tools/go/analysis"
 )
 
@@ -100,7 +98,7 @@ func newDiagnostic(
 		Message:  checker + ": " + msg,
 	}
 	if len(fixes) != 0 {
-		d.SuggestedFixes = slices.Clone(fixes)
+		d.SuggestedFixes = fixes
 	}
 	return &d
 }
