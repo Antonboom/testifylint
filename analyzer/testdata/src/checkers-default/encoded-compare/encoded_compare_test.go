@@ -3,6 +3,7 @@
 package encodedcompare
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http/httptest"
@@ -14,11 +15,12 @@ import (
 
 func TestEncodedCompareChecker(t *testing.T) {
 	var respBody, raw, hexString, toJSON, expJSON, resultJSON, jsonb, resJson string
-	var conf, expectedYAML, expYaml, ymlResult, yamlResult, expYML string
+	var conf, expectedYAML, expYaml, ymlResult, yamlResult, expYML, outputYaml string
 	var respBytes, resultJSONBytes []byte
 	w := httptest.NewRecorder()
 	var batch interface{ ParentSummary() []byte }
 	var res [1]struct{ Data []byte }
+	var output bytes.Buffer
 
 	const expBody = `{"status":"healthy","message":"","peer_count":1}`
 
@@ -34,6 +36,8 @@ func TestEncodedCompareChecker(t *testing.T) {
 		assert.Equalf(t, `{"message":"success"}`, w.Body.String(), "msg with args %d %s", 42, "42")                                                           // want "encoded-compare: use assert\\.JSONEqf"
 		assert.Equal(t, "{\n  \"first\": \"Tobi\",\n  \"last\": \"Ferret\"\n}", string(w.Body.Bytes()))                                                       // want "encoded-compare: use assert\\.JSONEq"
 		assert.Equalf(t, "{\n  \"first\": \"Tobi\",\n  \"last\": \"Ferret\"\n}", string(w.Body.Bytes()), "msg with args %d %s", 42, "42")                     // want "encoded-compare: use assert\\.JSONEqf"
+		assert.Equal(t, "{\n\t\"msg\": \"hello world\"\n}", respBody)                                                                                         // want "encoded-compare: use assert\\.JSONEq"
+		assert.Equalf(t, "{\n\t\"msg\": \"hello world\"\n}", respBody, "msg with args %d %s", 42, "42")                                                       // want "encoded-compare: use assert\\.JSONEqf"
 		assert.Equal(t, fmt.Sprintf(`{"value":"%s","valuePtr":"%s"}`, hexString, hexString), string(respBytes))                                               // want "encoded-compare: use assert\\.JSONEq"
 		assert.Equalf(t, fmt.Sprintf(`{"value":"%s","valuePtr":"%s"}`, hexString, hexString), string(respBytes), "msg with args %d %s", 42, "42")             // want "encoded-compare: use assert\\.JSONEqf"
 		assert.Equal(t, `[{"@id":"a","b":[{"@id":"c"}]}]`, toJSON)                                                                                            // want "encoded-compare: use assert\\.JSONEq"
@@ -60,12 +64,22 @@ func TestEncodedCompareChecker(t *testing.T) {
 		assert.Equalf(t, expYML, conf, "msg with args %d %s", 42, "42")                                                                                       // want "encoded-compare: use assert\\.YAMLEqf"
 		assert.Equal(t, conf, expectedYAML)                                                                                                                   // want "encoded-compare: use assert\\.YAMLEq"
 		assert.Equalf(t, conf, expectedYAML, "msg with args %d %s", 42, "42")                                                                                 // want "encoded-compare: use assert\\.YAMLEqf"
+		assert.Equal(t, outputYaml, string(output.Bytes()))                                                                                                   // want "encoded-compare: use assert\\.YAMLEq"
+		assert.Equalf(t, outputYaml, string(output.Bytes()), "msg with args %d %s", 42, "42")                                                                 // want "encoded-compare: use assert\\.YAMLEqf"
 		assert.Equal(t, json.RawMessage(`{"uuid": "b65b1a22-db6d-4f5a-9b3d-7302368a82e6"}`), batch.ParentSummary())                                           // want "encoded-compare: use assert\\.JSONEq"
 		assert.Equalf(t, json.RawMessage(`{"uuid": "b65b1a22-db6d-4f5a-9b3d-7302368a82e6"}`), batch.ParentSummary(), "msg with args %d %s", 42, "42")         // want "encoded-compare: use assert\\.JSONEqf"
 		assert.Equal(t, res[0].Data, json.RawMessage([]byte(`{"name":"new"}`)))                                                                               // want "encoded-compare: use assert\\.JSONEq"
 		assert.Equalf(t, res[0].Data, json.RawMessage([]byte(`{"name":"new"}`)), "msg with args %d %s", 42, "42")                                             // want "encoded-compare: use assert\\.JSONEqf"
 		assert.Equal(t, json.RawMessage(raw), json.RawMessage(resultJSONBytes))                                                                               // want "encoded-compare: use assert\\.JSONEq"
 		assert.Equalf(t, json.RawMessage(raw), json.RawMessage(resultJSONBytes), "msg with args %d %s", 42, "42")                                             // want "encoded-compare: use assert\\.JSONEqf"
+		assert.Equal(t, json.RawMessage(raw), raw)                                                                                                            // want "encoded-compare: use assert\\.JSONEq"
+		assert.Equalf(t, json.RawMessage(raw), raw, "msg with args %d %s", 42, "42")                                                                          // want "encoded-compare: use assert\\.JSONEqf"
+		assert.Equal(t, json.RawMessage("{}"), respBody)                                                                                                      // want "encoded-compare: use assert\\.JSONEq"
+		assert.Equalf(t, json.RawMessage("{}"), respBody, "msg with args %d %s", 42, "42")                                                                    // want "encoded-compare: use assert\\.JSONEqf"
+		assert.Equal(t, respBody, json.RawMessage("null"))                                                                                                    // want "encoded-compare: use assert\\.JSONEq"
+		assert.Equalf(t, respBody, json.RawMessage("null"), "msg with args %d %s", 42, "42")                                                                  // want "encoded-compare: use assert\\.JSONEqf"
+		assert.Equal(t, json.RawMessage(`["more","raw","things"]`), resultJSONBytes)                                                                          // want "encoded-compare: use assert\\.JSONEq"
+		assert.Equalf(t, json.RawMessage(`["more","raw","things"]`), resultJSONBytes, "msg with args %d %s", 42, "42")                                        // want "encoded-compare: use assert\\.JSONEqf"
 		assert.Equal(t, "{}", string(resultJSONBytes))                                                                                                        // want "encoded-compare: use assert\\.JSONEq"
 		assert.Equalf(t, "{}", string(resultJSONBytes), "msg with args %d %s", 42, "42")                                                                      // want "encoded-compare: use assert\\.JSONEqf"
 		assert.Equal(t, []byte(expJSON), resultJSONBytes)                                                                                                     // want "encoded-compare: use assert\\.JSONEq"
@@ -128,6 +142,12 @@ func TestEncodedCompareChecker(t *testing.T) {
 
 	// Ignored.
 	{
+		assert.Equal(t, "{{ .StepName }}", "use", "command name incorrect")
+		assert.Equalf(t, "{{ .StepName }}", "use", "command name incorrect", "msg with args %d %s", 42, "42")
+		assert.Equal(t, json.RawMessage{}, respBody)
+		assert.Equalf(t, json.RawMessage{}, respBody, "msg with args %d %s", 42, "42")
+		assert.Equal(t, json.RawMessage(nil), respBody)
+		assert.Equalf(t, json.RawMessage(nil), respBody, "msg with args %d %s", 42, "42")
 		assert.Equal(t, raw, raw)
 		assert.Equalf(t, raw, raw, "msg with args %d %s", 42, "42")
 		assert.EqualValues(t, raw, raw)

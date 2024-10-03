@@ -302,8 +302,9 @@ assert.YAMLEq(t, expectedYML, conf)
 `encoded-compare` detects JSON-style string constants (usable in `fmt.Sprintf` also) and JSON-style/YAML-style named
 variables.
 
-When fixing, `encoded-compare` removes unnecessary casts to `[]byte`, `string`, `json.RawMessage` and calls of
-`strings.Replace`, `strings.ReplaceAll`, `strings.Trim`, `strings.TrimSpace`, and adds a `string` cast when needed.
+When fixing, `encoded-compare` removes unnecessary conversions to `[]byte`, `string`, `json.RawMessage` and calls of
+`strings.Replace`, `strings.ReplaceAll`, `strings.Trim`, `strings.TrimSpace`, and adds a conversion to `string` when
+needed.
 
 ---
 
@@ -683,7 +684,7 @@ assert.Equal(t, (chan Event)(nil), eventsChan)
 assert.NotEqual(t, (chan Event)(nil), eventsChan)
 ```
 
-But in the case of `Equal`, `NotEqual` and `Exactly` type casting approach still doesn't work for the function type.
+But in the case of `Equal`, `NotEqual` and `Exactly` type conversion approach still doesn't work for the function type.
 
 The best option here is to just use `Nil` / `NotNil` (see [details](https://github.com/stretchr/testify/issues/1524)).
 

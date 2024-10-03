@@ -72,6 +72,10 @@ images:
 				ProposedArgsf: `"{\n  \"first\": \"Tobi\",\n  \"last\": \"Ferret\"\n}", w.Body.String()`,
 			},
 			{
+				Fn: "Equal", Argsf: `"{\n\t\"msg\": \"hello world\"\n}", respBody`,
+				ReportMsgf: report, ProposedFn: "JSONEq",
+			},
+			{
 				Fn: "Equal", Argsf: "fmt.Sprintf(`{\"value\":\"%s\",\"valuePtr\":\"%s\"}`, hexString, hexString), string(respBytes)",
 				ReportMsgf: report, ProposedFn: "JSONEq",
 			},
@@ -127,8 +131,13 @@ images:
 				Fn: "Equal", Argsf: "conf, expectedYAML",
 				ReportMsgf: report, ProposedFn: "YAMLEq",
 			},
+			{
+				Fn: "Equal", Argsf: "outputYaml, string(output.Bytes())",
+				ReportMsgf: report, ProposedFn: "YAMLEq",
+				ProposedArgsf: "outputYaml, output.String()",
+			},
 
-			// Type cast cases.
+			// Type conversion cases.
 			{
 				Fn: "Equal", Argsf: "json.RawMessage(`{\"uuid\": \"b65b1a22-db6d-4f5a-9b3d-7302368a82e6\"}`), batch.ParentSummary()",
 				ReportMsgf: report, ProposedFn: "JSONEq",
@@ -143,6 +152,26 @@ images:
 				Fn: "Equal", Argsf: "json.RawMessage(raw), json.RawMessage(resultJSONBytes)",
 				ReportMsgf: report, ProposedFn: "JSONEq",
 				ProposedArgsf: "raw, string(resultJSONBytes)",
+			},
+			{
+				Fn: "Equal", Argsf: "json.RawMessage(raw), raw",
+				ReportMsgf: report, ProposedFn: "JSONEq",
+				ProposedArgsf: "raw, raw",
+			},
+			{
+				Fn: "Equal", Argsf: `json.RawMessage("{}"), respBody`,
+				ReportMsgf: report, ProposedFn: "JSONEq",
+				ProposedArgsf: `"{}", respBody`,
+			},
+			{
+				Fn: "Equal", Argsf: `respBody, json.RawMessage("null")`,
+				ReportMsgf: report, ProposedFn: "JSONEq",
+				ProposedArgsf: `respBody, "null"`,
+			},
+			{
+				Fn: "Equal", Argsf: "json.RawMessage(`[\"more\",\"raw\",\"things\"]`), resultJSONBytes",
+				ReportMsgf: report, ProposedFn: "JSONEq",
+				ProposedArgsf: "`[\"more\",\"raw\",\"things\"]`, string(resultJSONBytes)",
 			},
 
 			{
@@ -223,6 +252,10 @@ images:
 			{Fn: "YAMLEq", Argsf: "expYaml, conf"},
 		},
 		IgnoredAssertions: []Assertion{
+			{Fn: "Equal", Argsf: `"{{ .StepName }}", "use", "command name incorrect"`},
+			{Fn: "Equal", Argsf: "json.RawMessage{}, respBody"},
+			{Fn: "Equal", Argsf: "json.RawMessage(nil), respBody"},
+
 			{Fn: "Equal", Argsf: "raw, raw"},
 			{Fn: "EqualValues", Argsf: "raw, raw"},
 			{Fn: "Exactly", Argsf: "raw, raw"},
@@ -261,6 +294,7 @@ const encodedCompareTestTmpl = header + `
 package {{ .CheckerName.AsPkgName }}
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http/httptest"
@@ -272,11 +306,12 @@ import (
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var respBody, raw, hexString, toJSON, expJSON, resultJSON, jsonb, resJson string
-	var conf, expectedYAML, expYaml, ymlResult, yamlResult, expYML string
+	var conf, expectedYAML, expYaml, ymlResult, yamlResult, expYML, outputYaml string
 	var respBytes, resultJSONBytes []byte
 	w := httptest.NewRecorder()
 	var batch interface { ParentSummary() []byte }
 	var res [1]struct{ Data []byte }
+	var output bytes.Buffer
 
 	const expBody = ` + "`{\"status\":\"healthy\",\"message\":\"\",\"peer_count\":1}`" + `
 

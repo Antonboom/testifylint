@@ -43,6 +43,14 @@ func TestIsJSONLike(t *testing.T) {
 			in:       `[{}]`,
 			expected: false,
 		},
+		{
+			in:       `{{ .TemplateVar }}`,
+			expected: false,
+		},
+		{
+			in:       `{{-.TemplateVar}}`,
+			expected: false,
+		},
 	}
 
 	for _, tt := range cases {

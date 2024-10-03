@@ -106,7 +106,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 		case xor(t1, t2):
 			survivingArg, _ := anyVal([]bool{t1, t2}, arg2, arg1)
 			if call.Fn.NameFTrimmed == "Exactly" && !isBuiltinBool(pass, survivingArg) {
-				// NOTE(a.telyshev): `Exactly` assumes no type casting.
+				// NOTE(a.telyshev): `Exactly` assumes no type conversion.
 				return nil
 			}
 			return newUseTrueDiagnostic(survivingArg, arg1.Pos(), arg2.End())
@@ -114,7 +114,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 		case xor(f1, f2):
 			survivingArg, _ := anyVal([]bool{f1, f2}, arg2, arg1)
 			if call.Fn.NameFTrimmed == "Exactly" && !isBuiltinBool(pass, survivingArg) {
-				// NOTE(a.telyshev): `Exactly` assumes no type casting.
+				// NOTE(a.telyshev): `Exactly` assumes no type conversion.
 				return nil
 			}
 			return newUseFalseDiagnostic(survivingArg, arg1.Pos(), arg2.End())

@@ -3,6 +3,7 @@ package checkers
 import (
 	"bytes"
 	"go/ast"
+	"strings"
 
 	"golang.org/x/tools/go/analysis"
 
@@ -53,7 +54,7 @@ func isBufferBytesCall(pass *analysis.Pass, e ast.Expr) (ast.Node, bool) {
 	if t := pass.TypesInfo.TypeOf(se.X); t != nil {
 		// NOTE(a.telyshev): This is hack, because `bytes` package can be not imported,
 		// and we cannot do "true" comparison with `Buffer` object.
-		return se.X, t.String() == "*bytes.Buffer"
+		return se.X, strings.TrimPrefix(t.String(), "*") == "bytes.Buffer"
 	}
 
 	return nil, false

@@ -41,12 +41,12 @@ func (checker EncodedCompare) Check(pass *analysis.Pass, call *CallMeta) *analys
 	}
 	lhs, rhs := call.Args[0], call.Args[1]
 
-	a := checker.unwrap(pass, call.Args[0])
-	b := checker.unwrap(pass, call.Args[1])
+	a, aIsExplicitJSON := checker.unwrap(pass, call.Args[0])
+	b, bIsExplicitJSON := checker.unwrap(pass, call.Args[1])
 
 	var proposed string
 	switch {
-	case isJSONStyleExpr(pass, a), isJSONStyleExpr(pass, b):
+	case aIsExplicitJSON, bIsExplicitJSON, isJSONStyleExpr(pass, a), isJSONStyleExpr(pass, b):
 		proposed = "JSONEq"
 	case isYAMLStyleExpr(a), isYAMLStyleExpr(b):
 		proposed = "YAMLEq"
@@ -67,13 +67,24 @@ func (checker EncodedCompare) Check(pass *analysis.Pass, call *CallMeta) *analys
 	return nil
 }
 
-func (checker EncodedCompare) unwrap(pass *analysis.Pass, e ast.Expr) ast.Expr {
+// unwrap unwraps expression from string, []byte, strings.Replace(All), strings.Trim(Space) and json.RawMessage conversions.
+// Returns true in the second argument, if json.RawMessage was in the chain.
+func (checker EncodedCompare) unwrap(pass *analysis.Pass, e ast.Expr) (ast.Expr, bool) {
 	ce, ok := e.(*ast.CallExpr)
 	if !ok {
-		return e
+		return e, false
 	}
 	if len(ce.Args) == 0 {
-		return e
+		return e, false
+	}
+
+	if isJSONRawMessageCast(pass, ce) {
+		if isNil(ce.Args[0]) { // NOTE(a.telyshev): Ignore json.RawMessage(nil) case.
+			return checker.unwrap(pass, ce.Args[0])
+		}
+
+		v, _ := checker.unwrap(pass, ce.Args[0])
+		return v, true
 	}
 
 	if isIdentWithName("string", ce.Fun) ||
@@ -81,9 +92,8 @@ func (checker EncodedCompare) unwrap(pass *analysis.Pass, e ast.Expr) ast.Expr {
 		isStringsReplaceCall(pass, ce) ||
 		isStringsReplaceAllCall(pass, ce) ||
 		isStringsTrimCall(pass, ce) ||
-		isStringsTrimSpaceCall(pass, ce) ||
-		isJSONRawMessageCast(pass, ce) {
+		isStringsTrimSpaceCall(pass, ce) {
 		return checker.unwrap(pass, ce.Args[0])
 	}
-	return e
+	return e, false
 }

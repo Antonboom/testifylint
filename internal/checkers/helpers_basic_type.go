@@ -166,7 +166,7 @@ func hasBytesType(pass *analysis.Pass, e ast.Expr) bool {
 	return ok && el.Kind() == types.Uint8
 }
 
-// untype returns v from type(v) expression or v itself if there is no type cast.
+// untype returns v from type(v) expression or v itself if there is no type conversion.
 func untype(e ast.Expr) ast.Expr {
 	ce, ok := e.(*ast.CallExpr)
 	if !ok || len(ce.Args) != 1 {
