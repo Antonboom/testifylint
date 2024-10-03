@@ -3,6 +3,7 @@ package checkers
 import (
 	"fmt"
 	"go/ast"
+
 	"golang.org/x/tools/go/analysis"
 )
 
