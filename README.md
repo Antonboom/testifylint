@@ -340,12 +340,16 @@ logic, but without autofix.
 ```go
 ❌
 assert.Nil(t, err)
-assert.NotNil(t, err)
+assert.Empty(t, err)
+assert.Zero(t, err)
 assert.Equal(t, nil, err)
 assert.EqualValues(t, nil, err)
 assert.Exactly(t, nil, err)
 assert.ErrorIs(t, err, nil)
 
+assert.NotNil(t, err)
+assert.NotEmpty(t, err)
+assert.NotZero(t, err)
 assert.NotEqual(t, nil, err)
 assert.NotEqualValues(t, nil, err)
 assert.NotErrorIs(t, err, nil)
