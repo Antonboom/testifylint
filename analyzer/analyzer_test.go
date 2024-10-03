@@ -13,6 +13,29 @@ import (
 func TestTestifyLint(t *testing.T) {
 	t.Parallel()
 
+	for _, checker := range checkers.All() {
+		checker := checker
+
+		t.Run(checker, func(t *testing.T) {
+			t.Parallel()
+
+			anlzr := analyzer.New()
+			if err := anlzr.Flags.Set("disable-all", "true"); err != nil {
+				t.Fatal(err)
+			}
+			if err := anlzr.Flags.Set("enable", checker); err != nil {
+				t.Fatal(err)
+			}
+
+			pkg := filepath.Join("checkers-default", checker)
+			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), anlzr, pkg)
+		})
+	}
+}
+
+func TestTestifyLint_NotDefaultCases(t *testing.T) {
+	t.Parallel()
+
 	cases := []struct {
 		dir   string
 		flags map[string]string
@@ -51,6 +74,20 @@ func TestTestifyLint(t *testing.T) {
 				"disable-all":             "true",
 				"enable":                  checkers.NewExpectedActual().Name(),
 				"expected-actual.pattern": "goldenValue",
+			},
+		},
+		{
+			dir: "formatter-issue170",
+			flags: map[string]string{
+				"disable-all": "true",
+				"enable":      checkers.NewFormatter().Name(),
+			},
+		},
+		{
+			dir: "formatter-issue170-suite",
+			flags: map[string]string{
+				"disable-all": "true",
+				"enable":      checkers.NewFormatter().Name(),
 			},
 		},
 		{
@@ -126,29 +163,6 @@ func TestTestifyLint(t *testing.T) {
 				}
 			}
 			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), anlzr, filepath.Join(tt.dir, "..."))
-		})
-	}
-}
-
-func TestTestifyLint_CheckersDefault(t *testing.T) {
-	t.Parallel()
-
-	for _, checker := range checkers.All() {
-		checker := checker
-
-		t.Run(checker, func(t *testing.T) {
-			t.Parallel()
-
-			anlzr := analyzer.New()
-			if err := anlzr.Flags.Set("disable-all", "true"); err != nil {
-				t.Fatal(err)
-			}
-			if err := anlzr.Flags.Set("enable", checker); err != nil {
-				t.Fatal(err)
-			}
-
-			pkg := filepath.Join("checkers-default", checker)
-			analysistest.RunWithSuggestedFixes(t, analysistest.TestData(), anlzr, pkg)
 		})
 	}
 }
