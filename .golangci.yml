@@ -107,7 +107,6 @@ linters:
     - errcheck
     - errname
     - exhaustive
-    - exportloopref
     - forbidigo
     - gci
     - gocheckcompilerdirectives
