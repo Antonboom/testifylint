@@ -87,6 +87,8 @@ func (g ErrorNilTestsGenerator) TemplateData() any {
 			{Fn: "Zero", Argsf: "err.Error()"},
 			{Fn: "NotZero", Argsf: "err.Error()"},
 
+			{Fn: "Nil", Argsf: "errs"},
+			{Fn: "NotNil", Argsf: "errs"},
 			{Fn: "Empty", Argsf: "errs"},
 			{Fn: "NotEmpty", Argsf: "errs"},
 			{Fn: "Zero", Argsf: "errs"},
