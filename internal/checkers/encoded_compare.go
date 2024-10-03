@@ -54,15 +54,17 @@ func (checker EncodedCompare) Check(pass *analysis.Pass, call *CallMeta) *analys
 
 	if proposed != "" {
 		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
-			newSuggestedFuncReplacement(call, proposed, analysis.TextEdit{
+			analysis.TextEdit{
 				Pos:     lhs.Pos(),
 				End:     lhs.End(),
 				NewText: formatWithStringCastForBytes(pass, a),
-			}, analysis.TextEdit{
+			},
+			analysis.TextEdit{
 				Pos:     rhs.Pos(),
 				End:     rhs.End(),
 				NewText: formatWithStringCastForBytes(pass, b),
-			}))
+			},
+		)
 	}
 	return nil
 }

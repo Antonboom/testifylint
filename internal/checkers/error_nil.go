@@ -81,12 +81,11 @@ func (checker ErrorNil) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 
 	if proposedFn != "" {
 		return newUseFunctionDiagnostic(checker.Name(), call, proposedFn,
-			newSuggestedFuncReplacement(call, proposedFn, analysis.TextEdit{
+			analysis.TextEdit{
 				Pos:     call.Args[0].Pos(),
 				End:     replacementEndPos,
 				NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
-			}),
-		)
+			})
 	}
 	return nil
 }

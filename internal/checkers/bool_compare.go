@@ -49,13 +49,11 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			}
 			survivingArg = newBoolCast(survivingArg)
 		}
-		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
-			newSuggestedFuncReplacement(call, proposed, analysis.TextEdit{
-				Pos:     replaceStart,
-				End:     replaceEnd,
-				NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
-			}),
-		)
+		return newUseFunctionDiagnostic(checker.Name(), call, proposed, analysis.TextEdit{
+			Pos:     replaceStart,
+			End:     replaceEnd,
+			NewText: analysisutil.NodeBytes(pass.Fset, survivingArg),
+		})
 	}
 
 	newUseTrueDiagnostic := func(survivingArg ast.Expr, replaceStart, replaceEnd token.Pos) *analysis.Diagnostic {
@@ -74,7 +72,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			survivingArg = newBoolCast(survivingArg)
 		}
 		return newDiagnostic(checker.Name(), call, "need to simplify the assertion",
-			&analysis.SuggestedFix{
+			analysis.SuggestedFix{
 				Message: "Simplify the assertion",
 				TextEdits: []analysis.TextEdit{{
 					Pos:     replaceStart,

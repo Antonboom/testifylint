@@ -134,7 +134,7 @@ func (checker RequireError) Check(pass *analysis.Pass, inspector *inspector.Insp
 			}
 
 			diagnostics = append(diagnostics,
-				*newDiagnostic(checker.Name(), c.testifyCall, requireErrorReport, nil))
+				*newDiagnostic(checker.Name(), c.testifyCall, requireErrorReport))
 		}
 	}
 
