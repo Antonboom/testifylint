@@ -74,7 +74,7 @@ func (checker BoolCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 			survivingArg = newBoolCast(survivingArg)
 		}
 		return newDiagnostic(checker.Name(), call, "need to simplify the assertion",
-			&analysis.SuggestedFix{
+			analysis.SuggestedFix{
 				Message: "Simplify the assertion",
 				TextEdits: []analysis.TextEdit{{
 					Pos:     replaceStart,

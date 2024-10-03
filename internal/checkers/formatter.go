@@ -1,7 +1,6 @@
 package checkers
 
 import (
-	"fmt"
 	"go/types"
 	"strconv"
 
@@ -70,14 +69,8 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 		msgAndArgs := call.ArgsRaw[msgAndArgsPos]
 		if args, ok := isFmtSprintfCall(pass, msgAndArgs); ok {
 			if checker.requireFFuncs {
-				msg := fmt.Sprintf("remove unnecessary fmt.Sprintf and use %s.%s", call.SelectorXStr, fFunc)
-				return newDiagnostic(checker.Name(), call, msg,
-					newSuggestedFuncReplacement(call, fFunc, analysis.TextEdit{
-						Pos:     msgAndArgs.Pos(),
-						End:     msgAndArgs.End(),
-						NewText: formatAsCallArgs(pass, args...),
-					}),
-				)
+				return newRemoveFnAndUseDiagnostic(pass, checker.Name(), call, fFunc,
+					"fmt.Sprintf", msgAndArgs, args...)
 			}
 			return newRemoveSprintfDiagnostic(pass, checker.Name(), call, msgAndArgs, args)
 		}
@@ -108,7 +101,7 @@ func (checker Formatter) checkFmtAssertion(pass *analysis.Pass, call *CallMeta) 
 		defer func() { pass.Report = report }()
 
 		pass.Report = func(d analysis.Diagnostic) {
-			result = newDiagnostic(checker.Name(), call, d.Message, nil)
+			result = newDiagnostic(checker.Name(), call, d.Message)
 		}
 
 		format, err := strconv.Unquote(analysisutil.NodeString(pass.Fset, msg))

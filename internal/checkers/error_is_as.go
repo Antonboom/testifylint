@@ -127,15 +127,15 @@ func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Di
 
 		pt, ok := tv.Type.Underlying().(*types.Pointer)
 		if !ok {
-			return newDiagnostic(checker.Name(), call, defaultReport, nil)
+			return newDiagnostic(checker.Name(), call, defaultReport)
 		}
 		if pt.Elem() == errorType {
-			return newDiagnostic(checker.Name(), call, errorPtrReport, nil)
+			return newDiagnostic(checker.Name(), call, errorPtrReport)
 		}
 
 		_, isInterface := pt.Elem().Underlying().(*types.Interface)
 		if !isInterface && !types.Implements(pt.Elem(), errorIface) {
-			return newDiagnostic(checker.Name(), call, defaultReport, nil)
+			return newDiagnostic(checker.Name(), call, defaultReport)
 		}
 	}
 	return nil

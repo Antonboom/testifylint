@@ -97,7 +97,7 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 	}
 
 	if isMeaningless {
-		return newDiagnostic(checker.Name(), call, "meaningless assertion", nil)
+		return newDiagnostic(checker.Name(), call, "meaningless assertion")
 	}
 	return nil
 }
@@ -159,7 +159,7 @@ func (checker UselessAssert) checkSameVars(pass *analysis.Pass, call *CallMeta) 
 	}
 
 	if analysisutil.NodeString(pass.Fset, first) == analysisutil.NodeString(pass.Fset, second) {
-		return newDiagnostic(checker.Name(), call, "asserting of the same variable", nil)
+		return newDiagnostic(checker.Name(), call, "asserting of the same variable")
 	}
 	return nil
 }
