@@ -300,7 +300,7 @@ assert.YAMLEq(t, expectedYML, conf)
 **Reason**: Protection from bugs and more appropriate `testify` API with clearer failure message.
 
 `encoded-compare` detects JSON-style string constants (usable in `fmt.Sprintf` also) and JSON-style/YAML-style named
-variables.
+variables. If variable is converted to `json.RawMessage`, then it is considered JSON unconditionally.
 
 When fixing, `encoded-compare` removes unnecessary conversions to `[]byte`, `string`, `json.RawMessage` and calls of
 `strings.Replace`, `strings.ReplaceAll`, `strings.Trim`, `strings.TrimSpace`, and adds a conversion to `string` when
