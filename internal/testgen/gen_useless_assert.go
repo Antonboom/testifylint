@@ -95,6 +95,8 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 			{Fn: "Nil", Argsf: "nil", ReportMsgf: defaultReport},
 			{Fn: "NoError", Argsf: "nil", ReportMsgf: defaultReport},
 			{Fn: "NotEmpty", Argsf: `"value"`, ReportMsgf: defaultReport},
+			{Fn: "NotZero", Argsf: `42`, ReportMsgf: defaultReport},
+			{Fn: "NotZero", Argsf: `"value"`, ReportMsgf: defaultReport},
 			{Fn: "Positive", Argsf: "42", ReportMsgf: defaultReport},
 			{Fn: "True", Argsf: "true", ReportMsgf: defaultReport},
 			{Fn: "Zero", Argsf: "0", ReportMsgf: defaultReport},

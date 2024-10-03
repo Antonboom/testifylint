@@ -37,6 +37,8 @@ import (
 //	assert.Nil(t, nil)
 //	assert.NoError(t, nil)
 //	assert.NotEmpty(t, "value")
+//	assert.NotZero(t, 42)
+//	assert.NotZero(t, "value")
 //	assert.Positive(t, 42)
 //	assert.True(t, true)
 //	assert.Zero(t, 0)
@@ -77,6 +79,11 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 
 	case "NotEmpty":
 		isMeaningless = (len(call.Args) >= 1) && isNotEmptyStringLit(call.Args[0])
+
+	case "NotZero":
+		isMeaningless = (len(call.Args) >= 1) &&
+			(isNotEmptyStringLit(call.Args[0]) ||
+				isNegativeIntNumber(call.Args[0]) || isPositiveIntNumber(call.Args[0]))
 
 	case "Positive":
 		isMeaningless = (len(call.Args) >= 1) && isPositiveIntNumber(call.Args[0])

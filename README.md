@@ -887,7 +887,7 @@ assert.Contains(t, tt.value, tt.value)
 assert.ElementsMatch(t, tt.value, tt.value)
 assert.Equal(t, tt.value, tt.value)
 assert.EqualExportedValues(t, tt.value, tt.value)
-// And other assert-functions...
+// And other assert functions...
 
 assert.True(t, num > num)
 assert.True(t, num < num)
@@ -913,6 +913,8 @@ assert.Negative(t, -42)
 assert.Nil(t, nil)
 assert.NoError(t, nil)
 assert.NotEmpty(t, "value")
+assert.NotZero(t, 42)
+assert.NotZero(t, "value")
 assert.Positive(t, 42)
 assert.True(t, true)
 assert.Zero(t, 0)
