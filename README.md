@@ -96,6 +96,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [compares](#compares)                               | ✅                  | ✅       |
 | [contains](#contains)                               | ✅                  | ✅       |
 | [empty](#empty)                                     | ✅                  | ✅       |
+| [encoded-compare](#encoded-compare)                 | ✅                  | ✅       |
 | [error-is-as](#error-is-as)                         | ✅                  | 🤏      |
 | [error-nil](#error-nil)                             | ✅                  | ✅       |
 | [expected-actual](#expected-actual)                 | ✅                  | ✅       |
@@ -271,6 +272,39 @@ assert.NotEmpty(t, err)
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
+
+---
+
+### encoded-compare
+
+```go
+❌
+assert.Equal(t, `{"foo": "bar"}`, body)
+assert.EqualValues(t, `{"foo": "bar"}`, body)
+assert.Exactly(t, `{"foo": "bar"}`, body)
+assert.Equal(t, expectedJSON, resultJSON)
+assert.Equal(t, expBodyConst, w.Body.String())
+assert.Equal(t, fmt.Sprintf(`{"value":"%s"}`, hexString), result)
+assert.Equal(t, "{}", json.RawMessage(resp))
+assert.Equal(t, expJSON, strings.Trim(string(resultJSONBytes), "\n")) // + Replace, ReplaceAll, TrimSpace
+
+assert.Equal(t, expectedYML, conf)
+
+✅
+assert.JSONEq(t, `{"foo": "bar"}`, body)
+assert.YAMLEq(t, expectedYML, conf)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Protection from bugs and more appropriate `testify` API with clearer failure message.
+
+`encoded-compare` detects JSON-style string constants (usable in `fmt.Sprintf` also) and JSON-style/YAML-style named
+variables. If variable is converted to `json.RawMessage`, then it is considered JSON unconditionally.
+
+When fixing, `encoded-compare` removes unnecessary conversions to `[]byte`, `string`, `json.RawMessage` and calls of
+`strings.Replace`, `strings.ReplaceAll`, `strings.Trim`, `strings.TrimSpace`, and adds a conversion to `string` when
+needed.
 
 ---
 
@@ -654,7 +688,7 @@ assert.Equal(t, (chan Event)(nil), eventsChan)
 assert.NotEqual(t, (chan Event)(nil), eventsChan)
 ```
 
-But in the case of `Equal`, `NotEqual` and `Exactly` type casting approach still doesn't work for the function type.
+But in the case of `Equal`, `NotEqual` and `Exactly` type conversion approach still doesn't work for the function type.
 
 The best option here is to just use `Nil` / `NotNil` (see [details](https://github.com/stretchr/testify/issues/1524)).
 
@@ -884,22 +918,51 @@ a [checkers.AdvancedChecker](https://github.com/Antonboom/testifylint/blob/67632
 
 ### useless-assert
 
-Currently the checker guards against assertion of the same variable:
+The checker guards against assertion of the same variable:
 
 ```go
-❌
+assert.Contains(t, tt.value, tt.value)
+assert.ElementsMatch(t, tt.value, tt.value)
 assert.Equal(t, tt.value, tt.value)
-assert.ElementsMatch(t, users, users)
-// And so on...
+assert.EqualExportedValues(t, tt.value, tt.value)
+// And other assert functions...
+
 assert.True(t, num > num)
+assert.True(t, num < num)
+assert.True(t, num >= num)
+assert.True(t, num <= num)
+assert.True(t, num == num)
+assert.True(t, num != num)
+
+assert.False(t, num > num)
+assert.False(t, num < num)
+assert.False(t, num >= num)
+assert.False(t, num <= num)
 assert.False(t, num == num)
+assert.False(t, num != num)
 ```
 
-More complex cases are [open for contribution](CONTRIBUTING.md#useless-assert).
+And against these meaningless assertions:
+```go
+assert.Empty(t, "")
+assert.False(t, false)
+assert.Implements(t, (*any)(nil), new(Conn))
+assert.Negative(t, -42)
+assert.Nil(t, nil)
+assert.NoError(t, nil)
+assert.NotEmpty(t, "value")
+assert.NotZero(t, 42)
+assert.NotZero(t, "value")
+assert.Positive(t, 42)
+assert.True(t, true)
+assert.Zero(t, 0)
+assert.Zero(t, "")
+assert.Zero(t, nil)
+```
 
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
-**Reason**: Protection from bugs and possible dead code.
+**Reason**: Protection from bugs and dead code.
 
 ---
 

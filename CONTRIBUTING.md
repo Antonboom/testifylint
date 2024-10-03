@@ -142,7 +142,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [http-sugar](#http-sugar)
 - [require-len](#require-len)
 - [suite-test-name](#suite-test-name)
-- [useless-assert](#useless-assert)
 
 ---
 
@@ -363,27 +362,6 @@ Also, maybe to check the configurable format of subtest name? Mess example:
 func (s *HandlersSuite) Test_Usecase_Success()
 func (s *HandlersSuite) TestUsecaseSuccess()
 func (s *HandlersSuite) Test_UsecaseSuccess()
-```
-
----
-
-### useless-assert
-
-Support more complex cases, e.g.
-
-```go
-body, err := io.ReadAll(rr.Body)
-require.NoError(t, err)
-require.NoError(t, err) ❌
-
-expectedJSON, err := json.Marshal(expected)
-require.NoError(t, err)
-require.JSONEq(t, string(expectedJSON), string(body))
-```
-
-```go
-require.NoError(t, err)
-assert.ErrorContains(t, err, "user") ❌
 ```
 
 ---

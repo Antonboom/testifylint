@@ -15,8 +15,9 @@ func (EmptyTestsGenerator) Checker() checkers.Checker {
 
 func (g EmptyTestsGenerator) TemplateData() any {
 	var (
-		checker = g.Checker().Name()
-		report  = checker + ": use %s.%s"
+		checker         = g.Checker().Name()
+		report          = checker + ": use %s.%s"
+		reportRemoveLen = checker + ": remove unnecessary len"
 	)
 
 	type test struct {
@@ -60,7 +61,9 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					{Fn: "Less", Argsf: "len(elems), 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 					{Fn: "Greater", Argsf: "1, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
 					{Fn: "Zero", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "Empty", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Zero", Argsf: `len([]string{"e"})`, ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: `[]string{"e"}`},
+					{Fn: "Empty", Argsf: "len(elems)", ReportMsgf: reportRemoveLen, ProposedArgsf: "elems"},
+					{Fn: "Empty", Argsf: `len([]string{"e"})`, ReportMsgf: reportRemoveLen, ProposedArgsf: `[]string{"e"}`},
 
 					// Bullshit, but supported by the checker:
 					// n < 0, n <= 0
@@ -88,7 +91,9 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					{Fn: "Greater", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "Positive", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
 					{Fn: "NotZero", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "NotEmpty", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotZero", Argsf: `len([]string{"e"})`, ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: `[]string{"e"}`},
+					{Fn: "NotEmpty", Argsf: "len(elems)", ReportMsgf: reportRemoveLen, ProposedArgsf: "elems"},
+					{Fn: "NotEmpty", Argsf: `len([]string{"e"})`, ReportMsgf: reportRemoveLen, ProposedArgsf: `[]string{"e"}`},
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "NotEmpty", Argsf: "elems"},

@@ -15,6 +15,7 @@ func TestUselessAssertChecker(t *testing.T) {
 	var elapsed time.Time
 	var str string
 	var num int
+	var b bool
 	var tc testCase
 
 	// Invalid.
@@ -61,6 +62,104 @@ func TestUselessAssertChecker(t *testing.T) {
 		assert.IsTypef(t, (*testCase)(nil), (*testCase)(nil), "msg")                                      // want "useless-assert: asserting of the same variable"
 		assert.IsTypef(t, (*testCase)(nil), (*testCase)(nil), "msg with arg %d", 42)                      // want "useless-assert: asserting of the same variable"
 		assert.IsTypef(t, (*testCase)(nil), (*testCase)(nil), "msg with args %d %s", 42, "42")            // want "useless-assert: asserting of the same variable"
+		assert.Empty(t, "")                                                                               // want "useless-assert: meaningless assertion"
+		assert.Empty(t, "", "msg")                                                                        // want "useless-assert: meaningless assertion"
+		assert.Empty(t, "", "msg with arg %d", 42)                                                        // want "useless-assert: meaningless assertion"
+		assert.Empty(t, "", "msg with args %d %s", 42, "42")                                              // want "useless-assert: meaningless assertion"
+		assert.Emptyf(t, "", "msg")                                                                       // want "useless-assert: meaningless assertion"
+		assert.Emptyf(t, "", "msg with arg %d", 42)                                                       // want "useless-assert: meaningless assertion"
+		assert.Emptyf(t, "", "msg with args %d %s", 42, "42")                                             // want "useless-assert: meaningless assertion"
+		assert.False(t, false)                                                                            // want "useless-assert: meaningless assertion"
+		assert.False(t, false, "msg")                                                                     // want "useless-assert: meaningless assertion"
+		assert.False(t, false, "msg with arg %d", 42)                                                     // want "useless-assert: meaningless assertion"
+		assert.False(t, false, "msg with args %d %s", 42, "42")                                           // want "useless-assert: meaningless assertion"
+		assert.Falsef(t, false, "msg")                                                                    // want "useless-assert: meaningless assertion"
+		assert.Falsef(t, false, "msg with arg %d", 42)                                                    // want "useless-assert: meaningless assertion"
+		assert.Falsef(t, false, "msg with args %d %s", 42, "42")                                          // want "useless-assert: meaningless assertion"
+		assert.Implements(t, (*any)(nil), new(testing.T))                                                 // want "useless-assert: meaningless assertion"
+		assert.Implements(t, (*any)(nil), new(testing.T), "msg")                                          // want "useless-assert: meaningless assertion"
+		assert.Implements(t, (*any)(nil), new(testing.T), "msg with arg %d", 42)                          // want "useless-assert: meaningless assertion"
+		assert.Implements(t, (*any)(nil), new(testing.T), "msg with args %d %s", 42, "42")                // want "useless-assert: meaningless assertion"
+		assert.Implementsf(t, (*any)(nil), new(testing.T), "msg")                                         // want "useless-assert: meaningless assertion"
+		assert.Implementsf(t, (*any)(nil), new(testing.T), "msg with arg %d", 42)                         // want "useless-assert: meaningless assertion"
+		assert.Implementsf(t, (*any)(nil), new(testing.T), "msg with args %d %s", 42, "42")               // want "useless-assert: meaningless assertion"
+		assert.Negative(t, -42)                                                                           // want "useless-assert: meaningless assertion"
+		assert.Negative(t, -42, "msg")                                                                    // want "useless-assert: meaningless assertion"
+		assert.Negative(t, -42, "msg with arg %d", 42)                                                    // want "useless-assert: meaningless assertion"
+		assert.Negative(t, -42, "msg with args %d %s", 42, "42")                                          // want "useless-assert: meaningless assertion"
+		assert.Negativef(t, -42, "msg")                                                                   // want "useless-assert: meaningless assertion"
+		assert.Negativef(t, -42, "msg with arg %d", 42)                                                   // want "useless-assert: meaningless assertion"
+		assert.Negativef(t, -42, "msg with args %d %s", 42, "42")                                         // want "useless-assert: meaningless assertion"
+		assert.Nil(t, nil)                                                                                // want "useless-assert: meaningless assertion"
+		assert.Nil(t, nil, "msg")                                                                         // want "useless-assert: meaningless assertion"
+		assert.Nil(t, nil, "msg with arg %d", 42)                                                         // want "useless-assert: meaningless assertion"
+		assert.Nil(t, nil, "msg with args %d %s", 42, "42")                                               // want "useless-assert: meaningless assertion"
+		assert.Nilf(t, nil, "msg")                                                                        // want "useless-assert: meaningless assertion"
+		assert.Nilf(t, nil, "msg with arg %d", 42)                                                        // want "useless-assert: meaningless assertion"
+		assert.Nilf(t, nil, "msg with args %d %s", 42, "42")                                              // want "useless-assert: meaningless assertion"
+		assert.NoError(t, nil)                                                                            // want "useless-assert: meaningless assertion"
+		assert.NoError(t, nil, "msg")                                                                     // want "useless-assert: meaningless assertion"
+		assert.NoError(t, nil, "msg with arg %d", 42)                                                     // want "useless-assert: meaningless assertion"
+		assert.NoError(t, nil, "msg with args %d %s", 42, "42")                                           // want "useless-assert: meaningless assertion"
+		assert.NoErrorf(t, nil, "msg")                                                                    // want "useless-assert: meaningless assertion"
+		assert.NoErrorf(t, nil, "msg with arg %d", 42)                                                    // want "useless-assert: meaningless assertion"
+		assert.NoErrorf(t, nil, "msg with args %d %s", 42, "42")                                          // want "useless-assert: meaningless assertion"
+		assert.NotEmpty(t, "value")                                                                       // want "useless-assert: meaningless assertion"
+		assert.NotEmpty(t, "value", "msg")                                                                // want "useless-assert: meaningless assertion"
+		assert.NotEmpty(t, "value", "msg with arg %d", 42)                                                // want "useless-assert: meaningless assertion"
+		assert.NotEmpty(t, "value", "msg with args %d %s", 42, "42")                                      // want "useless-assert: meaningless assertion"
+		assert.NotEmptyf(t, "value", "msg")                                                               // want "useless-assert: meaningless assertion"
+		assert.NotEmptyf(t, "value", "msg with arg %d", 42)                                               // want "useless-assert: meaningless assertion"
+		assert.NotEmptyf(t, "value", "msg with args %d %s", 42, "42")                                     // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, 42)                                                                             // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, 42, "msg")                                                                      // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, 42, "msg with arg %d", 42)                                                      // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, 42, "msg with args %d %s", 42, "42")                                            // want "useless-assert: meaningless assertion"
+		assert.NotZerof(t, 42, "msg")                                                                     // want "useless-assert: meaningless assertion"
+		assert.NotZerof(t, 42, "msg with arg %d", 42)                                                     // want "useless-assert: meaningless assertion"
+		assert.NotZerof(t, 42, "msg with args %d %s", 42, "42")                                           // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, "value")                                                                        // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, "value", "msg")                                                                 // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, "value", "msg with arg %d", 42)                                                 // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, "value", "msg with args %d %s", 42, "42")                                       // want "useless-assert: meaningless assertion"
+		assert.NotZerof(t, "value", "msg")                                                                // want "useless-assert: meaningless assertion"
+		assert.NotZerof(t, "value", "msg with arg %d", 42)                                                // want "useless-assert: meaningless assertion"
+		assert.NotZerof(t, "value", "msg with args %d %s", 42, "42")                                      // want "useless-assert: meaningless assertion"
+		assert.Positive(t, 42)                                                                            // want "useless-assert: meaningless assertion"
+		assert.Positive(t, 42, "msg")                                                                     // want "useless-assert: meaningless assertion"
+		assert.Positive(t, 42, "msg with arg %d", 42)                                                     // want "useless-assert: meaningless assertion"
+		assert.Positive(t, 42, "msg with args %d %s", 42, "42")                                           // want "useless-assert: meaningless assertion"
+		assert.Positivef(t, 42, "msg")                                                                    // want "useless-assert: meaningless assertion"
+		assert.Positivef(t, 42, "msg with arg %d", 42)                                                    // want "useless-assert: meaningless assertion"
+		assert.Positivef(t, 42, "msg with args %d %s", 42, "42")                                          // want "useless-assert: meaningless assertion"
+		assert.True(t, true)                                                                              // want "useless-assert: meaningless assertion"
+		assert.True(t, true, "msg")                                                                       // want "useless-assert: meaningless assertion"
+		assert.True(t, true, "msg with arg %d", 42)                                                       // want "useless-assert: meaningless assertion"
+		assert.True(t, true, "msg with args %d %s", 42, "42")                                             // want "useless-assert: meaningless assertion"
+		assert.Truef(t, true, "msg")                                                                      // want "useless-assert: meaningless assertion"
+		assert.Truef(t, true, "msg with arg %d", 42)                                                      // want "useless-assert: meaningless assertion"
+		assert.Truef(t, true, "msg with args %d %s", 42, "42")                                            // want "useless-assert: meaningless assertion"
+		assert.Zero(t, 0)                                                                                 // want "useless-assert: meaningless assertion"
+		assert.Zero(t, 0, "msg")                                                                          // want "useless-assert: meaningless assertion"
+		assert.Zero(t, 0, "msg with arg %d", 42)                                                          // want "useless-assert: meaningless assertion"
+		assert.Zero(t, 0, "msg with args %d %s", 42, "42")                                                // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, 0, "msg")                                                                         // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, 0, "msg with arg %d", 42)                                                         // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, 0, "msg with args %d %s", 42, "42")                                               // want "useless-assert: meaningless assertion"
+		assert.Zero(t, "")                                                                                // want "useless-assert: meaningless assertion"
+		assert.Zero(t, "", "msg")                                                                         // want "useless-assert: meaningless assertion"
+		assert.Zero(t, "", "msg with arg %d", 42)                                                         // want "useless-assert: meaningless assertion"
+		assert.Zero(t, "", "msg with args %d %s", 42, "42")                                               // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, "", "msg")                                                                        // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, "", "msg with arg %d", 42)                                                        // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, "", "msg with args %d %s", 42, "42")                                              // want "useless-assert: meaningless assertion"
+		assert.Zero(t, nil)                                                                               // want "useless-assert: meaningless assertion"
+		assert.Zero(t, nil, "msg")                                                                        // want "useless-assert: meaningless assertion"
+		assert.Zero(t, nil, "msg with arg %d", 42)                                                        // want "useless-assert: meaningless assertion"
+		assert.Zero(t, nil, "msg with args %d %s", 42, "42")                                              // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, nil, "msg")                                                                       // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, nil, "msg with arg %d", 42)                                                       // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, nil, "msg with args %d %s", 42, "42")                                             // want "useless-assert: meaningless assertion"
 		assert.Contains(t, value, value)                                                                  // want "useless-assert: asserting of the same variable"
 		assert.Containsf(t, value, value, "msg with args %d %s", 42, "42")                                // want "useless-assert: asserting of the same variable"
 		assert.ElementsMatch(t, value, value)                                                             // want "useless-assert: asserting of the same variable"
@@ -186,6 +285,90 @@ func TestUselessAssertChecker(t *testing.T) {
 		assert.IsTypef(t, tc, testCase{}, "msg")
 		assert.IsTypef(t, tc, testCase{}, "msg with arg %d", 42)
 		assert.IsTypef(t, tc, testCase{}, "msg with args %d %s", 42, "42")
+		assert.Empty(t, str)
+		assert.Empty(t, str, "msg")
+		assert.Empty(t, str, "msg with arg %d", 42)
+		assert.Empty(t, str, "msg with args %d %s", 42, "42")
+		assert.Emptyf(t, str, "msg")
+		assert.Emptyf(t, str, "msg with arg %d", 42)
+		assert.Emptyf(t, str, "msg with args %d %s", 42, "42")
+		assert.False(t, b)
+		assert.False(t, b, "msg")
+		assert.False(t, b, "msg with arg %d", 42)
+		assert.False(t, b, "msg with args %d %s", 42, "42")
+		assert.Falsef(t, b, "msg")
+		assert.Falsef(t, b, "msg with arg %d", 42)
+		assert.Falsef(t, b, "msg with args %d %s", 42, "42")
+		assert.Implements(t, (*testing.TB)(nil), new(testing.T))
+		assert.Implements(t, (*testing.TB)(nil), new(testing.T), "msg")
+		assert.Implements(t, (*testing.TB)(nil), new(testing.T), "msg with arg %d", 42)
+		assert.Implements(t, (*testing.TB)(nil), new(testing.T), "msg with args %d %s", 42, "42")
+		assert.Implementsf(t, (*testing.TB)(nil), new(testing.T), "msg")
+		assert.Implementsf(t, (*testing.TB)(nil), new(testing.T), "msg with arg %d", 42)
+		assert.Implementsf(t, (*testing.TB)(nil), new(testing.T), "msg with args %d %s", 42, "42")
+		assert.Negative(t, num)
+		assert.Negative(t, num, "msg")
+		assert.Negative(t, num, "msg with arg %d", 42)
+		assert.Negative(t, num, "msg with args %d %s", 42, "42")
+		assert.Negativef(t, num, "msg")
+		assert.Negativef(t, num, "msg with arg %d", 42)
+		assert.Negativef(t, num, "msg with args %d %s", 42, "42")
+		assert.Nil(t, new(testCase))
+		assert.Nil(t, new(testCase), "msg")
+		assert.Nil(t, new(testCase), "msg with arg %d", 42)
+		assert.Nil(t, new(testCase), "msg with args %d %s", 42, "42")
+		assert.Nilf(t, new(testCase), "msg")
+		assert.Nilf(t, new(testCase), "msg with arg %d", 42)
+		assert.Nilf(t, new(testCase), "msg with args %d %s", 42, "42")
+		assert.NoError(t, err)
+		assert.NoError(t, err, "msg")
+		assert.NoError(t, err, "msg with arg %d", 42)
+		assert.NoError(t, err, "msg with args %d %s", 42, "42")
+		assert.NoErrorf(t, err, "msg")
+		assert.NoErrorf(t, err, "msg with arg %d", 42)
+		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42")
+		assert.NotEmpty(t, str)
+		assert.NotEmpty(t, str, "msg")
+		assert.NotEmpty(t, str, "msg with arg %d", 42)
+		assert.NotEmpty(t, str, "msg with args %d %s", 42, "42")
+		assert.NotEmptyf(t, str, "msg")
+		assert.NotEmptyf(t, str, "msg with arg %d", 42)
+		assert.NotEmptyf(t, str, "msg with args %d %s", 42, "42")
+		assert.Positive(t, num)
+		assert.Positive(t, num, "msg")
+		assert.Positive(t, num, "msg with arg %d", 42)
+		assert.Positive(t, num, "msg with args %d %s", 42, "42")
+		assert.Positivef(t, num, "msg")
+		assert.Positivef(t, num, "msg with arg %d", 42)
+		assert.Positivef(t, num, "msg with args %d %s", 42, "42")
+		assert.True(t, b)
+		assert.True(t, b, "msg")
+		assert.True(t, b, "msg with arg %d", 42)
+		assert.True(t, b, "msg with args %d %s", 42, "42")
+		assert.Truef(t, b, "msg")
+		assert.Truef(t, b, "msg with arg %d", 42)
+		assert.Truef(t, b, "msg with args %d %s", 42, "42")
+		assert.Zero(t, num)
+		assert.Zero(t, num, "msg")
+		assert.Zero(t, num, "msg with arg %d", 42)
+		assert.Zero(t, num, "msg with args %d %s", 42, "42")
+		assert.Zerof(t, num, "msg")
+		assert.Zerof(t, num, "msg with arg %d", 42)
+		assert.Zerof(t, num, "msg with args %d %s", 42, "42")
+		assert.Zero(t, str)
+		assert.Zero(t, str, "msg")
+		assert.Zero(t, str, "msg with arg %d", 42)
+		assert.Zero(t, str, "msg with args %d %s", 42, "42")
+		assert.Zerof(t, str, "msg")
+		assert.Zerof(t, str, "msg with arg %d", 42)
+		assert.Zerof(t, str, "msg with args %d %s", 42, "42")
+		assert.Zero(t, new(testCase))
+		assert.Zero(t, new(testCase), "msg")
+		assert.Zero(t, new(testCase), "msg with arg %d", 42)
+		assert.Zero(t, new(testCase), "msg with args %d %s", 42, "42")
+		assert.Zerof(t, new(testCase), "msg")
+		assert.Zerof(t, new(testCase), "msg with arg %d", 42)
+		assert.Zerof(t, new(testCase), "msg with args %d %s", 42, "42")
 	}
 }
 
