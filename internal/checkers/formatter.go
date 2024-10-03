@@ -60,7 +60,7 @@ func (checker Formatter) Check(pass *analysis.Pass, call *CallMeta) (result *ana
 }
 
 func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	msgAndArgsPos, ok := isPrintfLikeCall(pass, call, call.Fn.Signature)
+	msgAndArgsPos, ok := isPrintfLikeCall(pass, call)
 	if !ok {
 		return nil
 	}
@@ -121,19 +121,51 @@ func (checker Formatter) checkFmtAssertion(pass *analysis.Pass, call *CallMeta) 
 	return result
 }
 
-func isPrintfLikeCall(pass *analysis.Pass, call *CallMeta, sig *types.Signature) (int, bool) {
+func isPrintfLikeCall(pass *analysis.Pass, call *CallMeta) (int, bool) {
+	sig := call.Fn.Signature
+
 	msgAndArgsPos := getMsgAndArgsPosition(sig)
 	if msgAndArgsPos < 0 {
 		return -1, false
 	}
 
-	fmtFn := analysisutil.ObjectOf(pass.Pkg, testify.AssertPkgPath, call.Fn.Name+"f")
-	if fmtFn == nil {
-		// NOTE(a.telyshev): No formatted analogue of assertion.
+	if !assertHasFormattedAnalogue(pass, call) {
 		return -1, false
 	}
 
 	return msgAndArgsPos, len(call.ArgsRaw) > msgAndArgsPos
+}
+
+func assertHasFormattedAnalogue(pass *analysis.Pass, call *CallMeta) bool {
+	if fn := analysisutil.ObjectOf(pass.Pkg, testify.AssertPkgPath, call.Fn.Name+"f"); fn != nil {
+		return true
+	}
+
+	if fn := analysisutil.ObjectOf(pass.Pkg, testify.RequirePkgPath, call.Fn.Name+"f"); fn != nil {
+		return true
+	}
+
+	recv := call.Fn.Signature.Recv()
+	if recv == nil {
+		return false
+	}
+
+	recvT := recv.Type()
+	if ptr, ok := recv.Type().(*types.Pointer); ok {
+		recvT = ptr.Elem()
+	}
+
+	suite, ok := recvT.(*types.Named)
+	if !ok {
+		return false
+	}
+	for i := 0; i < suite.NumMethods(); i++ {
+		if suite.Method(i).Name() == call.Fn.Name+"f" {
+			return true
+		}
+	}
+
+	return false
 }
 
 func getMsgAndArgsPosition(sig *types.Signature) int {
