@@ -34,6 +34,9 @@ func TestCommonResultFromFullAndCompactJSON(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, crFromCompactJSON, crFromFullJSON)
+
+	var crFromYML *commonResult
+	assert.Equal(t, crFromYML, new(commonResult))
 }
 
 type commonResult struct {

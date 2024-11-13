@@ -11,8 +11,10 @@ import (
 )
 
 var (
+	wordsRe = regexp.MustCompile(`[A-Z]+(?:[a-z]*|$)|[a-z]+`) // NOTE(a.telyshev): ChatGPT.
+
 	jsonIdentRe = regexp.MustCompile(`json|JSON|Json`)
-	yamlIdentRe = regexp.MustCompile(`yaml|YAML|Yaml|yml|YML|Yml`)
+	yamlWordRe  = regexp.MustCompile(`yaml|YAML|Yaml|^(yml|YML|Yml)$`)
 )
 
 func isJSONStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
@@ -36,5 +38,19 @@ func isJSONStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
 }
 
 func isYAMLStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
-	return isIdentNamedAfterPattern(yamlIdentRe, e) && (hasBytesType(pass, e) || hasStringType(pass, e))
+	id, ok := e.(*ast.Ident)
+	return ok && (hasBytesType(pass, e) || hasStringType(pass, e)) && hasWordAfterPattern(id.Name, yamlWordRe)
+}
+
+func splitIntoWords(s string) []string {
+	return wordsRe.FindAllString(s, -1)
+}
+
+func hasWordAfterPattern(s string, re *regexp.Regexp) bool {
+	for _, w := range splitIntoWords(s) {
+		if re.MatchString(w) {
+			return true
+		}
+	}
+	return false
 }
