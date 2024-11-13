@@ -114,6 +114,7 @@ func (g FormatterTestsGenerator) TemplateData() any {
 		SprintfAssertions: sprintfAssertions,
 		AllAssertions:     assertions,
 		IgnoredAssertions: []Assertion{
+			{Fn: "Equal", Argsf: "nil, nil, new(time.Time)"},
 			{Fn: "ObjectsAreEqual", Argsf: "nil, nil"},
 			{Fn: "ObjectsAreEqualValues", Argsf: "nil, nil"},
 			{Fn: "ObjectsExportedFieldsAreEqual", Argsf: "nil, nil"},
