@@ -19,6 +19,8 @@ func (g FormatterNotDefaultsTestsGenerator) TemplateData() any {
 
 	baseAssertions := []Assertion{
 		{Fn: "Equal", Argsf: "1, 2"},
+		{Fn: "Equal", Argsf: "1, 2, new(time.Time)"},
+		// {Fn: "Equal", Argsf: "1, 2, new(time.Time), 2"}, // Panics.
 		{Fn: "Equal", Argsf: `1, 2, "msg"`, ReportMsgf: reportUse, ProposedFn: "Equalf"},
 		{Fn: "Equal", Argsf: `1, 2, "msg with arg %d", 42`, ReportMsgf: reportUse, ProposedFn: "Equalf"},
 		{Fn: "Equal", Argsf: `1, 2, "msg with args %d %s", 42, "42"`, ReportMsgf: reportUse, ProposedFn: "Equalf"},

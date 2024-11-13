@@ -363,6 +363,7 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 }
 
 func TestFormatterChecker_Ignored(t *testing.T) {
+	assert.Equal(nil, nil, new(time.Time))
 	assert.ObjectsAreEqual(nil, nil)
 	assert.ObjectsAreEqualValues(nil, nil)
 	assert.ObjectsExportedFieldsAreEqual(nil, nil)

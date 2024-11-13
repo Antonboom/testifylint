@@ -15,6 +15,7 @@ func TestFormatterChecker(t *testing.T) {
 	var args []any
 	assert.Error(t, err, "Parse(%v) should fail.", args) // want "formatter: use assert\\.Errorf$"
 	assert.Equal(t, 1, 2)
+	assert.Equal(t, 1, 2, new(time.Time))
 	assert.Equal(t, 1, 2, "msg")                           // want "formatter: use assert\\.Equalf"
 	assert.Equal(t, 1, 2, "msg with arg %d", 42)           // want "formatter: use assert\\.Equalf"
 	assert.Equal(t, 1, 2, "msg with args %d %s", 42, "42") // want "formatter: use assert\\.Equalf"
