@@ -465,19 +465,29 @@ disable this feature, use `--formatter.check-format-string=false` flag.
 
 #### 3)
 
-Requirement of the f-assertions if format string is used. Disabled by default, use `--formatter.require-f-funcs` flag
-to enable. This helps follow Go's implicit convention
+Requirement of the f-assertions (e.g. assert.Equal**f**) if format string is used. Disabled by default, use 
+`--formatter.require-f-funcs` flag to enable. <br>
 
-> Printf-like functions must end with `f`
+This helps follow Go's implicit convention _"Printf-like functions must end with `f`"_ and sets the stage for moving to
+`v2` of `testify`. In this way the checker resembles the [goprintffuncname](https://github.com/jirfag/go-printf-func-name) 
+linter (included in [golangci-lint](https://golangci-lint.run/usage/linters/)). <br>
 
-and sets the stage for moving to `v2` of `testify`. In this way the checker resembles the
-[goprintffuncname](https://github.com/jirfag/go-printf-func-name) linter (included in
-[golangci-lint](https://golangci-lint.run/usage/linters/)). Also format string in f-assertions is highlighted by IDE
-, e.g. GoLand:
+Also, verbs in the format string of f-assertions are highlighted by an IDE, e.g. GoLand:
 
 <img width="600" alt="F-assertion IDE highlighting" src="https://github.com/Antonboom/testifylint/assets/17127404/9bdab802-d6eb-477d-a411-6cba043d33a5">
 
-#### Historical Reference
+<br>
+
+> [!CAUTION]
+> `--formatter.require-f-funcs` requires f-assertions **even if there are no variable-length variables**, i.e. it 
+> requires `require.NoErrorf` for both these cases:
+> ```
+> require.NoErrorf(t, err, "unexpected error")
+> require.NoErrorf(t, err, "unexpected error for sid: %v", sid)
+> ```
+> To understand this behavior, please read the reference below.
+
+#### Historical reference of formatter
 
 <details>
 
