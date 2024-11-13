@@ -42,10 +42,6 @@ func isYAMLStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
 	return ok && (hasBytesType(pass, e) || hasStringType(pass, e)) && hasWordAfterPattern(id.Name, yamlWordRe)
 }
 
-func splitIntoWords(s string) []string {
-	return wordsRe.FindAllString(s, -1)
-}
-
 func hasWordAfterPattern(s string, re *regexp.Regexp) bool {
 	for _, w := range splitIntoWords(s) {
 		if re.MatchString(w) {
@@ -53,4 +49,8 @@ func hasWordAfterPattern(s string, re *regexp.Regexp) bool {
 		}
 	}
 	return false
+}
+
+func splitIntoWords(s string) []string {
+	return wordsRe.FindAllString(s, -1)
 }
