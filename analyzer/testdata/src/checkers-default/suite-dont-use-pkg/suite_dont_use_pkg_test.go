@@ -5,11 +5,10 @@ package suitedontusepkg
 import (
 	"testing"
 
-	a "github.com/stretchr/testify/assert"
-	r "github.com/stretchr/testify/require"
-
 	"github.com/stretchr/testify/assert"
+	a "github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	r "github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 

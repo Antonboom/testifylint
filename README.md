@@ -479,7 +479,7 @@ Also, verbs in the format string of f-assertions are highlighted by an IDE, e.g.
 <br>
 
 > [!CAUTION]
-> `--formatter.require-f-funcs` requires f-assertions **even if there are no variable-length variables**, i.e. it 
+> `--formatter.require-f-funcs` requires f-assertions, **even if there are no variable-length variables**, i.e. it 
 > requires `require.NoErrorf` for both these cases:
 > ```
 > require.NoErrorf(t, err, "unexpected error")
