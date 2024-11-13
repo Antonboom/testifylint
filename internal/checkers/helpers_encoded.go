@@ -17,7 +17,7 @@ var (
 
 func isJSONStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
 	if isIdentNamedAfterPattern(jsonIdentRe, e) {
-		return true
+		return hasBytesType(pass, e) || hasStringType(pass, e)
 	}
 
 	if t, ok := pass.TypesInfo.Types[e]; ok && t.Value != nil {
@@ -35,6 +35,6 @@ func isJSONStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
 	return false
 }
 
-func isYAMLStyleExpr(e ast.Expr) bool {
-	return isIdentNamedAfterPattern(yamlIdentRe, e)
+func isYAMLStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
+	return isIdentNamedAfterPattern(yamlIdentRe, e) && (hasBytesType(pass, e) || hasStringType(pass, e))
 }
