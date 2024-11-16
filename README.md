@@ -651,6 +651,12 @@ assert.Len(t, arr, len(expArr))
 **Enabled by default**: true. <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
 
+> [!CAUTION]
+> The checker ignores assertions in which length checking is not a priority, e.g.
+> ```go
+> assert.Equal(t, len(arr), value)
+> ```
+
 ---
 
 ### negative-positive

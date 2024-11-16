@@ -33,6 +33,10 @@ import (
 //	assert.Len(t, arr, 42)
 //	assert.Len(t, arr, value)
 //	assert.Len(t, arr, len(expArr))
+//
+// The checker ignores assertions in which length checking is not a priority, e.g
+//
+//	assert.Equal(t, len(arr), value)
 type Len struct{}
 
 // NewLen constructs Len checker.
