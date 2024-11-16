@@ -370,6 +370,8 @@ assert.Error(t, err)
 ```go
 ❌
 assert.Equal(t, result, expected)
+assert.Equal(t, result, len(expected))
+assert.Equal(t, len(resultFields), len(expectedFields))
 assert.EqualExportedValues(t, resultObj, User{Name: "Rob"})
 assert.EqualValues(t, result, 42)
 assert.Exactly(t, result, int64(42))
@@ -389,6 +391,8 @@ assert.YAMLEq(t, result, "version: '3'")
 
 ✅
 assert.Equal(t, expected, result)
+assert.Equal(t, len(expected), result)
+assert.Equal(t, len(expectedFields), len(resultFields))
 assert.EqualExportedValues(t, User{Name: "Rob"}, resultObj)
 assert.EqualValues(t, 42, result)
 // And so on...
