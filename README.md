@@ -622,13 +622,29 @@ P.S. Look at [testify's issue](https://github.com/stretchr/testify/issues/772), 
 
 ```go
 ❌
-assert.Equal(t, 3, len(arr))
-assert.EqualValues(t, 3, len(arr))
-assert.Exactly(t, 3, len(arr))
-assert.True(t, len(arr) == 3)
+assert.Equal(t, 42, len(arr))
+assert.Equal(t, len(arr), 42)
+assert.EqualValues(t, 42, len(arr))
+assert.EqualValues(t, len(arr), 42)
+assert.Exactly(t, 42, len(arr))
+assert.Exactly(t, len(arr), 42)
+assert.True(t, 42 == len(arr))
+assert.True(t, len(arr) == 42)
+
+assert.Equal(t, value, len(arr))
+assert.EqualValues(t, value, len(arr))
+assert.Exactly(t, value, len(arr))
+assert.True(t, len(arr) == value)
+
+assert.Equal(t, len(expArr), len(arr))
+assert.EqualValues(t, len(expArr), len(arr))
+assert.Exactly(t, len(expArr), len(arr))
+assert.True(t, len(arr) == len(expArr))
 
 ✅
-assert.Len(t, arr, 3)
+assert.Len(t, arr, 42)
+assert.Len(t, arr, value)
+assert.Len(t, arr, len(expArr))
 ```
 
 **Autofix**: true. <br>

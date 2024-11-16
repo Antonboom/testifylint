@@ -8,62 +8,74 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const constNum = 10
+
 func TestLenChecker(t *testing.T) {
-	var arr [3]int
+	var arr, expArr [3]int
 	var value int
 
 	// Invalid.
 	{
-		assert.Len(t, arr, 42)                                      // want "len: use assert\\.Len"
-		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
-		assert.Len(t, arr, 42)                                      // want "len: use assert\\.Len"
-		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
-		assert.Len(t, arr, value)                                   // want "len: use assert\\.Len"
-		assert.Lenf(t, arr, value, "msg with args %d %s", 42, "42") // want "len: use assert\\.Lenf"
-		assert.Len(t, arr, 42)                                      // want "len: use assert\\.Len"
-		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
-		assert.Len(t, arr, 42)                                      // want "len: use assert\\.Len"
-		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
-		assert.Len(t, arr, value)                                   // want "len: use assert\\.Len"
-		assert.Lenf(t, arr, value, "msg with args %d %s", 42, "42") // want "len: use assert\\.Lenf"
-		assert.Len(t, arr, 42)                                      // want "len: use assert\\.Len"
-		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
-		assert.Len(t, arr, 42)                                      // want "len: use assert\\.Len"
-		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
-		assert.Len(t, arr, value)                                   // want "len: use assert\\.Len"
-		assert.Lenf(t, arr, value, "msg with args %d %s", 42, "42") // want "len: use assert\\.Lenf"
-		assert.Len(t, arr, 42)                                      // want "len: use assert\\.Len"
-		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
-		assert.Len(t, arr, 42)                                      // want "len: use assert\\.Len"
-		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, 42)                                            // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")          // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, 42)                                            // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")          // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, value)                                         // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, value, "msg with args %d %s", 42, "42")       // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, len(expArr))                                   // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, len(expArr), "msg with args %d %s", 42, "42") // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, 42)                                            // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")          // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, 42)                                            // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")          // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, value)                                         // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, value, "msg with args %d %s", 42, "42")       // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, len(expArr))                                   // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, len(expArr), "msg with args %d %s", 42, "42") // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, 42)                                            // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")          // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, 42)                                            // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")          // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, value)                                         // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, value, "msg with args %d %s", 42, "42")       // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, len(expArr))                                   // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, len(expArr), "msg with args %d %s", 42, "42") // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, 42)                                            // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")          // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, 42)                                            // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")          // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, value)                                         // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, value, "msg with args %d %s", 42, "42")       // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, len(expArr))                                   // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, len(expArr), "msg with args %d %s", 42, "42") // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, constNum)                                      // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, constNum, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, constNum)                                      // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, constNum, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, constNum)                                      // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, constNum, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
+		assert.Len(t, arr, constNum)                                      // want "len: use assert\\.Len"
+		assert.Lenf(t, arr, constNum, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
 	}
 
 	// Valid.
 	{
 		assert.Len(t, arr, 42)
 		assert.Lenf(t, arr, 42, "msg with args %d %s", 42, "42")
+		assert.Len(t, arr, value)
+		assert.Lenf(t, arr, value, "msg with args %d %s", 42, "42")
 		assert.Len(t, arr, len(arr))
 		assert.Lenf(t, arr, len(arr), "msg with args %d %s", 42, "42")
 	}
 
 	// Ignored.
 	{
-		assert.Equal(t, len(arr), len(arr))
-		assert.Equalf(t, len(arr), len(arr), "msg with args %d %s", 42, "42")
 		assert.Equal(t, len(arr), value)
 		assert.Equalf(t, len(arr), value, "msg with args %d %s", 42, "42")
-		assert.EqualValues(t, len(arr), len(arr))
-		assert.EqualValuesf(t, len(arr), len(arr), "msg with args %d %s", 42, "42")
 		assert.EqualValues(t, len(arr), value)
 		assert.EqualValuesf(t, len(arr), value, "msg with args %d %s", 42, "42")
-		assert.Exactly(t, len(arr), len(arr))
-		assert.Exactlyf(t, len(arr), len(arr), "msg with args %d %s", 42, "42")
 		assert.Exactly(t, len(arr), value)
 		assert.Exactlyf(t, len(arr), value, "msg with args %d %s", 42, "42")
-		assert.True(t, len(arr) == len(arr))
-		assert.Truef(t, len(arr) == len(arr), "msg with args %d %s", 42, "42")
-		assert.True(t, len(arr) == value)
-		assert.Truef(t, len(arr) == value, "msg with args %d %s", 42, "42")
 		assert.True(t, value == len(arr))
 		assert.Truef(t, value == len(arr), "msg with args %d %s", 42, "42")
 		assert.NotEqual(t, 42, len(arr))
