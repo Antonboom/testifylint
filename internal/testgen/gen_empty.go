@@ -39,7 +39,7 @@ func (g EmptyTestsGenerator) TemplateData() any {
 	}{
 		CheckerName: CheckerName(checker),
 		LenTest: lenTest{
-			Vars:  []string{"arr", "arrPtr", "sl", "mp", "str", "ch"},
+			Vars:  []string{"arr", "arrPtr", "sl", "mp", "str", "[]byte(str)", "string(str)", "ch"},
 			Assrn: Assertion{Fn: "Equal", Argsf: "0, len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
 		},
 		Tests: []test{

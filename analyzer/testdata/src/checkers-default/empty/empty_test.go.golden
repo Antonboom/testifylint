@@ -100,12 +100,14 @@ func TestEmptyChecker_LenVarIndependence(t *testing.T) {
 		ch     chan int
 	)
 
-	assert.Empty(t, arr)    // want "empty: use assert\\.Empty"
-	assert.Empty(t, arrPtr) // want "empty: use assert\\.Empty"
-	assert.Empty(t, sl)     // want "empty: use assert\\.Empty"
-	assert.Empty(t, mp)     // want "empty: use assert\\.Empty"
-	assert.Empty(t, str)    // want "empty: use assert\\.Empty"
-	assert.Empty(t, ch)     // want "empty: use assert\\.Empty"
+	assert.Empty(t, arr)         // want "empty: use assert\\.Empty"
+	assert.Empty(t, arrPtr)      // want "empty: use assert\\.Empty"
+	assert.Empty(t, sl)          // want "empty: use assert\\.Empty"
+	assert.Empty(t, mp)          // want "empty: use assert\\.Empty"
+	assert.Empty(t, str)         // want "empty: use assert\\.Empty"
+	assert.Empty(t, []byte(str)) // want "empty: use assert\\.Empty"
+	assert.Empty(t, string(str)) // want "empty: use assert\\.Empty"
+	assert.Empty(t, ch)          // want "empty: use assert\\.Empty"
 }
 
 func TestEmptyChecker_Ignored(t *testing.T) {
