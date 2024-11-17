@@ -51,11 +51,33 @@ func (g LenTestsGenerator) TemplateData() any {
 			{Fn: "True", Argsf: "len(arr) == value", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, value"},
 			{Fn: "True", Argsf: "len(arr) == len(expArr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, len(expArr)"},
 
-			// Constant case.
+			// Constant cases.
 			{Fn: "Equal", Argsf: "constNum, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, constNum"},
 			{Fn: "EqualValues", Argsf: "constNum, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, constNum"},
 			{Fn: "Exactly", Argsf: "constNum, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, constNum"},
 			{Fn: "True", Argsf: "len(arr) == constNum", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, constNum"},
+
+			// Type conversions cases.
+			{
+				Fn: "Equal", Argsf: "42, len(string(resp))", ReportMsgf: report,
+				ProposedFn: proposedFn, ProposedArgsf: "string(resp), 42",
+			},
+			{
+				Fn: "Equal", Argsf: "42, len([]byte(resp))", ReportMsgf: report,
+				ProposedFn: proposedFn, ProposedArgsf: "[]byte(resp), 42",
+			},
+			{
+				Fn: "Equal", Argsf: "42, len(json.RawMessage(resp))", ReportMsgf: report,
+				ProposedFn: proposedFn, ProposedArgsf: "json.RawMessage(resp), 42",
+			},
+			{
+				Fn: "Equal", Argsf: "42, len(string([]byte(json.RawMessage(resp))))", ReportMsgf: report,
+				ProposedFn: proposedFn, ProposedArgsf: "string([]byte(json.RawMessage(resp))), 42",
+			},
+			{
+				Fn: "True", Argsf: "len(string(resp)) == 42", ReportMsgf: report,
+				ProposedFn: proposedFn, ProposedArgsf: "string(resp), 42",
+			},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "Len", Argsf: "arr, 42"},
@@ -125,6 +147,7 @@ const lenTestTmpl = header + `
 package {{ .CheckerName.AsPkgName }}
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -135,6 +158,7 @@ const constNum = 10
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var arr, expArr [3]int
 	var value int
+	var resp string
 
 	// Invalid.
 	{
