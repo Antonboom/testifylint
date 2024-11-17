@@ -8,8 +8,8 @@ import (
 )
 
 func TestLenTypeConversions(t *testing.T) {
-	const resp = "Mutlti-языковая string 你好世界 🙂"
-	const respLen = len(resp) // 48
+	const resp = "Multi-языковая string 你好世界 🙂"
+	const respLen = len(resp) // 47
 
 	assert.Equal(t, respLen, len(resp))
 	assert.Equal(t, respLen, len([]byte(resp)))
