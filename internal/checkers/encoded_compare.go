@@ -23,13 +23,6 @@ import (
 //
 //	assert.JSONEq(t, `{"foo": "bar"}`, body)
 //	assert.YAMLEq(t, expectedYML, conf)
-//
-// EncodedCompare detects JSON-style string constants (usable in fmt.Sprintf also) and JSON-style/YAML-style named
-// variables. If variable is converted to json.RawMessage, then it is considered JSON unconditionally.
-//
-// When fixing, EncodedCompare removes unnecessary conversions to []byte, string, json.RawMessage and calls of
-// strings.Replace, strings.ReplaceAll, strings.Trim, strings.TrimSpace, and adds a conversion to string when
-// needed.
 type EncodedCompare struct{}
 
 // NewEncodedCompare constructs EncodedCompare checker.

@@ -3,8 +3,6 @@
 package len
 
 import (
-	"encoding/json"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,7 +13,6 @@ const constNum = 10
 func TestLenChecker(t *testing.T) {
 	var arr, expArr [3]int
 	var value int
-	var resp []byte
 
 	// Invalid.
 	{
@@ -59,24 +56,6 @@ func TestLenChecker(t *testing.T) {
 		assert.Lenf(t, arr, constNum, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
 		assert.Len(t, arr, constNum)                                      // want "len: use assert\\.Len"
 		assert.Lenf(t, arr, constNum, "msg with args %d %s", 42, "42")    // want "len: use assert\\.Lenf"
-		assert.Len(t, resp, 42)                                           // want "len: use assert\\.Len"
-		assert.Lenf(t, resp, 42, "msg with args %d %s", 42, "42")         // want "len: use assert\\.Lenf"
-		assert.Len(t, resp, 42)                                           // want "len: use assert\\.Len"
-		assert.Lenf(t, resp, 42, "msg with args %d %s", 42, "42")         // want "len: use assert\\.Lenf"
-		assert.Len(t, resp, 42)                                           // want "len: use assert\\.Len"
-		assert.Lenf(t, resp, 42, "msg with args %d %s", 42, "42")         // want "len: use assert\\.Lenf"
-		assert.Len(t, resp, 42)                                           // want "len: use assert\\.Len"
-		assert.Lenf(t, resp, 42, "msg with args %d %s", 42, "42")         // want "len: use assert\\.Lenf"
-		assert.Len(t, resp, 42)                                           // want "len: use assert\\.Len"
-		assert.Lenf(t, resp, 42, "msg with args %d %s", 42, "42")         // want "len: use assert\\.Lenf"
-		assert.Len(t, resp, 42)                                           // want "len: remove unnecessary type conversion"
-		assert.Lenf(t, resp, 42, "msg with args %d %s", 42, "42")         // want "len: remove unnecessary type conversion"
-		assert.Len(t, resp, 42)                                           // want "len: remove unnecessary type conversion"
-		assert.Lenf(t, resp, 42, "msg with args %d %s", 42, "42")         // want "len: remove unnecessary type conversion"
-		assert.Len(t, resp, 42)                                           // want "len: remove unnecessary type conversion"
-		assert.Lenf(t, resp, 42, "msg with args %d %s", 42, "42")         // want "len: remove unnecessary type conversion"
-		assert.Len(t, resp, 42)                                           // want "len: remove unnecessary type conversion"
-		assert.Lenf(t, resp, 42, "msg with args %d %s", 42, "42")         // want "len: remove unnecessary type conversion"
 	}
 
 	// Valid.
@@ -87,16 +66,12 @@ func TestLenChecker(t *testing.T) {
 		assert.Lenf(t, arr, value, "msg with args %d %s", 42, "42")
 		assert.Len(t, arr, len(arr))
 		assert.Lenf(t, arr, len(arr), "msg with args %d %s", 42, "42")
-		assert.Len(t, String(10), 10)
-		assert.Lenf(t, String(10), 10, "msg with args %d %s", 42, "42")
 	}
 
 	// Ignored.
 	{
 		assert.Equal(t, len(arr), value)
 		assert.Equalf(t, len(arr), value, "msg with args %d %s", 42, "42")
-		assert.Len(t, String(10), 10)
-		assert.Lenf(t, String(10), 10, "msg with args %d %s", 42, "42")
 		assert.EqualValues(t, len(arr), value)
 		assert.EqualValuesf(t, len(arr), value, "msg with args %d %s", 42, "42")
 		assert.Exactly(t, len(arr), value)
@@ -172,8 +147,4 @@ func TestLenChecker(t *testing.T) {
 		assert.False(t, len(arr) <= 42)
 		assert.Falsef(t, len(arr) <= 42, "msg with args %d %s", 42, "42")
 	}
-}
-
-func String(n int) string {
-	return strings.Repeat("*", n)
 }

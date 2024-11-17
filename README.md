@@ -657,15 +657,6 @@ assert.Len(t, arr, len(expArr))
 > assert.Equal(t, len(arr), value)
 > ```
 
-Also, `len` repeats expected [gosimple](https://golangci-lint.run/usage/linters/#gosimple) (from staticcheck)
-[behaviour](https://github.com/dominikh/go-tools/issues/760) and detects (and removes) unnecessary 
-`string/[]byte/json.RawMessage` conversions like
-
-```go
-❌ assert.Len(t, string(headContents), 40)
-✅ assert.Len(t, headContents, 40)
-```
-
 ---
 
 ### negative-positive

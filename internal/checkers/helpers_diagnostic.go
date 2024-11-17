@@ -5,8 +5,6 @@ import (
 	"go/ast"
 
 	"golang.org/x/tools/go/analysis"
-
-	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
 func newRemoveFnAndUseDiagnostic(
@@ -86,26 +84,6 @@ func newRemoveFnDiagnostic(
 ) *analysis.Diagnostic {
 	return newDiagnostic(checker, call, "remove unnecessary "+fnName,
 		newSuggestedFuncRemoving(pass, fnName, fnPos, fnArgs...))
-}
-
-func newRemoveTypeConversionDiagnostic(
-	pass *analysis.Pass,
-	checker string,
-	call *CallMeta,
-	convPos analysis.Range,
-	replaceWith ast.Expr,
-) *analysis.Diagnostic {
-	return newDiagnostic(checker, call, "remove unnecessary type conversion",
-		analysis.SuggestedFix{
-			Message: "Remove type conversions",
-			TextEdits: []analysis.TextEdit{
-				{
-					Pos:     convPos.Pos(),
-					End:     convPos.End(),
-					NewText: analysisutil.NodeBytes(pass.Fset, replaceWith),
-				},
-			},
-		})
 }
 
 func newDiagnostic(

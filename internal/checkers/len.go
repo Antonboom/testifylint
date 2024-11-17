@@ -28,16 +28,11 @@ import (
 //	assert.Exactly(t, len(expArr), len(arr))
 //	assert.True(t, len(arr) == len(expArr))
 //
-//	assert.Len(t, string(headContents), 40)
-//	assert.Len(t, []byte(headContents), 40)
-//	assert.Len(t, json.RawMessage(headContents), 40)
-//
 // and requires
 //
 //	assert.Len(t, arr, 42)
 //	assert.Len(t, arr, value)
 //	assert.Len(t, arr, len(expArr))
-//	assert.Len(t, headContents, 40)
 //
 // The checker ignores assertions in which length checking is not a priority, e.g
 //
@@ -71,16 +66,6 @@ func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnost
 			return nil
 		}
 		return checker.checkArgs(call, pass, be.Y, be.X, true) // In True, the actual value is usually first.
-
-	case "Len":
-		if len(call.Args) < 2 {
-			return nil
-		}
-		a := call.Args[0]
-
-		if cleaned, ok := checker.unwrap(pass, a); ok {
-			return newRemoveTypeConversionDiagnostic(pass, checker.Name(), call, a, cleaned)
-		}
 	}
 	return nil
 }
@@ -88,13 +73,10 @@ func (checker Len) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnost
 func (checker Len) checkArgs(call *CallMeta, pass *analysis.Pass, a, b ast.Expr, inverted bool) *analysis.Diagnostic {
 	newUseLenDiagnostic := func(lenArg, expectedLen ast.Expr) *analysis.Diagnostic {
 		const proposedFn = "Len"
-
 		start, end := a.Pos(), b.End()
 		if inverted {
 			start, end = b.Pos(), a.End()
 		}
-
-		lenArg, _ = checker.unwrap(pass, lenArg)
 		return newUseFunctionDiagnostic(checker.Name(), call, proposedFn,
 			analysis.TextEdit{
 				Pos:     start,
@@ -120,24 +102,4 @@ func (checker Len) checkArgs(call *CallMeta, pass *analysis.Pass, a, b ast.Expr,
 	}
 
 	return nil
-}
-
-// unwrap unwraps expression from string, []byte, and json.RawMessage type conversions.
-// Return false if no conversion found.
-func (checker Len) unwrap(pass *analysis.Pass, e ast.Expr) (ast.Expr, bool) {
-	ce, ok := e.(*ast.CallExpr)
-	if !ok {
-		return e, false
-	}
-	if len(ce.Args) == 0 {
-		return e, false
-	}
-
-	if isIdentWithName("string", ce.Fun) ||
-		isByteArray(ce.Fun) ||
-		isJSONRawMessageCast(pass, ce) {
-		v, _ := checker.unwrap(pass, ce.Args[0])
-		return v, true
-	}
-	return e, false
 }
