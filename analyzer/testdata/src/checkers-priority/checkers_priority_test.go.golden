@@ -11,9 +11,9 @@ func TestCheckersPriority(t *testing.T) {
 	var f float64
 	var b bool
 
-	// `empty` > `len` > `expected-actual`
-	assert.Empty(t, []int{})  // want "empty: use assert\\.Empty"
-	assert.Len(t, []int{}, 3) // want "len: use assert\\.Len"
+	// `empty` > `expected-actual` > `len`
+	assert.Empty(t, []int{}) // want "empty: use assert\\.Empty"
+	assert.Equal(t, 3, len([]int{})) // want "expected-actual: need to reverse actual and expected values"
 
 	// `float-compare` > `bool-compare` > `compares` > `expected-actual`
 	require.True(t, 42.42 == f) // want "float-compare: use require\\.InEpsilon \\(or InDelta\\)"

@@ -370,6 +370,8 @@ assert.Error(t, err)
 ```go
 ❌
 assert.Equal(t, result, expected)
+assert.Equal(t, result, len(expected))
+assert.Equal(t, len(resultFields), len(expectedFields))
 assert.EqualExportedValues(t, resultObj, User{Name: "Rob"})
 assert.EqualValues(t, result, 42)
 assert.Exactly(t, result, int64(42))
@@ -389,6 +391,8 @@ assert.YAMLEq(t, result, "version: '3'")
 
 ✅
 assert.Equal(t, expected, result)
+assert.Equal(t, len(expected), result)
+assert.Equal(t, len(expectedFields), len(resultFields))
 assert.EqualExportedValues(t, User{Name: "Rob"}, resultObj)
 assert.EqualValues(t, 42, result)
 // And so on...
@@ -618,18 +622,40 @@ P.S. Look at [testify's issue](https://github.com/stretchr/testify/issues/772), 
 
 ```go
 ❌
-assert.Equal(t, 3, len(arr))
-assert.EqualValues(t, 3, len(arr))
-assert.Exactly(t, 3, len(arr))
-assert.True(t, len(arr) == 3)
+assert.Equal(t, 42, len(arr))
+assert.Equal(t, len(arr), 42)
+assert.EqualValues(t, 42, len(arr))
+assert.EqualValues(t, len(arr), 42)
+assert.Exactly(t, 42, len(arr))
+assert.Exactly(t, len(arr), 42)
+assert.True(t, 42 == len(arr))
+assert.True(t, len(arr) == 42)
+
+assert.Equal(t, value, len(arr))
+assert.EqualValues(t, value, len(arr))
+assert.Exactly(t, value, len(arr))
+assert.True(t, len(arr) == value)
+
+assert.Equal(t, len(expArr), len(arr))
+assert.EqualValues(t, len(expArr), len(arr))
+assert.Exactly(t, len(expArr), len(arr))
+assert.True(t, len(arr) == len(expArr))
 
 ✅
-assert.Len(t, arr, 3)
+assert.Len(t, arr, 42)
+assert.Len(t, arr, value)
+assert.Len(t, arr, len(expArr))
 ```
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
+
+> [!CAUTION]
+> The checker ignores assertions in which length checking is not a priority, e.g.
+> ```go
+> assert.Equal(t, len(arr), value)
+> ```
 
 ---
 
