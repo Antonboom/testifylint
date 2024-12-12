@@ -463,7 +463,7 @@ func isZero(v reflect.Value) bool {
 }
 
 // FutureLineWrap globally disables line wrapping when encoding long strings.
-// This is a temporary and thus deprecated method introduced to faciliate
+// This is a temporary and thus deprecated method introduced to facilitate
 // migration towards v3, which offers more control of line lengths on
 // individual encodings, and has a default matching the behavior introduced
 // by this function.

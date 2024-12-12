@@ -55,12 +55,12 @@ func FinalizeProfilesAndReportsForSuites(suites TestSuites, cliConfig types.CLIC
 			if coverage == 0 {
 				messages = append(messages, "composite coverage: [no statements]")
 			} else if suitesWithProfiles.AnyHaveProgrammaticFocus() {
-				messages = append(messages, fmt.Sprintf("composite coverage: %.1f%% of statements however some suites did not contribute because they included programatically focused specs", coverage))
+				messages = append(messages, fmt.Sprintf("composite coverage: %.1f%% of statements however some suites did not contribute because they included programmatically focused specs", coverage))
 			} else {
 				messages = append(messages, fmt.Sprintf("composite coverage: %.1f%% of statements", coverage))
 			}
 		} else {
-			messages = append(messages, "no composite coverage computed: all suites included programatically focused specs")
+			messages = append(messages, "no composite coverage computed: all suites included programmatically focused specs")
 		}
 	}
 

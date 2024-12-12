@@ -238,7 +238,7 @@ The 2.17.0 release did not have a version pinned for xstrings, which caused comp
 ### Fixed
 
 - #60: Fix typo in function name documentation (thanks @neil-ca-moore)
-- #61: Removing line with {{ due to blocking github pages genertion
+- #61: Removing line with {{ due to blocking github pages generation
 - #64: Update the list functions to handle int, string, and other slices for compatibility
 
 ## Release 2.14.0 (2017-10-06)
@@ -342,7 +342,7 @@ Because we switched from `int` to `int64` as the return value for all integer ma
 - `min` complements `max` (formerly `biggest`)
 - `empty` indicates that a value is the empty value for its type
 - `tuple` creates a tuple inside of a template: `{{$t := tuple "a", "b" "c"}}`
-- `dict` creates a dictionary inside of a template `{{$d := dict "key1" "val1" "key2" "val2"}}` 
+- `dict` creates a dictionary inside of a template `{{$d := dict "key1" "val1" "key2" "val2"}}`
 - Date formatters have been added for HTML dates (as used in `date` input fields)
 - Integer math functions can convert from a number of types, including `string` (via `strconv.ParseInt`).
 

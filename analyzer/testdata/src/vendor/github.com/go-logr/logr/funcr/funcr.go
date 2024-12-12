@@ -503,7 +503,7 @@ func (f Formatter) prettyWithFlags(value interface{}, flags uint32, depth int) s
 		}
 		return buf.String()
 	case reflect.Slice, reflect.Array:
-		// If this is outputing as JSON make sure this isn't really a json.RawMessage.
+		// If this is outputting as JSON make sure this isn't really a json.RawMessage.
 		// If so just emit "as-is" and don't pretty it as that will just print
 		// it as [X,Y,Z,...] which isn't terribly useful vs the string form you really want.
 		if f.outputFormat == outputJSON {

@@ -350,7 +350,7 @@ func (l Logger) WithName(name string) Logger {
 // support CallDepthLogSink, the original Logger will be returned.
 //
 // To skip one level, WithCallStackHelper() should be used instead of
-// WithCallDepth(1) because it works with implementions that support the
+// WithCallDepth(1) because it works with implementations that support the
 // CallDepthLogSink and/or CallStackHelperLogSink interfaces.
 func (l Logger) WithCallDepth(depth int) Logger {
 	if l.sink == nil {

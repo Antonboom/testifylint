@@ -818,7 +818,7 @@ func (nt NodeType) Is(nodeTypes NodeType) bool {
 }
 
 /*
-SpecEvent captures a vareity of events that can occur when specs run.  See SpecEventType for the list of available events.
+SpecEvent captures a variety of events that can occur when specs run.  See SpecEventType for the list of available events.
 */
 type SpecEvent struct {
 	SpecEventType SpecEventType

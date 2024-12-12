@@ -103,7 +103,7 @@ func generateBootstrap(conf GeneratorsConfig) {
 		if conf.CustomTemplateData != "" {
 			var tplCustomDataMap map[string]any
 			tplCustomData, err := os.ReadFile(conf.CustomTemplateData)
-			command.AbortIfError("Failed to read custom boostrap data file:", err)
+			command.AbortIfError("Failed to read custom bootstrap data file:", err)
 			if !json.Valid([]byte(tplCustomData)) {
 				command.AbortWith("Invalid JSON object in custom data file.")
 			}

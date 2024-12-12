@@ -59,8 +59,8 @@ type Suite struct {
 
 		However, there are some operations that can happen concurrently:
 
-		- AddReportEntry and CurrentSpecReport can be accessed at any point by the user - including in goroutines that outlive the node intentionally (see, e.g. #1020).  They both form a self-contained read-write pair and so a lock in them is sufficent.
-		- generateProgressReport can be invoked at any point in time by an interrupt or a progres poll.  Moreover, it requires access to currentSpecReport, currentNode, currentNodeStartTime, and progressStepCursor.  To make it threadsafe we need to lock around generateProgressReport when we read those variables _and_ everywhere those variables are *written*.  In general we don't need to worry about all possible field writes to these variables as what `generateProgressReport` does with these variables is fairly selective (hence the name of the lock).  Specifically, we dont' need to lock around state and failure message changes on `currentSpecReport` - just the setting of the variable itself.
+		- AddReportEntry and CurrentSpecReport can be accessed at any point by the user - including in goroutines that outlive the node intentionally (see, e.g. #1020).  They both form a self-contained read-write pair and so a lock in them is sufficient.
+		- generateProgressReport can be invoked at any point in time by an interrupt or a progress poll.  Moreover, it requires access to currentSpecReport, currentNode, currentNodeStartTime, and progressStepCursor.  To make it threadsafe we need to lock around generateProgressReport when we read those variables _and_ everywhere those variables are *written*.  In general we don't need to worry about all possible field writes to these variables as what `generateProgressReport` does with these variables is fairly selective (hence the name of the lock).  Specifically, we don't need to lock around state and failure message changes on `currentSpecReport` - just the setting of the variable itself.
 	*/
 	selectiveLock *sync.Mutex
 

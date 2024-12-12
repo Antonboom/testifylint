@@ -68,7 +68,7 @@ type JUnitTestSuite struct {
 	Tests int `xml:"tests,attr"`
 	// Disabled maps onto specs that are pending
 	Disabled int `xml:"disabled,attr"`
-	// Skiped maps onto specs that are skipped
+	// Skipped maps onto specs that are skipped
 	Skipped int `xml:"skipped,attr"`
 	// Errors maps onto specs that panicked or were interrupted
 	Errors int `xml:"errors,attr"`

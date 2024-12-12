@@ -354,9 +354,9 @@ Ginkgo now supports per-node and per-spec timeouts on interruptible nodes.  Chec
 It("is interruptible", func(ctx SpecContext) { // or context.Context instead of SpecContext, both are valid.
     // do things until `ctx.Done()` is closed, for example:
     req, err := http.NewRequestWithContext(ctx, "POST", "/build-widgets", nil)
-    Expect(err).NotTo(HaveOccured())
+    Expect(err).NotTo(HaveOccurred())
     _, err := http.DefaultClient.Do(req)
-    Expect(err).NotTo(HaveOccured())
+    Expect(err).NotTo(HaveOccurred())
 
     Eventually(client.WidgetCount).WithContext(ctx).Should(Equal(17))
 }, NodeTimeout(time.Second*20), GracePeriod(5*time.Second))
@@ -388,9 +388,9 @@ Ginkgo can now generate Progress Reports to point users at the current running l
 
 These Progress Reports allow users to debug stuck or slow tests without exiting the Ginkgo process.  A Progress Report can be generated at any time by sending Ginkgo a `SIGINFO` (`^T` on MacOS/BSD) or `SIGUSR1`.
 
-In addition, the user can specify `--poll-progress-after` and `--poll-progress-interval` to have Ginkgo start periodically emitting progress reports if a given node takes too long.  These can be overriden/set on a per-node basis with the `PollProgressAfter` and `PollProgressInterval` decorators.
+In addition, the user can specify `--poll-progress-after` and `--poll-progress-interval` to have Ginkgo start periodically emitting progress reports if a given node takes too long.  These can be overridden/set on a per-node basis with the `PollProgressAfter` and `PollProgressInterval` decorators.
 
-Progress Reports are emitted to stdout, and also stored in the machine-redable report formats that Ginkgo supports.
+Progress Reports are emitted to stdout, and also stored in the machine-readable report formats that Ginkgo supports.
 
 Ginkgo also uses this progress reporting infrastructure under the hood when handling timeouts and interrupts.  This yields much more focused, useful, and informative stack traces than previously.
 
@@ -401,7 +401,7 @@ Ginkgo also uses this progress reporting infrastructure under the hood when hand
 
 ### Maintenance
 - Modernize the invocation of Ginkgo in github actions [0ffde58]
-- Update reocmmended CI settings in docs [896bbb9]
+- Update recommended CI settings in docs [896bbb9]
 - Speed up unnecessarily slow integration test [6d3a90e]
 
 ## 2.1.6
@@ -820,7 +820,7 @@ Improvements:
 
 Bug Fixes:
 
-- `ginkgo boostrap` and `ginkgo generate` no longer fail when dealing with `hyphen-separated-packages`.
+- `ginkgo bootstrap` and `ginkgo generate` no longer fail when dealing with `hyphen-separated-packages`.
 - parallel specs are now better distributed across nodes - fixed a crashing bug where (for example) distributing 11 tests across 7 nodes would panic
 
 ## 1.0.0 (5/24/2014)

@@ -750,9 +750,9 @@ Similarly:
 	BeforeEach(func() {
 	    DeferCleanup(func(ctx SpecContext, path) {
 	    	req, err := http.NewRequestWithContext(ctx, "POST", path, nil)
-	    	Expect(err).NotTo(HaveOccured())
+	    	Expect(err).NotTo(HaveOccurred())
 	    	_, err := http.DefaultClient.Do(req)
-	    	Expect(err).NotTo(HaveOccured())
+	    	Expect(err).NotTo(HaveOccurred())
 	    }, "example.com/cleanup", NodeTimeout(time.Second*3))
 	})
 

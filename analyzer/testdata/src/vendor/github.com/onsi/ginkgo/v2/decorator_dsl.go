@@ -109,19 +109,19 @@ type PollProgressAfter = internal.PollProgressAfter
 /*
 PollProgressInterval allows you to override the configured value for --poll-progress-interval for a particular node.
 
-Once a node has been running for longer than PollProgressAfter Ginkgo will emit node progress periodically at an interval of PollProgresInterval.
+Once a node has been running for longer than PollProgressAfter Ginkgo will emit node progress periodically at an interval of PollProgressInterval.
 */
 type PollProgressInterval = internal.PollProgressInterval
 
 /*
-NodeTimeout allows you to specify a timeout for an indivdiual node.  The node cannot be a container and must be interruptible (i.e. it must be passed a function that accepts a SpecContext or context.Context).
+NodeTimeout allows you to specify a timeout for an individual node.  The node cannot be a container and must be interruptible (i.e. it must be passed a function that accepts a SpecContext or context.Context).
 
 If the node does not exit within the specified NodeTimeout its context will be cancelled.  The node wil then have a period of time controlled by the GracePeriod decorator (or global --grace-period command-line argument) to exit.  If the node does not exit within GracePeriod Ginkgo will leak the node and proceed to any clean-up nodes associated with the current spec.
 */
 type NodeTimeout = internal.NodeTimeout
 
 /*
-SpecTimeout allows you to specify a timeout for an indivdiual spec.  SpecTimeout can only decorate interruptible It nodes.
+SpecTimeout allows you to specify a timeout for an individual spec.  SpecTimeout can only decorate interruptible It nodes.
 
 All nodes associated with the It node will need to complete before the SpecTimeout has elapsed.  Individual nodes (e.g. BeforeEach) may be decorated with different NodeTimeouts - but these can only serve to provide a more stringent deadline for the node in question; they cannot extend the deadline past the SpecTimeout.
 
