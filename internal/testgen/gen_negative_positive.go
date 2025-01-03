@@ -63,6 +63,11 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		)
 	}
 
+	invalidAssertions = append(invalidAssertions,
+		Assertion{Fn: "True", Argsf: "f(a) > 0", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "f(a)"},
+		Assertion{Fn: "True", Argsf: "len(l) > 0", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "len(l)"},
+	)
+
 	var ignoredAssertions []Assertion
 
 	for _, fn := range []string{"Equal", "NotEqual", "GreaterOrEqual", "LessOrEqual"} {
@@ -273,6 +278,10 @@ import (
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var a int
+	l := []int{1, 2, 3}
+	f := func(d int) int {
+		return 1
+	}
 
 	// Invalid.
 	{

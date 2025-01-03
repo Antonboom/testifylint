@@ -10,6 +10,10 @@ import (
 
 func TestNegativePositiveChecker(t *testing.T) {
 	var a int
+	l := []int{1, 2, 3}
+	f := func(d int) int {
+		return 1
+	}
 
 	// Invalid.
 	{
@@ -217,6 +221,10 @@ func TestNegativePositiveChecker(t *testing.T) {
 		assert.Falsef(t, uint64(a) <= uint64(0), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
 		assert.False(t, uint64(0) >= uint64(a))                                   // want "negative-positive: use assert\\.Positive"
 		assert.Falsef(t, uint64(0) >= uint64(a), "msg with args %d %s", 42, "42") // want "negative-positive: use assert\\.Positivef"
+		assert.True(t, f(a) > 0)                                                  // want "negative-positive: use assert\\.Positive"
+		assert.Truef(t, f(a) > 0, "msg with args %d %s", 42, "42")                // want "negative-positive: use assert\\.Positivef"
+		assert.True(t, len(l) > 0)                                                // want "negative-positive: use assert\\.Positive"
+		assert.Truef(t, len(l) > 0, "msg with args %d %s", 42, "42")              // want "negative-positive: use assert\\.Positivef"
 	}
 
 	// Valid.

@@ -46,6 +46,11 @@ func (checker NegativePositive) Check(pass *analysis.Pass, call *CallMeta) *anal
 
 func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	newUseNegativeDiagnostic := func(replaceStart, replaceEnd token.Pos, replaceWith ast.Expr) *analysis.Diagnostic {
+		e, ok := isTypeConversion(replaceWith, "uint", "uint8", "uint16", "uint32", "uint64", "int", "int8", "int16", "int32", "int64")
+		if ok {
+			replaceWith = e
+		}
+
 		const proposed = "Negative"
 		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
 			analysis.TextEdit{
@@ -65,7 +70,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		a, b := call.Args[0], call.Args[1]
 
 		if isSignedNotZero(pass, a) && isZeroOrSignedZero(b) {
-			return newUseNegativeDiagnostic(a.Pos(), b.End(), untype(a))
+			return newUseNegativeDiagnostic(a.Pos(), b.End(), a)
 		}
 
 	case "Greater":
@@ -75,7 +80,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		a, b := call.Args[0], call.Args[1]
 
 		if isZeroOrSignedZero(a) && isSignedNotZero(pass, b) {
-			return newUseNegativeDiagnostic(a.Pos(), b.End(), untype(b))
+			return newUseNegativeDiagnostic(a.Pos(), b.End(), b)
 		}
 
 	case "True":
@@ -89,7 +94,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
-			return newUseNegativeDiagnostic(expr.Pos(), expr.End(), untype(survivingArg))
+			return newUseNegativeDiagnostic(expr.Pos(), expr.End(), survivingArg)
 		}
 
 	case "False":
@@ -103,7 +108,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
-			return newUseNegativeDiagnostic(expr.Pos(), expr.End(), untype(survivingArg))
+			return newUseNegativeDiagnostic(expr.Pos(), expr.End(), survivingArg)
 		}
 	}
 	return nil
@@ -111,6 +116,11 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 
 func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	newUsePositiveDiagnostic := func(replaceStart, replaceEnd token.Pos, replaceWith ast.Expr) *analysis.Diagnostic {
+		e, ok := isTypeConversion(replaceWith, "uint", "uint8", "uint16", "uint32", "uint64", "int", "int8", "int16", "int32", "int64")
+		if ok {
+			replaceWith = e
+		}
+
 		const proposed = "Positive"
 		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
 			analysis.TextEdit{
@@ -128,7 +138,7 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 		a, b := call.Args[0], call.Args[1]
 
 		if isNotAnyZero(a) && isAnyZero(b) {
-			return newUsePositiveDiagnostic(a.Pos(), b.End(), untype(a))
+			return newUsePositiveDiagnostic(a.Pos(), b.End(), a)
 		}
 
 	case "Less":
@@ -138,7 +148,7 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 		a, b := call.Args[0], call.Args[1]
 
 		if isAnyZero(a) && isNotAnyZero(b) {
-			return newUsePositiveDiagnostic(a.Pos(), b.End(), untype(b))
+			return newUsePositiveDiagnostic(a.Pos(), b.End(), b)
 		}
 
 	case "True":
@@ -152,7 +162,7 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
-			return newUsePositiveDiagnostic(expr.Pos(), expr.End(), untype(survivingArg))
+			return newUsePositiveDiagnostic(expr.Pos(), expr.End(), survivingArg)
 		}
 
 	case "False":
@@ -166,7 +176,7 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
-			return newUsePositiveDiagnostic(expr.Pos(), expr.End(), untype(survivingArg))
+			return newUsePositiveDiagnostic(expr.Pos(), expr.End(), survivingArg)
 		}
 	}
 	return nil

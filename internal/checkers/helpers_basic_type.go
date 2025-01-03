@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/token"
 	"go/types"
+	"slices"
 	"strconv"
 
 	"golang.org/x/tools/go/analysis"
@@ -38,22 +39,29 @@ func isTypedUnsignedIntNumber(e ast.Expr, v int) bool {
 }
 
 func isTypedIntNumber(e ast.Expr, v int, types ...string) bool {
+	e, ok := isTypeConversion(e, types...)
+	if !ok {
+		return false
+	}
+	return isIntNumber(e, v)
+}
+
+func isTypeConversion(e ast.Expr, types ...string) (ast.Expr, bool) {
 	ce, ok := e.(*ast.CallExpr)
 	if !ok || len(ce.Args) != 1 {
-		return false
+		return e, false
 	}
 
 	fn, ok := ce.Fun.(*ast.Ident)
 	if !ok {
-		return false
+		return e, false
 	}
 
-	for _, t := range types {
-		if fn.Name == t {
-			return isIntNumber(ce.Args[0], v)
-		}
+	if !slices.Contains(types, fn.Name) {
+		return e, false
 	}
-	return false
+
+	return ce.Args[0], true
 }
 
 func isIntNumber(e ast.Expr, rhs int) bool {
@@ -170,13 +178,4 @@ func hasBytesType(pass *analysis.Pass, e ast.Expr) bool {
 func hasStringType(pass *analysis.Pass, e ast.Expr) bool {
 	basicType, ok := pass.TypesInfo.TypeOf(e).(*types.Basic)
 	return ok && basicType.Kind() == types.String
-}
-
-// untype returns v from type(v) expression or v itself if there is no type conversion.
-func untype(e ast.Expr) ast.Expr {
-	ce, ok := e.(*ast.CallExpr)
-	if !ok || len(ce.Args) != 1 {
-		return e
-	}
-	return ce.Args[0]
 }
