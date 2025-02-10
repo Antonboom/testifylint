@@ -180,6 +180,46 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 	assert.FileExistsf(t, "", "msg")
 	assert.FileExistsf(t, "", "msg with arg", 42) // want "formatter: assert\\.FileExistsf call has arguments but no formatting directives"
 	assert.FileExistsf(t, "", "msg with arg %d", 42)
+	assert.Greater(t, nil, nil)
+	assert.Greater(t, nil, nil, "msg")
+	assert.Greaterf(t, nil, nil, "msg")
+	assert.Greaterf(t, nil, nil, "msg with arg", 42) // want "formatter: assert\\.Greaterf call has arguments but no formatting directives"
+	assert.Greaterf(t, nil, nil, "msg with arg %d", 42)
+	assert.GreaterOrEqual(t, nil, nil)
+	assert.GreaterOrEqual(t, nil, nil, "msg")
+	assert.GreaterOrEqualf(t, nil, nil, "msg")
+	assert.GreaterOrEqualf(t, nil, nil, "msg with arg", 42) // want "formatter: assert\\.GreaterOrEqualf call has arguments but no formatting directives"
+	assert.GreaterOrEqualf(t, nil, nil, "msg with arg %d", 42)
+	assert.HTTPBodyContains(t, nil, "", "", nil, "")
+	assert.HTTPBodyContains(t, nil, "", "", nil, "", "msg")
+	assert.HTTPBodyContainsf(t, nil, "", "", nil, "", "msg")
+	assert.HTTPBodyContainsf(t, nil, "", "", nil, "", "msg with arg", 42) // want "formatter: assert\\.HTTPBodyContainsf call has arguments but no formatting directives"
+	assert.HTTPBodyContainsf(t, nil, "", "", nil, "", "msg with arg %d", 42)
+	assert.HTTPBodyNotContains(t, nil, "", "", nil, "")
+	assert.HTTPBodyNotContains(t, nil, "", "", nil, "", "msg")
+	assert.HTTPBodyNotContainsf(t, nil, "", "", nil, "", "msg")
+	assert.HTTPBodyNotContainsf(t, nil, "", "", nil, "", "msg with arg", 42) // want "formatter: assert\\.HTTPBodyNotContainsf call has arguments but no formatting directives"
+	assert.HTTPBodyNotContainsf(t, nil, "", "", nil, "", "msg with arg %d", 42)
+	assert.HTTPError(t, nil, "", "", nil)
+	assert.HTTPError(t, nil, "", "", nil, "msg")
+	assert.HTTPErrorf(t, nil, "", "", nil, "msg")
+	assert.HTTPErrorf(t, nil, "", "", nil, "msg with arg", 42) // want "formatter: assert\\.HTTPErrorf call has arguments but no formatting directives"
+	assert.HTTPErrorf(t, nil, "", "", nil, "msg with arg %d", 42)
+	assert.HTTPRedirect(t, nil, "", "", nil)
+	assert.HTTPRedirect(t, nil, "", "", nil, "msg")
+	assert.HTTPRedirectf(t, nil, "", "", nil, "msg")
+	assert.HTTPRedirectf(t, nil, "", "", nil, "msg with arg", 42) // want "formatter: assert\\.HTTPRedirectf call has arguments but no formatting directives"
+	assert.HTTPRedirectf(t, nil, "", "", nil, "msg with arg %d", 42)
+	assert.HTTPStatusCode(t, nil, "", "", nil, 200)
+	assert.HTTPStatusCode(t, nil, "", "", nil, 200, "msg")
+	assert.HTTPStatusCodef(t, nil, "", "", nil, 200, "msg")
+	assert.HTTPStatusCodef(t, nil, "", "", nil, 200, "msg with arg", 42) // want "formatter: assert\\.HTTPStatusCodef call has arguments but no formatting directives"
+	assert.HTTPStatusCodef(t, nil, "", "", nil, 200, "msg with arg %d", 42)
+	assert.HTTPSuccess(t, nil, "", "", nil)
+	assert.HTTPSuccess(t, nil, "", "", nil, "msg")
+	assert.HTTPSuccessf(t, nil, "", "", nil, "msg")
+	assert.HTTPSuccessf(t, nil, "", "", nil, "msg with arg", 42) // want "formatter: assert\\.HTTPSuccessf call has arguments but no formatting directives"
+	assert.HTTPSuccessf(t, nil, "", "", nil, "msg with arg %d", 42)
 	assert.Implements(t, nil, nil)
 	assert.Implements(t, nil, nil, "msg")
 	assert.Implementsf(t, nil, nil, "msg")
@@ -210,6 +250,26 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 	assert.InEpsilonSlicef(t, nil, nil, 0., "msg")
 	assert.InEpsilonSlicef(t, nil, nil, 0., "msg with arg", 42) // want "formatter: assert\\.InEpsilonSlicef call has arguments but no formatting directives"
 	assert.InEpsilonSlicef(t, nil, nil, 0., "msg with arg %d", 42)
+	assert.IsDecreasing(t, nil)
+	assert.IsDecreasing(t, nil, "msg")
+	assert.IsDecreasingf(t, nil, "msg")
+	assert.IsDecreasingf(t, nil, "msg with arg", 42) // want "formatter: assert\\.IsDecreasingf call has arguments but no formatting directives"
+	assert.IsDecreasingf(t, nil, "msg with arg %d", 42)
+	assert.IsIncreasing(t, nil)
+	assert.IsIncreasing(t, nil, "msg")
+	assert.IsIncreasingf(t, nil, "msg")
+	assert.IsIncreasingf(t, nil, "msg with arg", 42) // want "formatter: assert\\.IsIncreasingf call has arguments but no formatting directives"
+	assert.IsIncreasingf(t, nil, "msg with arg %d", 42)
+	assert.IsNonDecreasing(t, nil)
+	assert.IsNonDecreasing(t, nil, "msg")
+	assert.IsNonDecreasingf(t, nil, "msg")
+	assert.IsNonDecreasingf(t, nil, "msg with arg", 42) // want "formatter: assert\\.IsNonDecreasingf call has arguments but no formatting directives"
+	assert.IsNonDecreasingf(t, nil, "msg with arg %d", 42)
+	assert.IsNonIncreasing(t, nil)
+	assert.IsNonIncreasing(t, nil, "msg")
+	assert.IsNonIncreasingf(t, nil, "msg")
+	assert.IsNonIncreasingf(t, nil, "msg with arg", 42) // want "formatter: assert\\.IsNonIncreasingf call has arguments but no formatting directives"
+	assert.IsNonIncreasingf(t, nil, "msg with arg %d", 42)
 	assert.IsType(t, nil, nil)
 	assert.IsType(t, nil, nil, "msg")
 	assert.IsTypef(t, nil, nil, "msg")
@@ -225,6 +285,21 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 	assert.Lenf(t, nil, 0, "msg")
 	assert.Lenf(t, nil, 0, "msg with arg", 42) // want "formatter: assert\\.Lenf call has arguments but no formatting directives"
 	assert.Lenf(t, nil, 0, "msg with arg %d", 42)
+	assert.Less(t, nil, nil)
+	assert.Less(t, nil, nil, "msg")
+	assert.Lessf(t, nil, nil, "msg")
+	assert.Lessf(t, nil, nil, "msg with arg", 42) // want "formatter: assert\\.Lessf call has arguments but no formatting directives"
+	assert.Lessf(t, nil, nil, "msg with arg %d", 42)
+	assert.LessOrEqual(t, nil, nil)
+	assert.LessOrEqual(t, nil, nil, "msg")
+	assert.LessOrEqualf(t, nil, nil, "msg")
+	assert.LessOrEqualf(t, nil, nil, "msg with arg", 42) // want "formatter: assert\\.LessOrEqualf call has arguments but no formatting directives"
+	assert.LessOrEqualf(t, nil, nil, "msg with arg %d", 42)
+	assert.Negative(t, 0)
+	assert.Negative(t, 0, "msg")
+	assert.Negativef(t, 0, "msg")
+	assert.Negativef(t, 0, "msg with arg", 42) // want "formatter: assert\\.Negativef call has arguments but no formatting directives"
+	assert.Negativef(t, 0, "msg with arg %d", 42)
 	assert.Never(t, nil, 0, 0)
 	assert.Never(t, nil, 0, 0, "msg")
 	assert.Neverf(t, nil, 0, 0, "msg")
@@ -255,6 +330,11 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 	assert.NotContainsf(t, nil, nil, "msg")
 	assert.NotContainsf(t, nil, nil, "msg with arg", 42) // want "formatter: assert\\.NotContainsf call has arguments but no formatting directives"
 	assert.NotContainsf(t, nil, nil, "msg with arg %d", 42)
+	assert.NotElementsMatch(t, nil, nil)
+	assert.NotElementsMatch(t, nil, nil, "msg")
+	assert.NotElementsMatchf(t, nil, nil, "msg")
+	assert.NotElementsMatchf(t, nil, nil, "msg with arg", 42) // want "formatter: assert\\.NotElementsMatchf call has arguments but no formatting directives"
+	assert.NotElementsMatchf(t, nil, nil, "msg with arg %d", 42)
 	assert.NotEmpty(t, nil)
 	assert.NotEmpty(t, nil, "msg")
 	assert.NotEmptyf(t, nil, "msg")
@@ -270,11 +350,21 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 	assert.NotEqualValuesf(t, nil, nil, "msg")
 	assert.NotEqualValuesf(t, nil, nil, "msg with arg", 42) // want "formatter: assert\\.NotEqualValuesf call has arguments but no formatting directives"
 	assert.NotEqualValuesf(t, nil, nil, "msg with arg %d", 42)
+	assert.NotErrorAs(t, nil, nil)
+	assert.NotErrorAs(t, nil, nil, "msg")
+	assert.NotErrorAsf(t, nil, nil, "msg")
+	assert.NotErrorAsf(t, nil, nil, "msg with arg", 42) // want "formatter: assert\\.NotErrorAsf call has arguments but no formatting directives"
+	assert.NotErrorAsf(t, nil, nil, "msg with arg %d", 42)
 	assert.NotErrorIs(t, nil, nil)
 	assert.NotErrorIs(t, nil, nil, "msg")
 	assert.NotErrorIsf(t, nil, nil, "msg")
 	assert.NotErrorIsf(t, nil, nil, "msg with arg", 42) // want "formatter: assert\\.NotErrorIsf call has arguments but no formatting directives"
 	assert.NotErrorIsf(t, nil, nil, "msg with arg %d", 42)
+	assert.NotImplements(t, nil, nil)
+	assert.NotImplements(t, nil, nil, "msg")
+	assert.NotImplementsf(t, nil, nil, "msg")
+	assert.NotImplementsf(t, nil, nil, "msg with arg", 42) // want "formatter: assert\\.NotImplementsf call has arguments but no formatting directives"
+	assert.NotImplementsf(t, nil, nil, "msg with arg %d", 42)
 	assert.NotNil(t, nil)
 	assert.NotNil(t, nil, "msg")
 	assert.NotNilf(t, nil, "msg")
