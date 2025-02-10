@@ -41,8 +41,7 @@ func loginUser(t *testing.T, uid string) *session {
 	return new(session)
 }
 
-type session struct {
-}
+type session struct{}
 
 func (s *session) MakeRequest(t *testing.T, req *http.Request, expStatusCode int) *Response {
 	return new(Response)
@@ -57,8 +56,7 @@ type Response struct {
 }
 
 // HTMLDoc struct
-type HTMLDoc struct {
-}
+type HTMLDoc struct{}
 
 // NewHTMLParser parse html file
 func NewHTMLParser(t testing.TB, body *bytes.Buffer) *HTMLDoc {
@@ -73,8 +71,7 @@ func (doc *HTMLDoc) Find(selector string) *Selection {
 	return new(Selection)
 }
 
-type Selection struct {
-}
+type Selection struct{}
 
 // Attr gets the specified attribute's value for the first element in the
 // Selection. To get the value for each element individually, use a looping

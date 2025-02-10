@@ -388,14 +388,14 @@ func TestCSRDuration(t *testing.T) {
 	assert.NoError(t, err) // want "require-error: for error assertions use require"
 
 	caPublicKeyFile := path.Join(t.TempDir(), "test-ca-public-key")
-	err = os.WriteFile(caPublicKeyFile, pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: caCert.([]byte)}), os.FileMode(0600))
+	err = os.WriteFile(caPublicKeyFile, pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: caCert.([]byte)}), os.FileMode(0o600))
 	require.NoError(t, err)
 
 	caPrivateKeyBytes, err := operationWithResult()
 	assert.NoError(t, err) // want "require-error: for error assertions use require"
 
 	caPrivateKeyFile := path.Join(t.TempDir(), "test-ca-private-key")
-	err = os.WriteFile(caPrivateKeyFile, caPrivateKeyBytes.([]byte), os.FileMode(0600))
+	err = os.WriteFile(caPrivateKeyFile, caPrivateKeyBytes.([]byte), os.FileMode(0o600))
 	assert.NoError(t, err) // want "require-error: for error assertions use require"
 
 	tests := []struct {
@@ -547,7 +547,7 @@ func createTempPackageJson(t *testing.T, version string) error {
 	data := struct{}{}
 	file, _ := json.MarshalIndent(data, "", " ")
 
-	err := os.WriteFile("package.json", file, 0644)
+	err := os.WriteFile("package.json", file, 0o644)
 	assert.NoError(t, err) // want "require-error: for error assertions use require"
 
 	t.Cleanup(func() {
