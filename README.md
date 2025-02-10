@@ -317,11 +317,13 @@ assert.NoError(t, err, errSentinel)
 assert.True(t, errors.Is(err, errSentinel))
 assert.False(t, errors.Is(err, errSentinel))
 assert.True(t, errors.As(err, &target))
+assert.False(t, errors.As(err, &target))
 
 ✅
 assert.ErrorIs(t, err, errSentinel)
 assert.NotErrorIs(t, err, errSentinel)
 assert.ErrorAs(t, err, &target)
+assert.NotErrorAs(t, err, &target)
 ```
 
 **Autofix**: partially. <br>

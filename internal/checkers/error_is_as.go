@@ -15,12 +15,14 @@ import (
 //	assert.True(t, errors.Is(err, errSentinel))
 //	assert.False(t, errors.Is(err, errSentinel))
 //	assert.True(t, errors.As(err, &target))
+//	assert.False(t, errors.As(err, &target))
 //
 // and requires
 //
 //	assert.ErrorIs(t, err, errSentinel)
 //	assert.NotErrorIs(t, err, errSentinel)
 //	assert.ErrorAs(t, err, &target)
+//	assert.NotErrorAs(t, err, &target)
 //
 // Also ErrorIsAs repeats go vet's "errorsas" check logic.
 type ErrorIsAs struct{}
@@ -87,8 +89,14 @@ func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Di
 			return nil
 		}
 
-		if isErrorsIsCall(pass, ce) {
-			const proposed = "NotErrorIs"
+		var proposed string
+		switch {
+		case isErrorsIsCall(pass, ce):
+			proposed = "NotErrorIs"
+		case isErrorsAsCall(pass, ce):
+			proposed = "NotErrorAs"
+		}
+		if proposed != "" {
 			return newUseFunctionDiagnostic(checker.Name(), call, proposed,
 				analysis.TextEdit{
 					Pos:     ce.Pos(),
@@ -97,7 +105,7 @@ func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Di
 				})
 		}
 
-	case "ErrorAs":
+	case "ErrorAs", "NotErrorAs":
 		if len(call.Args) < 2 {
 			return nil
 		}

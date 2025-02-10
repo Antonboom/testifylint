@@ -35,6 +35,8 @@ func TestErrorIsAsChecker(t *testing.T) {
 		assert.Falsef(t, errors.Is(err, errSentinel), "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.NotErrorIsf"
 		assert.True(t, errors.As(err, &target))                                        // want "error-is-as: use assert\\.ErrorAs"
 		assert.Truef(t, errors.As(err, &target), "msg with args %d %s", 42, "42")      // want "error-is-as: use assert\\.ErrorAsf"
+		assert.False(t, errors.As(err, &target))                                       // want "error-is-as: use assert\\.NotErrorAs"
+		assert.Falsef(t, errors.As(err, &target), "msg with args %d %s", 42, "42")     // want "error-is-as: use assert\\.NotErrorAsf"
 	}
 
 	// Valid.
@@ -78,5 +80,13 @@ func TestErrorIsAsChecker(t *testing.T) {
 		assert.ErrorAsf(t, err, &target, "msg")
 		assert.ErrorAsf(t, err, &target, "msg with arg %d", 42)
 		assert.ErrorAsf(t, err, &target, "msg with args %d %s", 42, "42")
+
+		assert.NotErrorAs(t, err, &target)
+		assert.NotErrorAs(t, err, &target, "msg")
+		assert.NotErrorAs(t, err, &target, "msg with arg %d", 42)
+		assert.NotErrorAs(t, err, &target, "msg with args %d %s", 42, "42")
+		assert.NotErrorAsf(t, err, &target, "msg")
+		assert.NotErrorAsf(t, err, &target, "msg with arg %d", 42)
+		assert.NotErrorAsf(t, err, &target, "msg with args %d %s", 42, "42")
 	}
 }
