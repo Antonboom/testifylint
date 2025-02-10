@@ -136,6 +136,46 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 	assert.FileExistsf(t, "", "msg")
 	assert.FileExistsf(t, "", "msg with arg", 42)
 	assert.FileExistsf(t, "", "msg with arg %d", 42)
+	assert.Greater(t, nil, nil)
+	assert.Greaterf(t, nil, nil, "msg") // want "formatter: use assert\\.Greaterf"
+	assert.Greaterf(t, nil, nil, "msg")
+	assert.Greaterf(t, nil, nil, "msg with arg", 42)
+	assert.Greaterf(t, nil, nil, "msg with arg %d", 42)
+	assert.GreaterOrEqual(t, nil, nil)
+	assert.GreaterOrEqualf(t, nil, nil, "msg") // want "formatter: use assert\\.GreaterOrEqualf"
+	assert.GreaterOrEqualf(t, nil, nil, "msg")
+	assert.GreaterOrEqualf(t, nil, nil, "msg with arg", 42)
+	assert.GreaterOrEqualf(t, nil, nil, "msg with arg %d", 42)
+	assert.HTTPBodyContains(t, nil, "", "", nil, "")
+	assert.HTTPBodyContainsf(t, nil, "", "", nil, "", "msg") // want "formatter: use assert\\.HTTPBodyContainsf"
+	assert.HTTPBodyContainsf(t, nil, "", "", nil, "", "msg")
+	assert.HTTPBodyContainsf(t, nil, "", "", nil, "", "msg with arg", 42)
+	assert.HTTPBodyContainsf(t, nil, "", "", nil, "", "msg with arg %d", 42)
+	assert.HTTPBodyNotContains(t, nil, "", "", nil, "")
+	assert.HTTPBodyNotContainsf(t, nil, "", "", nil, "", "msg") // want "formatter: use assert\\.HTTPBodyNotContainsf"
+	assert.HTTPBodyNotContainsf(t, nil, "", "", nil, "", "msg")
+	assert.HTTPBodyNotContainsf(t, nil, "", "", nil, "", "msg with arg", 42)
+	assert.HTTPBodyNotContainsf(t, nil, "", "", nil, "", "msg with arg %d", 42)
+	assert.HTTPError(t, nil, "", "", nil)
+	assert.HTTPErrorf(t, nil, "", "", nil, "msg") // want "formatter: use assert\\.HTTPErrorf"
+	assert.HTTPErrorf(t, nil, "", "", nil, "msg")
+	assert.HTTPErrorf(t, nil, "", "", nil, "msg with arg", 42)
+	assert.HTTPErrorf(t, nil, "", "", nil, "msg with arg %d", 42)
+	assert.HTTPRedirect(t, nil, "", "", nil)
+	assert.HTTPRedirectf(t, nil, "", "", nil, "msg") // want "formatter: use assert\\.HTTPRedirectf"
+	assert.HTTPRedirectf(t, nil, "", "", nil, "msg")
+	assert.HTTPRedirectf(t, nil, "", "", nil, "msg with arg", 42)
+	assert.HTTPRedirectf(t, nil, "", "", nil, "msg with arg %d", 42)
+	assert.HTTPStatusCode(t, nil, "", "", nil, 200)
+	assert.HTTPStatusCodef(t, nil, "", "", nil, 200, "msg") // want "formatter: use assert\\.HTTPStatusCodef"
+	assert.HTTPStatusCodef(t, nil, "", "", nil, 200, "msg")
+	assert.HTTPStatusCodef(t, nil, "", "", nil, 200, "msg with arg", 42)
+	assert.HTTPStatusCodef(t, nil, "", "", nil, 200, "msg with arg %d", 42)
+	assert.HTTPSuccess(t, nil, "", "", nil)
+	assert.HTTPSuccessf(t, nil, "", "", nil, "msg") // want "formatter: use assert\\.HTTPSuccessf"
+	assert.HTTPSuccessf(t, nil, "", "", nil, "msg")
+	assert.HTTPSuccessf(t, nil, "", "", nil, "msg with arg", 42)
+	assert.HTTPSuccessf(t, nil, "", "", nil, "msg with arg %d", 42)
 	assert.Implements(t, nil, nil)
 	assert.Implementsf(t, nil, nil, "msg") // want "formatter: use assert\\.Implementsf"
 	assert.Implementsf(t, nil, nil, "msg")
@@ -166,6 +206,26 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 	assert.InEpsilonSlicef(t, nil, nil, 0., "msg")
 	assert.InEpsilonSlicef(t, nil, nil, 0., "msg with arg", 42)
 	assert.InEpsilonSlicef(t, nil, nil, 0., "msg with arg %d", 42)
+	assert.IsDecreasing(t, nil)
+	assert.IsDecreasingf(t, nil, "msg") // want "formatter: use assert\\.IsDecreasingf"
+	assert.IsDecreasingf(t, nil, "msg")
+	assert.IsDecreasingf(t, nil, "msg with arg", 42)
+	assert.IsDecreasingf(t, nil, "msg with arg %d", 42)
+	assert.IsIncreasing(t, nil)
+	assert.IsIncreasingf(t, nil, "msg") // want "formatter: use assert\\.IsIncreasingf"
+	assert.IsIncreasingf(t, nil, "msg")
+	assert.IsIncreasingf(t, nil, "msg with arg", 42)
+	assert.IsIncreasingf(t, nil, "msg with arg %d", 42)
+	assert.IsNonDecreasing(t, nil)
+	assert.IsNonDecreasingf(t, nil, "msg") // want "formatter: use assert\\.IsNonDecreasingf"
+	assert.IsNonDecreasingf(t, nil, "msg")
+	assert.IsNonDecreasingf(t, nil, "msg with arg", 42)
+	assert.IsNonDecreasingf(t, nil, "msg with arg %d", 42)
+	assert.IsNonIncreasing(t, nil)
+	assert.IsNonIncreasingf(t, nil, "msg") // want "formatter: use assert\\.IsNonIncreasingf"
+	assert.IsNonIncreasingf(t, nil, "msg")
+	assert.IsNonIncreasingf(t, nil, "msg with arg", 42)
+	assert.IsNonIncreasingf(t, nil, "msg with arg %d", 42)
 	assert.IsType(t, nil, nil)
 	assert.IsTypef(t, nil, nil, "msg") // want "formatter: use assert\\.IsTypef"
 	assert.IsTypef(t, nil, nil, "msg")
@@ -181,6 +241,21 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 	assert.Lenf(t, nil, 0, "msg")
 	assert.Lenf(t, nil, 0, "msg with arg", 42)
 	assert.Lenf(t, nil, 0, "msg with arg %d", 42)
+	assert.Less(t, nil, nil)
+	assert.Lessf(t, nil, nil, "msg") // want "formatter: use assert\\.Lessf"
+	assert.Lessf(t, nil, nil, "msg")
+	assert.Lessf(t, nil, nil, "msg with arg", 42)
+	assert.Lessf(t, nil, nil, "msg with arg %d", 42)
+	assert.LessOrEqual(t, nil, nil)
+	assert.LessOrEqualf(t, nil, nil, "msg") // want "formatter: use assert\\.LessOrEqualf"
+	assert.LessOrEqualf(t, nil, nil, "msg")
+	assert.LessOrEqualf(t, nil, nil, "msg with arg", 42)
+	assert.LessOrEqualf(t, nil, nil, "msg with arg %d", 42)
+	assert.Negative(t, 0)
+	assert.Negativef(t, 0, "msg") // want "formatter: use assert\\.Negativef"
+	assert.Negativef(t, 0, "msg")
+	assert.Negativef(t, 0, "msg with arg", 42)
+	assert.Negativef(t, 0, "msg with arg %d", 42)
 	assert.Never(t, nil, 0, 0)
 	assert.Neverf(t, nil, 0, 0, "msg") // want "formatter: use assert\\.Neverf"
 	assert.Neverf(t, nil, 0, 0, "msg")
@@ -211,6 +286,11 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 	assert.NotContainsf(t, nil, nil, "msg")
 	assert.NotContainsf(t, nil, nil, "msg with arg", 42)
 	assert.NotContainsf(t, nil, nil, "msg with arg %d", 42)
+	assert.NotElementsMatch(t, nil, nil)
+	assert.NotElementsMatchf(t, nil, nil, "msg") // want "formatter: use assert\\.NotElementsMatchf"
+	assert.NotElementsMatchf(t, nil, nil, "msg")
+	assert.NotElementsMatchf(t, nil, nil, "msg with arg", 42)
+	assert.NotElementsMatchf(t, nil, nil, "msg with arg %d", 42)
 	assert.NotEmpty(t, nil)
 	assert.NotEmptyf(t, nil, "msg") // want "formatter: use assert\\.NotEmptyf"
 	assert.NotEmptyf(t, nil, "msg")
@@ -226,11 +306,21 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 	assert.NotEqualValuesf(t, nil, nil, "msg")
 	assert.NotEqualValuesf(t, nil, nil, "msg with arg", 42)
 	assert.NotEqualValuesf(t, nil, nil, "msg with arg %d", 42)
+	assert.NotErrorAs(t, nil, nil)
+	assert.NotErrorAsf(t, nil, nil, "msg") // want "formatter: use assert\\.NotErrorAsf"
+	assert.NotErrorAsf(t, nil, nil, "msg")
+	assert.NotErrorAsf(t, nil, nil, "msg with arg", 42)
+	assert.NotErrorAsf(t, nil, nil, "msg with arg %d", 42)
 	assert.NotErrorIs(t, nil, nil)
 	assert.NotErrorIsf(t, nil, nil, "msg") // want "formatter: use assert\\.NotErrorIsf"
 	assert.NotErrorIsf(t, nil, nil, "msg")
 	assert.NotErrorIsf(t, nil, nil, "msg with arg", 42)
 	assert.NotErrorIsf(t, nil, nil, "msg with arg %d", 42)
+	assert.NotImplements(t, nil, nil)
+	assert.NotImplementsf(t, nil, nil, "msg") // want "formatter: use assert\\.NotImplementsf"
+	assert.NotImplementsf(t, nil, nil, "msg")
+	assert.NotImplementsf(t, nil, nil, "msg with arg", 42)
+	assert.NotImplementsf(t, nil, nil, "msg with arg %d", 42)
 	assert.NotNil(t, nil)
 	assert.NotNilf(t, nil, "msg") // want "formatter: use assert\\.NotNilf"
 	assert.NotNilf(t, nil, "msg")
