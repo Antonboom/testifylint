@@ -481,3 +481,18 @@ func TestFormatterChecker_Ignored(t *testing.T) {
 	assert.ObjectsAreEqualValues(nil, nil)
 	assert.ObjectsExportedFieldsAreEqual(nil, nil)
 }
+
+// AssertElementsMatchFunc is similar to the assert.ElementsMatch function, but it allows for a custom comparison function
+func AssertElementsMatchFunc[T any](t *testing.T, expected, actual []T, comp func(a, b T) bool, msgAndArgs ...any) bool {
+	t.Helper()
+
+	extraA, extraB := diffListsFunc(expected, actual, comp)
+	if len(extraA) == 0 && len(extraB) == 0 {
+		return true
+	}
+
+	return assert.Fail(t, formatListDiff(expected, actual, extraA, extraB), msgAndArgs...)
+}
+
+func diffListsFunc[T any](a []T, b []T, comp func(a, b T) bool) ([]T, []T)          { return nil, nil }
+func formatListDiff[T any](expected, actual, extraExpected, extraActual []T) string { return "" }

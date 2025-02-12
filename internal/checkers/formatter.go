@@ -74,34 +74,37 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 	}
 
 	lastArgPos := len(call.ArgsRaw) - 1
+	isSingleMsgAndArgElem := msgAndArgsPos == lastArgPos
 	msgAndArgs := call.ArgsRaw[msgAndArgsPos]
 
-	if msgAndArgsPos == lastArgPos { // The single msgAndArg element.
-		if args, ok := isFmtSprintfCall(pass, msgAndArgs); ok {
-			if checker.requireFFuncs {
-				return newRemoveFnAndUseDiagnostic(pass, checker.Name(), call, call.Fn.Name+"f",
-					"fmt.Sprintf", msgAndArgs, args...)
-			}
-			return newRemoveSprintfDiagnostic(pass, checker.Name(), call, msgAndArgs, args)
+	if args, ok := isFmtSprintfCall(pass, msgAndArgs); ok && isSingleMsgAndArgElem {
+		if checker.requireFFuncs {
+			return newRemoveFnAndUseDiagnostic(pass, checker.Name(), call, call.Fn.Name+"f",
+				"fmt.Sprintf", msgAndArgs, args...)
 		}
-
-		if !checker.allowNonStringMsg && !hasStringType(pass, msgAndArgs) {
-			return newDiagnostic(checker.Name(), call, "do not use non-string value as first element of msgAndArgs",
-				analysis.SuggestedFix{
-					Message: `Introduce "%+v" as the message`,
-					TextEdits: []analysis.TextEdit{
-						{
-							Pos:     msgAndArgs.Pos(),
-							End:     msgAndArgs.End(),
-							NewText: []byte(`"%+v", ` + analysisutil.NodeString(pass.Fset, msgAndArgs)),
-						},
-					},
-				})
-		}
+		return newRemoveSprintfDiagnostic(pass, checker.Name(), call, msgAndArgs, args)
 	}
 
-	if msgAndArgsPos < lastArgPos { // Format arguments are presented.
-		if !hasStringType(pass, msgAndArgs) {
+	if hasStringType(pass, msgAndArgs) { //nolint:nestif // This is the best option of code organization :(
+		if checker.requireFFuncs {
+			return newUseFunctionDiagnostic(checker.Name(), call, call.Fn.Name+"f")
+		}
+	} else {
+		if isSingleMsgAndArgElem { //nolint:revive // Better without early-return.
+			if !checker.allowNonStringMsg {
+				return newDiagnostic(checker.Name(), call, "do not use non-string value as first element of msgAndArgs",
+					analysis.SuggestedFix{
+						Message: `Introduce "%+v" as the message`,
+						TextEdits: []analysis.TextEdit{
+							{
+								Pos:     msgAndArgs.Pos(),
+								End:     msgAndArgs.End(),
+								NewText: []byte(`"%+v", ` + analysisutil.NodeString(pass.Fset, msgAndArgs)),
+							},
+						},
+					})
+			}
+		} else {
 			return newDiagnostic(checker.Name(), call,
 				"using arguments with non-string value as first element of msgAndArgs causes panic",
 				analysis.SuggestedFix{
@@ -115,10 +118,6 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 					},
 				})
 		}
-	}
-
-	if checker.requireFFuncs && hasStringType(pass, msgAndArgs) {
-		return newUseFunctionDiagnostic(checker.Name(), call, call.Fn.Name+"f")
 	}
 	return nil
 }
