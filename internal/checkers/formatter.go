@@ -28,6 +28,7 @@ import (
 type Formatter struct {
 	checkFormatString bool
 	requireFFuncs     bool
+	allowNonStringMsg bool
 }
 
 // NewFormatter constructs Formatter checker.
@@ -35,6 +36,7 @@ func NewFormatter() *Formatter {
 	return &Formatter{
 		checkFormatString: true,
 		requireFFuncs:     false,
+		allowNonStringMsg: false,
 	}
 }
 
@@ -73,6 +75,20 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 					"fmt.Sprintf", msgAndArgs, args...)
 			}
 			return newRemoveSprintfDiagnostic(pass, checker.Name(), call, msgAndArgs, args)
+		}
+
+		if !checker.allowNonStringMsg && !hasStringType(pass, msgAndArgs) {
+			return newDiagnostic(checker.Name(), call, "do not use non-string value as first element of msgAndArgs",
+				analysis.SuggestedFix{
+					Message: `Introduce "%+v" as the message`,
+					TextEdits: []analysis.TextEdit{
+						{
+							Pos:     msgAndArgs.Pos(),
+							End:     msgAndArgs.End(),
+							NewText: []byte(`"%+v", ` + analysisutil.NodeString(pass.Fset, msgAndArgs)),
+						},
+					},
+				})
 		}
 	}
 
@@ -119,7 +135,7 @@ func isPrintfLikeCall(pass *analysis.Pass, call *CallMeta) (int, bool) {
 		return -1, false
 	}
 
-	if !(len(call.ArgsRaw) > msgAndArgsPos && hasStringType(pass, call.ArgsRaw[msgAndArgsPos])) {
+	if !(len(call.ArgsRaw) > msgAndArgsPos) {
 		return -1, false
 	}
 

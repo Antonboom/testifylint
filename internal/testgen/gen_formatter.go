@@ -14,9 +14,42 @@ func (FormatterTestsGenerator) Checker() checkers.Checker {
 }
 
 func (g FormatterTestsGenerator) TemplateData() any {
-	reportRemove := g.Checker().Name() + ": remove unnecessary fmt.Sprintf"
+	var (
+		checker                    = g.Checker().Name()
+		reportRemove               = checker + ": remove unnecessary fmt.Sprintf"
+		reportDoNotUseNonStringMsg = checker + ": do not use non-string value as first element of msgAndArgs"
+	)
 
 	baseAssertion := Assertion{Fn: "Equal", Argsf: "1, 2"}
+
+	nonStringMsgAssertions := []Assertion{
+		{
+			Fn:            "Equal",
+			Argsf:         "1, 2, new(time.Time)",
+			ReportMsgf:    reportDoNotUseNonStringMsg,
+			ProposedArgsf: `1, 2, "%+v", new(time.Time)`,
+		},
+		{
+			Fn:            "Equal",
+			Argsf:         "1, 2, i",
+			ReportMsgf:    reportDoNotUseNonStringMsg,
+			ProposedArgsf: `1, 2, "%+v", i`,
+		},
+		{
+			Fn:            "Equal",
+			Argsf:         "1, 2, tc",
+			ReportMsgf:    reportDoNotUseNonStringMsg,
+			ProposedArgsf: `1, 2, "%+v", tc`,
+		},
+
+		{Fn: "Equal", Argsf: "1, 2, msg()"},
+		{Fn: "Equal", Argsf: "1, 2, new(time.Time).String()"},
+		{Fn: "Equal", Argsf: `1, 2, "%+v", new(time.Time)`},
+		{Fn: "Equal", Argsf: `1, 2, "%+v", i`},
+		{Fn: "Equal", Argsf: `1, 2, "%+v", tc`},
+		{Fn: "Equal", Argsf: `1, 2, "%+v", msg()`},
+		{Fn: "Equal", Argsf: `1, 2, "%+v", new(time.Time).String()`},
+	}
 
 	sprintfAssertions := []Assertion{
 		{
@@ -103,18 +136,19 @@ func (g FormatterTestsGenerator) TemplateData() any {
 	}
 
 	return struct {
-		CheckerName       CheckerName
-		BaseAssertion     Assertion
-		SprintfAssertions []Assertion
-		AllAssertions     []Assertion
-		IgnoredAssertions []Assertion
+		CheckerName            CheckerName
+		BaseAssertion          Assertion
+		NonStringMsgAssertions []Assertion
+		SprintfAssertions      []Assertion
+		AllAssertions          []Assertion
+		IgnoredAssertions      []Assertion
 	}{
-		CheckerName:       CheckerName(g.Checker().Name()),
-		BaseAssertion:     baseAssertion,
-		SprintfAssertions: sprintfAssertions,
-		AllAssertions:     assertions,
+		CheckerName:            CheckerName(g.Checker().Name()),
+		BaseAssertion:          baseAssertion,
+		NonStringMsgAssertions: nonStringMsgAssertions,
+		SprintfAssertions:      sprintfAssertions,
+		AllAssertions:          assertions,
 		IgnoredAssertions: []Assertion{
-			{Fn: "Equal", Argsf: "nil, nil, new(time.Time)"},
 			{Fn: "ObjectsAreEqual", Argsf: "nil, nil"},
 			{Fn: "ObjectsAreEqualValues", Argsf: "nil, nil"},
 			{Fn: "ObjectsExportedFieldsAreEqual", Argsf: "nil, nil"},
@@ -167,9 +201,23 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 
 	{{ NewAssertionExpander.FullMode.Expand $.BaseAssertion "assert" "t" nil }}
 
+	var i int
+	var tc struct {
+		strLogLevel        string
+		logFunc            func(func() string)
+		expectedToBeCalled bool
+	}
+	{{- range $ai, $assrn := $.NonStringMsgAssertions }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" nil }}
+	{{- end }}
+
 	{{ range $ai, $assrn := $.SprintfAssertions }}
 		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" nil }}
 	{{- end }}
+}
+
+func msg() string {
+	return "msg"
 }
 
 func {{ .CheckerName.AsTestName }}_PrintfChecks(t *testing.T) {

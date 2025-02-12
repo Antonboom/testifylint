@@ -25,6 +25,23 @@ func TestFormatterChecker(t *testing.T) {
 	assert.Equalf(t, 1, 2, "msg with arg %d", 42)
 	assert.Equalf(t, 1, 2, "msg with args %d %s", 42, "42")
 
+	var i int
+	var tc struct {
+		strLogLevel        string
+		logFunc            func(func() string)
+		expectedToBeCalled bool
+	}
+	assert.Equal(t, 1, 2, "%+v", new(time.Time)) // want "formatter: do not use non-string value as first element of msgAndArgs"
+	assert.Equal(t, 1, 2, "%+v", i)              // want "formatter: do not use non-string value as first element of msgAndArgs"
+	assert.Equal(t, 1, 2, "%+v", tc)             // want "formatter: do not use non-string value as first element of msgAndArgs"
+	assert.Equal(t, 1, 2, msg())
+	assert.Equal(t, 1, 2, new(time.Time).String())
+	assert.Equal(t, 1, 2, "%+v", new(time.Time))
+	assert.Equal(t, 1, 2, "%+v", i)
+	assert.Equal(t, 1, 2, "%+v", tc)
+	assert.Equal(t, 1, 2, "%+v", msg())
+	assert.Equal(t, 1, 2, "%+v", new(time.Time).String())
+
 	assert.Equal(t, 1, 2, "msg")                           // want "formatter: remove unnecessary fmt\\.Sprintf"
 	assert.Equal(t, 1, 2, "msg with arg %d", 42)           // want "formatter: remove unnecessary fmt\\.Sprintf"
 	assert.Equal(t, 1, 2, "msg with args %d %s", 42, "42") // want "formatter: remove unnecessary fmt\\.Sprintf"
@@ -35,6 +52,10 @@ func TestFormatterChecker(t *testing.T) {
 	assert.Equalf(t, 1, 2, "msg with args %d %s", 42, "42") // want "formatter: remove unnecessary fmt\\.Sprintf"
 	assert.Equalf(t, 1, 2, fmt.Sprintf("msg"), 42)
 	assert.Equalf(t, 1, 2, fmt.Sprintf("msg with arg %d", 42), "42")
+}
+
+func msg() string {
+	return "msg"
 }
 
 func TestFormatterChecker_PrintfChecks(t *testing.T) {
@@ -453,7 +474,6 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 }
 
 func TestFormatterChecker_Ignored(t *testing.T) {
-	assert.Equal(nil, nil, new(time.Time))
 	assert.ObjectsAreEqual(nil, nil)
 	assert.ObjectsAreEqualValues(nil, nil)
 	assert.ObjectsExportedFieldsAreEqual(nil, nil)

@@ -66,6 +66,7 @@ type ExpectedActualConfig struct {
 type FormatterConfig struct {
 	CheckFormatString bool
 	RequireFFuncs     bool
+	AllowNonStringMsg bool
 }
 
 // GoRequireConfig implements configuration of checkers.GoRequire.
@@ -134,6 +135,9 @@ func BindToFlags(cfg *Config, fs *flag.FlagSet) {
 	fs.BoolVar(&cfg.Formatter.RequireFFuncs,
 		"formatter.require-f-funcs", false,
 		"to require f-assertions (e.g. assert.Equalf) if format string is used, even if there are no variable-length variables.")
+	fs.BoolVar(&cfg.Formatter.AllowNonStringMsg,
+		"formatter.allow-non-string-msg", false,
+		"to allow non-string value as first element of msgAndArgs assertion's argument")
 
 	fs.BoolVar(&cfg.GoRequire.IgnoreHTTPHandlers,
 		"go-require.ignore-http-handlers", false,
