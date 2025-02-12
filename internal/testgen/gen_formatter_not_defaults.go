@@ -11,20 +11,28 @@ type FormatterNotDefaultsTestsGenerator struct{}
 
 func (g FormatterNotDefaultsTestsGenerator) TemplateData() any {
 	var (
-		checker            = checkers.NewFormatter().Name()
-		reportUse          = checker + ": use %s.%s"
-		reportRemove       = checker + ": remove unnecessary fmt.Sprintf"
-		reportRemoveAndUse = checker + ": remove unnecessary fmt.Sprintf and use %s.%s"
+		checker                            = checkers.NewFormatter().Name()
+		reportUse                          = checker + ": use %s.%s"
+		reportRemove                       = checker + ": remove unnecessary fmt.Sprintf"
+		reportRemoveAndUse                 = checker + ": remove unnecessary fmt.Sprintf and use %s.%s"
+		reportDoNotUseArgsWithNonStringMsg = checker +
+			": using arguments with non-string value as first element of msgAndArgs causes panic"
 	)
 
 	baseAssertions := []Assertion{
 		{Fn: "Equal", Argsf: "1, 2"},
 		{Fn: "Equal", Argsf: "1, 2, new(time.Time)"},
-		// {Fn: "Equal", Argsf: "1, 2, new(time.Time), 2"}, // Panics.
+		{
+			Fn:            "Equal",
+			Argsf:         "1, 2, new(time.Time), 42",
+			ReportMsgf:    reportDoNotUseArgsWithNonStringMsg,
+			ProposedArgsf: `1, 2, new(time.Time)`,
+		},
 		{Fn: "Equal", Argsf: `1, 2, "msg"`, ReportMsgf: reportUse, ProposedFn: "Equalf"},
 		{Fn: "Equal", Argsf: `1, 2, "msg with arg %d", 42`, ReportMsgf: reportUse, ProposedFn: "Equalf"},
 		{Fn: "Equal", Argsf: `1, 2, "msg with args %d %s", 42, "42"`, ReportMsgf: reportUse, ProposedFn: "Equalf"},
-		// {Fn: "Equalf", Argsf: `1, 2, "msg"`}, // Not compiled.
+		// {Fn: "Equalf", Argsf: `1, 2`}, // Not compiled.
+		// {Fn: "Equalf", Argsf: `1, 2, new(time.Time)`}, // Not compiled.
 		{Fn: "Equalf", Argsf: `1, 2, "msg"`},
 		{Fn: "Equalf", Argsf: `1, 2, "msg with arg %d", 42`},
 		{Fn: "Equalf", Argsf: `1, 2, "msg with args %d %s", 42, "42"`},

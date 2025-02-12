@@ -101,10 +101,19 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 		{
 			dir: "formatter-not-defaults",
 			flags: map[string]string{
-				"disable-all":                   "true",
-				"enable":                        checkers.NewFormatter().Name(),
-				"formatter.check-format-string": "false",
-				"formatter.require-f-funcs":     "true",
+				"disable-all":                    "true",
+				"enable":                         checkers.NewFormatter().Name(),
+				"formatter.check-format-string":  "false",
+				"formatter.require-f-funcs":      "true",
+				"formatter.allow-non-string-msg": "true",
+			},
+		},
+		{
+			dir: "formatter-require-f-for-non-string-arg",
+			flags: map[string]string{
+				"disable-all":               "true",
+				"enable":                    checkers.NewFormatter().Name(),
+				"formatter.require-f-funcs": "true",
 			},
 		},
 		{

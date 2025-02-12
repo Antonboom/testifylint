@@ -25,6 +25,9 @@ import (
 //	assert.Errorf(t, err, "Profile %s should not be valid", test.profile)
 //	assert.Errorf(t, err, "test %s", test.testName)
 //	assert.Truef(t, targetTs.Equal(ts), "the timestamp should be as expected (%s) but was %s", targetTs, ts)
+//
+// It also checks that there are no arguments in `msgAndArgs` if the message is not a string,
+// and additionally checks that the first argument of `msgAndArgs` is a string.
 type Formatter struct {
 	checkFormatString bool
 	requireFFuncs     bool
@@ -49,6 +52,11 @@ func (checker *Formatter) SetCheckFormatString(v bool) *Formatter {
 
 func (checker *Formatter) SetRequireFFuncs(v bool) *Formatter {
 	checker.requireFFuncs = v
+	return checker
+}
+
+func (checker *Formatter) SetAllowNonStringMsg(v bool) *Formatter {
+	checker.allowNonStringMsg = v
 	return checker
 }
 
@@ -109,7 +117,7 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 		}
 	}
 
-	if checker.requireFFuncs {
+	if checker.requireFFuncs && hasStringType(pass, msgAndArgs) {
 		return newUseFunctionDiagnostic(checker.Name(), call, call.Fn.Name+"f")
 	}
 	return nil
