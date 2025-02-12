@@ -15,9 +15,13 @@ func (FormatterTestsGenerator) Checker() checkers.Checker {
 
 func (g FormatterTestsGenerator) TemplateData() any {
 	var (
-		checker                    = g.Checker().Name()
-		reportRemove               = checker + ": remove unnecessary fmt.Sprintf"
-		reportDoNotUseNonStringMsg = checker + ": do not use non-string value as first element of msgAndArgs"
+		checker      = g.Checker().Name()
+		reportRemove = checker +
+			": remove unnecessary fmt.Sprintf"
+		reportDoNotUseNonStringMsg = checker +
+			": do not use non-string value as first element of msgAndArgs"
+		reportDoNotUseArgsWithNonStringMsg = checker +
+			": using arguments with non-string value as first element of msgAndArgs causes panic"
 	)
 
 	baseAssertion := Assertion{Fn: "Equal", Argsf: "1, 2"}
@@ -40,6 +44,25 @@ func (g FormatterTestsGenerator) TemplateData() any {
 			Argsf:         "1, 2, tc",
 			ReportMsgf:    reportDoNotUseNonStringMsg,
 			ProposedArgsf: `1, 2, "%+v", tc`,
+		},
+
+		{
+			Fn:            "Equal",
+			Argsf:         "1, 2, new(time.Time), 42",
+			ReportMsgf:    reportDoNotUseArgsWithNonStringMsg,
+			ProposedArgsf: `1, 2, new(time.Time)`,
+		},
+		{
+			Fn:            "Equal",
+			Argsf:         `1, 2, i, 42, "42"`,
+			ReportMsgf:    reportDoNotUseArgsWithNonStringMsg,
+			ProposedArgsf: `1, 2, i`,
+		},
+		{
+			Fn:            "Equal",
+			Argsf:         "1, 2, tc, 0",
+			ReportMsgf:    reportDoNotUseArgsWithNonStringMsg,
+			ProposedArgsf: `1, 2, tc`,
 		},
 
 		{Fn: "Equal", Argsf: "1, 2, msg()"},

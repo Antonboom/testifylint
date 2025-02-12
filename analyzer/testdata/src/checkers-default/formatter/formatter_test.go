@@ -31,9 +31,12 @@ func TestFormatterChecker(t *testing.T) {
 		logFunc            func(func() string)
 		expectedToBeCalled bool
 	}
-	assert.Equal(t, 1, 2, new(time.Time)) // want "formatter: do not use non-string value as first element of msgAndArgs"
-	assert.Equal(t, 1, 2, i)              // want "formatter: do not use non-string value as first element of msgAndArgs"
-	assert.Equal(t, 1, 2, tc)             // want "formatter: do not use non-string value as first element of msgAndArgs"
+	assert.Equal(t, 1, 2, new(time.Time))     // want "formatter: do not use non-string value as first element of msgAndArgs"
+	assert.Equal(t, 1, 2, i)                  // want "formatter: do not use non-string value as first element of msgAndArgs"
+	assert.Equal(t, 1, 2, tc)                 // want "formatter: do not use non-string value as first element of msgAndArgs"
+	assert.Equal(t, 1, 2, new(time.Time), 42) // want "formatter: using arguments with non-string value as first element of msgAndArgs causes panic"
+	assert.Equal(t, 1, 2, i, 42, "42")        // want "formatter: using arguments with non-string value as first element of msgAndArgs causes panic"
+	assert.Equal(t, 1, 2, tc, 0)              // want "formatter: using arguments with non-string value as first element of msgAndArgs causes panic"
 	assert.Equal(t, 1, 2, msg())
 	assert.Equal(t, 1, 2, new(time.Time).String())
 	assert.Equal(t, 1, 2, "%+v", new(time.Time))

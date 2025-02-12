@@ -65,13 +65,13 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 		return nil
 	}
 
-	fFunc := call.Fn.Name + "f"
+	lastArgPos := len(call.ArgsRaw) - 1
+	msgAndArgs := call.ArgsRaw[msgAndArgsPos]
 
-	if msgAndArgsPos == len(call.ArgsRaw)-1 {
-		msgAndArgs := call.ArgsRaw[msgAndArgsPos]
+	if msgAndArgsPos == lastArgPos { // The single msgAndArg element.
 		if args, ok := isFmtSprintfCall(pass, msgAndArgs); ok {
 			if checker.requireFFuncs {
-				return newRemoveFnAndUseDiagnostic(pass, checker.Name(), call, fFunc,
+				return newRemoveFnAndUseDiagnostic(pass, checker.Name(), call, call.Fn.Name+"f",
 					"fmt.Sprintf", msgAndArgs, args...)
 			}
 			return newRemoveSprintfDiagnostic(pass, checker.Name(), call, msgAndArgs, args)
@@ -92,8 +92,25 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 		}
 	}
 
+	if msgAndArgsPos < lastArgPos { // Format arguments are presented.
+		if !hasStringType(pass, msgAndArgs) {
+			return newDiagnostic(checker.Name(), call,
+				"using arguments with non-string value as first element of msgAndArgs causes panic",
+				analysis.SuggestedFix{
+					Message: `Remove format arguments`,
+					TextEdits: []analysis.TextEdit{
+						{
+							Pos:     msgAndArgs.Pos(),
+							End:     call.ArgsRaw[lastArgPos].End(),
+							NewText: analysisutil.NodeBytes(pass.Fset, msgAndArgs),
+						},
+					},
+				})
+		}
+	}
+
 	if checker.requireFFuncs {
-		return newUseFunctionDiagnostic(checker.Name(), call, fFunc)
+		return newUseFunctionDiagnostic(checker.Name(), call, call.Fn.Name+"f")
 	}
 	return nil
 }
@@ -104,9 +121,10 @@ func (checker Formatter) checkFmtAssertion(pass *analysis.Pass, call *CallMeta) 
 		return nil
 	}
 
+	lastArgPos := len(call.ArgsRaw) - 1
 	msg := call.ArgsRaw[formatPos]
 
-	if formatPos == len(call.ArgsRaw)-1 {
+	if formatPos == lastArgPos {
 		if args, ok := isFmtSprintfCall(pass, msg); ok {
 			return newRemoveSprintfDiagnostic(pass, checker.Name(), call, msg, args)
 		}
