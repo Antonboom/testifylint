@@ -155,6 +155,10 @@ func (checker Formatter) checkFmtAssertion(pass *analysis.Pass, call *CallMeta) 
 }
 
 func isPrintfLikeCall(pass *analysis.Pass, call *CallMeta) (int, bool) {
+	if call.Call.Ellipsis.IsValid() {
+		return -1, false
+	}
+
 	msgAndArgsPos := getMsgAndArgsPosition(call.Fn.Signature)
 	if msgAndArgsPos <= 0 {
 		return -1, false

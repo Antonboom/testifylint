@@ -45,6 +45,12 @@ func (g FormatterTestsGenerator) TemplateData() any {
 			ReportMsgf:    reportDoNotUseNonStringMsg,
 			ProposedArgsf: `1, 2, "%+v", tc`,
 		},
+		{
+			Fn:            "Equal",
+			Argsf:         "1, 2, args",
+			ReportMsgf:    reportDoNotUseNonStringMsg,
+			ProposedArgsf: `1, 2, "%+v", args`,
+		},
 
 		{
 			Fn:            "Equal",
@@ -67,11 +73,13 @@ func (g FormatterTestsGenerator) TemplateData() any {
 
 		{Fn: "Equal", Argsf: "1, 2, msg()"},
 		{Fn: "Equal", Argsf: "1, 2, new(time.Time).String()"},
+		{Fn: "Equal", Argsf: `1, 2, args...`},
 		{Fn: "Equal", Argsf: `1, 2, "%+v", new(time.Time)`},
 		{Fn: "Equal", Argsf: `1, 2, "%+v", i`},
 		{Fn: "Equal", Argsf: `1, 2, "%+v", tc`},
 		{Fn: "Equal", Argsf: `1, 2, "%+v", msg()`},
 		{Fn: "Equal", Argsf: `1, 2, "%+v", new(time.Time).String()`},
+		{Fn: "Equal", Argsf: `1, 2, "%+v", args`},
 	}
 
 	sprintfAssertions := []Assertion{

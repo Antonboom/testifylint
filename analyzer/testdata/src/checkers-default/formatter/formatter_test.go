@@ -34,16 +34,19 @@ func TestFormatterChecker(t *testing.T) {
 	assert.Equal(t, 1, 2, new(time.Time))     // want "formatter: do not use non-string value as first element of msgAndArgs"
 	assert.Equal(t, 1, 2, i)                  // want "formatter: do not use non-string value as first element of msgAndArgs"
 	assert.Equal(t, 1, 2, tc)                 // want "formatter: do not use non-string value as first element of msgAndArgs"
+	assert.Equal(t, 1, 2, args)               // want "formatter: do not use non-string value as first element of msgAndArgs"
 	assert.Equal(t, 1, 2, new(time.Time), 42) // want "formatter: using arguments with non-string value as first element of msgAndArgs causes panic"
 	assert.Equal(t, 1, 2, i, 42, "42")        // want "formatter: using arguments with non-string value as first element of msgAndArgs causes panic"
 	assert.Equal(t, 1, 2, tc, 0)              // want "formatter: using arguments with non-string value as first element of msgAndArgs causes panic"
 	assert.Equal(t, 1, 2, msg())
 	assert.Equal(t, 1, 2, new(time.Time).String())
+	assert.Equal(t, 1, 2, args...)
 	assert.Equal(t, 1, 2, "%+v", new(time.Time))
 	assert.Equal(t, 1, 2, "%+v", i)
 	assert.Equal(t, 1, 2, "%+v", tc)
 	assert.Equal(t, 1, 2, "%+v", msg())
 	assert.Equal(t, 1, 2, "%+v", new(time.Time).String())
+	assert.Equal(t, 1, 2, "%+v", args)
 
 	assert.Equal(t, 1, 2, fmt.Sprintf("msg"))                           // want "formatter: remove unnecessary fmt\\.Sprintf"
 	assert.Equal(t, 1, 2, fmt.Sprintf("msg with arg %d", 42))           // want "formatter: remove unnecessary fmt\\.Sprintf"
