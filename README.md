@@ -596,6 +596,18 @@ assert.True(t, cco.IsCardNumber(valid), i) // But this is still not recommended 
 
 See [testify's issue](https://github.com/stretchr/testify/issues/1679) for details.
 
+#### 6) 
+
+Finally, it checks that failure message in `Fail` and `FailNow` is not used as a format string (which won't work):
+
+```go
+❌
+assert.Fail(t, "test case [%d] failed. %+v != %+v", idx, tc.expected, actual) // Causes panic.
+
+✅
+assert.Fail(t, "good luck!", "test case [%d] failed. %+v != %+v", idx, tc.expected, actual)
+```
+
 ---
 
 ### go-require

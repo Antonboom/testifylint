@@ -29,6 +29,8 @@ import (
 //
 // It also checks that there are no arguments in `msgAndArgs` if the message is not a string,
 // and additionally checks that the first argument of `msgAndArgs` is a string.
+//
+// Finally, it checks that failure message in Fail and FailNow is not used as a format string (which won't work).
 type Formatter struct {
 	checkFormatString bool
 	requireFFuncs     bool
