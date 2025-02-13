@@ -164,7 +164,7 @@ func TestBindToFlags(t *testing.T) {
 		"expected-actual.pattern":          cfg.ExpectedActual.ExpVarPattern.String(),
 		"formatter.check-format-string":    "true",
 		"formatter.require-f-funcs":        "false",
-		"formatter.allow-non-string-msg":   "false",
+		"formatter.require-string-msg":     "true",
 		"go-require.ignore-http-handlers":  "false",
 		"require-error.fn-pattern":         cfg.RequireError.FnPattern.String(),
 		"suite-extra-assert-call.mode":     "remove",

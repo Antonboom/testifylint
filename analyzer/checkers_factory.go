@@ -58,7 +58,7 @@ func newCheckers(cfg config.Config) ([]checkers.RegularChecker, []checkers.Advan
 		case *checkers.Formatter:
 			c.SetCheckFormatString(cfg.Formatter.CheckFormatString)
 			c.SetRequireFFuncs(cfg.Formatter.RequireFFuncs)
-			c.SetAllowNonStringMsg(cfg.Formatter.AllowNonStringMsg)
+			c.SetRequireStringMsg(cfg.Formatter.RequireStringMsg)
 
 		case *checkers.GoRequire:
 			c.SetIgnoreHTTPHandlers(cfg.GoRequire.IgnoreHTTPHandlers)

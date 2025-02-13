@@ -31,7 +31,7 @@ import (
 type Formatter struct {
 	checkFormatString bool
 	requireFFuncs     bool
-	allowNonStringMsg bool
+	requireStringMsg  bool
 }
 
 // NewFormatter constructs Formatter checker.
@@ -39,7 +39,7 @@ func NewFormatter() *Formatter {
 	return &Formatter{
 		checkFormatString: true,
 		requireFFuncs:     false,
-		allowNonStringMsg: false,
+		requireStringMsg:  true,
 	}
 }
 
@@ -55,8 +55,8 @@ func (checker *Formatter) SetRequireFFuncs(v bool) *Formatter {
 	return checker
 }
 
-func (checker *Formatter) SetAllowNonStringMsg(v bool) *Formatter {
-	checker.allowNonStringMsg = v
+func (checker *Formatter) SetRequireStringMsg(v bool) *Formatter {
+	checker.requireStringMsg = v
 	return checker
 }
 
@@ -91,7 +91,7 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 		}
 	} else {
 		if isSingleMsgAndArgElem { //nolint:revive // Better without early-return.
-			if !checker.allowNonStringMsg {
+			if checker.requireStringMsg {
 				return newDiagnostic(checker.Name(), call, "do not use non-string value as first element of msgAndArgs",
 					analysis.SuggestedFix{
 						Message: `Introduce "%+v" as the message`,
