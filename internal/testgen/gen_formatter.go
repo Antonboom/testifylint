@@ -19,9 +19,11 @@ func (g FormatterTestsGenerator) TemplateData() any {
 		reportRemove = checker +
 			": remove unnecessary fmt.Sprintf"
 		reportDoNotUseNonStringMsg = checker +
-			": do not use non-string value as first element of msgAndArgs"
+			": do not use non-string value as first element (msg) of msgAndArgs"
 		reportDoNotUseArgsWithNonStringMsg = checker +
-			": using arguments with non-string value as first element of msgAndArgs causes panic"
+			": using msgAndArgs with non-string first element (msg) causes panic"
+		reportFailureMsgIsNotFmtString = checker +
+			": failure message is not a format string, use msgAndArgs instead"
 	)
 
 	baseAssertion := Assertion{Fn: "Equal", Argsf: "1, 2"}
@@ -70,6 +72,38 @@ func (g FormatterTestsGenerator) TemplateData() any {
 			ReportMsgf:    reportDoNotUseArgsWithNonStringMsg,
 			ProposedArgsf: `1, 2, tc`,
 		},
+		{
+			Fn:         "Fail",
+			Argsf:      `"test case [%d] failed.  Expected: %+v, Got: %+v", 1, 2, 3`,
+			ReportMsgf: reportFailureMsgIsNotFmtString,
+		},
+		{
+			Fn:         "Fail",
+			Argsf:      `"test case [%d] failed", 1`,
+			ReportMsgf: reportFailureMsgIsNotFmtString,
+		},
+		{
+			Fn:            "Fail",
+			Argsf:         `"test case failed", 1`,
+			ReportMsgf:    reportDoNotUseNonStringMsg,
+			ProposedArgsf: `"test case failed", "%+v", 1`,
+		},
+		{
+			Fn:         "FailNow",
+			Argsf:      `"test case [%d] failed.  Expected: %+v, Got: %+v", 1, 2, 3`,
+			ReportMsgf: reportFailureMsgIsNotFmtString,
+		},
+		{
+			Fn:         "FailNow",
+			Argsf:      `"test case [%d] failed", 1`,
+			ReportMsgf: reportFailureMsgIsNotFmtString,
+		},
+		{
+			Fn:            "FailNow",
+			Argsf:         `"test case failed", 1`,
+			ReportMsgf:    reportDoNotUseNonStringMsg,
+			ProposedArgsf: `"test case failed", "%+v", 1`,
+		},
 
 		{Fn: "Equal", Argsf: "1, 2, msg()"},
 		{Fn: "Equal", Argsf: "1, 2, new(time.Time).String()"},
@@ -80,6 +114,8 @@ func (g FormatterTestsGenerator) TemplateData() any {
 		{Fn: "Equal", Argsf: `1, 2, "%+v", msg()`},
 		{Fn: "Equal", Argsf: `1, 2, "%+v", new(time.Time).String()`},
 		{Fn: "Equal", Argsf: `1, 2, "%+v", args`},
+		{Fn: "Fail", Argsf: `"boom!", "test case [%d] failed", 1`},
+		{Fn: "FailNow", Argsf: `"boom!", "test case [%d] failed", 1`},
 	}
 
 	sprintfAssertions := []Assertion{
@@ -232,6 +268,8 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 
 	{{ NewAssertionExpander.FullMode.Expand $.BaseAssertion "assert" "t" nil }}
 
+	assertObj := assert.New(t)
+
 	var i int
 	var tc struct {
 		strLogLevel        string
@@ -240,10 +278,12 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	}
 	{{- range $ai, $assrn := $.NonStringMsgAssertions }}
 		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" nil }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assertObj" "" nil }}
 	{{- end }}
 
 	{{ range $ai, $assrn := $.SprintfAssertions }}
 		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" nil }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assertObj" "" nil }}
 	{{- end }}
 }
 

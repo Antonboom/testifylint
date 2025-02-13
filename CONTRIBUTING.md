@@ -174,6 +174,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
      assert.Equal(t, err.Error(), "user not found")
      assert.Equal(t, err, errSentinel) // Through `reflect.DeepEqual` causes error strings to be compared.
      assert.NotEqual(t, err, errSentinel)
+     require.Error(t, fmt.Errorf("you need to specify either logGroupName or logGroupArn"), err) // grafana case
      // etc.
 
 ✅   assert.ErrorIs(t, err, ErrUserNotFound)

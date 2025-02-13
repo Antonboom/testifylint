@@ -16,7 +16,9 @@ func (g FormatterNotDefaultsTestsGenerator) TemplateData() any {
 		reportRemove                       = checker + ": remove unnecessary fmt.Sprintf"
 		reportRemoveAndUse                 = checker + ": remove unnecessary fmt.Sprintf and use %s.%s"
 		reportDoNotUseArgsWithNonStringMsg = checker +
-			": using arguments with non-string value as first element of msgAndArgs causes panic"
+			": using msgAndArgs with non-string first element (msg) causes panic"
+		reportFailureMsgIsNotFmtString = checker +
+			": failure message is not a format string, use msgAndArgs instead"
 	)
 
 	baseAssertions := []Assertion{
@@ -27,6 +29,34 @@ func (g FormatterNotDefaultsTestsGenerator) TemplateData() any {
 			Argsf:         "1, 2, new(time.Time), 42",
 			ReportMsgf:    reportDoNotUseArgsWithNonStringMsg,
 			ProposedArgsf: `1, 2, new(time.Time)`,
+		},
+		{
+			Fn:         "Fail",
+			Argsf:      `"test case [%d] failed.  Expected: %+v, Got: %+v", 1, 2, 3`,
+			ReportMsgf: reportFailureMsgIsNotFmtString,
+		},
+		{
+			Fn:         "Fail",
+			Argsf:      `"test case [%d] failed", 1`,
+			ReportMsgf: reportFailureMsgIsNotFmtString,
+		},
+		{
+			Fn:    "Fail",
+			Argsf: `"test case failed", 1`,
+		},
+		{
+			Fn:         "FailNow",
+			Argsf:      `"test case [%d] failed.  Expected: %+v, Got: %+v", 1, 2, 3`,
+			ReportMsgf: reportFailureMsgIsNotFmtString,
+		},
+		{
+			Fn:         "FailNow",
+			Argsf:      `"test case [%d] failed", 1`,
+			ReportMsgf: reportFailureMsgIsNotFmtString,
+		},
+		{
+			Fn:    "FailNow",
+			Argsf: `"test case failed", 1`,
 		},
 		{Fn: "Equal", Argsf: `1, 2, "msg"`, ReportMsgf: reportUse, ProposedFn: "Equalf"},
 		{Fn: "Equal", Argsf: `1, 2, "msg with arg %d", 42`, ReportMsgf: reportUse, ProposedFn: "Equalf"},
