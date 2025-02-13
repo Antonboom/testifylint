@@ -19,6 +19,7 @@ var registry = checkersRegistry{
 	{factory: asCheckerFactory(NewEncodedCompare), enabledByDefault: true},
 	{factory: asCheckerFactory(NewExpectedActual), enabledByDefault: true},
 	{factory: asCheckerFactory(NewLen), enabledByDefault: true},
+	{factory: asCheckerFactory(NewEqualValues), enabledByDefault: true},
 	{factory: asCheckerFactory(NewRegexp), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteExtraAssertCall), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteDontUsePkg), enabledByDefault: true},

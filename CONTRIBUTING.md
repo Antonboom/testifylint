@@ -59,9 +59,9 @@ By default, we disable the checker if we doubt its 100% usefulness.
 
 Create new `TimeCompareTestsGenerator` in `internal/testgen/gen_time_compare.go`.
 
-See examples in adjacent files.
+See examples in adjacent files, e.g. [internal/testgen/gen_regexp.go](internal/testgen/gen_regexp.go).
 
-In the first iteration, these can be a very simple tests for debugging checker's proof of concept.
+In the first iteration, these can be a simple tests for debugging checker's proof of concept.
 And after the implementation of the checker, you can add various cycles, variables, etc. to the template.
 
 `GoldenTemplate` is usually an `ErroredTemplate` with some strings replaced.
@@ -208,19 +208,6 @@ func (s *ServiceIntegrationSuite) TearDownTest() {
 **Enabled by default**: false. <br>
 **Reason**: Possible resource leaks, because `require` finishes the current goroutine. <br>
 **Related issues**: [#142](https://github.com/Antonboom/testifylint/issues/142)
-
----
-
-### equal-values
-
-```go
-❌   assert.Equal(t, int64(100), price.Amount)
-✅   assert.EqualValues(t, 100, price.Amount)
-```
-
-**Autofix**: true. <br>
-**Enabled by default**: maybe? <br>
-**Reason**: Code simplification.
 
 ---
 
