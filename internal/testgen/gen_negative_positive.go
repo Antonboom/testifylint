@@ -63,6 +63,13 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		)
 	}
 
+	invalidAssertions = append(invalidAssertions,
+		Assertion{Fn: "True", Argsf: "len(x) > 0", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "len(x)"},
+		Assertion{Fn: "Greater", Argsf: "len(x), 0", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "len(x)"},
+		Assertion{Fn: "Less", Argsf: "f(a), 0", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "f(a)"},
+		Assertion{Fn: "False", Argsf: "0 >= f(a)", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "f(a)"},
+	)
+
 	var ignoredAssertions []Assertion
 
 	for _, fn := range []string{"Equal", "NotEqual", "GreaterOrEqual", "LessOrEqual"} {
@@ -192,16 +199,27 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		Assertion{Fn: "False", Argsf: "-1 <= -1"},
 		Assertion{Fn: "False", Argsf: "-1 == -1"},
 		Assertion{Fn: "False", Argsf: "-1 != -1"},
+		Assertion{Fn: "GreaterOrEqual", Argsf: "len(x), 0"},
+		Assertion{Fn: "LessOrEqual", Argsf: "0, len(x)"},
 	)
 
 	// These one will be reported by incorrect-assert.
 	ignoredAssertions = append(ignoredAssertions,
 		Assertion{Fn: "Negative", Argsf: "uint(a)"},
 		Assertion{Fn: "Less", Argsf: "uint(a), 0"},
+		Assertion{Fn: "Greater", Argsf: "0, uint(a)"},
 		Assertion{Fn: "True", Argsf: "uint(a) < 0"},
 		Assertion{Fn: "True", Argsf: "0 > uint(a)"},
 		Assertion{Fn: "False", Argsf: "uint(a) >= 0"},
 		Assertion{Fn: "False", Argsf: "0 <= uint(a)"},
+
+		Assertion{Fn: "Negative", Argsf: "len(x)"},
+		Assertion{Fn: "Less", Argsf: "len(x), 0"},
+		Assertion{Fn: "Greater", Argsf: "0, len(x)"},
+		Assertion{Fn: "True", Argsf: "len(x) < 0"},
+		Assertion{Fn: "True", Argsf: "0 > len(x)"},
+		Assertion{Fn: "False", Argsf: "len(x) >= 0"},
+		Assertion{Fn: "False", Argsf: "0 <= len(x)"},
 	)
 
 	return struct {
@@ -215,7 +233,10 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		InvalidAssertions: invalidAssertions,
 		ValidAssertions: []Assertion{
 			{Fn: "Negative", Argsf: "a"},
+			{Fn: "Negative", Argsf: "f(a)"},
 			{Fn: "Positive", Argsf: "a"},
+			{Fn: "Positive", Argsf: "len(x)"},
+			{Fn: "Positive", Argsf: "f(a)"},
 		},
 		IgnoredAssertions: ignoredAssertions,
 		RealLifeUintExamples: []Assertion{
@@ -272,7 +293,11 @@ import (
 )
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
-	var a int
+	var (
+		a int
+		x []int
+		f func(d int) int
+	)
 
 	// Invalid.
 	{

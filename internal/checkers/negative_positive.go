@@ -55,7 +55,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 			})
 	}
 
-	// NOTE(a.telyshev): We ignore uint-asserts as being no sense for assert.Negative.
+	// NOTE(a.telyshev): We ignore uint and len asserts as being no sense for assert.Negative.
 
 	switch call.Fn.NameFTrimmed {
 	case "Less":
@@ -64,7 +64,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		}
 		a, b := call.Args[0], call.Args[1]
 
-		if isSignedNotZero(pass, a) && isZeroOrSignedZero(b) {
+		if canBeNegative(pass, a) && isZeroOrSignedZero(b) {
 			return newUseNegativeDiagnostic(a.Pos(), b.End(), untype(a))
 		}
 
@@ -74,7 +74,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		}
 		a, b := call.Args[0], call.Args[1]
 
-		if isZeroOrSignedZero(a) && isSignedNotZero(pass, b) {
+		if isZeroOrSignedZero(a) && canBeNegative(pass, b) {
 			return newUseNegativeDiagnostic(a.Pos(), b.End(), untype(b))
 		}
 
@@ -84,8 +84,8 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		}
 		expr := call.Args[0]
 
-		a, _, ok1 := isStrictComparisonWith(pass, expr, isSignedNotZero, token.LSS, p(isZeroOrSignedZero)) // a < 0
-		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZeroOrSignedZero), token.GTR, isSignedNotZero) // 0 > a
+		a, _, ok1 := isStrictComparisonWith(pass, expr, canBeNegative, token.LSS, p(isZeroOrSignedZero)) // a < 0
+		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZeroOrSignedZero), token.GTR, canBeNegative) // 0 > a
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
@@ -98,8 +98,8 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		}
 		expr := call.Args[0]
 
-		a, _, ok1 := isStrictComparisonWith(pass, expr, isSignedNotZero, token.GEQ, p(isZeroOrSignedZero)) // a >= 0
-		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZeroOrSignedZero), token.LEQ, isSignedNotZero) // 0 <= a
+		a, _, ok1 := isStrictComparisonWith(pass, expr, canBeNegative, token.GEQ, p(isZeroOrSignedZero)) // a >= 0
+		_, b, ok2 := isStrictComparisonWith(pass, expr, p(isZeroOrSignedZero), token.LEQ, canBeNegative) // 0 <= a
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
@@ -170,4 +170,9 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 		}
 	}
 	return nil
+}
+
+func canBeNegative(pass *analysis.Pass, e ast.Expr) bool {
+	_, isLen := isBuiltinLenCall(pass, e)
+	return isSignedNotZero(pass, e) && !isLen
 }
