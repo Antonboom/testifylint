@@ -10,7 +10,7 @@ import (
 func TestEqualValuesChecker(t *testing.T) {
 	assert.Equal(t, Request{}, Request{}) // want "equal-values: use assert\\.Equal"
 	assert.EqualValues(t, Request{}, Response{})
-	assert.EqualValues(t, Request{}, v2.Request{}) // THIS IS OK!
+	assert.EqualValues(t, Request{}, v2.Request{}) // THIS IS OK! Using Equal won't work here.
 	assert.EqualValues(t, v2.Request{}, v2.Response{})
 	assert.Equal(t, v2.Response{}, v2.Response{}) // want "equal-values: use assert\\.Equal"
 }

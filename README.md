@@ -324,12 +324,12 @@ assert.NotEqual(t, 42, result.IntField)
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
-**Reason**: Using more appropriate `testify` API.
+**Reason**: Using more appropriate and more error-proof `testify` API.
 
 In additional:
 
-1. The overflow-underflow issues are [covered by testify itself](https://github.com/stretchr/testify/pull/1531).
-2. The nil comparisons are covered by [nil-compare](#nil-compare).
+1. Overflow-underflow issues are [covered by testify itself](https://github.com/stretchr/testify/pull/1531).
+2. Nil comparisons are covered by [nil-compare](#nil-compare).
 
 ---
 
