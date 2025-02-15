@@ -1,6 +1,7 @@
 package checkers
 
 import (
+	"fmt"
 	"go/types"
 	"strconv"
 	"strings"
@@ -28,7 +29,7 @@ import (
 //	assert.Truef(t, targetTs.Equal(ts), "the timestamp should be as expected (%s) but was %s", targetTs, ts)
 //
 // It also checks that there are no arguments in `msgAndArgs` if the message is not a string,
-// and additionally checks that the first argument of `msgAndArgs` is a string.
+// and additionally checks that the first argument of `msgAndArgs` is a not-empty string.
 //
 // Finally, it checks that failure message in Fail and FailNow is not used as a format string (which won't work).
 type Formatter struct {
@@ -100,6 +101,17 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 	}
 
 	if hasStringType(pass, msgAndArgs) { //nolint:nestif // This is the best option of code organization :(
+		format, err := strconv.Unquote(analysisutil.NodeString(pass.Fset, msgAndArgs))
+		if nil == err && format == "" {
+			var fixes []analysis.SuggestedFix
+			if isSingleMsgAndArgElem {
+				fixes = append(fixes, analysis.SuggestedFix{
+					Message:   "Remove empty message",
+					TextEdits: []analysis.TextEdit{newRemoveLastArgTextEdit(pass, call.Args)},
+				})
+			}
+			return newDiagnostic(checker.Name(), call, "empty message", fixes...)
+		}
 		if checker.requireFFuncs {
 			return newUseFunctionDiagnostic(checker.Name(), call, call.Fn.Name+"f")
 		}
@@ -135,11 +147,30 @@ func (checker Formatter) checkFmtAssertion(pass *analysis.Pass, call *CallMeta) 
 
 	lastArgPos := len(call.ArgsRaw) - 1
 	msg := call.ArgsRaw[formatPos]
+	noFormatArgs := formatPos == lastArgPos
 
 	if formatPos == lastArgPos {
 		if args, ok := isFmtSprintfCall(pass, msg); ok {
 			return newRemoveSprintfDiagnostic(pass, checker.Name(), call, msg, args)
 		}
+	}
+
+	format, err := strconv.Unquote(analysisutil.NodeString(pass.Fset, msg))
+	if err != nil {
+		return nil
+	}
+	if format == "" {
+		var fixes []analysis.SuggestedFix
+		if noFormatArgs {
+			fixes = append(fixes, analysis.SuggestedFix{
+				Message: fmt.Sprintf("Remove empty message and use `%s`", call.Fn.NameFTrimmed),
+				TextEdits: []analysis.TextEdit{
+					newReplaceFnTextEdit(call.Fn, call.Fn.NameFTrimmed),
+					newRemoveLastArgTextEdit(pass, call.Args),
+				},
+			})
+		}
+		return newDiagnostic(checker.Name(), call, "empty message", fixes...)
 	}
 
 	if checker.checkFormatString {
@@ -148,11 +179,6 @@ func (checker Formatter) checkFmtAssertion(pass *analysis.Pass, call *CallMeta) 
 
 		pass.Report = func(d analysis.Diagnostic) {
 			result = newDiagnostic(checker.Name(), call, d.Message)
-		}
-
-		format, err := strconv.Unquote(analysisutil.NodeString(pass.Fset, msg))
-		if err != nil {
-			return nil
 		}
 		printf.CheckPrintf(pass, call.Call, call.String(), format, formatPos)
 	}

@@ -124,6 +124,25 @@ func TestFormatterChecker_PrintfChecks(t *testing.T) {
 	assert.Equalf(t, 1, 2, "msg with args %s %s", "42") // want "formatter: assert\\.Equalf format %s reads arg #2, but call has 1 arg$"
 }
 
+func TestFormatterChecker_EmptyMessage(t *testing.T) {
+	var want, got any
+	assertObj := assert.New(t)
+	assert.Equal(t, want, got, "")        // want "formatter: empty message"
+	assertObj.Equal(want, got, "")        // want "formatter: empty message"
+	assert.Equalf(t, want, got, "")       // want "formatter: empty message"
+	assertObj.Equalf(want, got, "")       // want "formatter: empty message"
+	assert.Equal(t, want, got, "", 1, 2)  // want "formatter: empty message"
+	assertObj.Equal(want, got, "", 1, 2)  // want "formatter: empty message"
+	assert.Equalf(t, want, got, "", 1, 2) // want "formatter: empty message"
+	assertObj.Equalf(want, got, "", 1, 2) // want "formatter: empty message"
+	assert.Equal(t, want, got, "boom!")
+	assertObj.Equal(want, got, "boom!")
+	assert.Equal(t, want, got, "%v != %v", 1, 2)
+	assertObj.Equal(want, got, "%v != %v", 1, 2)
+	assert.Equalf(t, want, got, "%v != %v", 1, 2)
+	assertObj.Equalf(want, got, "%v != %v", 1, 2)
+}
+
 type FormatterCheckerSuite struct {
 	suite.Suite
 }

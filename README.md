@@ -595,14 +595,17 @@ in `v2` of `testify`.
 #### 4)
 
 Validating the first argument of `msgAndArgs` has `string` type (based on `testify`'s
-maintainer's [feedback](https://github.com/stretchr/testify/issues/1679#issuecomment-2480629257)):
+maintainer's [feedback](https://github.com/stretchr/testify/issues/1679#issuecomment-2480629257)) and this string is
+not empty:
 
 ```go
 ❌
 assert.Equal(t, 1, strings.Count(b.String(), "hello"), tc)
+assert.Equalf(t, want, got, "")
 
 ✅
 assert.Equal(t, 1, strings.Count(b.String(), "hello"), "%+v", tc)
+assert.Equal(t, want, got)
 ```
 
 You can disable this behaviour with the `--formatter.require-string-msg=false` flag.

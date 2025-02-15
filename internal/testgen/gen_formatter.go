@@ -24,6 +24,8 @@ func (g FormatterTestsGenerator) TemplateData() any {
 			": using msgAndArgs with non-string first element (msg) causes panic"
 		reportFailureMsgIsNotFmtString = checker +
 			": failure message is not a format string, use msgAndArgs instead"
+		reportEmptyMessage = checker +
+			": empty message"
 	)
 
 	baseAssertion := Assertion{Fn: "Equal", Argsf: "1, 2"}
@@ -171,6 +173,21 @@ func (g FormatterTestsGenerator) TemplateData() any {
 		},
 	}
 
+	emptyMsgAssertions := []Assertion{
+		{Fn: "Equal", Argsf: `want, got, ""`,
+			ReportMsgf: reportEmptyMessage, ProposedArgsf: "want, got"},
+		{Fn: "Equalf", Argsf: `want, got, ""`,
+			ReportMsgf: reportEmptyMessage + "%.s%.s", ProposedFn: "Equal", ProposedArgsf: "want, got"},
+		{Fn: "Equal", Argsf: `want, got, "", 1, 2`,
+			ReportMsgf: reportEmptyMessage},
+		{Fn: "Equalf", Argsf: `want, got, "", 1, 2`,
+			ReportMsgf: reportEmptyMessage},
+
+		{Fn: "Equal", Argsf: `want, got, "boom!"`},
+		{Fn: "Equal", Argsf: `want, got, "%v != %v", 1, 2`},
+		{Fn: "Equalf", Argsf: `want, got, "%v != %v", 1, 2`},
+	}
+
 	assertions := make([]Assertion, 0, len(allAssertions)*5)
 	for _, a := range allAssertions {
 		assertions = append(assertions,
@@ -204,6 +221,7 @@ func (g FormatterTestsGenerator) TemplateData() any {
 		BaseAssertion          Assertion
 		NonStringMsgAssertions []Assertion
 		SprintfAssertions      []Assertion
+		EmptyMsgAssertions     []Assertion
 		AllAssertions          []Assertion
 		IgnoredAssertions      []Assertion
 	}{
@@ -211,6 +229,7 @@ func (g FormatterTestsGenerator) TemplateData() any {
 		BaseAssertion:          baseAssertion,
 		NonStringMsgAssertions: nonStringMsgAssertions,
 		SprintfAssertions:      sprintfAssertions,
+		EmptyMsgAssertions:     emptyMsgAssertions,
 		AllAssertions:          assertions,
 		IgnoredAssertions: []Assertion{
 			{Fn: "ObjectsAreEqual", Argsf: "nil, nil"},
@@ -302,6 +321,16 @@ func {{ .CheckerName.AsTestName }}_PrintfChecks(t *testing.T) {
 	assert.Equalf(t, 1, 2, "msg with arg %d", assertFalse)  // want "formatter: assert\\.Equalf format %d arg assertFalse is a func value, not called"
 
 	assert.Equalf(t, 1, 2, "msg with args %s %s", "42") // want "formatter: assert\\.Equalf format %s reads arg #2, but call has 1 arg$"
+}
+
+func {{ .CheckerName.AsTestName }}_EmptyMessage(t *testing.T) {
+	var want, got any
+	assertObj := assert.New(t)
+
+	{{- range $ai, $assrn := $.EmptyMsgAssertions }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" nil }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assertObj" "" nil }}
+	{{- end }}
 }
 
 {{ $suiteName := .CheckerName.AsSuiteName }}

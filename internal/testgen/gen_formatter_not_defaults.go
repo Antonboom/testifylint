@@ -19,6 +19,8 @@ func (g FormatterNotDefaultsTestsGenerator) TemplateData() any {
 			": using msgAndArgs with non-string first element (msg) causes panic"
 		reportFailureMsgIsNotFmtString = checker +
 			": failure message is not a format string, use msgAndArgs instead"
+		reportEmptyMessage = checker +
+			": empty message"
 	)
 
 	baseAssertions := []Assertion{
@@ -130,6 +132,21 @@ func (g FormatterNotDefaultsTestsGenerator) TemplateData() any {
 		},
 	}
 
+	emptyMsgAssertions := []Assertion{
+		{Fn: "Equal", Argsf: `want, got, ""`,
+			ReportMsgf: reportEmptyMessage, ProposedArgsf: "want, got"},
+		{Fn: "Equalf", Argsf: `want, got, ""`,
+			ReportMsgf: reportEmptyMessage + "%.s%.s", ProposedFn: "Equal", ProposedArgsf: "want, got"},
+		{Fn: "Equal", Argsf: `want, got, "", 1, 2`,
+			ReportMsgf: reportEmptyMessage},
+		{Fn: "Equalf", Argsf: `want, got, "", 1, 2`,
+			ReportMsgf: reportEmptyMessage},
+
+		{Fn: "Equal", Argsf: `want, got, "boom!"`, ReportMsgf: reportUse, ProposedFn: "Equalf"},
+		{Fn: "Equal", Argsf: `want, got, "%v != %v", 1, 2`, ReportMsgf: reportUse, ProposedFn: "Equalf"},
+		{Fn: "Equalf", Argsf: `want, got, "%v != %v", 1, 2`},
+	}
+
 	assertions := make([]Assertion, 0, len(allAssertions)*5)
 	for _, a := range allAssertions {
 		assertions = append(assertions,
@@ -159,15 +176,17 @@ func (g FormatterNotDefaultsTestsGenerator) TemplateData() any {
 	}
 
 	return struct {
-		CheckerName       CheckerName
-		BaseAssertions    []Assertion
-		SprintfAssertions []Assertion
-		AllAssertions     []Assertion
+		CheckerName        CheckerName
+		BaseAssertions     []Assertion
+		SprintfAssertions  []Assertion
+		EmptyMsgAssertions []Assertion
+		AllAssertions      []Assertion
 	}{
-		CheckerName:       CheckerName(checker),
-		BaseAssertions:    baseAssertions,
-		SprintfAssertions: sprintfAssertions,
-		AllAssertions:     assertions,
+		CheckerName:        CheckerName(checker),
+		BaseAssertions:     baseAssertions,
+		SprintfAssertions:  sprintfAssertions,
+		EmptyMsgAssertions: emptyMsgAssertions,
+		AllAssertions:      assertions,
 	}
 }
 
@@ -207,6 +226,16 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	
 	{{ range $ai, $assrn := $.SprintfAssertions }}
 		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" nil }}
+	{{- end }}
+}
+
+func {{ .CheckerName.AsTestName }}_EmptyMessage(t *testing.T) {
+	var want, got any
+	assertObj := assert.New(t)
+
+	{{- range $ai, $assrn := $.EmptyMsgAssertions }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" nil }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assertObj" "" nil }}
 	{{- end }}
 }
 
