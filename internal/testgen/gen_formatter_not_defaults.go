@@ -25,10 +25,9 @@ func (g FormatterNotDefaultsTestsGenerator) TemplateData() any {
 		{Fn: "Equal", Argsf: "1, 2"},
 		{Fn: "Equal", Argsf: "1, 2, new(time.Time)"},
 		{
-			Fn:            "Equal",
-			Argsf:         "1, 2, new(time.Time), 42",
-			ReportMsgf:    reportDoNotUseArgsWithNonStringMsg,
-			ProposedArgsf: `1, 2, new(time.Time)`,
+			Fn:         "Equal",
+			Argsf:      "1, 2, new(time.Time), 42",
+			ReportMsgf: reportDoNotUseArgsWithNonStringMsg,
 		},
 		{
 			Fn:         "Fail",

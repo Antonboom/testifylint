@@ -86,7 +86,8 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 			return nil
 		}
 		if strings.Contains(failureMsg, "%") {
-			return newDiagnostic(checker.Name(), call, "failure message is not a format string, use msgAndArgs instead")
+			return newDiagnostic(checker.Name(), call,
+				"failure message is not a format string, use msgAndArgs instead")
 		}
 	}
 
@@ -120,17 +121,7 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 			}
 		} else {
 			return newDiagnostic(checker.Name(), call,
-				"using msgAndArgs with non-string first element (msg) causes panic",
-				analysis.SuggestedFix{
-					Message: `Remove format arguments`,
-					TextEdits: []analysis.TextEdit{
-						{
-							Pos:     msgAndArgs.Pos(),
-							End:     call.ArgsRaw[lastArgPos].End(),
-							NewText: analysisutil.NodeBytes(pass.Fset, msgAndArgs),
-						},
-					},
-				})
+				"using msgAndArgs with non-string first element (msg) causes panic")
 		}
 	}
 	return nil

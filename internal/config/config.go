@@ -138,7 +138,7 @@ func BindToFlags(cfg *Config, fs *flag.FlagSet) {
 		"to require f-assertions (e.g. assert.Equalf) if format string is used, even if there are no variable-length variables")
 	fs.BoolVar(&cfg.Formatter.RequireStringMsg,
 		"formatter.require-string-msg", true,
-		"to require that the first element of msgAndArgs... has a string type")
+		"to require that the first element of msgAndArgs (msg) has a string type")
 
 	fs.BoolVar(&cfg.GoRequire.IgnoreHTTPHandlers,
 		"go-require.ignore-http-handlers", false,

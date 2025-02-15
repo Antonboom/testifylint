@@ -55,22 +55,19 @@ func (g FormatterTestsGenerator) TemplateData() any {
 		},
 
 		{
-			Fn:            "Equal",
-			Argsf:         "1, 2, new(time.Time), 42",
-			ReportMsgf:    reportDoNotUseArgsWithNonStringMsg,
-			ProposedArgsf: `1, 2, new(time.Time)`,
+			Fn:         "Equal",
+			Argsf:      "1, 2, new(time.Time), 42",
+			ReportMsgf: reportDoNotUseArgsWithNonStringMsg,
 		},
 		{
-			Fn:            "Equal",
-			Argsf:         `1, 2, i, 42, "42"`,
-			ReportMsgf:    reportDoNotUseArgsWithNonStringMsg,
-			ProposedArgsf: `1, 2, i`,
+			Fn:         "Equal",
+			Argsf:      `1, 2, i, 42, "42"`,
+			ReportMsgf: reportDoNotUseArgsWithNonStringMsg,
 		},
 		{
-			Fn:            "Equal",
-			Argsf:         "1, 2, tc, 0",
-			ReportMsgf:    reportDoNotUseArgsWithNonStringMsg,
-			ProposedArgsf: `1, 2, tc`,
+			Fn:         "Equal",
+			Argsf:      "1, 2, tc, 0",
+			ReportMsgf: reportDoNotUseArgsWithNonStringMsg,
 		},
 		{
 			Fn:         "Fail",

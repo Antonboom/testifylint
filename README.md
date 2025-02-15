@@ -589,9 +589,6 @@ Validating there are no arguments in `msgAndArgs` if message is not a string:
 ```go
 ❌
 assert.True(t, cco.IsCardNumber(valid), i, valid) // Causes panic.
-
-✅
-assert.True(t, cco.IsCardNumber(valid), i) // But this is still not recommended due to point 4 (above).
 ```
 
 See [testify's issue](https://github.com/stretchr/testify/issues/1679) for details.
