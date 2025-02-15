@@ -1064,6 +1064,11 @@ assert.True(t, true)
 assert.Zero(t, 0)
 assert.Zero(t, "")
 assert.Zero(t, nil)
+
+assert.GreaterOrEqual(t, uintVal, 0)
+assert.LessOrEqual(t, 0, uintVal)
+assert.GreaterOrEqual(t, len(x), 0)
+assert.LessOrEqual(t, 0, len(x))
 ```
 
 **Autofix**: false. <br>

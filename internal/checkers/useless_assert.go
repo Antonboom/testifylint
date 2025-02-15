@@ -44,6 +44,11 @@ import (
 //	assert.Zero(t, 0)
 //	assert.Zero(t, "")
 //	assert.Zero(t, nil)
+//
+//	assert.GreaterOrEqual(t, uintVal, 0)
+//	assert.LessOrEqual(t, 0, uintVal)
+//	assert.GreaterOrEqual(t, len(x), 0)
+//	assert.LessOrEqual(t, 0, len(x))
 type UselessAssert struct{}
 
 // NewUselessAssert constructs UselessAssert checker.
@@ -55,6 +60,11 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 		return d
 	}
 
+	isLen := func(pass *analysis.Pass, e ast.Expr) bool {
+		_, ok := isBuiltinLenCall(pass, e)
+		return ok
+	}
+
 	var isMeaningless bool
 	switch call.Fn.NameFTrimmed {
 	case "Empty":
@@ -63,6 +73,10 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 	case "False":
 		isMeaningless = (len(call.Args) >= 1) && isUntypedFalse(pass, call.Args[0])
 
+	case "GreaterOrEqual":
+		isMeaningless = (len(call.Args) >= 2) && isAnyZero(call.Args[1]) &&
+			(isLen(pass, call.Args[0]) || isUnsigned(pass, call.Args[0]))
+
 	case "Implements":
 		if len(call.Args) < 2 {
 			return nil
@@ -70,6 +84,10 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 
 		elem, ok := isPointer(pass, call.Args[0])
 		isMeaningless = ok && isEmptyInterfaceType(elem)
+
+	case "LessOrEqual":
+		isMeaningless = (len(call.Args) >= 2) && isAnyZero(call.Args[0]) &&
+			(isLen(pass, call.Args[1]) || isUnsigned(pass, call.Args[1]))
 
 	case "Negative":
 		isMeaningless = (len(call.Args) >= 1) && isNegativeIntNumber(call.Args[0])

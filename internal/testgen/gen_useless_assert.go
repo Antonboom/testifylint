@@ -104,6 +104,12 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 			{Fn: "Zero", Argsf: "0", ReportMsgf: defaultReport},
 			{Fn: "Zero", Argsf: `""`, ReportMsgf: defaultReport},
 			{Fn: "Zero", Argsf: "nil", ReportMsgf: defaultReport},
+
+			{Fn: "GreaterOrEqual", Argsf: "uint(42), 0", ReportMsgf: defaultReport},
+			{Fn: "LessOrEqual", Argsf: "0, uint(42)", ReportMsgf: defaultReport},
+
+			{Fn: "GreaterOrEqual", Argsf: "len(x), 0", ReportMsgf: defaultReport},
+			{Fn: "LessOrEqual", Argsf: "0, len(x)", ReportMsgf: defaultReport},
 		},
 		InvalidAssertions: twoSideAssertions,
 		ValidAssertions: []Assertion{
@@ -159,6 +165,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var num int
 	var b bool
 	var tc testCase
+	var x []int
 
 	// Invalid.
 	{
