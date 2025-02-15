@@ -65,7 +65,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		a, b := call.Args[0], call.Args[1]
 
 		if canBeNegative(pass, a) && isZeroOrSignedZero(b) {
-			return newUseNegativeDiagnostic(a.Pos(), b.End(), untype(a))
+			return newUseNegativeDiagnostic(a.Pos(), b.End(), a)
 		}
 
 	case "Greater":
@@ -75,7 +75,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 		a, b := call.Args[0], call.Args[1]
 
 		if isZeroOrSignedZero(a) && canBeNegative(pass, b) {
-			return newUseNegativeDiagnostic(a.Pos(), b.End(), untype(b))
+			return newUseNegativeDiagnostic(a.Pos(), b.End(), b)
 		}
 
 	case "True":
@@ -89,7 +89,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
-			return newUseNegativeDiagnostic(expr.Pos(), expr.End(), untype(survivingArg))
+			return newUseNegativeDiagnostic(expr.Pos(), expr.End(), survivingArg)
 		}
 
 	case "False":
@@ -103,7 +103,7 @@ func (checker NegativePositive) checkNegative(pass *analysis.Pass, call *CallMet
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
-			return newUseNegativeDiagnostic(expr.Pos(), expr.End(), untype(survivingArg))
+			return newUseNegativeDiagnostic(expr.Pos(), expr.End(), survivingArg)
 		}
 	}
 	return nil
@@ -128,7 +128,7 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 		a, b := call.Args[0], call.Args[1]
 
 		if isNotAnyZero(a) && isAnyZero(b) {
-			return newUsePositiveDiagnostic(a.Pos(), b.End(), untype(a))
+			return newUsePositiveDiagnostic(a.Pos(), b.End(), a)
 		}
 
 	case "Less":
@@ -138,7 +138,7 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 		a, b := call.Args[0], call.Args[1]
 
 		if isAnyZero(a) && isNotAnyZero(b) {
-			return newUsePositiveDiagnostic(a.Pos(), b.End(), untype(b))
+			return newUsePositiveDiagnostic(a.Pos(), b.End(), b)
 		}
 
 	case "True":
@@ -152,7 +152,7 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
-			return newUsePositiveDiagnostic(expr.Pos(), expr.End(), untype(survivingArg))
+			return newUsePositiveDiagnostic(expr.Pos(), expr.End(), survivingArg)
 		}
 
 	case "False":
@@ -166,7 +166,7 @@ func (checker NegativePositive) checkPositive(pass *analysis.Pass, call *CallMet
 
 		survivingArg, ok := anyVal([]bool{ok1, ok2}, a, b)
 		if ok {
-			return newUsePositiveDiagnostic(expr.Pos(), expr.End(), untype(survivingArg))
+			return newUsePositiveDiagnostic(expr.Pos(), expr.End(), survivingArg)
 		}
 	}
 	return nil

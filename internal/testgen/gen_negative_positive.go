@@ -33,12 +33,12 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		}
 
 		invalidAssertions = append(invalidAssertions,
-			Assertion{Fn: "Less", Argsf: "a, " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
-			Assertion{Fn: "Greater", Argsf: zero + ", a", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
-			Assertion{Fn: "True", Argsf: v + " < " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
-			Assertion{Fn: "True", Argsf: zero + " > " + v, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
-			Assertion{Fn: "False", Argsf: v + " >= " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
-			Assertion{Fn: "False", Argsf: zero + " <= " + v, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+			Assertion{Fn: "Less", Argsf: v + ", " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
+			Assertion{Fn: "Greater", Argsf: zero + ", " + v, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
+			Assertion{Fn: "True", Argsf: v + " < " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
+			Assertion{Fn: "True", Argsf: zero + " > " + v, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
+			Assertion{Fn: "False", Argsf: v + " >= " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
+			Assertion{Fn: "False", Argsf: zero + " <= " + v, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: v},
 		)
 	}
 
@@ -54,12 +54,12 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		}
 
 		invalidAssertions = append(invalidAssertions,
-			Assertion{Fn: "Greater", Argsf: "a, " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			Assertion{Fn: "Less", Argsf: zero + ", a", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			Assertion{Fn: "True", Argsf: v + " > " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			Assertion{Fn: "True", Argsf: zero + " < " + v, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			Assertion{Fn: "False", Argsf: v + " <= " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			Assertion{Fn: "False", Argsf: zero + " >= " + v, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			Assertion{Fn: "Greater", Argsf: v + ", " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
+			Assertion{Fn: "Less", Argsf: zero + ", " + v, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
+			Assertion{Fn: "True", Argsf: v + " > " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
+			Assertion{Fn: "True", Argsf: zero + " < " + v, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
+			Assertion{Fn: "False", Argsf: v + " <= " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
+			Assertion{Fn: "False", Argsf: zero + " >= " + v, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: v},
 		)
 	}
 
@@ -258,7 +258,7 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 			},
 			{
 				Fn: "Greater", Argsf: "uint64(state.LastUpdatedEpoch), uint64(0)",
-				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "state.LastUpdatedEpoch",
+				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "uint64(state.LastUpdatedEpoch)",
 			},
 			{
 				Fn: "True", Argsf: `uint64(0) < prod["last_claim_time"].(uint64)`,
