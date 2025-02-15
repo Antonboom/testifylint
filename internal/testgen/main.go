@@ -30,6 +30,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	ContainsTestsGenerator{},
 	EmptyTestsGenerator{},
 	EncodedCompareTestsGenerator{},
+	EqualValuesTestsGenerator{},
 	ErrorNilTestsGenerator{},
 	ErrorIsAsTestsGenerator{},
 	ExpectedActualTestsGenerator{},

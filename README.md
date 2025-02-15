@@ -97,6 +97,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [contains](#contains)                               | ✅                  | ✅       |
 | [empty](#empty)                                     | ✅                  | ✅       |
 | [encoded-compare](#encoded-compare)                 | ✅                  | ✅       |
+| [equal-values](#equal-values)                       | ✅                  | ✅       |
 | [error-is-as](#error-is-as)                         | ✅                  | 🤏      |
 | [error-nil](#error-nil)                             | ✅                  | ✅       |
 | [expected-actual](#expected-actual)                 | ✅                  | ✅       |
@@ -305,6 +306,30 @@ variables. If variable is converted to `json.RawMessage`, then it is considered 
 When fixing, `encoded-compare` removes unnecessary conversions to `[]byte`, `string`, `json.RawMessage` and calls of
 `strings.Replace`, `strings.ReplaceAll`, `strings.Trim`, `strings.TrimSpace`, and adds a conversion to `string` when
 needed.
+
+---
+
+### equal-values
+
+```go
+❌
+assert.EqualValues(t, 42, result.IntField)
+assert.NotEqualValues(t, 42, result.IntField)
+// And other variations with similar types (strings, numerics, structs, etc.)...
+
+✅
+assert.Equal(t, 42, result.IntField)
+assert.NotEqual(t, 42, result.IntField)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Using more appropriate and more error-proof `testify` API.
+
+In additional:
+
+1. Overflow-underflow issues are [covered by testify itself](https://github.com/stretchr/testify/pull/1531).
+2. Nil comparisons are covered by [nil-compare](#nil-compare).
 
 ---
 

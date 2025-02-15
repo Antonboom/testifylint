@@ -144,6 +144,11 @@ func isPointer(pass *analysis.Pass, e ast.Expr) (types.Type, bool) {
 	return ptr.Elem(), true
 }
 
+func isFunc(pass *analysis.Pass, e ast.Expr) bool {
+	_, ok := pass.TypesInfo.TypeOf(e).(*types.Signature)
+	return ok
+}
+
 // isByteArray returns true if expression is `[]byte` itself.
 func isByteArray(e ast.Expr) bool {
 	at, ok := e.(*ast.ArrayType)

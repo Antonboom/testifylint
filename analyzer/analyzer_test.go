@@ -69,6 +69,10 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewEncodedCompare().Name()},
 		},
 		{
+			dir:   "equal-values-different-pkg",
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewEqualValues().Name()},
+		},
+		{
 			dir:   "error-as-target",
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewErrorIsAs().Name()},
 		},
