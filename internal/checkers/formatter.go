@@ -3,6 +3,7 @@ package checkers
 import (
 	"go/types"
 	"strconv"
+	"strings"
 
 	"golang.org/x/tools/go/analysis"
 
@@ -25,9 +26,15 @@ import (
 //	assert.Errorf(t, err, "Profile %s should not be valid", test.profile)
 //	assert.Errorf(t, err, "test %s", test.testName)
 //	assert.Truef(t, targetTs.Equal(ts), "the timestamp should be as expected (%s) but was %s", targetTs, ts)
+//
+// It also checks that there are no arguments in `msgAndArgs` if the message is not a string,
+// and additionally checks that the first argument of `msgAndArgs` is a string.
+//
+// Finally, it checks that failure message in Fail and FailNow is not used as a format string (which won't work).
 type Formatter struct {
 	checkFormatString bool
 	requireFFuncs     bool
+	requireStringMsg  bool
 }
 
 // NewFormatter constructs Formatter checker.
@@ -35,6 +42,7 @@ func NewFormatter() *Formatter {
 	return &Formatter{
 		checkFormatString: true,
 		requireFFuncs:     false,
+		requireStringMsg:  true,
 	}
 }
 
@@ -47,6 +55,11 @@ func (checker *Formatter) SetCheckFormatString(v bool) *Formatter {
 
 func (checker *Formatter) SetRequireFFuncs(v bool) *Formatter {
 	checker.requireFFuncs = v
+	return checker
+}
+
+func (checker *Formatter) SetRequireStringMsg(v bool) *Formatter {
+	checker.requireStringMsg = v
 	return checker
 }
 
@@ -63,21 +76,53 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 		return nil
 	}
 
-	fFunc := call.Fn.Name + "f"
+	lastArgPos := len(call.ArgsRaw) - 1
+	isSingleMsgAndArgElem := msgAndArgsPos == lastArgPos
+	msgAndArgs := call.ArgsRaw[msgAndArgsPos]
 
-	if msgAndArgsPos == len(call.ArgsRaw)-1 {
-		msgAndArgs := call.ArgsRaw[msgAndArgsPos]
-		if args, ok := isFmtSprintfCall(pass, msgAndArgs); ok {
-			if checker.requireFFuncs {
-				return newRemoveFnAndUseDiagnostic(pass, checker.Name(), call, fFunc,
-					"fmt.Sprintf", msgAndArgs, args...)
-			}
-			return newRemoveSprintfDiagnostic(pass, checker.Name(), call, msgAndArgs, args)
+	if name := call.Fn.NameFTrimmed; name == "Fail" || name == "FailNow" {
+		failureMsg, err := strconv.Unquote(analysisutil.NodeString(pass.Fset, call.Args[0]))
+		if err != nil {
+			return nil
+		}
+		if strings.Contains(failureMsg, "%") {
+			return newDiagnostic(checker.Name(), call,
+				"failure message is not a format string, use msgAndArgs instead")
 		}
 	}
 
-	if checker.requireFFuncs {
-		return newUseFunctionDiagnostic(checker.Name(), call, fFunc)
+	if args, ok := isFmtSprintfCall(pass, msgAndArgs); ok && isSingleMsgAndArgElem {
+		if checker.requireFFuncs {
+			return newRemoveFnAndUseDiagnostic(pass, checker.Name(), call, call.Fn.Name+"f",
+				"fmt.Sprintf", msgAndArgs, args...)
+		}
+		return newRemoveSprintfDiagnostic(pass, checker.Name(), call, msgAndArgs, args)
+	}
+
+	if hasStringType(pass, msgAndArgs) { //nolint:nestif // This is the best option of code organization :(
+		if checker.requireFFuncs {
+			return newUseFunctionDiagnostic(checker.Name(), call, call.Fn.Name+"f")
+		}
+	} else {
+		if isSingleMsgAndArgElem { //nolint:revive // Better without early-return.
+			if checker.requireStringMsg {
+				return newDiagnostic(checker.Name(), call,
+					"do not use non-string value as first element (msg) of msgAndArgs",
+					analysis.SuggestedFix{
+						Message: `Introduce "%+v" as the message`,
+						TextEdits: []analysis.TextEdit{
+							{
+								Pos:     msgAndArgs.Pos(),
+								End:     msgAndArgs.End(),
+								NewText: []byte(`"%+v", ` + analysisutil.NodeString(pass.Fset, msgAndArgs)),
+							},
+						},
+					})
+			}
+		} else {
+			return newDiagnostic(checker.Name(), call,
+				"using msgAndArgs with non-string first element (msg) causes panic")
+		}
 	}
 	return nil
 }
@@ -88,9 +133,10 @@ func (checker Formatter) checkFmtAssertion(pass *analysis.Pass, call *CallMeta) 
 		return nil
 	}
 
+	lastArgPos := len(call.ArgsRaw) - 1
 	msg := call.ArgsRaw[formatPos]
 
-	if formatPos == len(call.ArgsRaw)-1 {
+	if formatPos == lastArgPos {
 		if args, ok := isFmtSprintfCall(pass, msg); ok {
 			return newRemoveSprintfDiagnostic(pass, checker.Name(), call, msg, args)
 		}
@@ -114,12 +160,16 @@ func (checker Formatter) checkFmtAssertion(pass *analysis.Pass, call *CallMeta) 
 }
 
 func isPrintfLikeCall(pass *analysis.Pass, call *CallMeta) (int, bool) {
+	if call.Call.Ellipsis.IsValid() {
+		return -1, false
+	}
+
 	msgAndArgsPos := getMsgAndArgsPosition(call.Fn.Signature)
 	if msgAndArgsPos <= 0 {
 		return -1, false
 	}
 
-	if !(len(call.ArgsRaw) > msgAndArgsPos && hasStringType(pass, call.ArgsRaw[msgAndArgsPos])) {
+	if msgAndArgsPos >= len(call.ArgsRaw) {
 		return -1, false
 	}
 

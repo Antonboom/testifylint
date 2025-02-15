@@ -25,16 +25,87 @@ func TestFormatterChecker(t *testing.T) {
 	assert.Equalf(t, 1, 2, "msg with arg %d", 42)
 	assert.Equalf(t, 1, 2, "msg with args %d %s", 42, "42")
 
+	assertObj := assert.New(t)
+
+	var i int
+	var tc struct {
+		strLogLevel        string
+		logFunc            func(func() string)
+		expectedToBeCalled bool
+	}
+	assert.Equal(t, 1, 2, new(time.Time))                                         // want "formatter: do not use non-string value as first element \\(msg\\) of msgAndArgs"
+	assertObj.Equal(1, 2, new(time.Time))                                         // want "formatter: do not use non-string value as first element \\(msg\\) of msgAndArgs"
+	assert.Equal(t, 1, 2, i)                                                      // want "formatter: do not use non-string value as first element \\(msg\\) of msgAndArgs"
+	assertObj.Equal(1, 2, i)                                                      // want "formatter: do not use non-string value as first element \\(msg\\) of msgAndArgs"
+	assert.Equal(t, 1, 2, tc)                                                     // want "formatter: do not use non-string value as first element \\(msg\\) of msgAndArgs"
+	assertObj.Equal(1, 2, tc)                                                     // want "formatter: do not use non-string value as first element \\(msg\\) of msgAndArgs"
+	assert.Equal(t, 1, 2, args)                                                   // want "formatter: do not use non-string value as first element \\(msg\\) of msgAndArgs"
+	assertObj.Equal(1, 2, args)                                                   // want "formatter: do not use non-string value as first element \\(msg\\) of msgAndArgs"
+	assert.Equal(t, 1, 2, new(time.Time), 42)                                     // want "formatter: using msgAndArgs with non-string first element \\(msg\\) causes panic"
+	assertObj.Equal(1, 2, new(time.Time), 42)                                     // want "formatter: using msgAndArgs with non-string first element \\(msg\\) causes panic"
+	assert.Equal(t, 1, 2, i, 42, "42")                                            // want "formatter: using msgAndArgs with non-string first element \\(msg\\) causes panic"
+	assertObj.Equal(1, 2, i, 42, "42")                                            // want "formatter: using msgAndArgs with non-string first element \\(msg\\) causes panic"
+	assert.Equal(t, 1, 2, tc, 0)                                                  // want "formatter: using msgAndArgs with non-string first element \\(msg\\) causes panic"
+	assertObj.Equal(1, 2, tc, 0)                                                  // want "formatter: using msgAndArgs with non-string first element \\(msg\\) causes panic"
+	assert.Fail(t, "test case [%d] failed.  Expected: %+v, Got: %+v", 1, 2, 3)    // want "formatter: failure message is not a format string, use msgAndArgs instead"
+	assertObj.Fail("test case [%d] failed.  Expected: %+v, Got: %+v", 1, 2, 3)    // want "formatter: failure message is not a format string, use msgAndArgs instead"
+	assert.Fail(t, "test case [%d] failed", 1)                                    // want "formatter: failure message is not a format string, use msgAndArgs instead"
+	assertObj.Fail("test case [%d] failed", 1)                                    // want "formatter: failure message is not a format string, use msgAndArgs instead"
+	assert.Fail(t, "test case failed", 1)                                         // want "formatter: do not use non-string value as first element \\(msg\\) of msgAndArgs"
+	assertObj.Fail("test case failed", 1)                                         // want "formatter: do not use non-string value as first element \\(msg\\) of msgAndArgs"
+	assert.FailNow(t, "test case [%d] failed.  Expected: %+v, Got: %+v", 1, 2, 3) // want "formatter: failure message is not a format string, use msgAndArgs instead"
+	assertObj.FailNow("test case [%d] failed.  Expected: %+v, Got: %+v", 1, 2, 3) // want "formatter: failure message is not a format string, use msgAndArgs instead"
+	assert.FailNow(t, "test case [%d] failed", 1)                                 // want "formatter: failure message is not a format string, use msgAndArgs instead"
+	assertObj.FailNow("test case [%d] failed", 1)                                 // want "formatter: failure message is not a format string, use msgAndArgs instead"
+	assert.FailNow(t, "test case failed", 1)                                      // want "formatter: do not use non-string value as first element \\(msg\\) of msgAndArgs"
+	assertObj.FailNow("test case failed", 1)                                      // want "formatter: do not use non-string value as first element \\(msg\\) of msgAndArgs"
+	assert.Equal(t, 1, 2, msg())
+	assertObj.Equal(1, 2, msg())
+	assert.Equal(t, 1, 2, new(time.Time).String())
+	assertObj.Equal(1, 2, new(time.Time).String())
+	assert.Equal(t, 1, 2, args...)
+	assertObj.Equal(1, 2, args...)
+	assert.Equal(t, 1, 2, "%+v", new(time.Time))
+	assertObj.Equal(1, 2, "%+v", new(time.Time))
+	assert.Equal(t, 1, 2, "%+v", i)
+	assertObj.Equal(1, 2, "%+v", i)
+	assert.Equal(t, 1, 2, "%+v", tc)
+	assertObj.Equal(1, 2, "%+v", tc)
+	assert.Equal(t, 1, 2, "%+v", msg())
+	assertObj.Equal(1, 2, "%+v", msg())
+	assert.Equal(t, 1, 2, "%+v", new(time.Time).String())
+	assertObj.Equal(1, 2, "%+v", new(time.Time).String())
+	assert.Equal(t, 1, 2, "%+v", args)
+	assertObj.Equal(1, 2, "%+v", args)
+	assert.Fail(t, "boom!", "test case [%d] failed", 1)
+	assertObj.Fail("boom!", "test case [%d] failed", 1)
+	assert.FailNow(t, "boom!", "test case [%d] failed", 1)
+	assertObj.FailNow("boom!", "test case [%d] failed", 1)
+
 	assert.Equal(t, 1, 2, fmt.Sprintf("msg"))                           // want "formatter: remove unnecessary fmt\\.Sprintf"
+	assertObj.Equal(1, 2, fmt.Sprintf("msg"))                           // want "formatter: remove unnecessary fmt\\.Sprintf"
 	assert.Equal(t, 1, 2, fmt.Sprintf("msg with arg %d", 42))           // want "formatter: remove unnecessary fmt\\.Sprintf"
+	assertObj.Equal(1, 2, fmt.Sprintf("msg with arg %d", 42))           // want "formatter: remove unnecessary fmt\\.Sprintf"
 	assert.Equal(t, 1, 2, fmt.Sprintf("msg with args %d %s", 42, "42")) // want "formatter: remove unnecessary fmt\\.Sprintf"
+	assertObj.Equal(1, 2, fmt.Sprintf("msg with args %d %s", 42, "42")) // want "formatter: remove unnecessary fmt\\.Sprintf"
 	assert.Equal(t, 1, 2, fmt.Sprintf("msg"), 42)
+	assertObj.Equal(1, 2, fmt.Sprintf("msg"), 42)
 	assert.Equal(t, 1, 2, fmt.Sprintf("msg with arg %d", 42), "42")
+	assertObj.Equal(1, 2, fmt.Sprintf("msg with arg %d", 42), "42")
 	assert.Equalf(t, 1, 2, fmt.Sprintf("msg"))                           // want "formatter: remove unnecessary fmt\\.Sprintf"
+	assertObj.Equalf(1, 2, fmt.Sprintf("msg"))                           // want "formatter: remove unnecessary fmt\\.Sprintf"
 	assert.Equalf(t, 1, 2, fmt.Sprintf("msg with arg %d", 42))           // want "formatter: remove unnecessary fmt\\.Sprintf"
+	assertObj.Equalf(1, 2, fmt.Sprintf("msg with arg %d", 42))           // want "formatter: remove unnecessary fmt\\.Sprintf"
 	assert.Equalf(t, 1, 2, fmt.Sprintf("msg with args %d %s", 42, "42")) // want "formatter: remove unnecessary fmt\\.Sprintf"
+	assertObj.Equalf(1, 2, fmt.Sprintf("msg with args %d %s", 42, "42")) // want "formatter: remove unnecessary fmt\\.Sprintf"
 	assert.Equalf(t, 1, 2, fmt.Sprintf("msg"), 42)
+	assertObj.Equalf(1, 2, fmt.Sprintf("msg"), 42)
 	assert.Equalf(t, 1, 2, fmt.Sprintf("msg with arg %d", 42), "42")
+	assertObj.Equalf(1, 2, fmt.Sprintf("msg with arg %d", 42), "42")
+}
+
+func msg() string {
+	return "msg"
 }
 
 func TestFormatterChecker_PrintfChecks(t *testing.T) {
@@ -453,8 +524,22 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 }
 
 func TestFormatterChecker_Ignored(t *testing.T) {
-	assert.Equal(nil, nil, new(time.Time))
 	assert.ObjectsAreEqual(nil, nil)
 	assert.ObjectsAreEqualValues(nil, nil)
 	assert.ObjectsExportedFieldsAreEqual(nil, nil)
 }
+
+// AssertElementsMatchFunc is similar to the assert.ElementsMatch function, but it allows for a custom comparison function
+func AssertElementsMatchFunc[T any](t *testing.T, expected, actual []T, comp func(a, b T) bool, msgAndArgs ...any) bool {
+	t.Helper()
+
+	extraA, extraB := diffListsFunc(expected, actual, comp)
+	if len(extraA) == 0 && len(extraB) == 0 {
+		return true
+	}
+
+	return assert.Fail(t, formatListDiff(expected, actual, extraA, extraB), msgAndArgs...)
+}
+
+func diffListsFunc[T any](a []T, b []T, comp func(a, b T) bool) ([]T, []T)          { return nil, nil }
+func formatListDiff[T any](expected, actual, extraExpected, extraActual []T) string { return "" }

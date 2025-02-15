@@ -69,9 +69,10 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewSuiteTHelper(),
 	}
 
-	zeroedFormatter := checkers.RegularChecker(checkers.NewFormatter().
+	formatterWithoutEnabledOptions := checkers.RegularChecker(checkers.NewFormatter().
 		SetCheckFormatString(false).
-		SetRequireFFuncs(false))
+		SetRequireFFuncs(false).
+		SetRequireStringMsg(false))
 
 	cases := []struct {
 		name        string
@@ -82,7 +83,7 @@ func Test_newCheckers(t *testing.T) {
 		{
 			name:        "no config",
 			cfg:         config.Config{},
-			expRegular:  replace(enabledByDefaultRegularCheckers, zeroedFormatter),
+			expRegular:  replace(enabledByDefaultRegularCheckers, formatterWithoutEnabledOptions),
 			expAdvanced: enabledByDefaultAdvancedCheckers,
 		},
 		{
@@ -116,7 +117,7 @@ func Test_newCheckers(t *testing.T) {
 					checkers.NewSuiteTHelper().Name(),
 				},
 			},
-			expRegular: filter(replace(allRegularCheckers, zeroedFormatter), config.KnownCheckersValue{
+			expRegular: filter(replace(allRegularCheckers, formatterWithoutEnabledOptions), config.KnownCheckersValue{
 				checkers.NewRequireError().Name(),
 				checkers.NewSuiteTHelper().Name(),
 			}),
@@ -132,7 +133,7 @@ func Test_newCheckers(t *testing.T) {
 					checkers.NewSuiteTHelper().Name(),
 				},
 			},
-			expRegular:  replace(enabledByDefaultRegularCheckers, zeroedFormatter),
+			expRegular:  replace(enabledByDefaultRegularCheckers, formatterWithoutEnabledOptions),
 			expAdvanced: allAdvancedCheckers,
 		},
 		{
@@ -144,7 +145,7 @@ func Test_newCheckers(t *testing.T) {
 					checkers.NewRequireError().Name(),
 				},
 			},
-			expRegular: filter(replace(enabledByDefaultRegularCheckers, zeroedFormatter), config.KnownCheckersValue{
+			expRegular: filter(replace(enabledByDefaultRegularCheckers, formatterWithoutEnabledOptions), config.KnownCheckersValue{
 				checkers.NewNilCompare().Name(),
 				checkers.NewErrorNil().Name(),
 				checkers.NewRequireError().Name(),

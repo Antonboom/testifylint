@@ -14,9 +14,106 @@ func (FormatterTestsGenerator) Checker() checkers.Checker {
 }
 
 func (g FormatterTestsGenerator) TemplateData() any {
-	reportRemove := g.Checker().Name() + ": remove unnecessary fmt.Sprintf"
+	var (
+		checker      = g.Checker().Name()
+		reportRemove = checker +
+			": remove unnecessary fmt.Sprintf"
+		reportDoNotUseNonStringMsg = checker +
+			": do not use non-string value as first element (msg) of msgAndArgs"
+		reportDoNotUseArgsWithNonStringMsg = checker +
+			": using msgAndArgs with non-string first element (msg) causes panic"
+		reportFailureMsgIsNotFmtString = checker +
+			": failure message is not a format string, use msgAndArgs instead"
+	)
 
 	baseAssertion := Assertion{Fn: "Equal", Argsf: "1, 2"}
+
+	nonStringMsgAssertions := []Assertion{
+		{
+			Fn:            "Equal",
+			Argsf:         "1, 2, new(time.Time)",
+			ReportMsgf:    reportDoNotUseNonStringMsg,
+			ProposedArgsf: `1, 2, "%+v", new(time.Time)`,
+		},
+		{
+			Fn:            "Equal",
+			Argsf:         "1, 2, i",
+			ReportMsgf:    reportDoNotUseNonStringMsg,
+			ProposedArgsf: `1, 2, "%+v", i`,
+		},
+		{
+			Fn:            "Equal",
+			Argsf:         "1, 2, tc",
+			ReportMsgf:    reportDoNotUseNonStringMsg,
+			ProposedArgsf: `1, 2, "%+v", tc`,
+		},
+		{
+			Fn:            "Equal",
+			Argsf:         "1, 2, args",
+			ReportMsgf:    reportDoNotUseNonStringMsg,
+			ProposedArgsf: `1, 2, "%+v", args`,
+		},
+
+		{
+			Fn:         "Equal",
+			Argsf:      "1, 2, new(time.Time), 42",
+			ReportMsgf: reportDoNotUseArgsWithNonStringMsg,
+		},
+		{
+			Fn:         "Equal",
+			Argsf:      `1, 2, i, 42, "42"`,
+			ReportMsgf: reportDoNotUseArgsWithNonStringMsg,
+		},
+		{
+			Fn:         "Equal",
+			Argsf:      "1, 2, tc, 0",
+			ReportMsgf: reportDoNotUseArgsWithNonStringMsg,
+		},
+		{
+			Fn:         "Fail",
+			Argsf:      `"test case [%d] failed.  Expected: %+v, Got: %+v", 1, 2, 3`,
+			ReportMsgf: reportFailureMsgIsNotFmtString,
+		},
+		{
+			Fn:         "Fail",
+			Argsf:      `"test case [%d] failed", 1`,
+			ReportMsgf: reportFailureMsgIsNotFmtString,
+		},
+		{
+			Fn:            "Fail",
+			Argsf:         `"test case failed", 1`,
+			ReportMsgf:    reportDoNotUseNonStringMsg,
+			ProposedArgsf: `"test case failed", "%+v", 1`,
+		},
+		{
+			Fn:         "FailNow",
+			Argsf:      `"test case [%d] failed.  Expected: %+v, Got: %+v", 1, 2, 3`,
+			ReportMsgf: reportFailureMsgIsNotFmtString,
+		},
+		{
+			Fn:         "FailNow",
+			Argsf:      `"test case [%d] failed", 1`,
+			ReportMsgf: reportFailureMsgIsNotFmtString,
+		},
+		{
+			Fn:            "FailNow",
+			Argsf:         `"test case failed", 1`,
+			ReportMsgf:    reportDoNotUseNonStringMsg,
+			ProposedArgsf: `"test case failed", "%+v", 1`,
+		},
+
+		{Fn: "Equal", Argsf: "1, 2, msg()"},
+		{Fn: "Equal", Argsf: "1, 2, new(time.Time).String()"},
+		{Fn: "Equal", Argsf: `1, 2, args...`},
+		{Fn: "Equal", Argsf: `1, 2, "%+v", new(time.Time)`},
+		{Fn: "Equal", Argsf: `1, 2, "%+v", i`},
+		{Fn: "Equal", Argsf: `1, 2, "%+v", tc`},
+		{Fn: "Equal", Argsf: `1, 2, "%+v", msg()`},
+		{Fn: "Equal", Argsf: `1, 2, "%+v", new(time.Time).String()`},
+		{Fn: "Equal", Argsf: `1, 2, "%+v", args`},
+		{Fn: "Fail", Argsf: `"boom!", "test case [%d] failed", 1`},
+		{Fn: "FailNow", Argsf: `"boom!", "test case [%d] failed", 1`},
+	}
 
 	sprintfAssertions := []Assertion{
 		{
@@ -103,18 +200,19 @@ func (g FormatterTestsGenerator) TemplateData() any {
 	}
 
 	return struct {
-		CheckerName       CheckerName
-		BaseAssertion     Assertion
-		SprintfAssertions []Assertion
-		AllAssertions     []Assertion
-		IgnoredAssertions []Assertion
+		CheckerName            CheckerName
+		BaseAssertion          Assertion
+		NonStringMsgAssertions []Assertion
+		SprintfAssertions      []Assertion
+		AllAssertions          []Assertion
+		IgnoredAssertions      []Assertion
 	}{
-		CheckerName:       CheckerName(g.Checker().Name()),
-		BaseAssertion:     baseAssertion,
-		SprintfAssertions: sprintfAssertions,
-		AllAssertions:     assertions,
+		CheckerName:            CheckerName(g.Checker().Name()),
+		BaseAssertion:          baseAssertion,
+		NonStringMsgAssertions: nonStringMsgAssertions,
+		SprintfAssertions:      sprintfAssertions,
+		AllAssertions:          assertions,
 		IgnoredAssertions: []Assertion{
-			{Fn: "Equal", Argsf: "nil, nil, new(time.Time)"},
 			{Fn: "ObjectsAreEqual", Argsf: "nil, nil"},
 			{Fn: "ObjectsAreEqualValues", Argsf: "nil, nil"},
 			{Fn: "ObjectsExportedFieldsAreEqual", Argsf: "nil, nil"},
@@ -167,9 +265,27 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 
 	{{ NewAssertionExpander.FullMode.Expand $.BaseAssertion "assert" "t" nil }}
 
+	assertObj := assert.New(t)
+
+	var i int
+	var tc struct {
+		strLogLevel        string
+		logFunc            func(func() string)
+		expectedToBeCalled bool
+	}
+	{{- range $ai, $assrn := $.NonStringMsgAssertions }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" nil }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assertObj" "" nil }}
+	{{- end }}
+
 	{{ range $ai, $assrn := $.SprintfAssertions }}
 		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" nil }}
+		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assertObj" "" nil }}
 	{{- end }}
+}
+
+func msg() string {
+	return "msg"
 }
 
 func {{ .CheckerName.AsTestName }}_PrintfChecks(t *testing.T) {
@@ -227,4 +343,19 @@ func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
 		{{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "" nil }}
 	{{- end }}
 }
+
+// AssertElementsMatchFunc is similar to the assert.ElementsMatch function, but it allows for a custom comparison function
+func AssertElementsMatchFunc[T any](t *testing.T, expected, actual []T, comp func(a, b T) bool, msgAndArgs ...any) bool {
+	t.Helper()
+
+	extraA, extraB := diffListsFunc(expected, actual, comp)
+	if len(extraA) == 0 && len(extraB) == 0 {
+		return true
+	}
+
+	return assert.Fail(t, formatListDiff(expected, actual, extraA, extraB), msgAndArgs...)
+}
+
+func diffListsFunc[T any](a []T, b []T, comp func(a, b T) bool) ([]T, []T) { return nil, nil }
+func formatListDiff[T any](expected, actual, extraExpected, extraActual []T) string { return "" }
 `

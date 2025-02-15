@@ -50,7 +50,7 @@ tasks:
   test:checker:
     deps: [ test:gen ]
     cmds:
-      - go test -count 1 -run TestTestifyLint_CheckersDefault/{{.CLI_ARGS}} ./analyzer
+      - go test -count 1 -run TestTestifyLint/{{.CLI_ARGS}} ./analyzer
 
   test:coverage:
     env:

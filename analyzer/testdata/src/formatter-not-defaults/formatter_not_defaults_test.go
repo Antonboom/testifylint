@@ -16,6 +16,13 @@ func TestFormatterChecker(t *testing.T) {
 	assert.Error(t, err, "Parse(%v) should fail.", args) // want "formatter: use assert\\.Errorf$"
 	assert.Equal(t, 1, 2)
 	assert.Equal(t, 1, 2, new(time.Time))
+	assert.Equal(t, 1, 2, new(time.Time), 42)                                  // want "formatter: using msgAndArgs with non-string first element \\(msg\\) causes panic"
+	assert.Fail(t, "test case [%d] failed.  Expected: %+v, Got: %+v", 1, 2, 3) // want "formatter: failure message is not a format string, use msgAndArgs instead"
+	assert.Fail(t, "test case [%d] failed", 1)                                 // want "formatter: failure message is not a format string, use msgAndArgs instead"
+	assert.Fail(t, "test case failed", 1)
+	assert.FailNow(t, "test case [%d] failed.  Expected: %+v, Got: %+v", 1, 2, 3) // want "formatter: failure message is not a format string, use msgAndArgs instead"
+	assert.FailNow(t, "test case [%d] failed", 1)                                 // want "formatter: failure message is not a format string, use msgAndArgs instead"
+	assert.FailNow(t, "test case failed", 1)
 	assert.Equal(t, 1, 2, "msg")                           // want "formatter: use assert\\.Equalf"
 	assert.Equal(t, 1, 2, "msg with arg %d", 42)           // want "formatter: use assert\\.Equalf"
 	assert.Equal(t, 1, 2, "msg with args %d %s", 42, "42") // want "formatter: use assert\\.Equalf"

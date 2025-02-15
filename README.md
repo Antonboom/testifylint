@@ -73,7 +73,7 @@ $ testifylint --enable-all --disable=empty,error-is-as ./...
 # Checkers configuration.
 $ testifylint --bool-compare.ignore-custom-types ./...
 $ testifylint --expected-actual.pattern=^wanted$ ./...
-$ testifylint --formatter.check-format-string --formatter.require-f-funcs ./...
+$ testifylint --formatter.check-format-string --formatter.require-f-funcs --formatter.require-string-msg ./...
 $ testifylint --go-require.ignore-http-handlers ./...
 $ testifylint --require-error.fn-pattern="^(Errorf?|NoErrorf?)$" ./...
 $ testifylint --suite-extra-assert-call.mode=require ./...
@@ -471,11 +471,12 @@ disable this feature, use `--formatter.check-format-string=false` flag.
 
 #### 3)
 
-Requirement of the f-assertions (e.g. assert.Equal**f**) if format string is used. Disabled by default, use 
+Requirement of the f-assertions (e.g. assert.Equal**f**) if format string is used. Disabled by default, use
 `--formatter.require-f-funcs` flag to enable. <br>
 
 This helps follow Go's implicit convention _"Printf-like functions must end with `f`"_ and sets the stage for moving to
-`v2` of `testify`. In this way the checker resembles the [goprintffuncname](https://github.com/jirfag/go-printf-func-name) 
+`v2` of `testify`. In this way the checker resembles
+the [goprintffuncname](https://github.com/jirfag/go-printf-func-name)
 linter (included in [golangci-lint](https://golangci-lint.run/usage/linters/)). <br>
 
 Also, verbs in the format string of f-assertions are highlighted by an IDE, e.g. GoLand:
@@ -485,7 +486,7 @@ Also, verbs in the format string of f-assertions are highlighted by an IDE, e.g.
 <br>
 
 > [!CAUTION]
-> `--formatter.require-f-funcs` requires f-assertions, **even if there are no variable-length variables**, i.e. it 
+> `--formatter.require-f-funcs` requires f-assertions, **even if there are no variable-length variables**, i.e. it
 > requires `require.NoErrorf` for both these cases:
 > ```
 > require.NoErrorf(t, err, "unexpected error")
@@ -565,6 +566,44 @@ But I hope it will be [introduced](https://github.com/stretchr/testify/issues/10
 in `v2` of `testify`.
 
 </details>
+
+#### 4)
+
+Validating the first argument of `msgAndArgs` has `string` type (based on `testify`'s
+maintainer's [feedback](https://github.com/stretchr/testify/issues/1679#issuecomment-2480629257)):
+
+```go
+❌
+assert.Equal(t, 1, strings.Count(b.String(), "hello"), tc)
+
+✅
+assert.Equal(t, 1, strings.Count(b.String(), "hello"), "%+v", tc)
+```
+
+You can disable this behaviour with the `--formatter.require-string-msg=false` flag.
+
+#### 5)
+
+Validating there are no arguments in `msgAndArgs` if message is not a string:
+
+```go
+❌
+assert.True(t, cco.IsCardNumber(valid), i, valid) // Causes panic.
+```
+
+See [testify's issue](https://github.com/stretchr/testify/issues/1679) for details.
+
+#### 6) 
+
+Finally, it checks that failure message in `Fail` and `FailNow` is not used as a format string (which won't work):
+
+```go
+❌
+assert.Fail(t, "test case [%d] failed. %+v != %+v", idx, tc.expected, actual) // Causes panic.
+
+✅
+assert.Fail(t, "good luck!", "test case [%d] failed. %+v != %+v", idx, tc.expected, actual)
+```
 
 ---
 
@@ -981,6 +1020,7 @@ assert.False(t, num != num)
 ```
 
 And against these meaningless assertions:
+
 ```go
 assert.Empty(t, "")
 assert.False(t, false)
