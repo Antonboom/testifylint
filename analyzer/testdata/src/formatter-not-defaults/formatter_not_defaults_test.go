@@ -42,6 +42,25 @@ func TestFormatterChecker(t *testing.T) {
 	assert.Equalf(t, 1, 2, fmt.Sprintf("msg with arg %d", 42), "42")
 }
 
+func TestFormatterChecker_EmptyMessage(t *testing.T) {
+	var want, got any
+	assertObj := assert.New(t)
+	assert.Equal(t, want, got, "")               // want "formatter: empty message"
+	assertObj.Equal(want, got, "")               // want "formatter: empty message"
+	assert.Equalf(t, want, got, "")              // want "formatter: empty message"
+	assertObj.Equalf(want, got, "")              // want "formatter: empty message"
+	assert.Equal(t, want, got, "", 1, 2)         // want "formatter: empty message"
+	assertObj.Equal(want, got, "", 1, 2)         // want "formatter: empty message"
+	assert.Equalf(t, want, got, "", 1, 2)        // want "formatter: empty message"
+	assertObj.Equalf(want, got, "", 1, 2)        // want "formatter: empty message"
+	assert.Equal(t, want, got, "boom!")          // want "formatter: use assert\\.Equalf"
+	assertObj.Equal(want, got, "boom!")          // want "formatter: use assertObj\\.Equalf"
+	assert.Equal(t, want, got, "%v != %v", 1, 2) // want "formatter: use assert\\.Equalf"
+	assertObj.Equal(want, got, "%v != %v", 1, 2) // want "formatter: use assertObj\\.Equalf"
+	assert.Equalf(t, want, got, "%v != %v", 1, 2)
+	assertObj.Equalf(want, got, "%v != %v", 1, 2)
+}
+
 func TestFormatterChecker_AllAssertions(t *testing.T) {
 	assert.Condition(t, nil)
 	assert.Condition(t, nil, "msg") // want "formatter: use assert\\.Conditionf"
