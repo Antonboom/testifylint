@@ -133,14 +133,22 @@ func (g FormatterNotDefaultsTestsGenerator) TemplateData() any {
 	}
 
 	emptyMsgAssertions := []Assertion{
-		{Fn: "Equal", Argsf: `want, got, ""`,
-			ReportMsgf: reportEmptyMessage, ProposedArgsf: "want, got"},
-		{Fn: "Equalf", Argsf: `want, got, ""`,
-			ReportMsgf: reportEmptyMessage + "%.s%.s", ProposedFn: "Equal", ProposedArgsf: "want, got"},
-		{Fn: "Equal", Argsf: `want, got, "", 1, 2`,
-			ReportMsgf: reportEmptyMessage},
-		{Fn: "Equalf", Argsf: `want, got, "", 1, 2`,
-			ReportMsgf: reportEmptyMessage},
+		{
+			Fn: "Equal", Argsf: `want, got, ""`,
+			ReportMsgf: reportEmptyMessage, ProposedArgsf: "want, got",
+		},
+		{
+			Fn: "Equalf", Argsf: `want, got, ""`,
+			ReportMsgf: reportEmptyMessage + "%.s%.s", ProposedFn: "Equal", ProposedArgsf: "want, got",
+		},
+		{
+			Fn: "Equal", Argsf: `want, got, "", 1, 2`,
+			ReportMsgf: reportEmptyMessage,
+		},
+		{
+			Fn: "Equalf", Argsf: `want, got, "", 1, 2`,
+			ReportMsgf: reportEmptyMessage,
+		},
 
 		{Fn: "Equal", Argsf: `want, got, "boom!"`, ReportMsgf: reportUse, ProposedFn: "Equalf"},
 		{Fn: "Equal", Argsf: `want, got, "%v != %v", 1, 2`, ReportMsgf: reportUse, ProposedFn: "Equalf"},
