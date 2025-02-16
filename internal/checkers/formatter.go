@@ -29,7 +29,7 @@ import (
 //	assert.Truef(t, targetTs.Equal(ts), "the timestamp should be as expected (%s) but was %s", targetTs, ts)
 //
 // It also checks that there are no arguments in `msgAndArgs` if the message is not a string,
-// and additionally checks that the first argument of `msgAndArgs` is a not-empty string.
+// and additionally checks that the first argument of `msgAndArgs` is a not empty string.
 //
 // Finally, it checks that failure message in Fail and FailNow is not used as a format string (which won't work).
 type Formatter struct {
@@ -102,7 +102,7 @@ func (checker Formatter) checkNotFmtAssertion(pass *analysis.Pass, call *CallMet
 
 	if hasStringType(pass, msgAndArgs) { //nolint:nestif // This is the best option of code organization :(
 		format, err := strconv.Unquote(analysisutil.NodeString(pass.Fset, msgAndArgs))
-		if nil == err && format == "" {
+		if nil == err && format == "" { // Unquote failed for not string literals.
 			var fixes []analysis.SuggestedFix
 			if isSingleMsgAndArgElem {
 				fixes = append(fixes, analysis.SuggestedFix{
@@ -157,6 +157,7 @@ func (checker Formatter) checkFmtAssertion(pass *analysis.Pass, call *CallMeta) 
 
 	format, err := strconv.Unquote(analysisutil.NodeString(pass.Fset, msg))
 	if err != nil {
+		// Unreachable, because msg is a string literal in formatted assertion.
 		return nil
 	}
 	if format == "" {
