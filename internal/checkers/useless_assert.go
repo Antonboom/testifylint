@@ -60,11 +60,6 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 		return d
 	}
 
-	isLen := func(pass *analysis.Pass, e ast.Expr) bool {
-		_, ok := isBuiltinLenCall(pass, e)
-		return ok
-	}
-
 	var isMeaningless bool
 	switch call.Fn.NameFTrimmed {
 	case "Empty":
@@ -74,8 +69,7 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 		isMeaningless = (len(call.Args) >= 1) && isUntypedFalse(pass, call.Args[0])
 
 	case "GreaterOrEqual":
-		isMeaningless = (len(call.Args) >= 2) && isAnyZero(call.Args[1]) &&
-			(isLen(pass, call.Args[0]) || isUnsigned(pass, call.Args[0]))
+		isMeaningless = (len(call.Args) >= 2) && isAnyZero(call.Args[1]) && canNotBeNegative(pass, call.Args[0])
 
 	case "Implements":
 		if len(call.Args) < 2 {
@@ -86,8 +80,7 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 		isMeaningless = ok && isEmptyInterfaceType(elem)
 
 	case "LessOrEqual":
-		isMeaningless = (len(call.Args) >= 2) && isAnyZero(call.Args[0]) &&
-			(isLen(pass, call.Args[1]) || isUnsigned(pass, call.Args[1]))
+		isMeaningless = (len(call.Args) >= 2) && isAnyZero(call.Args[0]) && canNotBeNegative(pass, call.Args[1])
 
 	case "Negative":
 		isMeaningless = (len(call.Args) >= 1) && isNegativeIntNumber(call.Args[0])
@@ -182,4 +175,9 @@ func (checker UselessAssert) checkSameVars(pass *analysis.Pass, call *CallMeta) 
 		return newDiagnostic(checker.Name(), call, "asserting of the same variable")
 	}
 	return nil
+}
+
+func canNotBeNegative(pass *analysis.Pass, e ast.Expr) bool {
+	_, isLen := isBuiltinLenCall(pass, e)
+	return isLen || isUnsigned(pass, e)
 }
