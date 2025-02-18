@@ -44,6 +44,11 @@ import (
 //	assert.Zero(t, 0)
 //	assert.Zero(t, "")
 //	assert.Zero(t, nil)
+//
+//	assert.GreaterOrEqual(t, uintVal, 0)
+//	assert.LessOrEqual(t, 0, uintVal)
+//	assert.GreaterOrEqual(t, len(x), 0)
+//	assert.LessOrEqual(t, 0, len(x))
 type UselessAssert struct{}
 
 // NewUselessAssert constructs UselessAssert checker.
@@ -63,6 +68,9 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 	case "False":
 		isMeaningless = (len(call.Args) >= 1) && isUntypedFalse(pass, call.Args[0])
 
+	case "GreaterOrEqual":
+		isMeaningless = (len(call.Args) >= 2) && isAnyZero(call.Args[1]) && canNotBeNegative(pass, call.Args[0])
+
 	case "Implements":
 		if len(call.Args) < 2 {
 			return nil
@@ -70,6 +78,9 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 
 		elem, ok := isPointer(pass, call.Args[0])
 		isMeaningless = ok && isEmptyInterfaceType(elem)
+
+	case "LessOrEqual":
+		isMeaningless = (len(call.Args) >= 2) && isAnyZero(call.Args[0]) && canNotBeNegative(pass, call.Args[1])
 
 	case "Negative":
 		isMeaningless = (len(call.Args) >= 1) && isNegativeIntNumber(call.Args[0])
@@ -164,4 +175,9 @@ func (checker UselessAssert) checkSameVars(pass *analysis.Pass, call *CallMeta) 
 		return newDiagnostic(checker.Name(), call, "asserting of the same variable")
 	}
 	return nil
+}
+
+func canNotBeNegative(pass *analysis.Pass, e ast.Expr) bool {
+	_, isLen := isBuiltinLenCall(pass, e)
+	return isLen || isUnsigned(pass, e)
 }

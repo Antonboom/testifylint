@@ -176,12 +176,3 @@ func hasStringType(pass *analysis.Pass, e ast.Expr) bool {
 	basicType, ok := pass.TypesInfo.TypeOf(e).(*types.Basic)
 	return ok && basicType.Kind() == types.String
 }
-
-// untype returns v from type(v) expression or v itself if there is no type conversion.
-func untype(e ast.Expr) ast.Expr {
-	ce, ok := e.(*ast.CallExpr)
-	if !ok || len(ce.Args) != 1 {
-		return e
-	}
-	return ce.Args[0]
-}
