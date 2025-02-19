@@ -1,0 +1,24 @@
+package formatterissue170
+
+import (
+	"fmt"
+	"testing"
+
+	"github.com/stretchr/testify/suite"
+)
+
+func TestFormatter(t *testing.T) {
+	suite.Run(t, new(FormatterSuite))
+}
+
+type FormatterSuite struct {
+	suite.Suite
+}
+
+func (s *FormatterSuite) TestFormatter() {
+	s.True(false, "expected %v, got %v", true, false) // want "formatter: remove unnecessary fmt\\.Sprintf"
+}
+
+func (s FormatterSuite) TestFormatterValueRecv() {
+	s.False(true, "expected %v, got %v", true, false) // want "formatter: remove unnecessary fmt\\.Sprintf"
+}

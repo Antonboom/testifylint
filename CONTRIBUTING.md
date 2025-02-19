@@ -1,7 +1,5 @@
 # Contribution guideline
 
-> ⚠️ The module version is **1.20**, but for development you need Go >= **1.21**
-
 ### 1) Install developer tools
 
 ```bash
@@ -30,7 +28,7 @@ type TimeCompare struct{}
 
 // NewTimeCompare constructs TimeCompare checker.
 func NewTimeCompare() TimeCompare { return TimeCompare{} }
-func (TimeCompare) Name() string  { return "TimeCompare" }
+func (TimeCompare) Name() string  { return "time-compare" }
 ```
 
 The above code is enough to satisfy the `checkers.Checker` interface.
@@ -61,9 +59,9 @@ By default, we disable the checker if we doubt its 100% usefulness.
 
 Create new `TimeCompareTestsGenerator` in `internal/testgen/gen_time_compare.go`.
 
-See examples in adjacent files.
+See examples in adjacent files, e.g. [internal/testgen/gen_regexp.go](internal/testgen/gen_regexp.go).
 
-In the first iteration, these can be a very simple tests for debugging checker's proof of concept.
+In the first iteration, these can be a simple tests for debugging checker's proof of concept.
 And after the implementation of the checker, you can add various cycles, variables, etc. to the template.
 
 `GoldenTemplate` is usually an `ErroredTemplate` with some strings replaced.
@@ -121,6 +119,12 @@ Install...
 
 Fix linter issues and broken tests (probably related to the checkers registry).
 
+To run checker default tests you can use `task test:checker -- {checker-name}`, e.g.
+
+```bash
+$ task test:checker -- time-compare
+```
+
 ### 10) Update `README.md`, commit the changes and submit a pull request 🔥
 
 Describe a new checker in [checkers section](./README.md#checkers).
@@ -136,7 +140,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [http-sugar](#http-sugar)
 - [require-len](#require-len)
 - [suite-test-name](#suite-test-name)
-- [useless-assert](#useless-assert)
 
 ---
 
@@ -171,6 +174,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
      assert.Equal(t, err.Error(), "user not found")
      assert.Equal(t, err, errSentinel) // Through `reflect.DeepEqual` causes error strings to be compared.
      assert.NotEqual(t, err, errSentinel)
+     require.Error(t, fmt.Errorf("you need to specify either logGroupName or logGroupArn"), err) // grafana case
      // etc.
 
 ✅   assert.ErrorIs(t, err, ErrUserNotFound)
@@ -202,20 +206,8 @@ func (s *ServiceIntegrationSuite) TearDownTest() {
 
 **Autofix**: false. <br>
 **Enabled by default**: false. <br>
-**Reason**: Possible resource leaks, because `require` finishes the current goroutine.
-
----
-
-### equal-values
-
-```go
-❌   assert.Equal(t, int64(100), price.Amount)
-✅   assert.EqualValues(t, 100, price.Amount)
-```
-
-**Autofix**: true. <br>
-**Enabled by default**: maybe? <br>
-**Reason**: Code simplification.
+**Reason**: Possible resource leaks, because `require` finishes the current goroutine. <br>
+**Related issues**: [#142](https://github.com/Antonboom/testifylint/issues/142)
 
 ---
 
@@ -274,7 +266,8 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
-**Reason**: Is similar to the [usestdlibvars](https://golangci-lint.run/usage/linters/#usestdlibvars) linter.
+**Reason**: Is similar to the [usestdlibvars](https://golangci-lint.run/usage/linters/#usestdlibvars) linter. <br>
+**Related issues**: [#141](https://github.com/Antonboom/testifylint/issues/141)
 
 ---
 
@@ -296,7 +289,8 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 
 **Autofix**: true. <br>
 **Enabled by default**: maybe? <br>
-**Reason**: Code simplification.
+**Reason**: Code simplification. <br>
+**Related issues**: [#140](https://github.com/Antonboom/testifylint/issues/140)
 
 ---
 
@@ -354,27 +348,6 @@ Also, maybe to check the configurable format of subtest name? Mess example:
 func (s *HandlersSuite) Test_Usecase_Success()
 func (s *HandlersSuite) TestUsecaseSuccess()
 func (s *HandlersSuite) Test_UsecaseSuccess()
-```
-
----
-
-### useless-assert
-
-Support more complex cases, e.g.
-
-```go
-body, err := io.ReadAll(rr.Body)
-require.NoError(t, err)
-require.NoError(t, err) ❌
-
-expectedJSON, err := json.Marshal(expected)
-require.NoError(t, err)
-require.JSONEq(t, string(expectedJSON), string(body))
-```
-
-```go
-require.NoError(t, err)
-assert.ErrorContains(t, err, "user") ❌
 ```
 
 ---

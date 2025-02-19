@@ -29,12 +29,25 @@ func (g ErrorAsTargetTestsGenerator) TemplateData() any {
 			{Fn: "ErrorAs", Argsf: "err, iface", ReportMsgf: defaultReport, ProposedFn: "ErrorAs"},
 			{Fn: "ErrorAs", Argsf: "err, &i", ReportMsgf: defaultReport, ProposedFn: "ErrorAs"},
 			{Fn: "ErrorAs", Argsf: "err, &err", ReportMsgf: errorPtrReport, ProposedFn: "ErrorAs"},
+
+			{Fn: "NotErrorAs", Argsf: "err, nil", ReportMsgf: defaultReport, ProposedFn: "NotErrorAs"},
+			{Fn: "NotErrorAs", Argsf: "err, pathErrNotPtr", ReportMsgf: defaultReport, ProposedFn: "NotErrorAs"},
+			{Fn: "NotErrorAs", Argsf: "err, pathErrNil", ReportMsgf: defaultReport, ProposedFn: "NotErrorAs"},
+			{Fn: "NotErrorAs", Argsf: "err, err", ReportMsgf: defaultReport, ProposedFn: "NotErrorAs"},
+			{Fn: "NotErrorAs", Argsf: "err, iface", ReportMsgf: defaultReport, ProposedFn: "NotErrorAs"},
+			{Fn: "NotErrorAs", Argsf: "err, &i", ReportMsgf: defaultReport, ProposedFn: "NotErrorAs"},
+			{Fn: "NotErrorAs", Argsf: "err, &err", ReportMsgf: errorPtrReport, ProposedFn: "NotErrorAs"},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "ErrorAs", Argsf: "err, &pathErr"},
 			{Fn: "ErrorAs", Argsf: "err, &iface"},
 			{Fn: "ErrorAs", Argsf: "err, emptyIface"},
 			{Fn: "ErrorAs", Argsf: "err, &emptyIface"},
+
+			{Fn: "NotErrorAs", Argsf: "err, &pathErr"},
+			{Fn: "NotErrorAs", Argsf: "err, &iface"},
+			{Fn: "NotErrorAs", Argsf: "err, emptyIface"},
+			{Fn: "NotErrorAs", Argsf: "err, &emptyIface"},
 		},
 	}
 }

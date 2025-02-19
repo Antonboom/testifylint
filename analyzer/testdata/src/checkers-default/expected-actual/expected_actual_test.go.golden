@@ -30,6 +30,7 @@ func TestExpectedActualChecker(t *testing.T) {
 	expectedVal := func() any { return nil }
 	var expectedObj struct{ Val int }
 	var expectedObjPtr = &expectedObj
+	var expectedFields []string
 
 	var result any
 
@@ -81,6 +82,8 @@ func TestExpectedActualChecker(t *testing.T) {
 		assert.Equalf(t, *(tt.expPtr()), result, "msg with args %d %s", 42, "42")                     // want "expected-actual: need to reverse actual and expected values"
 		assert.Equal(t, ttPtr.expected, result)                                                       // want "expected-actual: need to reverse actual and expected values"
 		assert.Equalf(t, ttPtr.expected, result, "msg with args %d %s", 42, "42")                     // want "expected-actual: need to reverse actual and expected values"
+		assert.Equal(t, len(expectedFields), result)                                                  // want "expected-actual: need to reverse actual and expected values"
+		assert.Equalf(t, len(expectedFields), result, "msg with args %d %s", 42, "42")                // want "expected-actual: need to reverse actual and expected values"
 		assert.Equal(t, 42, result)                                                                   // want "expected-actual: need to reverse actual and expected values"
 		assert.Equalf(t, 42, result, "msg with args %d %s", 42, "42")                                 // want "expected-actual: need to reverse actual and expected values"
 		assert.Equal(t, 3.14, result)                                                                 // want "expected-actual: need to reverse actual and expected values"
@@ -140,6 +143,8 @@ func TestExpectedActualChecker(t *testing.T) {
 		assert.NotEqualf(t, *(tt.expPtr()), result, "msg with args %d %s", 42, "42")                     // want "expected-actual: need to reverse actual and expected values"
 		assert.NotEqual(t, ttPtr.expected, result)                                                       // want "expected-actual: need to reverse actual and expected values"
 		assert.NotEqualf(t, ttPtr.expected, result, "msg with args %d %s", 42, "42")                     // want "expected-actual: need to reverse actual and expected values"
+		assert.NotEqual(t, len(expectedFields), result)                                                  // want "expected-actual: need to reverse actual and expected values"
+		assert.NotEqualf(t, len(expectedFields), result, "msg with args %d %s", 42, "42")                // want "expected-actual: need to reverse actual and expected values"
 		assert.NotEqual(t, 42, result)                                                                   // want "expected-actual: need to reverse actual and expected values"
 		assert.NotEqualf(t, 42, result, "msg with args %d %s", 42, "42")                                 // want "expected-actual: need to reverse actual and expected values"
 		assert.NotEqual(t, 3.14, result)                                                                 // want "expected-actual: need to reverse actual and expected values"
@@ -202,6 +207,8 @@ func TestExpectedActualChecker(t *testing.T) {
 		assert.Equalf(t, *(tt.expPtr()), result, "msg with args %d %s", 42, "42")
 		assert.Equal(t, ttPtr.expected, result)
 		assert.Equalf(t, ttPtr.expected, result, "msg with args %d %s", 42, "42")
+		assert.Equal(t, len(expectedFields), result)
+		assert.Equalf(t, len(expectedFields), result, "msg with args %d %s", 42, "42")
 		assert.Equal(t, 42, result)
 		assert.Equalf(t, 42, result, "msg with args %d %s", 42, "42")
 		assert.Equal(t, 3.14, result)
@@ -261,6 +268,8 @@ func TestExpectedActualChecker(t *testing.T) {
 		assert.NotEqualf(t, *(tt.expPtr()), result, "msg with args %d %s", 42, "42")
 		assert.NotEqual(t, ttPtr.expected, result)
 		assert.NotEqualf(t, ttPtr.expected, result, "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, len(expectedFields), result)
+		assert.NotEqualf(t, len(expectedFields), result, "msg with args %d %s", 42, "42")
 		assert.NotEqual(t, 42, result)
 		assert.NotEqualf(t, 42, result, "msg with args %d %s", 42, "42")
 		assert.NotEqual(t, 3.14, result)
@@ -278,15 +287,18 @@ func TestExpectedActualChecker(t *testing.T) {
 
 func TestExpectedActualChecker_Other(t *testing.T) {
 	var (
-		result, expected         any
-		resultPtr, expectedPtr   *int
-		resultObj, expectedObj   user
-		resultTime, expectedTime time.Time
-		value                    int
+		result, expected             any
+		resultPtr, expectedPtr       *int
+		resultObj, expectedObj       user
+		resultTime, expectedTime     time.Time
+		value                        int
+		actualFields, expectedFields []string
 	)
 
 	// Invalid.
 	{
+		assert.Equal(t, len(expectedFields), len(actualFields))                                                                                   // want "expected-actual: need to reverse actual and expected values"
+		assert.Equalf(t, len(expectedFields), len(actualFields), "msg with args %d %s", 42, "42")                                                 // want "expected-actual: need to reverse actual and expected values"
 		assert.EqualExportedValues(t, expectedObj, resultObj)                                                                                     // want "expected-actual: need to reverse actual and expected values"
 		assert.EqualExportedValuesf(t, expectedObj, resultObj, "msg with args %d %s", 42, "42")                                                   // want "expected-actual: need to reverse actual and expected values"
 		assert.EqualExportedValues(t, user{Name: "Rob"}, resultObj)                                                                               // want "expected-actual: need to reverse actual and expected values"
@@ -1150,10 +1162,11 @@ func TestExpectedActualChecker_CannotDetectVariablesLookedLikeConsts(t *testing.
 
 func TestExpectedActualChecker_Ignored(t *testing.T) {
 	var (
-		result, expected       any
-		resultPtr, expectedPtr *int
-		value                  int
-		expectedTime           time.Time
+		result, expected                       any
+		resultPtr, expectedPtr                 *int
+		value                                  int
+		expectedTime                           time.Time
+		expectedFields, interfaces, directions []string
 	)
 
 	assert.Equal(t, nil, nil)
@@ -1162,6 +1175,10 @@ func TestExpectedActualChecker_Ignored(t *testing.T) {
 	assert.Equalf(t, "value", "value", "msg with args %d %s", 42, "42")
 	assert.Equal(t, expected, expected)
 	assert.Equalf(t, expected, expected, "msg with args %d %s", 42, "42")
+	assert.Equal(t, len(expectedFields), len(expectedFields))
+	assert.Equalf(t, len(expectedFields), len(expectedFields), "msg with args %d %s", 42, "42")
+	assert.Equal(t, len(interfaces), len(directions))
+	assert.Equalf(t, len(interfaces), len(directions), "msg with args %d %s", 42, "42")
 	assert.Equal(t, value, &resultPtr)
 	assert.Equalf(t, value, &resultPtr, "msg with args %d %s", 42, "42")
 	assert.Equal(t, []int{1, 2}, map[int]int{1: 2})

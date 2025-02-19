@@ -57,6 +57,41 @@ func TestErrorIsAsChecker(t *testing.T) {
 		assert.ErrorAsf(t, err, &err, "msg with args %d %s", 42, "42")  // want "error-is-as: second argument to assert\\.ErrorAsf should not be \\*error"
 		require.ErrorAs(t, err, &err)                                   // want "error-is-as: second argument to require\\.ErrorAs should not be \\*error"
 		require.ErrorAsf(t, err, &err, "msg with args %d %s", 42, "42") // want "error-is-as: second argument to require\\.ErrorAsf should not be \\*error"
+
+		assert.NotErrorAs(t, err, nil)                                    // want "error-is-as: second argument to assert\\.NotErrorAs must be a non-nil pointer to either a type that implements error, or to any interface type"
+		assert.NotErrorAsf(t, err, nil, "msg with args %d %s", 42, "42")  // want "error-is-as: second argument to assert\\.NotErrorAsf must be a non-nil pointer to either a type that implements error, or to any interface type"
+		require.NotErrorAs(t, err, nil)                                   // want "error-is-as: second argument to require\\.NotErrorAs must be a non-nil pointer to either a type that implements error, or to any interface type"
+		require.NotErrorAsf(t, err, nil, "msg with args %d %s", 42, "42") // want "error-is-as: second argument to require\\.NotErrorAsf must be a non-nil pointer to either a type that implements error, or to any interface type"
+
+		assert.NotErrorAs(t, err, pathErrNotPtr)                                    // want "error-is-as: second argument to assert\\.NotErrorAs must be a non-nil pointer to either a type that implements error, or to any interface type"
+		assert.NotErrorAsf(t, err, pathErrNotPtr, "msg with args %d %s", 42, "42")  // want "error-is-as: second argument to assert\\.NotErrorAsf must be a non-nil pointer to either a type that implements error, or to any interface type"
+		require.NotErrorAs(t, err, pathErrNotPtr)                                   // want "error-is-as: second argument to require\\.NotErrorAs must be a non-nil pointer to either a type that implements error, or to any interface type"
+		require.NotErrorAsf(t, err, pathErrNotPtr, "msg with args %d %s", 42, "42") // want "error-is-as: second argument to require\\.NotErrorAsf must be a non-nil pointer to either a type that implements error, or to any interface type"
+
+		assert.NotErrorAs(t, err, pathErrNil)                                    // want "error-is-as: second argument to assert\\.NotErrorAs must be a non-nil pointer to either a type that implements error, or to any interface type"
+		assert.NotErrorAsf(t, err, pathErrNil, "msg with args %d %s", 42, "42")  // want "error-is-as: second argument to assert\\.NotErrorAsf must be a non-nil pointer to either a type that implements error, or to any interface type"
+		require.NotErrorAs(t, err, pathErrNil)                                   // want "error-is-as: second argument to require\\.NotErrorAs must be a non-nil pointer to either a type that implements error, or to any interface type"
+		require.NotErrorAsf(t, err, pathErrNil, "msg with args %d %s", 42, "42") // want "error-is-as: second argument to require\\.NotErrorAsf must be a non-nil pointer to either a type that implements error, or to any interface type"
+
+		assert.NotErrorAs(t, err, err)                                    // want "error-is-as: second argument to assert\\.NotErrorAs must be a non-nil pointer to either a type that implements error, or to any interface type"
+		assert.NotErrorAsf(t, err, err, "msg with args %d %s", 42, "42")  // want "error-is-as: second argument to assert\\.NotErrorAsf must be a non-nil pointer to either a type that implements error, or to any interface type"
+		require.NotErrorAs(t, err, err)                                   // want "error-is-as: second argument to require\\.NotErrorAs must be a non-nil pointer to either a type that implements error, or to any interface type"
+		require.NotErrorAsf(t, err, err, "msg with args %d %s", 42, "42") // want "error-is-as: second argument to require\\.NotErrorAsf must be a non-nil pointer to either a type that implements error, or to any interface type"
+
+		assert.NotErrorAs(t, err, iface)                                    // want "error-is-as: second argument to assert\\.NotErrorAs must be a non-nil pointer to either a type that implements error, or to any interface type"
+		assert.NotErrorAsf(t, err, iface, "msg with args %d %s", 42, "42")  // want "error-is-as: second argument to assert\\.NotErrorAsf must be a non-nil pointer to either a type that implements error, or to any interface type"
+		require.NotErrorAs(t, err, iface)                                   // want "error-is-as: second argument to require\\.NotErrorAs must be a non-nil pointer to either a type that implements error, or to any interface type"
+		require.NotErrorAsf(t, err, iface, "msg with args %d %s", 42, "42") // want "error-is-as: second argument to require\\.NotErrorAsf must be a non-nil pointer to either a type that implements error, or to any interface type"
+
+		assert.NotErrorAs(t, err, &i)                                    // want "error-is-as: second argument to assert\\.NotErrorAs must be a non-nil pointer to either a type that implements error, or to any interface type"
+		assert.NotErrorAsf(t, err, &i, "msg with args %d %s", 42, "42")  // want "error-is-as: second argument to assert\\.NotErrorAsf must be a non-nil pointer to either a type that implements error, or to any interface type"
+		require.NotErrorAs(t, err, &i)                                   // want "error-is-as: second argument to require\\.NotErrorAs must be a non-nil pointer to either a type that implements error, or to any interface type"
+		require.NotErrorAsf(t, err, &i, "msg with args %d %s", 42, "42") // want "error-is-as: second argument to require\\.NotErrorAsf must be a non-nil pointer to either a type that implements error, or to any interface type"
+
+		assert.NotErrorAs(t, err, &err)                                    // want "error-is-as: second argument to assert\\.NotErrorAs should not be \\*error"
+		assert.NotErrorAsf(t, err, &err, "msg with args %d %s", 42, "42")  // want "error-is-as: second argument to assert\\.NotErrorAsf should not be \\*error"
+		require.NotErrorAs(t, err, &err)                                   // want "error-is-as: second argument to require\\.NotErrorAs should not be \\*error"
+		require.NotErrorAsf(t, err, &err, "msg with args %d %s", 42, "42") // want "error-is-as: second argument to require\\.NotErrorAsf should not be \\*error"
 	}
 
 	// Valid.
@@ -80,5 +115,25 @@ func TestErrorIsAsChecker(t *testing.T) {
 		assert.ErrorAsf(t, err, &emptyIface, "msg with args %d %s", 42, "42")
 		require.ErrorAs(t, err, &emptyIface)
 		require.ErrorAsf(t, err, &emptyIface, "msg with args %d %s", 42, "42")
+
+		assert.NotErrorAs(t, err, &pathErr)
+		assert.NotErrorAsf(t, err, &pathErr, "msg with args %d %s", 42, "42")
+		require.NotErrorAs(t, err, &pathErr)
+		require.NotErrorAsf(t, err, &pathErr, "msg with args %d %s", 42, "42")
+
+		assert.NotErrorAs(t, err, &iface)
+		assert.NotErrorAsf(t, err, &iface, "msg with args %d %s", 42, "42")
+		require.NotErrorAs(t, err, &iface)
+		require.NotErrorAsf(t, err, &iface, "msg with args %d %s", 42, "42")
+
+		assert.NotErrorAs(t, err, emptyIface)
+		assert.NotErrorAsf(t, err, emptyIface, "msg with args %d %s", 42, "42")
+		require.NotErrorAs(t, err, emptyIface)
+		require.NotErrorAsf(t, err, emptyIface, "msg with args %d %s", 42, "42")
+
+		assert.NotErrorAs(t, err, &emptyIface)
+		assert.NotErrorAsf(t, err, &emptyIface, "msg with args %d %s", 42, "42")
+		require.NotErrorAs(t, err, &emptyIface)
+		require.NotErrorAsf(t, err, &emptyIface, "msg with args %d %s", 42, "42")
 	}
 }

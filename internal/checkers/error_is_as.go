@@ -15,12 +15,14 @@ import (
 //	assert.True(t, errors.Is(err, errSentinel))
 //	assert.False(t, errors.Is(err, errSentinel))
 //	assert.True(t, errors.As(err, &target))
+//	assert.False(t, errors.As(err, &target))
 //
 // and requires
 //
 //	assert.ErrorIs(t, err, errSentinel)
 //	assert.NotErrorIs(t, err, errSentinel)
 //	assert.ErrorAs(t, err, &target)
+//	assert.NotErrorAs(t, err, &target)
 //
 // Also ErrorIsAs repeats go vet's "errorsas" check logic.
 type ErrorIsAs struct{}
@@ -67,12 +69,11 @@ func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Di
 		}
 		if proposed != "" {
 			return newUseFunctionDiagnostic(checker.Name(), call, proposed,
-				newSuggestedFuncReplacement(call, proposed, analysis.TextEdit{
+				analysis.TextEdit{
 					Pos:     ce.Pos(),
 					End:     ce.End(),
 					NewText: formatAsCallArgs(pass, ce.Args[0], ce.Args[1]),
-				}),
-			)
+				})
 		}
 
 	case "False":
@@ -88,18 +89,23 @@ func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Di
 			return nil
 		}
 
-		if isErrorsIsCall(pass, ce) {
-			const proposed = "NotErrorIs"
+		var proposed string
+		switch {
+		case isErrorsIsCall(pass, ce):
+			proposed = "NotErrorIs"
+		case isErrorsAsCall(pass, ce):
+			proposed = "NotErrorAs"
+		}
+		if proposed != "" {
 			return newUseFunctionDiagnostic(checker.Name(), call, proposed,
-				newSuggestedFuncReplacement(call, proposed, analysis.TextEdit{
+				analysis.TextEdit{
 					Pos:     ce.Pos(),
 					End:     ce.End(),
 					NewText: formatAsCallArgs(pass, ce.Args[0], ce.Args[1]),
-				}),
-			)
+				})
 		}
 
-	case "ErrorAs":
+	case "ErrorAs", "NotErrorAs":
 		if len(call.Args) < 2 {
 			return nil
 		}
@@ -127,15 +133,15 @@ func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Di
 
 		pt, ok := tv.Type.Underlying().(*types.Pointer)
 		if !ok {
-			return newDiagnostic(checker.Name(), call, defaultReport, nil)
+			return newDiagnostic(checker.Name(), call, defaultReport)
 		}
 		if pt.Elem() == errorType {
-			return newDiagnostic(checker.Name(), call, errorPtrReport, nil)
+			return newDiagnostic(checker.Name(), call, errorPtrReport)
 		}
 
 		_, isInterface := pt.Elem().Underlying().(*types.Interface)
 		if !isInterface && !types.Implements(pt.Elem(), errorIface) {
-			return newDiagnostic(checker.Name(), call, defaultReport, nil)
+			return newDiagnostic(checker.Name(), call, defaultReport)
 		}
 	}
 	return nil

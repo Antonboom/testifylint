@@ -73,7 +73,7 @@ $ testifylint --enable-all --disable=empty,error-is-as ./...
 # Checkers configuration.
 $ testifylint --bool-compare.ignore-custom-types ./...
 $ testifylint --expected-actual.pattern=^wanted$ ./...
-$ testifylint --formatter.check-format-string --formatter.require-f-funcs ./...
+$ testifylint --formatter.check-format-string --formatter.require-f-funcs --formatter.require-string-msg ./...
 $ testifylint --go-require.ignore-http-handlers ./...
 $ testifylint --require-error.fn-pattern="^(Errorf?|NoErrorf?)$" ./...
 $ testifylint --suite-extra-assert-call.mode=require ./...
@@ -94,7 +94,10 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [blank-import](#blank-import)                       | ✅                  | ❌       |
 | [bool-compare](#bool-compare)                       | ✅                  | ✅       |
 | [compares](#compares)                               | ✅                  | ✅       |
+| [contains](#contains)                               | ✅                  | ✅       |
 | [empty](#empty)                                     | ✅                  | ✅       |
+| [encoded-compare](#encoded-compare)                 | ✅                  | ✅       |
+| [equal-values](#equal-values)                       | ✅                  | ✅       |
 | [error-is-as](#error-is-as)                         | ✅                  | 🤏      |
 | [error-nil](#error-nil)                             | ✅                  | ✅       |
 | [expected-actual](#expected-actual)                 | ✅                  | ✅       |
@@ -104,6 +107,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [len](#len)                                         | ✅                  | ✅       |
 | [negative-positive](#negative-positive)             | ✅                  | ✅       |
 | [nil-compare](#nil-compare)                         | ✅                  | ✅       |
+| [regexp](#regexp)                                   | ✅                  | ✅       |
 | [require-error](#require-error)                     | ✅                  | ❌       |
 | [suite-broken-parallel](#suite-broken-parallel)     | ✅                  | ✅       |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
@@ -215,6 +219,27 @@ due to the inappropriate recursive nature of `assert.Equal` (based on
 
 ---
 
+### contains
+
+```go
+❌
+assert.True(t, strings.Contains(a, "abc123"))
+assert.False(t, !strings.Contains(a, "abc123"))
+
+assert.False(t, strings.Contains(a, "abc123"))
+assert.True(t, !strings.Contains(a, "abc123"))
+
+✅
+assert.Contains(t, a, "abc123")
+assert.NotContains(t, a, "abc123")
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Code simplification and more appropriate `testify` API with clearer failure message.
+
+---
+
 ### empty
 
 ```go
@@ -255,6 +280,63 @@ String conversion (like `assert.Len(t, string(b), 0)`) are also supported.
 
 ---
 
+### encoded-compare
+
+```go
+❌
+assert.Equal(t, `{"foo": "bar"}`, body)
+assert.EqualValues(t, `{"foo": "bar"}`, body)
+assert.Exactly(t, `{"foo": "bar"}`, body)
+assert.Equal(t, expectedJSON, resultJSON)
+assert.Equal(t, expBodyConst, w.Body.String())
+assert.Equal(t, fmt.Sprintf(`{"value":"%s"}`, hexString), result)
+assert.Equal(t, "{}", json.RawMessage(resp))
+assert.Equal(t, expJSON, strings.Trim(string(resultJSONBytes), "\n")) // + Replace, ReplaceAll, TrimSpace
+
+assert.Equal(t, expectedYML, conf)
+
+✅
+assert.JSONEq(t, `{"foo": "bar"}`, body)
+assert.YAMLEq(t, expectedYML, conf)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Protection from bugs and more appropriate `testify` API with clearer failure message.
+
+`encoded-compare` detects JSON-style string constants (usable in `fmt.Sprintf` also) and JSON-style/YAML-style named
+variables. If variable is converted to `json.RawMessage`, then it is considered JSON unconditionally.
+
+When fixing, `encoded-compare` removes unnecessary conversions to `[]byte`, `string`, `json.RawMessage` and calls of
+`strings.Replace`, `strings.ReplaceAll`, `strings.Trim`, `strings.TrimSpace`, and adds a conversion to `string` when
+needed.
+
+---
+
+### equal-values
+
+```go
+❌
+assert.EqualValues(t, 42, result.IntField)
+assert.NotEqualValues(t, 42, result.IntField)
+// And other variations with similar types (strings, numerics, structs, etc.)...
+
+✅
+assert.Equal(t, 42, result.IntField)
+assert.NotEqual(t, 42, result.IntField)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Using more appropriate and more error-proof `testify` API.
+
+In additional:
+
+1. Overflow-underflow issues are [covered by testify itself](https://github.com/stretchr/testify/pull/1531).
+2. Nil comparisons are covered by [nil-compare](#nil-compare).
+
+---
+
 ### error-is-as
 
 ```go
@@ -264,11 +346,13 @@ assert.NoError(t, err, errSentinel)
 assert.True(t, errors.Is(err, errSentinel))
 assert.False(t, errors.Is(err, errSentinel))
 assert.True(t, errors.As(err, &target))
+assert.False(t, errors.As(err, &target))
 
 ✅
 assert.ErrorIs(t, err, errSentinel)
 assert.NotErrorIs(t, err, errSentinel)
 assert.ErrorAs(t, err, &target)
+assert.NotErrorAs(t, err, &target)
 ```
 
 **Autofix**: partially. <br>
@@ -287,12 +371,16 @@ logic, but without autofix.
 ```go
 ❌
 assert.Nil(t, err)
-assert.NotNil(t, err)
+assert.Empty(t, err)
+assert.Zero(t, err)
 assert.Equal(t, nil, err)
 assert.EqualValues(t, nil, err)
 assert.Exactly(t, nil, err)
 assert.ErrorIs(t, err, nil)
 
+assert.NotNil(t, err)
+assert.NotEmpty(t, err)
+assert.NotZero(t, err)
 assert.NotEqual(t, nil, err)
 assert.NotEqualValues(t, nil, err)
 assert.NotErrorIs(t, err, nil)
@@ -313,6 +401,8 @@ assert.Error(t, err)
 ```go
 ❌
 assert.Equal(t, result, expected)
+assert.Equal(t, result, len(expected))
+assert.Equal(t, len(resultFields), len(expectedFields))
 assert.EqualExportedValues(t, resultObj, User{Name: "Rob"})
 assert.EqualValues(t, result, 42)
 assert.Exactly(t, result, int64(42))
@@ -332,6 +422,8 @@ assert.YAMLEq(t, result, "version: '3'")
 
 ✅
 assert.Equal(t, expected, result)
+assert.Equal(t, len(expected), result)
+assert.Equal(t, len(expectedFields), len(resultFields))
 assert.EqualExportedValues(t, User{Name: "Rob"}, resultObj)
 assert.EqualValues(t, 42, result)
 // And so on...
@@ -408,19 +500,30 @@ disable this feature, use `--formatter.check-format-string=false` flag.
 
 #### 3)
 
-Requirement of the f-assertions if format string is used. Disabled by default, use `--formatter.require-f-funcs` flag
-to enable. This helps follow Go's implicit convention
+Requirement of the f-assertions (e.g. assert.Equal**f**) if format string is used. Disabled by default, use
+`--formatter.require-f-funcs` flag to enable. <br>
 
-> Printf-like functions must end with `f`
+This helps follow Go's implicit convention _"Printf-like functions must end with `f`"_ and sets the stage for moving to
+`v2` of `testify`. In this way the checker resembles
+the [goprintffuncname](https://github.com/jirfag/go-printf-func-name)
+linter (included in [golangci-lint](https://golangci-lint.run/usage/linters/)). <br>
 
-and sets the stage for moving to `v2` of `testify`. In this way the checker resembles the
-[goprintffuncname](https://github.com/jirfag/go-printf-func-name) linter (included in
-[golangci-lint](https://golangci-lint.run/usage/linters/)). Also format string in f-assertions is highlighted by IDE
-, e.g. GoLand:
+Also, verbs in the format string of f-assertions are highlighted by an IDE, e.g. GoLand:
 
 <img width="600" alt="F-assertion IDE highlighting" src="https://github.com/Antonboom/testifylint/assets/17127404/9bdab802-d6eb-477d-a411-6cba043d33a5">
 
-#### Historical Reference
+<br>
+
+> [!CAUTION]
+> `--formatter.require-f-funcs` requires f-assertions, **even if there are no variable-length variables**, i.e. it
+> requires `require.NoErrorf` for both these cases:
+> ```
+> require.NoErrorf(t, err, "unexpected error")
+> require.NoErrorf(t, err, "unexpected error for sid: %v", sid)
+> ```
+> To understand this behavior, please read the reference below.
+
+#### Historical reference of formatter
 
 <details>
 
@@ -493,6 +596,47 @@ in `v2` of `testify`.
 
 </details>
 
+#### 4)
+
+Validating the first argument of `msgAndArgs` has `string` type (based on `testify`'s
+maintainer's [feedback](https://github.com/stretchr/testify/issues/1679#issuecomment-2480629257)) and this string is
+not empty:
+
+```go
+❌
+assert.Equal(t, 1, strings.Count(b.String(), "hello"), tc)
+assert.Equalf(t, want, got, "")
+
+✅
+assert.Equal(t, 1, strings.Count(b.String(), "hello"), "%+v", tc)
+assert.Equal(t, want, got)
+```
+
+You can disable this behaviour with the `--formatter.require-string-msg=false` flag.
+
+#### 5)
+
+Validating there are no arguments in `msgAndArgs` if message is not a string:
+
+```go
+❌
+assert.True(t, cco.IsCardNumber(valid), i, valid) // Causes panic.
+```
+
+See [testify's issue](https://github.com/stretchr/testify/issues/1679) for details.
+
+#### 6) 
+
+Finally, it checks that failure message in `Fail` and `FailNow` is not used as a format string (which won't work):
+
+```go
+❌
+assert.Fail(t, "test case [%d] failed. %+v != %+v", idx, tc.expected, actual) // Causes panic.
+
+✅
+assert.Fail(t, "good luck!", "test case [%d] failed. %+v != %+v", idx, tc.expected, actual)
+```
+
 ---
 
 ### go-require
@@ -551,18 +695,40 @@ P.S. Look at [testify's issue](https://github.com/stretchr/testify/issues/772), 
 
 ```go
 ❌
-assert.Equal(t, 3, len(arr))
-assert.EqualValues(t, 3, len(arr))
-assert.Exactly(t, 3, len(arr))
-assert.True(t, len(arr) == 3)
+assert.Equal(t, 42, len(arr))
+assert.Equal(t, len(arr), 42)
+assert.EqualValues(t, 42, len(arr))
+assert.EqualValues(t, len(arr), 42)
+assert.Exactly(t, 42, len(arr))
+assert.Exactly(t, len(arr), 42)
+assert.True(t, 42 == len(arr))
+assert.True(t, len(arr) == 42)
+
+assert.Equal(t, value, len(arr))
+assert.EqualValues(t, value, len(arr))
+assert.Exactly(t, value, len(arr))
+assert.True(t, len(arr) == value)
+
+assert.Equal(t, len(expArr), len(arr))
+assert.EqualValues(t, len(expArr), len(arr))
+assert.Exactly(t, len(expArr), len(arr))
+assert.True(t, len(arr) == len(expArr))
 
 ✅
-assert.Len(t, arr, 3)
+assert.Len(t, arr, 42)
+assert.Len(t, arr, value)
+assert.Len(t, arr, len(expArr))
 ```
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
+
+> [!CAUTION]
+> The checker ignores assertions in which length checking is not a priority, e.g.
+> ```go
+> assert.Equal(t, len(arr), value)
+> ```
 
 ---
 
@@ -592,6 +758,8 @@ assert.Positive(t, a)
 **Autofix**: true. <br>
 **Enabled by default**: true <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
+
+Typed zeros (like `int8(0)`, ..., `uint64(0)`) are also supported.
 
 ---
 
@@ -629,9 +797,27 @@ assert.Equal(t, (chan Event)(nil), eventsChan)
 assert.NotEqual(t, (chan Event)(nil), eventsChan)
 ```
 
-But in the case of `Equal`, `NotEqual` and `Exactly` type casting approach still doesn't work for the function type.
+But in the case of `Equal`, `NotEqual` and `Exactly` type conversion approach still doesn't work for the function type.
 
 The best option here is to just use `Nil` / `NotNil` (see [details](https://github.com/stretchr/testify/issues/1524)).
+
+---
+
+### regexp
+
+```go
+❌
+assert.Regexp(t, regexp.MustCompile(`\[.*\] DEBUG \(.*TestNew.*\): message`), out)
+assert.NotRegexp(t, regexp.MustCompile(`\[.*\] TRACE message`), out)
+
+✅
+assert.Regexp(t, `\[.*\] DEBUG \(.*TestNew.*\): message`, out)
+assert.NotRegexp(t, `\[.*\] TRACE message`, out)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Code simplification.
 
 ---
 
@@ -841,22 +1027,52 @@ a [checkers.AdvancedChecker](https://github.com/Antonboom/testifylint/blob/67632
 
 ### useless-assert
 
-Currently the checker guards against assertion of the same variable:
+The checker guards against assertion of the same variable:
 
 ```go
-❌
+assert.Contains(t, tt.value, tt.value)
+assert.ElementsMatch(t, tt.value, tt.value)
 assert.Equal(t, tt.value, tt.value)
-assert.ElementsMatch(t, users, users)
-// And so on...
+assert.EqualExportedValues(t, tt.value, tt.value)
+// And other assert functions...
+
 assert.True(t, num > num)
+assert.True(t, num < num)
+assert.True(t, num >= num)
+assert.True(t, num <= num)
+assert.True(t, num == num)
+assert.True(t, num != num)
+
+assert.False(t, num > num)
+assert.False(t, num < num)
+assert.False(t, num >= num)
+assert.False(t, num <= num)
 assert.False(t, num == num)
+assert.False(t, num != num)
 ```
 
-More complex cases are [open for contribution](CONTRIBUTING.md#useless-assert).
+And against these meaningless assertions:
+
+```go
+assert.Empty(t, "")
+assert.False(t, false)
+assert.Implements(t, (*any)(nil), new(Conn))
+assert.Negative(t, -42)
+assert.Nil(t, nil)
+assert.NoError(t, nil)
+assert.NotEmpty(t, "value")
+assert.NotZero(t, 42)
+assert.NotZero(t, "value")
+assert.Positive(t, 42)
+assert.True(t, true)
+assert.Zero(t, 0)
+assert.Zero(t, "")
+assert.Zero(t, nil)
+```
 
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
-**Reason**: Protection from bugs and possible dead code.
+**Reason**: Protection from bugs and dead code.
 
 ---
 

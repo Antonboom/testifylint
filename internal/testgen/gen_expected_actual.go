@@ -106,6 +106,8 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			"*(tt.expPtr())",
 			"ttPtr.expected",
 
+			"len(expectedFields)",
+
 			// NOTE(a.telyshev): Unsupported rare cases:
 			// "(*expectedObjPtr).Val",
 			// "(*ttPtr).expected",
@@ -122,6 +124,11 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 		},
 		OtherExpActFunctions: test{
 			InvalidAssertions: []Assertion{
+				{
+					Fn: "Equal", Argsf: "len(actualFields), len(expectedFields)",
+					ReportMsgf: report, ProposedArgsf: "len(expectedFields), len(actualFields)",
+				},
+
 				{
 					Fn: "EqualExportedValues", Argsf: "resultObj, expectedObj",
 					ReportMsgf: report, ProposedArgsf: "expectedObj, resultObj",
@@ -261,6 +268,8 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: "nil, nil"},
 			{Fn: "Equal", Argsf: `"value", "value"`},
 			{Fn: "Equal", Argsf: "expected, expected"},
+			{Fn: "Equal", Argsf: "len(expectedFields), len(expectedFields)"},
+			{Fn: "Equal", Argsf: "len(interfaces), len(directions)"},
 			{Fn: "Equal", Argsf: "value, &resultPtr"},
 			{Fn: "Equal", Argsf: "[]int{1, 2}, map[int]int{1: 2}"},
 			{Fn: "NotEqual", Argsf: "result, result"},
@@ -348,6 +357,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	expectedVal := func() any { return nil }
 	var expectedObj struct { Val int }
 	var expectedObjPtr = &expectedObj
+	var expectedFields []string
 
 	var result any
 
@@ -369,6 +379,7 @@ func {{ .CheckerName.AsTestName }}_Other(t *testing.T) {
 		resultObj, expectedObj user
 		resultTime, expectedTime time.Time
 		value int
+		actualFields, expectedFields []string
 	)
 
 	// Invalid.
@@ -503,6 +514,7 @@ func {{ .CheckerName.AsTestName }}_Ignored(t *testing.T) {
 		resultPtr, expectedPtr *int
 		value int
 		expectedTime time.Time
+		expectedFields, interfaces, directions []string
 	)
 
 	{{ range $ai, $assrn := $.IgnoredAssertions }}

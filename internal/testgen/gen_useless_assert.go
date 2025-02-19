@@ -16,6 +16,7 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 	var (
 		checker       = g.Checker().Name()
 		sameVarReport = checker + ": asserting of the same variable"
+		defaultReport = checker + ": meaningless assertion"
 	)
 
 	var twoSideAssertions []Assertion
@@ -40,8 +41,10 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 		"JSONEq":              "str, str",
 		"Less":                "value, value",
 		"LessOrEqual":         "value, value",
+		"NotElementsMatch":    "value, value",
 		"NotEqual":            "value, value",
 		"NotEqualValues":      "value, value",
+		"NotErrorAs":          "err, err",
 		"NotErrorIs":          "err, err",
 		"NotRegexp":           "value, value",
 		"NotSame":             "value, value",
@@ -86,6 +89,24 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: "tc.A(), tc.A()", ReportMsgf: sameVarReport},
 			{Fn: "Equal", Argsf: "testCase{}.A().B().C(), testCase{}.A().B().C()", ReportMsgf: sameVarReport},
 			{Fn: "IsType", Argsf: "(*testCase)(nil), (*testCase)(nil)", ReportMsgf: sameVarReport},
+
+			{Fn: "Empty", Argsf: `""`, ReportMsgf: defaultReport},
+			{Fn: "False", Argsf: "false", ReportMsgf: defaultReport},
+			{Fn: "Implements", Argsf: "(*any)(nil), new(testing.T)", ReportMsgf: defaultReport},
+			{Fn: "Negative", Argsf: "-42", ReportMsgf: defaultReport},
+			{Fn: "Nil", Argsf: "nil", ReportMsgf: defaultReport},
+			{Fn: "NoError", Argsf: "nil", ReportMsgf: defaultReport},
+			{Fn: "NotEmpty", Argsf: `"value"`, ReportMsgf: defaultReport},
+			{Fn: "NotZero", Argsf: `42`, ReportMsgf: defaultReport},
+			{Fn: "NotZero", Argsf: `"value"`, ReportMsgf: defaultReport},
+			{Fn: "Positive", Argsf: "42", ReportMsgf: defaultReport},
+			{Fn: "True", Argsf: "true", ReportMsgf: defaultReport},
+			{Fn: "Zero", Argsf: "0", ReportMsgf: defaultReport},
+			{Fn: "Zero", Argsf: `""`, ReportMsgf: defaultReport},
+			{Fn: "Zero", Argsf: "nil", ReportMsgf: defaultReport},
+
+			{Fn: "Less", Argsf: "len(elems), 0", ReportMsgf: defaultReport},
+			{Fn: "Greater", Argsf: "0, len(elems)", ReportMsgf: defaultReport},
 		},
 		InvalidAssertions: twoSideAssertions,
 		ValidAssertions: []Assertion{
@@ -94,6 +115,19 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: `tc.A(), "tc.A()"`},
 			{Fn: "Equal", Argsf: "testCase{}.A().B().C(), tc.A().B().C()"},
 			{Fn: "IsType", Argsf: "tc, testCase{}"},
+
+			{Fn: "Empty", Argsf: "str"},
+			{Fn: "False", Argsf: "b"},
+			{Fn: "Implements", Argsf: "(*testing.TB)(nil), new(testing.T)"},
+			{Fn: "Negative", Argsf: "num"},
+			{Fn: "Nil", Argsf: "new(testCase)"},
+			{Fn: "NoError", Argsf: "err"},
+			{Fn: "NotEmpty", Argsf: "str"},
+			{Fn: "Positive", Argsf: "num"},
+			{Fn: "True", Argsf: "b"},
+			{Fn: "Zero", Argsf: "num"},
+			{Fn: "Zero", Argsf: "str"},
+			{Fn: "Zero", Argsf: "new(testCase)"},
 		},
 	}
 }
@@ -126,6 +160,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var elapsed time.Time
 	var str string
 	var num int
+	var b bool
 	var tc testCase
 
 	// Invalid.

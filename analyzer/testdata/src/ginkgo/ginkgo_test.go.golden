@@ -10,7 +10,6 @@ import (
 )
 
 var _ = ginkgo.Describe("[Load Balancer] EWMA", func() {
-
 	ginkgo.BeforeEach(func() {
 		// Some stuff...
 	})

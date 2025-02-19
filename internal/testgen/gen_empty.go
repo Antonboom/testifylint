@@ -15,8 +15,10 @@ func (EmptyTestsGenerator) Checker() checkers.Checker {
 
 func (g EmptyTestsGenerator) TemplateData() any {
 	var (
-		checker = g.Checker().Name()
-		report  = checker + ": use %s.%s"
+		checker          = g.Checker().Name()
+		reportUse        = checker + ": use %s.%s"
+		reportRemoveLen  = checker + ": remove unnecessary len"
+		reportRemoveConv = checker + ": remove unnecessary string conversion"
 	)
 
 	type test struct {
@@ -38,52 +40,75 @@ func (g EmptyTestsGenerator) TemplateData() any {
 	}{
 		CheckerName: CheckerName(checker),
 		LenTest: lenTest{
-			Vars:  []string{"elems", "arr", "arrPtr", "sl", "mp", "str", "ch", "b"},
-			Assrn: Assertion{Fn: "Equal", Argsf: "0, len(%s)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "%s"},
+			Vars:  []string{"elems", "arr", "arrPtr", "sl", "mp", "str", "b", "ch", "[]byte(str)", "string(str)"},
+			Assrn: Assertion{Fn: "Equal", Argsf: "0, len(%s)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "%s"},
 		},
 		Tests: []test{
 			{
 				Name: "assert.Empty cases",
 				InvalidAssertions: []Assertion{
 					// n := len(elems)
-					// n == 0, n <= 0, n < 1
-					// 0 == n, 0 >= n, 1 > n
-					{Fn: "Len", Argsf: "elems, 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "Equal", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "Equal", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "EqualValues", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "EqualValues", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "Exactly", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "Exactly", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "LessOrEqual", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "GreaterOrEqual", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "Less", Argsf: "len(elems), 1", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "Greater", Argsf: "1, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "Zero", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "Empty", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "Zero", Argsf: "len(string(b))", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
-					{Fn: "Empty", Argsf: "len(string(b))", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
-					{Fn: "Empty", Argsf: "string(b)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
-					{Fn: "Len", Argsf: "str, 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "str"},
-					{Fn: "Len", Argsf: "b, 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
-					{Fn: "Len", Argsf: "string(b), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
-					{Fn: "Equal", Argsf: `"", str`, ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "str"},
-					{Fn: "Equal", Argsf: `"", string(b)`, ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
-					{Fn: "EqualValues", Argsf: `"", str`, ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "str"},
-					{Fn: "EqualValues", Argsf: `"", string(b)`, ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
-					{Fn: "Exactly", Argsf: `"", str`, ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "str"},
-					{Fn: "Exactly", Argsf: `"", string(b)`, ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "b"},
+					// n <= 0, n == 0, n <= 0, n < 1
+					// 0 >= n, 0 == n, 0 >= n, 1 > n
+					{Fn: "LessOrEqual", Argsf: "len(elems), 0", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "GreaterOrEqual", Argsf: "0, len(elems)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Len", Argsf: "elems, 0", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Len", Argsf: "str, 0", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Len", Argsf: "string(str), 0", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Len", Argsf: "b, 0", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "b"},
+					{Fn: "Len", Argsf: "string(b), 0", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "string(b)"},
+					{Fn: "Equal", Argsf: "len(elems), 0", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Equal", Argsf: "0, len(elems)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "EqualValues", Argsf: "len(elems), 0", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "EqualValues", Argsf: "0, len(elems)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Exactly", Argsf: "len(elems), 0", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Exactly", Argsf: "0, len(elems)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "LessOrEqual", Argsf: "len(elems), 0", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "GreaterOrEqual", Argsf: "0, len(elems)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Less", Argsf: "len(elems), 1", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Greater", Argsf: "1, len(elems)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Zero", Argsf: "len(elems)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
 
-					// Bullshit, but supported by the checker:
-					// n < 0, n <= 0
-					// 0 > n, 0 >= n
-					{Fn: "Less", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "Greater", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "LessOrEqual", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
-					{Fn: "GreaterOrEqual", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					// Empty string cases.
+					{Fn: "Equal", Argsf: `"", str`, ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Equal", Argsf: `"", string(str)`, ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Equal", Argsf: `"", string(b)`, ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "string(b)"},
+					{Fn: "EqualValues", Argsf: `"", str`, ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "EqualValues", Argsf: `"", string(str)`, ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "EqualValues", Argsf: `"", string(b)`, ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "string(b)"},
+					{Fn: "Exactly", Argsf: `"", str`, ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Exactly", Argsf: `"", string(str)`, ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Exactly", Argsf: `"", string(b)`, ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "string(b)"},
+
+					{Fn: "Equal", Argsf: "``, str", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Equal", Argsf: "``, string(str)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Equal", Argsf: "``, string(b)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "string(b)"},
+					{Fn: "EqualValues", Argsf: "``, str", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "EqualValues", Argsf: "``, string(str)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "EqualValues", Argsf: "``, string(b)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "string(b)"},
+					{Fn: "Exactly", Argsf: "``, str", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Exactly", Argsf: "``, string(str)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Exactly", Argsf: "``, string(b)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "string(b)"},
+
+					// Simplification cases.
+					{Fn: "Empty", Argsf: "len(elems)", ReportMsgf: reportRemoveLen, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Empty", Argsf: "len(str)", ReportMsgf: reportRemoveLen, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Empty", Argsf: "len(string(str))", ReportMsgf: reportRemoveLen, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Empty", Argsf: `len([]string{"e"})`, ReportMsgf: reportRemoveLen, ProposedArgsf: `[]string{"e"}`},
+					{Fn: "Empty", Argsf: "len(b)", ReportMsgf: reportRemoveLen, ProposedFn: "Empty", ProposedArgsf: "b"},
+					{Fn: "Empty", Argsf: "len(string(b))", ReportMsgf: reportRemoveLen, ProposedFn: "Empty", ProposedArgsf: "string(b)"},
+					{Fn: "Empty", Argsf: "string(str)", ReportMsgf: reportRemoveConv, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Zero", Argsf: "len(elems)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "elems"},
+					{Fn: "Zero", Argsf: "len(str)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Zero", Argsf: "len(string(str))", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Zero", Argsf: "len(b)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "b"},
+					{Fn: "Zero", Argsf: "len(string(b))", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "string(b)"},
+					{Fn: "Zero", Argsf: "string(str)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Zero", Argsf: `len([]string{"e"})`, ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: `[]string{"e"}`},
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "Empty", Argsf: "elems"},
+					{Fn: "Empty", Argsf: "string(b)"},
 				},
 			},
 			{
@@ -92,27 +117,57 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					// n := len(elems)
 					// n != 0, n > 0
 					// 0 != n, 0 < n
-					{Fn: "NotEqual", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "NotEqual", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "Less", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "Greater", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "Positive", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "NotZero", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "NotEmpty", Argsf: "len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "NotZero", Argsf: "len(str)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
-					{Fn: "NotEmpty", Argsf: "len(str)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
-					{Fn: "NotZero", Argsf: "len(string(b))", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "b"},
-					{Fn: "NotEmpty", Argsf: "len(string(b))", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "b"},
-					{Fn: "NotEmpty", Argsf: "string(b)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "b"},
-					{Fn: "NotEqual", Argsf: `"", str`, ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
-					{Fn: "NotEqual", Argsf: `"", string(b)`, ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "b"},
-					{Fn: "NotEqualValues", Argsf: "0, len(elems)", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "NotEqualValues", Argsf: "len(elems), 0", ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
-					{Fn: "NotEqualValues", Argsf: `"", str`, ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
-					{Fn: "NotEqualValues", Argsf: `"", string(b)`, ReportMsgf: report, ProposedFn: "NotEmpty", ProposedArgsf: "b"},
+					{Fn: "NotEqual", Argsf: "len(elems), 0", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotEqual", Argsf: "0, len(elems)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotEqualValues", Argsf: "len(elems), 0", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotEqualValues", Argsf: "0, len(elems)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotExactly", Argsf: "len(elems), 0", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotExactly", Argsf: "0, len(elems)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "Greater", Argsf: "len(elems), 0", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "Less", Argsf: "0, len(elems)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "Positive", Argsf: "len(elems)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotZero", Argsf: "len(elems)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+
+					// Empty string cases.
+					{Fn: "NotEqual", Argsf: `"", str`, ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotEqual", Argsf: `"", string(str)`, ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotEqual", Argsf: `"", string(b)`, ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "string(b)"},
+					{Fn: "NotEqualValues", Argsf: `"", str`, ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotEqualValues", Argsf: `"", string(str)`, ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotEqualValues", Argsf: `"", string(b)`, ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "string(b)"},
+					{Fn: "NotExactly", Argsf: `"", str`, ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotExactly", Argsf: `"", string(str)`, ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotExactly", Argsf: `"", string(b)`, ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "string(b)"},
+
+					{Fn: "NotEqual", Argsf: "``, str", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotEqual", Argsf: "``, string(str)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotEqual", Argsf: "``, string(b)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "string(b)"},
+					{Fn: "NotEqualValues", Argsf: "``, str", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotEqualValues", Argsf: "``, string(str)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotEqualValues", Argsf: "``, string(b)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "string(b)"},
+					{Fn: "NotExactly", Argsf: "``, str", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotExactly", Argsf: "``, string(str)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotExactly", Argsf: "``, string(b)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "string(b)"},
+
+					// Simplification cases.
+					{Fn: "NotEmpty", Argsf: "len(elems)", ReportMsgf: reportRemoveLen, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotEmpty", Argsf: "len(str)", ReportMsgf: reportRemoveLen, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotEmpty", Argsf: "len(string(str))", ReportMsgf: reportRemoveLen, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotEmpty", Argsf: `len([]string{"e"})`, ReportMsgf: reportRemoveLen, ProposedArgsf: `[]string{"e"}`},
+					{Fn: "NotEmpty", Argsf: "len(b)", ReportMsgf: reportRemoveLen, ProposedFn: "NotEmpty", ProposedArgsf: "b"},
+					{Fn: "NotEmpty", Argsf: "len(string(b))", ReportMsgf: reportRemoveLen, ProposedFn: "NotEmpty", ProposedArgsf: "string(b)"},
+					{Fn: "NotEmpty", Argsf: "string(str)", ReportMsgf: reportRemoveConv, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotZero", Argsf: "len(elems)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "elems"},
+					{Fn: "NotZero", Argsf: "len(str)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotZero", Argsf: "len(string(str))", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotZero", Argsf: "len(b)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "b"},
+					{Fn: "NotZero", Argsf: "len(string(b))", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "string(b)"},
+					{Fn: "NotZero", Argsf: "string(str)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotZero", Argsf: `len([]string{"e"})`, ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: `[]string{"e"}`},
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "NotEmpty", Argsf: "elems"},
+					{Fn: "NotEmpty", Argsf: "string(b)"},
 				},
 			},
 		},
@@ -123,6 +178,9 @@ func (g EmptyTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: "len(elems), len(elems)"},
 			{Fn: "Equal", Argsf: "len(elems), 1"},
 			{Fn: "Equal", Argsf: "1, len(elems)"},
+			{Fn: "Equal", Argsf: `nil, elems`},
+			{Fn: "Equal", Argsf: `nil, b`},
+			{Fn: "Equal", Argsf: `[]byte(nil), b`},
 
 			{Fn: "NotEqual", Argsf: "len(elems), len(elems)"},
 			{Fn: "NotEqual", Argsf: "len(elems), 1"},
@@ -146,16 +204,10 @@ func (g EmptyTestsGenerator) TemplateData() any {
 			{Fn: "LessOrEqual", Argsf: "len(elems), 2"},
 			{Fn: "LessOrEqual", Argsf: "2, len(elems)"},
 
-			// these one are not supported because Zero and Empty are almost equivalent
-			// It's not the role of empty checker to deal with this one
 			{Fn: "Equal", Argsf: "0, i"},
-			{Fn: "Zero", Argsf: "elems"},
-			{Fn: "Zero", Argsf: "str"},
-			{Fn: "Zero", Argsf: "string(b)"},
 			{Fn: "NotEqual", Argsf: "0, i"},
-			{Fn: "NotZero", Argsf: "elems"},
-			{Fn: "NotZero", Argsf: "str"},
-			{Fn: "NotZero", Argsf: "string(b)"},
+			{Fn: "Empty", Argsf: "err"},
+			{Fn: "Zero", Argsf: "err"},
 
 			// The linter ignores n > 1 case, because it is not exactly equivalent of NotEmpty.
 			{Fn: "Greater", Argsf: "len(elems), 1"},

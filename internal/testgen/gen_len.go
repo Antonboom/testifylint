@@ -31,28 +31,63 @@ func (g LenTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: "len(arr), 42", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, 42"},
 			{Fn: "Equal", Argsf: "42, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, 42"},
 			{Fn: "Equal", Argsf: "value, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, value"},
+			{Fn: "Equal", Argsf: "len(expArr), len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, len(expArr)"},
+
 			{Fn: "EqualValues", Argsf: "len(arr), 42", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, 42"},
 			{Fn: "EqualValues", Argsf: "42, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, 42"},
 			{Fn: "EqualValues", Argsf: "value, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, value"},
+			{
+				Fn: "EqualValues", Argsf: "len(expArr), len(arr)", ReportMsgf: report,
+				ProposedFn: proposedFn, ProposedArgsf: "arr, len(expArr)",
+			},
+
 			{Fn: "Exactly", Argsf: "len(arr), 42", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, 42"},
 			{Fn: "Exactly", Argsf: "42, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, 42"},
 			{Fn: "Exactly", Argsf: "value, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, value"},
+			{Fn: "Exactly", Argsf: "len(expArr), len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, len(expArr)"},
+
 			{Fn: "True", Argsf: "len(arr) == 42", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, 42"},
 			{Fn: "True", Argsf: "42 == len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, 42"},
+			{Fn: "True", Argsf: "len(arr) == value", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, value"},
+			{Fn: "True", Argsf: "len(arr) == len(expArr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, len(expArr)"},
+
+			// Constant cases.
+			{Fn: "Equal", Argsf: "constNum, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, constNum"},
+			{Fn: "EqualValues", Argsf: "constNum, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, constNum"},
+			{Fn: "Exactly", Argsf: "constNum, len(arr)", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, constNum"},
+			{Fn: "True", Argsf: "len(arr) == constNum", ReportMsgf: report, ProposedFn: proposedFn, ProposedArgsf: "arr, constNum"},
+
+			// Type conversions cases.
+			{
+				Fn: "Equal", Argsf: "42, len(string(resp))", ReportMsgf: report,
+				ProposedFn: proposedFn, ProposedArgsf: "string(resp), 42",
+			},
+			{
+				Fn: "Equal", Argsf: "42, len([]byte(resp))", ReportMsgf: report,
+				ProposedFn: proposedFn, ProposedArgsf: "[]byte(resp), 42",
+			},
+			{
+				Fn: "Equal", Argsf: "42, len(json.RawMessage(resp))", ReportMsgf: report,
+				ProposedFn: proposedFn, ProposedArgsf: "json.RawMessage(resp), 42",
+			},
+			{
+				Fn: "Equal", Argsf: "42, len(string([]byte(json.RawMessage(resp))))", ReportMsgf: report,
+				ProposedFn: proposedFn, ProposedArgsf: "string([]byte(json.RawMessage(resp))), 42",
+			},
+			{
+				Fn: "True", Argsf: "len(string(resp)) == 42", ReportMsgf: report,
+				ProposedFn: proposedFn, ProposedArgsf: "string(resp), 42",
+			},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "Len", Argsf: "arr, 42"},
+			{Fn: "Len", Argsf: "arr, value"},
 			{Fn: "Len", Argsf: "arr, len(arr)"},
 		},
 		IgnoredAssertions: []Assertion{
-			{Fn: "Equal", Argsf: "len(arr), len(arr)"},
 			{Fn: "Equal", Argsf: "len(arr), value"},
-			{Fn: "EqualValues", Argsf: "len(arr), len(arr)"},
 			{Fn: "EqualValues", Argsf: "len(arr), value"},
-			{Fn: "Exactly", Argsf: "len(arr), len(arr)"},
 			{Fn: "Exactly", Argsf: "len(arr), value"},
-			{Fn: "True", Argsf: "len(arr) == len(arr)"},
-			{Fn: "True", Argsf: "len(arr) == value"},
 			{Fn: "True", Argsf: "value == len(arr)"},
 
 			{Fn: "NotEqual", Argsf: "42, len(arr)"},
@@ -112,14 +147,18 @@ const lenTestTmpl = header + `
 package {{ .CheckerName.AsPkgName }}
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
+const constNum = 10
+
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
-	var arr [3]int
+	var arr, expArr [3]int
 	var value int
+	var resp string
 
 	// Invalid.
 	{

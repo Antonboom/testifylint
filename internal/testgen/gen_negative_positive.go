@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 	"text/template"
 
@@ -19,166 +20,231 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		report  = checker + ": use %s.%s"
 	)
 
-	return struct {
-		CheckerName       CheckerName
-		InvalidAssertions []Assertion
-		ValidAssertions   []Assertion
-		IgnoredAssertions []Assertion
-	}{
-		CheckerName: CheckerName(checker),
-		InvalidAssertions: []Assertion{
-			{Fn: "Less", Argsf: "a, 0", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
-			{Fn: "Greater", Argsf: "0, a", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
-			{Fn: "True", Argsf: "a < 0", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
-			{Fn: "True", Argsf: "0 > a", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
-			{Fn: "False", Argsf: "a >= 0", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
-			{Fn: "False", Argsf: "0 <= a", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+	var invalidAssertions []Assertion
 
-			{Fn: "Greater", Argsf: "a, 0", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			{Fn: "Less", Argsf: "0, a", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			{Fn: "True", Argsf: "a > 0", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			{Fn: "True", Argsf: "0 < a", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			{Fn: "False", Argsf: "a <= 0", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-			{Fn: "False", Argsf: "0 >= a", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
-		},
+	for _, zeroType := range []string{
+		"", "int", "int8", "int16", "int32", "int64",
+	} {
+		v := fmt.Sprintf("%s(a)", zeroType)
+		zero := fmt.Sprintf("%s(0)", zeroType)
+
+		if zeroType == "" {
+			v, zero = "a", "0"
+		}
+
+		invalidAssertions = append(invalidAssertions,
+			Assertion{Fn: "Less", Argsf: "a, " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+			Assertion{Fn: "Greater", Argsf: zero + ", a", ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+			Assertion{Fn: "True", Argsf: v + " < " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+			Assertion{Fn: "True", Argsf: zero + " > " + v, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+			Assertion{Fn: "False", Argsf: v + " >= " + zero, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+			Assertion{Fn: "False", Argsf: zero + " <= " + v, ReportMsgf: report, ProposedFn: "Negative", ProposedArgsf: "a"},
+		)
+	}
+
+	for _, zeroType := range []string{
+		"", "int", "int8", "int16", "int32", "int64",
+		"uint", "uint8", "uint16", "uint32", "uint64",
+	} {
+		v := fmt.Sprintf("%s(a)", zeroType)
+		zero := fmt.Sprintf("%s(0)", zeroType)
+
+		if zeroType == "" {
+			v, zero = "a", "0"
+		}
+
+		invalidAssertions = append(invalidAssertions,
+			Assertion{Fn: "Greater", Argsf: "a, " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			Assertion{Fn: "Less", Argsf: zero + ", a", ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			Assertion{Fn: "True", Argsf: v + " > " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			Assertion{Fn: "True", Argsf: zero + " < " + v, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			Assertion{Fn: "False", Argsf: v + " <= " + zero, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+			Assertion{Fn: "False", Argsf: zero + " >= " + v, ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "a"},
+		)
+	}
+
+	var ignoredAssertions []Assertion
+
+	for _, fn := range []string{"Equal", "NotEqual", "GreaterOrEqual", "LessOrEqual"} {
+		for _, arg := range []string{"-1", "0", "1"} {
+			ignoredAssertions = append(ignoredAssertions,
+				Assertion{Fn: fn, Argsf: arg + ", a"},
+				Assertion{Fn: fn, Argsf: "a, " + arg},
+			)
+		}
+
+		for _, zeroType := range []string{
+			"int", "int8", "int16", "int32", "int64",
+			"uint", "uint8", "uint16", "uint32", "uint64",
+			"CustomInt16",
+		} {
+			v := fmt.Sprintf("%s(a)", zeroType)
+			zero := fmt.Sprintf("%s(0)", zeroType)
+
+			ignoredAssertions = append(ignoredAssertions,
+				Assertion{Fn: fn, Argsf: zero + ", " + v},
+				Assertion{Fn: fn, Argsf: v + ", " + zero},
+			)
+		}
+	}
+
+	for _, fn := range []string{"Greater", "Less"} {
+		for _, arg := range []string{"-1", "CustomInt16(0)", "1"} {
+			ignoredAssertions = append(ignoredAssertions,
+				Assertion{Fn: fn, Argsf: arg + ", a"},
+				Assertion{Fn: fn, Argsf: "a, " + arg},
+			)
+		}
+	}
+
+	for _, fn := range []string{"True", "False"} {
+		for _, arg := range []string{"-1", "1"} {
+			for _, op := range []string{">", "<", ">=", "<=", "==", "!="} {
+				ignoredAssertions = append(ignoredAssertions,
+					Assertion{Fn: fn, Argsf: fmt.Sprintf("a %s %s", op, arg)},
+					Assertion{Fn: fn, Argsf: fmt.Sprintf("%s %s a", arg, op)},
+				)
+			}
+		}
+	}
+	for _, zeroType := range []string{
+		"",
+		"int", "int8", "int16", "int32", "int64",
+		"uint", "uint8", "uint16", "uint32", "uint64",
+		"CustomInt16",
+	} {
+		v := fmt.Sprintf("%s(a)", zeroType)
+		zero := fmt.Sprintf("%s(0)", zeroType)
+
+		if zeroType == "" {
+			v, zero = "a", "0"
+		}
+
+		for _, op := range []string{">=", "<=", "==", "!="} {
+			ignoredAssertions = append(ignoredAssertions,
+				Assertion{Fn: "True", Argsf: fmt.Sprintf("%s %s %s", v, op, zero)},
+				Assertion{Fn: "True", Argsf: fmt.Sprintf("%s %s %s", zero, op, v)},
+			)
+		}
+	}
+	for _, zeroType := range []string{
+		"",
+		"int", "int8", "int16", "int32", "int64",
+		"uint", "uint8", "uint16", "uint32", "uint64",
+		"CustomInt16",
+	} {
+		v := fmt.Sprintf("%s(a)", zeroType)
+		zero := fmt.Sprintf("%s(0)", zeroType)
+
+		if zeroType == "" {
+			v, zero = "a", "0"
+		}
+
+		for _, op := range []string{">", "<", "==", "!="} {
+			ignoredAssertions = append(ignoredAssertions,
+				Assertion{Fn: "False", Argsf: fmt.Sprintf("%s %s %s", v, op, zero)},
+				Assertion{Fn: "False", Argsf: fmt.Sprintf("%s %s %s", zero, op, v)},
+			)
+		}
+	}
+
+	// assert.Negative only cases.
+	for _, zeroType := range []string{
+		"uint", "uint8", "uint16", "uint32", "uint64",
+		"CustomInt16",
+	} {
+		v := fmt.Sprintf("%s(a)", zeroType)
+		zero := fmt.Sprintf("%s(0)", zeroType)
+
+		ignoredAssertions = append(ignoredAssertions,
+			Assertion{Fn: "Less", Argsf: v + ", " + zero},
+			Assertion{Fn: "Greater", Argsf: zero + ", " + v},
+			Assertion{Fn: "True", Argsf: v + " < " + zero},
+			Assertion{Fn: "True", Argsf: zero + " > " + v},
+			Assertion{Fn: "False", Argsf: v + " >= " + zero},
+			Assertion{Fn: "False", Argsf: zero + " <= " + v},
+		)
+	}
+
+	// These one will be reported by useless-assert.
+	ignoredAssertions = append(ignoredAssertions,
+		Assertion{Fn: "Equal", Argsf: "0, 0"},
+		Assertion{Fn: "Equal", Argsf: "a, a"},
+		Assertion{Fn: "NotEqual", Argsf: "0, 0"},
+		Assertion{Fn: "NotEqual", Argsf: "a, a"},
+		Assertion{Fn: "Greater", Argsf: "0, 0"},
+		Assertion{Fn: "Greater", Argsf: "a, a"},
+		Assertion{Fn: "GreaterOrEqual", Argsf: "0, 0"},
+		Assertion{Fn: "GreaterOrEqual", Argsf: "a, a"},
+		Assertion{Fn: "Less", Argsf: "0, 0"},
+		Assertion{Fn: "Less", Argsf: "a, a"},
+		Assertion{Fn: "LessOrEqual", Argsf: "0, 0"},
+		Assertion{Fn: "LessOrEqual", Argsf: "a, a"},
+		Assertion{Fn: "True", Argsf: "a > a"},
+		Assertion{Fn: "True", Argsf: "a < a"},
+		Assertion{Fn: "True", Argsf: "a >= a"},
+		Assertion{Fn: "True", Argsf: "a <= a"},
+		Assertion{Fn: "True", Argsf: "a == a"},
+		Assertion{Fn: "True", Argsf: "a != a"},
+		Assertion{Fn: "False", Argsf: "-1 > -1"},
+		Assertion{Fn: "False", Argsf: "-1 < -1"},
+		Assertion{Fn: "False", Argsf: "-1 >= -1"},
+		Assertion{Fn: "False", Argsf: "-1 <= -1"},
+		Assertion{Fn: "False", Argsf: "-1 == -1"},
+		Assertion{Fn: "False", Argsf: "-1 != -1"},
+	)
+
+	// These one will be reported by incorrect-assert.
+	ignoredAssertions = append(ignoredAssertions,
+		Assertion{Fn: "Negative", Argsf: "uint(a)"},
+		Assertion{Fn: "Less", Argsf: "uint(a), 0"},
+		Assertion{Fn: "True", Argsf: "uint(a) < 0"},
+		Assertion{Fn: "True", Argsf: "0 > uint(a)"},
+		Assertion{Fn: "False", Argsf: "uint(a) >= 0"},
+		Assertion{Fn: "False", Argsf: "0 <= uint(a)"},
+	)
+
+	return struct {
+		CheckerName          CheckerName
+		InvalidAssertions    []Assertion
+		ValidAssertions      []Assertion
+		IgnoredAssertions    []Assertion
+		RealLifeUintExamples []Assertion
+	}{
+		CheckerName:       CheckerName(checker),
+		InvalidAssertions: invalidAssertions,
 		ValidAssertions: []Assertion{
 			{Fn: "Negative", Argsf: "a"},
 			{Fn: "Positive", Argsf: "a"},
 		},
-		IgnoredAssertions: []Assertion{
-			{Fn: "Equal", Argsf: "-1, a"},
-			{Fn: "Equal", Argsf: "a, -1"},
-			{Fn: "Equal", Argsf: "0, a"},
-			{Fn: "Equal", Argsf: "a, 0"},
-			{Fn: "Equal", Argsf: "1, a"},
-			{Fn: "Equal", Argsf: "a, 1"},
+		IgnoredAssertions: ignoredAssertions,
+		RealLifeUintExamples: []Assertion{
+			{
+				Fn: "Less", Argsf: "uint64(0), e.VideoMinutes",
+				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "e.VideoMinutes",
+			},
+			{
+				Fn: "Less", Argsf: "uint32(0), c.stats.Rto",
+				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "c.stats.Rto",
+			},
+			{
+				Fn: "Less", Argsf: "uint32(0), c.stats.Ato",
+				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "c.stats.Ato",
+			},
+			{
+				Fn: "Less", Argsf: "uint64(0), baseLineHeap",
+				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "baseLineHeap",
+			},
+			{
+				Fn: "Greater", Argsf: "uint64(state.LastUpdatedEpoch), uint64(0)",
+				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: "state.LastUpdatedEpoch",
+			},
+			{
+				Fn: "True", Argsf: `uint64(0) < prod["last_claim_time"].(uint64)`,
+				ReportMsgf: report, ProposedFn: "Positive", ProposedArgsf: `prod["last_claim_time"].(uint64)`,
+			},
 
-			{Fn: "NotEqual", Argsf: "-1, a"},
-			{Fn: "NotEqual", Argsf: "a, -1"},
-			{Fn: "NotEqual", Argsf: "0, a"},
-			{Fn: "NotEqual", Argsf: "a, 0"},
-			{Fn: "NotEqual", Argsf: "1, a"},
-			{Fn: "NotEqual", Argsf: "a, 1"},
-
-			{Fn: "Greater", Argsf: "-1, a"},
-			{Fn: "Greater", Argsf: "a, -1"},
-			{Fn: "Greater", Argsf: "a, 1"},
-			{Fn: "Greater", Argsf: "1, a"},
-
-			{Fn: "GreaterOrEqual", Argsf: "-1, a"},
-			{Fn: "GreaterOrEqual", Argsf: "a, -1"},
-			{Fn: "GreaterOrEqual", Argsf: "0, a"},
-			{Fn: "GreaterOrEqual", Argsf: "a, 0"},
-			{Fn: "GreaterOrEqual", Argsf: "1, a"},
-			{Fn: "GreaterOrEqual", Argsf: "a, 1"},
-
-			{Fn: "Less", Argsf: "-1, a"},
-			{Fn: "Less", Argsf: "a, -1"},
-			{Fn: "Less", Argsf: "1, a"},
-			{Fn: "Less", Argsf: "a, 1"},
-
-			{Fn: "LessOrEqual", Argsf: "-1, a"},
-			{Fn: "LessOrEqual", Argsf: "a, -1"},
-			{Fn: "LessOrEqual", Argsf: "0, a"},
-			{Fn: "LessOrEqual", Argsf: "a, 0"},
-			{Fn: "LessOrEqual", Argsf: "1, a"},
-			{Fn: "LessOrEqual", Argsf: "a, 1"},
-
-			{Fn: "True", Argsf: "a > -1"},
-			{Fn: "True", Argsf: "a < -1"},
-			{Fn: "True", Argsf: "a >= -1"},
-			{Fn: "True", Argsf: "a <= -1"},
-			{Fn: "True", Argsf: "a == -1"},
-			{Fn: "True", Argsf: "a != -1"},
-			{Fn: "True", Argsf: "-1 > a"},
-			{Fn: "True", Argsf: "-1 < a"},
-			{Fn: "True", Argsf: "-1 >= a"},
-			{Fn: "True", Argsf: "-1 <= a"},
-			{Fn: "True", Argsf: "-1 == a"},
-			{Fn: "True", Argsf: "-1 != a"},
-
-			{Fn: "True", Argsf: "a >= 0"},
-			{Fn: "True", Argsf: "a <= 0"},
-			{Fn: "True", Argsf: "a == 0"},
-			{Fn: "True", Argsf: "a != 0"},
-			{Fn: "True", Argsf: "0 >= a"},
-			{Fn: "True", Argsf: "0 <= a"},
-			{Fn: "True", Argsf: "0 == a"},
-			{Fn: "True", Argsf: "0 != a"},
-
-			{Fn: "True", Argsf: "a > 1"},
-			{Fn: "True", Argsf: "a < 1"},
-			{Fn: "True", Argsf: "a >= 1"},
-			{Fn: "True", Argsf: "a <= 1"},
-			{Fn: "True", Argsf: "a == 1"},
-			{Fn: "True", Argsf: "a != 1"},
-			{Fn: "True", Argsf: "1 > a"},
-			{Fn: "True", Argsf: "1 < a"},
-			{Fn: "True", Argsf: "1 >= a"},
-			{Fn: "True", Argsf: "1 <= a"},
-			{Fn: "True", Argsf: "1 == a"},
-			{Fn: "True", Argsf: "1 != a"},
-
-			{Fn: "False", Argsf: "a > -1"},
-			{Fn: "False", Argsf: "a < -1"},
-			{Fn: "False", Argsf: "a >= -1"},
-			{Fn: "False", Argsf: "a <= -1"},
-			{Fn: "False", Argsf: "a == -1"},
-			{Fn: "False", Argsf: "a != -1"},
-			{Fn: "False", Argsf: "-1 > a"},
-			{Fn: "False", Argsf: "-1 < a"},
-			{Fn: "False", Argsf: "-1 >= a"},
-			{Fn: "False", Argsf: "-1 <= a"},
-			{Fn: "False", Argsf: "-1 == a"},
-			{Fn: "False", Argsf: "-1 != a"},
-
-			{Fn: "False", Argsf: "a > 0"},
-			{Fn: "False", Argsf: "a < 0"},
-			{Fn: "False", Argsf: "a == 0"},
-			{Fn: "False", Argsf: "a != 0"},
-			{Fn: "False", Argsf: "0 > a"},
-			{Fn: "False", Argsf: "0 < a"},
-			{Fn: "False", Argsf: "0 == a"},
-			{Fn: "False", Argsf: "0 != a"},
-
-			{Fn: "False", Argsf: "a > 1"},
-			{Fn: "False", Argsf: "a < 1"},
-			{Fn: "False", Argsf: "a >= 1"},
-			{Fn: "False", Argsf: "a <= 1"},
-			{Fn: "False", Argsf: "a == 1"},
-			{Fn: "False", Argsf: "a != 1"},
-			{Fn: "False", Argsf: "1 > a"},
-			{Fn: "False", Argsf: "1 < a"},
-			{Fn: "False", Argsf: "1 >= a"},
-			{Fn: "False", Argsf: "1 <= a"},
-			{Fn: "False", Argsf: "1 == a"},
-			{Fn: "False", Argsf: "1 != a"},
-
-			// These one will be reported by useless-assert.
-			{Fn: "Equal", Argsf: "0, 0"},
-			{Fn: "Equal", Argsf: "a, a"},
-			{Fn: "NotEqual", Argsf: "0, 0"},
-			{Fn: "NotEqual", Argsf: "a, a"},
-			{Fn: "Greater", Argsf: "0, 0"},
-			{Fn: "Greater", Argsf: "a, a"},
-			{Fn: "GreaterOrEqual", Argsf: "0, 0"},
-			{Fn: "GreaterOrEqual", Argsf: "a, a"},
-			{Fn: "Less", Argsf: "0, 0"},
-			{Fn: "Less", Argsf: "a, a"},
-			{Fn: "LessOrEqual", Argsf: "0, 0"},
-			{Fn: "LessOrEqual", Argsf: "a, a"},
-			{Fn: "True", Argsf: "a > a"},
-			{Fn: "True", Argsf: "a < a"},
-			{Fn: "True", Argsf: "a >= a"},
-			{Fn: "True", Argsf: "a <= a"},
-			{Fn: "True", Argsf: "a == a"},
-			{Fn: "True", Argsf: "a != a"},
-			{Fn: "False", Argsf: "-1 > -1"},
-			{Fn: "False", Argsf: "-1 < -1"},
-			{Fn: "False", Argsf: "-1 >= -1"},
-			{Fn: "False", Argsf: "-1 <= -1"},
-			{Fn: "False", Argsf: "-1 == -1"},
-			{Fn: "False", Argsf: "-1 != -1"},
+			{Fn: "Greater", Argsf: "uint64(result.GasUsed), minGasExpected"},
 		},
 	}
 }
@@ -229,4 +295,20 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 		{{- end }}
 	}
 }
+
+func {{ .CheckerName.AsTestName }}_RealLifeUintExamples(t *testing.T) {
+	var e struct{ VideoMinutes uint64 }
+	var c struct{ stats struct{ Rto, Ato uint64 } }
+	var baseLineHeap, minGasExpected uint64
+	var result struct{ GasUsed int }
+	var state struct{ LastUpdatedEpoch ChainEpoch }
+	var prod map[string]any
+
+	{{ range $ai, $assrn := $.RealLifeUintExamples }}
+		{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+	{{- end }}
+}
+
+type CustomInt16 int16
+type ChainEpoch int64
 `

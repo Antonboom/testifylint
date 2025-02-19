@@ -51,18 +51,23 @@ func (g ErrorNilTestsGenerator) TemplateData() any {
 		},
 		InvalidAssertions: []Assertion{
 			{Fn: "Nil", Argsf: "err", ReportMsgf: report, ProposedFn: "NoError"},
-			{Fn: "NotNil", Argsf: "err", ReportMsgf: report, ProposedFn: "Error"},
+			{Fn: "Empty", Argsf: "err", ReportMsgf: report, ProposedFn: "NoError"},
+			{Fn: "Zero", Argsf: "err", ReportMsgf: report, ProposedFn: "NoError"},
 			{Fn: "Equal", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 			{Fn: "Equal", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 			{Fn: "EqualValues", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 			{Fn: "EqualValues", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 			{Fn: "Exactly", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 			{Fn: "Exactly", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
+			{Fn: "ErrorIs", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
+
+			{Fn: "NotNil", Argsf: "err", ReportMsgf: report, ProposedFn: "Error"},
+			{Fn: "NotEmpty", Argsf: "err", ReportMsgf: report, ProposedFn: "Error"},
+			{Fn: "NotZero", Argsf: "err", ReportMsgf: report, ProposedFn: "Error"},
 			{Fn: "NotEqual", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
 			{Fn: "NotEqual", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
 			{Fn: "NotEqualValues", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
 			{Fn: "NotEqualValues", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
-			{Fn: "ErrorIs", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 			{Fn: "NotErrorIs", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
 		},
 		ValidAssertions: []Assertion{
@@ -76,6 +81,18 @@ func (g ErrorNilTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: "nil, nil"},
 			{Fn: "NotEqual", Argsf: "err, err"},
 			{Fn: "NotEqual", Argsf: "nil, nil"},
+
+			{Fn: "Empty", Argsf: "err.Error()"},
+			{Fn: "NotEmpty", Argsf: "err.Error()"},
+			{Fn: "Zero", Argsf: "err.Error()"},
+			{Fn: "NotZero", Argsf: "err.Error()"},
+
+			{Fn: "Nil", Argsf: "errs"},
+			{Fn: "NotNil", Argsf: "errs"},
+			{Fn: "Empty", Argsf: "errs"},
+			{Fn: "NotEmpty", Argsf: "errs"},
+			{Fn: "Zero", Argsf: "errs"},
+			{Fn: "NotZero", Argsf: "errs"},
 		},
 	}
 }
@@ -106,6 +123,7 @@ import (
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var err error
+	var errs []error
 
 	// Invalid.
 	{

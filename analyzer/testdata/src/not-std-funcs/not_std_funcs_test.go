@@ -11,7 +11,7 @@ import (
 
 func TestCustomStuff(t *testing.T) {
 	var err error
-	var errSentinel = errors.New("unexpected")
+	errSentinel := errors.New("unexpected")
 	var scores []float64
 
 	assert.Equal(t, nil, scores) // want "nil-compare: use assert\\.Nil"

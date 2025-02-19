@@ -56,16 +56,13 @@ func (g ErrorIsAsTestsGenerator) TemplateData() any {
 				ProposedFn:    "ErrorAs",
 				ProposedArgsf: "err, &target",
 			},
-			/*
-				https://github.com/stretchr/testify/issues/1066
-				{
-					Fn:            "False",
-					Argsf:         "errors.As(err, &target)",
-					ReportMsgf:    checker + ": use %s.%s",
-					ProposedFn:    "NotErrorAs",
-					ProposedArgsf: "err, &target",
-				},
-			*/
+			{
+				Fn:            "False",
+				Argsf:         "errors.As(err, &target)",
+				ReportMsgf:    checker + ": use %s.%s",
+				ProposedFn:    "NotErrorAs",
+				ProposedArgsf: "err, &target",
+			},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "Error", Argsf: "err"},
@@ -73,7 +70,7 @@ func (g ErrorIsAsTestsGenerator) TemplateData() any {
 			{Fn: "NoError", Argsf: "err"},
 			{Fn: "NotErrorIs", Argsf: "err, errSentinel"},
 			{Fn: "ErrorAs", Argsf: "err, &target"},
-			// {Fn: "NotErrorAs", Argsf: "err, &target"},
+			{Fn: "NotErrorAs", Argsf: "err, &target"},
 		},
 	}
 }
