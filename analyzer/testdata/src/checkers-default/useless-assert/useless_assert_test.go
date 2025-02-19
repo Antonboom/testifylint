@@ -17,6 +17,7 @@ func TestUselessAssertChecker(t *testing.T) {
 	var num int
 	var b bool
 	var tc testCase
+	var x []int
 
 	// Invalid.
 	{
@@ -174,6 +175,34 @@ func TestUselessAssertChecker(t *testing.T) {
 		assert.Greaterf(t, 0, len(elems), "msg")                                                          // want "useless-assert: meaningless assertion"
 		assert.Greaterf(t, 0, len(elems), "msg with arg %d", 42)                                          // want "useless-assert: meaningless assertion"
 		assert.Greaterf(t, 0, len(elems), "msg with args %d %s", 42, "42")                                // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqual(t, uint(42), 0)                                                             // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqual(t, uint(42), 0, "msg")                                                      // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqual(t, uint(42), 0, "msg with arg %d", 42)                                      // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqual(t, uint(42), 0, "msg with args %d %s", 42, "42")                            // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqualf(t, uint(42), 0, "msg")                                                     // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqualf(t, uint(42), 0, "msg with arg %d", 42)                                     // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqualf(t, uint(42), 0, "msg with args %d %s", 42, "42")                           // want "useless-assert: meaningless assertion"
+		assert.LessOrEqual(t, 0, uint(42))                                                                // want "useless-assert: meaningless assertion"
+		assert.LessOrEqual(t, 0, uint(42), "msg")                                                         // want "useless-assert: meaningless assertion"
+		assert.LessOrEqual(t, 0, uint(42), "msg with arg %d", 42)                                         // want "useless-assert: meaningless assertion"
+		assert.LessOrEqual(t, 0, uint(42), "msg with args %d %s", 42, "42")                               // want "useless-assert: meaningless assertion"
+		assert.LessOrEqualf(t, 0, uint(42), "msg")                                                        // want "useless-assert: meaningless assertion"
+		assert.LessOrEqualf(t, 0, uint(42), "msg with arg %d", 42)                                        // want "useless-assert: meaningless assertion"
+		assert.LessOrEqualf(t, 0, uint(42), "msg with args %d %s", 42, "42")                              // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqual(t, len(x), 0)                                                               // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqual(t, len(x), 0, "msg")                                                        // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqual(t, len(x), 0, "msg with arg %d", 42)                                        // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqual(t, len(x), 0, "msg with args %d %s", 42, "42")                              // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqualf(t, len(x), 0, "msg")                                                       // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqualf(t, len(x), 0, "msg with arg %d", 42)                                       // want "useless-assert: meaningless assertion"
+		assert.GreaterOrEqualf(t, len(x), 0, "msg with args %d %s", 42, "42")                             // want "useless-assert: meaningless assertion"
+		assert.LessOrEqual(t, 0, len(x))                                                                  // want "useless-assert: meaningless assertion"
+		assert.LessOrEqual(t, 0, len(x), "msg")                                                           // want "useless-assert: meaningless assertion"
+		assert.LessOrEqual(t, 0, len(x), "msg with arg %d", 42)                                           // want "useless-assert: meaningless assertion"
+		assert.LessOrEqual(t, 0, len(x), "msg with args %d %s", 42, "42")                                 // want "useless-assert: meaningless assertion"
+		assert.LessOrEqualf(t, 0, len(x), "msg")                                                          // want "useless-assert: meaningless assertion"
+		assert.LessOrEqualf(t, 0, len(x), "msg with arg %d", 42)                                          // want "useless-assert: meaningless assertion"
+		assert.LessOrEqualf(t, 0, len(x), "msg with args %d %s", 42, "42")                                // want "useless-assert: meaningless assertion"
 		assert.Contains(t, value, value)                                                                  // want "useless-assert: asserting of the same variable"
 		assert.Containsf(t, value, value, "msg with args %d %s", 42, "42")                                // want "useless-assert: asserting of the same variable"
 		assert.ElementsMatch(t, value, value)                                                             // want "useless-assert: asserting of the same variable"
