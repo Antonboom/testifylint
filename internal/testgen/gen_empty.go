@@ -15,10 +15,9 @@ func (EmptyTestsGenerator) Checker() checkers.Checker {
 
 func (g EmptyTestsGenerator) TemplateData() any {
 	var (
-		checker          = g.Checker().Name()
-		reportUse        = checker + ": use %s.%s"
-		reportRemoveLen  = checker + ": remove unnecessary len"
-		reportRemoveConv = checker + ": remove unnecessary string conversion"
+		checker         = g.Checker().Name()
+		reportUse       = checker + ": use %s.%s"
+		reportRemoveLen = checker + ": remove unnecessary len"
 	)
 
 	vars := []string{"elems", "str", "string(str)", "b", "string(b)", `[]string{"e"}`}
@@ -27,7 +26,7 @@ func (g EmptyTestsGenerator) TemplateData() any {
 		Name              string
 		Vars              []string
 		InvalidAssertions []Assertion
-		ExtraStringConv   Assertion
+		Special           []Assertion
 		ValidAssertions   []Assertion
 	}
 
@@ -56,7 +55,6 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					// n == 0, n <= 0, n < 1
 					// 0 == n, 0 >= n, 1 > n
 					{Fn: "Len", Argsf: "%s, 0", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "%s"},
-					{Fn: "Zero", Argsf: "%s", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "%s"},
 					{Fn: "Zero", Argsf: "len(%s)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "%s"},
 					{Fn: "Equal", Argsf: "len(%s), 0", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "%s"},
 					{Fn: "Equal", Argsf: "0, len(%s)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "%s"},
@@ -78,10 +76,12 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					{Fn: "Exactly", Argsf: "``, %s", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "%s"},
 
 					// Simplification cases.
-					{Fn: "Empty", Argsf: "len(%s)", ReportMsgf: reportRemoveLen, ProposedFn: "Empty", ProposedArgsf: "%s"},
+					{Fn: "Empty", Argsf: "len(%s)", ReportMsgf: reportRemoveLen, ProposedArgsf: "%s"},
 				},
-				ExtraStringConv: Assertion{
-					Fn: "Empty", Argsf: "string(str)", ReportMsgf: reportRemoveConv, ProposedFn: "Empty", ProposedArgsf: "str",
+				Special: []Assertion{
+					{Fn: "Zero", Argsf: "str", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
+					{Fn: "Zero", Argsf: "string(str)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "string(str)"},
+					{Fn: "Zero", Argsf: "string(b)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "string(b)"},
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "Empty", Argsf: "%s"},
@@ -95,8 +95,6 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					// n != 0, n > 0
 					// 0 != n, 0 < n
 					{Fn: "Positive", Argsf: "len(%s)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
-					{Fn: "NotZero", Argsf: "%s", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
-					{Fn: "NotZero", Argsf: "len(%s)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
 					{Fn: "NotEqual", Argsf: "len(%s), 0", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
 					{Fn: "NotEqual", Argsf: "0, len(%s)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
 					{Fn: "NotEqualValues", Argsf: "len(%s), 0", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
@@ -112,10 +110,12 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					{Fn: "NotEqualValues", Argsf: "``, %s", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
 
 					// Simplification cases.
-					{Fn: "NotEmpty", Argsf: "len(%s)", ReportMsgf: reportRemoveLen, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
+					{Fn: "NotEmpty", Argsf: "len(%s)", ReportMsgf: reportRemoveLen, ProposedArgsf: "%s"},
 				},
-				ExtraStringConv: Assertion{
-					Fn: "NotEmpty", Argsf: "string(str)", ReportMsgf: reportRemoveConv, ProposedFn: "Empty", ProposedArgsf: "str",
+				Special: []Assertion{
+					{Fn: "NotZero", Argsf: "str", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
+					{Fn: "NotZero", Argsf: "string(str)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "string(str)"},
+					{Fn: "NotZero", Argsf: "string(b)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "string(b)"},
 				},
 				ValidAssertions: []Assertion{
 					{Fn: "NotEmpty", Argsf: "%s"},
@@ -157,12 +157,27 @@ func (g EmptyTestsGenerator) TemplateData() any {
 
 			{Fn: "Equal", Argsf: "0, i"},
 			{Fn: "NotEqual", Argsf: "0, i"},
+
 			{Fn: "Empty", Argsf: "err"},
+			{Fn: "NotEmpty", Argsf: "err"},
+
+			// Zero and Empty are not equal assertions sometimes, be careful!
+			{Fn: "Zero", Argsf: "elems"},
 			{Fn: "Zero", Argsf: "arr"},
 			{Fn: "Zero", Argsf: "arrPtr"},
 			{Fn: "Zero", Argsf: "mp"},
+			{Fn: "Zero", Argsf: "b"},
 			{Fn: "Zero", Argsf: "i"},
 			{Fn: "Zero", Argsf: "ch"},
+			{Fn: "Zero", Argsf: `[]string{"e"}`},
+			{Fn: "NotZero", Argsf: "elems"},
+			{Fn: "NotZero", Argsf: "arr"},
+			{Fn: "NotZero", Argsf: "arrPtr"},
+			{Fn: "NotZero", Argsf: "mp"},
+			{Fn: "NotZero", Argsf: "b"},
+			{Fn: "NotZero", Argsf: "i"},
+			{Fn: "NotZero", Argsf: "ch"},
+			{Fn: "NotZero", Argsf: `[]string{"e"}`},
 
 			// The linter ignores n > 1 case, because it is not exactly equivalent of NotEmpty.
 			{Fn: "Greater", Argsf: "len(elems), 1"},
@@ -211,7 +226,9 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 					{{ NewAssertionExpander.Expand $assrn "assert" "t" (arr $var) }}
 				{{- end }}
 			{{- end }}
-			{{ NewAssertionExpander.Expand $test.ExtraStringConv "assert" "t" nil }}
+			{{- range $ai, $assrn := $test.Special }}
+				{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+			{{- end }}
 
 			// Valid.
 			{{- range $ai, $assrn := $test.ValidAssertions }}

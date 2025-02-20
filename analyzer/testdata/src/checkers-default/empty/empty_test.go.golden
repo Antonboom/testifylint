@@ -234,32 +234,24 @@ func TestEmptyChecker(t *testing.T) {
 		assert.Emptyf(t, string(b), "msg with args %d %s", 42, "42")     // want "empty: use assert\\.Emptyf"
 		assert.Empty(t, []string{"e"})                                   // want "empty: use assert\\.Empty"
 		assert.Emptyf(t, []string{"e"}, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
-		assert.Empty(t, elems)                                           // want "empty: use assert\\.Empty"
-		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42")         // want "empty: use assert\\.Emptyf"
+		assert.Empty(t, elems)                                           // want "empty: remove unnecessary len"
+		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42")         // want "empty: remove unnecessary len"
+		assert.Empty(t, str)                                             // want "empty: remove unnecessary len"
+		assert.Emptyf(t, str, "msg with args %d %s", 42, "42")           // want "empty: remove unnecessary len"
+		assert.Empty(t, string(str))                                     // want "empty: remove unnecessary len"
+		assert.Emptyf(t, string(str), "msg with args %d %s", 42, "42")   // want "empty: remove unnecessary len"
+		assert.Empty(t, b)                                               // want "empty: remove unnecessary len"
+		assert.Emptyf(t, b, "msg with args %d %s", 42, "42")             // want "empty: remove unnecessary len"
+		assert.Empty(t, string(b))                                       // want "empty: remove unnecessary len"
+		assert.Emptyf(t, string(b), "msg with args %d %s", 42, "42")     // want "empty: remove unnecessary len"
+		assert.Empty(t, []string{"e"})                                   // want "empty: remove unnecessary len"
+		assert.Emptyf(t, []string{"e"}, "msg with args %d %s", 42, "42") // want "empty: remove unnecessary len"
 		assert.Empty(t, str)                                             // want "empty: use assert\\.Empty"
 		assert.Emptyf(t, str, "msg with args %d %s", 42, "42")           // want "empty: use assert\\.Emptyf"
 		assert.Empty(t, string(str))                                     // want "empty: use assert\\.Empty"
 		assert.Emptyf(t, string(str), "msg with args %d %s", 42, "42")   // want "empty: use assert\\.Emptyf"
-		assert.Empty(t, b)                                               // want "empty: use assert\\.Empty"
-		assert.Emptyf(t, b, "msg with args %d %s", 42, "42")             // want "empty: use assert\\.Emptyf"
 		assert.Empty(t, string(b))                                       // want "empty: use assert\\.Empty"
 		assert.Emptyf(t, string(b), "msg with args %d %s", 42, "42")     // want "empty: use assert\\.Emptyf"
-		assert.Empty(t, []string{"e"})                                   // want "empty: use assert\\.Empty"
-		assert.Emptyf(t, []string{"e"}, "msg with args %d %s", 42, "42") // want "empty: use assert\\.Emptyf"
-		assert.Empty(t, elems)                                           // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=Empty\\)"
-		assert.Emptyf(t, elems, "msg with args %d %s", 42, "42")         // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=Emptyf\\)"
-		assert.Empty(t, str)                                             // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=Empty\\)"
-		assert.Emptyf(t, str, "msg with args %d %s", 42, "42")           // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=Emptyf\\)"
-		assert.Empty(t, string(str))                                     // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=Empty\\)"
-		assert.Emptyf(t, string(str), "msg with args %d %s", 42, "42")   // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=Emptyf\\)"
-		assert.Empty(t, b)                                               // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=Empty\\)"
-		assert.Emptyf(t, b, "msg with args %d %s", 42, "42")             // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=Emptyf\\)"
-		assert.Empty(t, string(b))                                       // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=Empty\\)"
-		assert.Emptyf(t, string(b), "msg with args %d %s", 42, "42")     // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=Emptyf\\)"
-		assert.Empty(t, []string{"e"})                                   // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=Empty\\)"
-		assert.Emptyf(t, []string{"e"}, "msg with args %d %s", 42, "42") // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=Emptyf\\)"
-		assert.Empty(t, str)                                             // want "empty: remove unnecessary string conversion%!\\(EXTRA string=assert, string=Empty\\)"
-		assert.Emptyf(t, str, "msg with args %d %s", 42, "42")           // want "empty: remove unnecessary string conversion%!\\(EXTRA string=assert, string=Emptyf\\)"
 
 		// Valid.
 		assert.Empty(t, elems)
@@ -411,44 +403,24 @@ func TestEmptyChecker(t *testing.T) {
 		assert.NotEmptyf(t, string(b), "msg with args %d %s", 42, "42")     // want "empty: use assert\\.NotEmptyf"
 		assert.NotEmpty(t, []string{"e"})                                   // want "empty: use assert\\.NotEmpty"
 		assert.NotEmptyf(t, []string{"e"}, "msg with args %d %s", 42, "42") // want "empty: use assert\\.NotEmptyf"
-		assert.NotEmpty(t, elems)                                           // want "empty: use assert\\.NotEmpty"
-		assert.NotEmptyf(t, elems, "msg with args %d %s", 42, "42")         // want "empty: use assert\\.NotEmptyf"
+		assert.NotEmpty(t, elems)                                           // want "empty: remove unnecessary len"
+		assert.NotEmptyf(t, elems, "msg with args %d %s", 42, "42")         // want "empty: remove unnecessary len"
+		assert.NotEmpty(t, str)                                             // want "empty: remove unnecessary len"
+		assert.NotEmptyf(t, str, "msg with args %d %s", 42, "42")           // want "empty: remove unnecessary len"
+		assert.NotEmpty(t, string(str))                                     // want "empty: remove unnecessary len"
+		assert.NotEmptyf(t, string(str), "msg with args %d %s", 42, "42")   // want "empty: remove unnecessary len"
+		assert.NotEmpty(t, b)                                               // want "empty: remove unnecessary len"
+		assert.NotEmptyf(t, b, "msg with args %d %s", 42, "42")             // want "empty: remove unnecessary len"
+		assert.NotEmpty(t, string(b))                                       // want "empty: remove unnecessary len"
+		assert.NotEmptyf(t, string(b), "msg with args %d %s", 42, "42")     // want "empty: remove unnecessary len"
+		assert.NotEmpty(t, []string{"e"})                                   // want "empty: remove unnecessary len"
+		assert.NotEmptyf(t, []string{"e"}, "msg with args %d %s", 42, "42") // want "empty: remove unnecessary len"
 		assert.NotEmpty(t, str)                                             // want "empty: use assert\\.NotEmpty"
 		assert.NotEmptyf(t, str, "msg with args %d %s", 42, "42")           // want "empty: use assert\\.NotEmptyf"
 		assert.NotEmpty(t, string(str))                                     // want "empty: use assert\\.NotEmpty"
 		assert.NotEmptyf(t, string(str), "msg with args %d %s", 42, "42")   // want "empty: use assert\\.NotEmptyf"
-		assert.NotEmpty(t, b)                                               // want "empty: use assert\\.NotEmpty"
-		assert.NotEmptyf(t, b, "msg with args %d %s", 42, "42")             // want "empty: use assert\\.NotEmptyf"
 		assert.NotEmpty(t, string(b))                                       // want "empty: use assert\\.NotEmpty"
 		assert.NotEmptyf(t, string(b), "msg with args %d %s", 42, "42")     // want "empty: use assert\\.NotEmptyf"
-		assert.NotEmpty(t, []string{"e"})                                   // want "empty: use assert\\.NotEmpty"
-		assert.NotEmptyf(t, []string{"e"}, "msg with args %d %s", 42, "42") // want "empty: use assert\\.NotEmptyf"
-		assert.NotEmpty(t, elems)                                           // want "empty: use assert\\.NotEmpty"
-		assert.NotEmptyf(t, elems, "msg with args %d %s", 42, "42")         // want "empty: use assert\\.NotEmptyf"
-		assert.NotEmpty(t, str)                                             // want "empty: use assert\\.NotEmpty"
-		assert.NotEmptyf(t, str, "msg with args %d %s", 42, "42")           // want "empty: use assert\\.NotEmptyf"
-		assert.NotEmpty(t, string(str))                                     // want "empty: use assert\\.NotEmpty"
-		assert.NotEmptyf(t, string(str), "msg with args %d %s", 42, "42")   // want "empty: use assert\\.NotEmptyf"
-		assert.NotEmpty(t, b)                                               // want "empty: use assert\\.NotEmpty"
-		assert.NotEmptyf(t, b, "msg with args %d %s", 42, "42")             // want "empty: use assert\\.NotEmptyf"
-		assert.NotEmpty(t, string(b))                                       // want "empty: use assert\\.NotEmpty"
-		assert.NotEmptyf(t, string(b), "msg with args %d %s", 42, "42")     // want "empty: use assert\\.NotEmptyf"
-		assert.NotEmpty(t, []string{"e"})                                   // want "empty: use assert\\.NotEmpty"
-		assert.NotEmptyf(t, []string{"e"}, "msg with args %d %s", 42, "42") // want "empty: use assert\\.NotEmptyf"
-		assert.NotEmpty(t, elems)                                           // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=NotEmpty\\)"
-		assert.NotEmptyf(t, elems, "msg with args %d %s", 42, "42")         // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=NotEmptyf\\)"
-		assert.NotEmpty(t, str)                                             // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=NotEmpty\\)"
-		assert.NotEmptyf(t, str, "msg with args %d %s", 42, "42")           // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=NotEmptyf\\)"
-		assert.NotEmpty(t, string(str))                                     // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=NotEmpty\\)"
-		assert.NotEmptyf(t, string(str), "msg with args %d %s", 42, "42")   // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=NotEmptyf\\)"
-		assert.NotEmpty(t, b)                                               // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=NotEmpty\\)"
-		assert.NotEmptyf(t, b, "msg with args %d %s", 42, "42")             // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=NotEmptyf\\)"
-		assert.NotEmpty(t, string(b))                                       // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=NotEmpty\\)"
-		assert.NotEmptyf(t, string(b), "msg with args %d %s", 42, "42")     // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=NotEmptyf\\)"
-		assert.NotEmpty(t, []string{"e"})                                   // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=NotEmpty\\)"
-		assert.NotEmptyf(t, []string{"e"}, "msg with args %d %s", 42, "42") // want "empty: remove unnecessary len%!\\(EXTRA string=assert, string=NotEmptyf\\)"
-		assert.Empty(t, str)                                                // want "empty: remove unnecessary string conversion%!\\(EXTRA string=assert, string=Empty\\)"
-		assert.Emptyf(t, str, "msg with args %d %s", 42, "42")              // want "empty: remove unnecessary string conversion%!\\(EXTRA string=assert, string=Emptyf\\)"
 
 		// Valid.
 		assert.NotEmpty(t, elems)
@@ -559,16 +531,40 @@ func TestEmptyChecker_Ignored(t *testing.T) {
 	assert.NotEqualf(t, 0, i, "msg with args %d %s", 42, "42")
 	assert.Empty(t, err)
 	assert.Emptyf(t, err, "msg with args %d %s", 42, "42")
+	assert.NotEmpty(t, err)
+	assert.NotEmptyf(t, err, "msg with args %d %s", 42, "42")
+	assert.Zero(t, elems)
+	assert.Zerof(t, elems, "msg with args %d %s", 42, "42")
 	assert.Zero(t, arr)
 	assert.Zerof(t, arr, "msg with args %d %s", 42, "42")
 	assert.Zero(t, arrPtr)
 	assert.Zerof(t, arrPtr, "msg with args %d %s", 42, "42")
 	assert.Zero(t, mp)
 	assert.Zerof(t, mp, "msg with args %d %s", 42, "42")
+	assert.Zero(t, b)
+	assert.Zerof(t, b, "msg with args %d %s", 42, "42")
 	assert.Zero(t, i)
 	assert.Zerof(t, i, "msg with args %d %s", 42, "42")
 	assert.Zero(t, ch)
 	assert.Zerof(t, ch, "msg with args %d %s", 42, "42")
+	assert.Zero(t, []string{"e"})
+	assert.Zerof(t, []string{"e"}, "msg with args %d %s", 42, "42")
+	assert.NotZero(t, elems)
+	assert.NotZerof(t, elems, "msg with args %d %s", 42, "42")
+	assert.NotZero(t, arr)
+	assert.NotZerof(t, arr, "msg with args %d %s", 42, "42")
+	assert.NotZero(t, arrPtr)
+	assert.NotZerof(t, arrPtr, "msg with args %d %s", 42, "42")
+	assert.NotZero(t, mp)
+	assert.NotZerof(t, mp, "msg with args %d %s", 42, "42")
+	assert.NotZero(t, b)
+	assert.NotZerof(t, b, "msg with args %d %s", 42, "42")
+	assert.NotZero(t, i)
+	assert.NotZerof(t, i, "msg with args %d %s", 42, "42")
+	assert.NotZero(t, ch)
+	assert.NotZerof(t, ch, "msg with args %d %s", 42, "42")
+	assert.NotZero(t, []string{"e"})
+	assert.NotZerof(t, []string{"e"}, "msg with args %d %s", 42, "42")
 	assert.Greater(t, len(elems), 1)
 	assert.Greaterf(t, len(elems), 1, "msg with args %d %s", 42, "42")
 	assert.Less(t, 1, len(elems))

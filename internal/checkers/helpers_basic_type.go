@@ -73,12 +73,12 @@ func isPositiveIntNumber(e ast.Expr) bool {
 
 func isEmptyStringLit(e ast.Expr) bool {
 	bl, ok := e.(*ast.BasicLit)
-	return ok && bl.Kind == token.STRING && bl.Value == `""`
+	return ok && bl.Kind == token.STRING && (bl.Value == `""` || bl.Value == "``")
 }
 
 func isNotEmptyStringLit(e ast.Expr) bool {
 	bl, ok := e.(*ast.BasicLit)
-	return ok && bl.Kind == token.STRING && bl.Value != `""`
+	return ok && bl.Kind == token.STRING && bl.Value != `""` && bl.Value != "``"
 }
 
 func isBasicLit(e ast.Expr) bool {

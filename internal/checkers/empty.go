@@ -12,7 +12,7 @@ import (
 // Empty detects situations like
 //
 // assert.Len(t, arr, 0)
-// assert.Zero(t, arr)
+// assert.Zero(t, str)
 // assert.Zero(t, len(arr))
 // assert.Equal(t, 0, len(arr))
 // assert.EqualValues(t, 0, len(arr))
@@ -29,7 +29,7 @@ import (
 // assert.Exactly(t, “, str)
 //
 // assert.Positive(t, len(arr))
-// assert.NotZero(t, arr)
+// assert.NotZero(t, str)
 // assert.NotZero(t, len(arr))
 // assert.NotEqual(t, 0, len(arr))
 // assert.NotEqualValues(t, 0, len(arr))
@@ -44,6 +44,8 @@ import (
 //
 //	assert.Empty(t, arr)
 //	assert.NotEmpty(t, arr)
+//
+// Also Empty removes extra `len` call.
 type Empty struct{}
 
 // NewEmpty constructs Empty checker.
@@ -75,6 +77,9 @@ func (checker Empty) checkEmpty(pass *analysis.Pass, call *CallMeta) *analysis.D
 
 	switch call.Fn.NameFTrimmed {
 	case "Zero":
+		if hasStringType(pass, a) {
+			return newUseEmptyDiagnostic(a.Pos(), a.End(), a)
+		}
 		if lenArg, ok := isBuiltinLenCall(pass, a); ok {
 			return newUseEmptyDiagnostic(a.Pos(), a.End(), lenArg)
 		}
@@ -97,6 +102,10 @@ func (checker Empty) checkEmpty(pass *analysis.Pass, call *CallMeta) *analysis.D
 		}
 
 	case "Equal", "EqualValues", "Exactly":
+		if isEmptyStringLit(a) {
+			return newUseEmptyDiagnostic(a.Pos(), b.End(), b)
+		}
+
 		arg1, ok1 := isLenCallAndZero(pass, a, b)
 		arg2, ok2 := isLenCallAndZero(pass, b, a)
 
@@ -144,7 +153,15 @@ func (checker Empty) checkNotEmpty(pass *analysis.Pass, call *CallMeta) *analysi
 	a := call.Args[0]
 
 	switch call.Fn.NameFTrimmed {
-	case "NotZero", "Positive":
+	case "Positive":
+		if lenArg, ok := isBuiltinLenCall(pass, a); ok {
+			return newUseNotEmptyDiagnostic(a.Pos(), a.End(), lenArg)
+		}
+
+	case "NotZero":
+		if hasStringType(pass, a) {
+			return newUseNotEmptyDiagnostic(a.Pos(), a.End(), a)
+		}
 		if lenArg, ok := isBuiltinLenCall(pass, a); ok {
 			return newUseNotEmptyDiagnostic(a.Pos(), a.End(), lenArg)
 		}
@@ -162,6 +179,10 @@ func (checker Empty) checkNotEmpty(pass *analysis.Pass, call *CallMeta) *analysi
 
 	switch call.Fn.NameFTrimmed {
 	case "NotEqual", "NotEqualValues":
+		if isEmptyStringLit(a) {
+			return newUseNotEmptyDiagnostic(a.Pos(), b.End(), b)
+		}
+
 		arg1, ok1 := isLenCallAndZero(pass, a, b)
 		arg2, ok2 := isLenCallAndZero(pass, b, a)
 

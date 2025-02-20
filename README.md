@@ -245,7 +245,7 @@ assert.NotContains(t, a, "abc123")
 ```go
 ❌
 assert.Len(t, arr, 0)
-assert.Zero(t, arr)
+assert.Zero(t, str)
 assert.Zero(t, len(arr))
 assert.Equal(t, 0, len(arr))
 assert.EqualValues(t, 0, len(arr))
@@ -262,7 +262,7 @@ assert.EqualValues(t, ``, str)
 assert.Exactly(t, ``, str)
 
 assert.Positive(t, len(arr))
-assert.NotZero(t, arr)
+assert.NotZero(t, str)
 assert.NotZero(t, len(arr))
 assert.NotEqual(t, 0, len(arr))
 assert.NotEqualValues(t, 0, len(arr))
@@ -282,22 +282,16 @@ assert.NotEmpty(t, arr)
 **Enabled by default**: true. <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
 
-Also `empty` remove extra string conversion or `len`:
+Also `empty` removes extra `len` call in `*Emtpy` assertions:
 
 ```go
 ❌
 assert.Empty(t, len(arr))
-assert.Empty(t, string(str))
 assert.NotEmpty(t, len(arr))
-assert.NotEmpty(t, string(str))
-// And so on...
 
 ✅
 assert.Empty(t, arr)
-assert.Empty(t, str)
 assert.NotEmpty(t, arr)
-assert.NotEmpty(t, str)
-// And so on...
 ```
 
 ---
