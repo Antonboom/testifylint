@@ -68,7 +68,7 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 	case "False":
 		isMeaningless = (len(call.Args) >= 1) && isUntypedFalse(pass, call.Args[0])
 
-	case "GreaterOrEqual":
+	case "GreaterOrEqual", "Less":
 		isMeaningless = (len(call.Args) >= 2) && isAnyZero(call.Args[1]) && canNotBeNegative(pass, call.Args[0])
 
 	case "Implements":
@@ -79,11 +79,11 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 		elem, ok := isPointer(pass, call.Args[0])
 		isMeaningless = ok && isEmptyInterfaceType(elem)
 
-	case "LessOrEqual":
+	case "LessOrEqual", "Greater":
 		isMeaningless = (len(call.Args) >= 2) && isAnyZero(call.Args[0]) && canNotBeNegative(pass, call.Args[1])
 
 	case "Negative":
-		isMeaningless = (len(call.Args) >= 1) && isNegativeIntNumber(call.Args[0])
+		isMeaningless = (len(call.Args) >= 1) && (isNegativeIntNumber(call.Args[0]) || canNotBeNegative(pass, call.Args[0]))
 
 	case "Nil", "NoError":
 		isMeaningless = (len(call.Args) >= 1) && isNil(call.Args[0])
@@ -93,11 +93,10 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 
 	case "NotZero":
 		isMeaningless = (len(call.Args) >= 1) &&
-			(isNotEmptyStringLit(call.Args[0]) ||
-				isNegativeIntNumber(call.Args[0]) || isPositiveIntNumber(call.Args[0]))
+			(isNotEmptyStringLit(call.Args[0]) || isNegativeIntNumber(call.Args[0]) || isPositiveIntNumber(call.Args[0]))
 
 	case "Positive":
-		isMeaningless = (len(call.Args) >= 1) && isPositiveIntNumber(call.Args[0])
+		isMeaningless = (len(call.Args) >= 1) && (isPositiveIntNumber(call.Args[0]) || canNotBeNegative(pass, call.Args[0]))
 
 	case "True":
 		isMeaningless = (len(call.Args) >= 1) && isUntypedTrue(pass, call.Args[0])
