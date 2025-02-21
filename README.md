@@ -294,6 +294,11 @@ assert.Empty(t, arr)
 assert.NotEmpty(t, arr)
 ```
 
+P.S. `empty` does not remove the string conversion and keeps as is:
+
+- `string(bytes)` – to keep assert failure message readability;
+- `string(str)` – in favor of [unconvert](https://golangci-lint.run/usage/linters/#unconvert).
+
 ---
 
 ### encoded-compare

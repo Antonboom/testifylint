@@ -79,6 +79,7 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					{Fn: "Empty", Argsf: "len(%s)", ReportMsgf: reportRemoveLen, ProposedArgsf: "%s"},
 				},
 				Special: []Assertion{
+					// Zero is moved to separate cases, because not-string vars are not relevant for it.
 					{Fn: "Zero", Argsf: "str", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "str"},
 					{Fn: "Zero", Argsf: "string(str)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "string(str)"},
 					{Fn: "Zero", Argsf: "string(b)", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "string(b)"},
@@ -113,6 +114,7 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					{Fn: "NotEmpty", Argsf: "len(%s)", ReportMsgf: reportRemoveLen, ProposedArgsf: "%s"},
 				},
 				Special: []Assertion{
+					// NotZero is moved to separate cases, because not-string vars are not relevant for it.
 					{Fn: "NotZero", Argsf: "str", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "str"},
 					{Fn: "NotZero", Argsf: "string(str)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "string(str)"},
 					{Fn: "NotZero", Argsf: "string(b)", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "string(b)"},
@@ -129,13 +131,20 @@ func (g EmptyTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: "len(elems), len(elems)"},
 			{Fn: "Equal", Argsf: "len(elems), 1"},
 			{Fn: "Equal", Argsf: "1, len(elems)"},
-			{Fn: "Equal", Argsf: `nil, elems`},
-			{Fn: "Equal", Argsf: `nil, b`},
-			{Fn: "Equal", Argsf: `[]byte(nil), b`},
+			{Fn: "Equal", Argsf: "nil, elems"},
+			{Fn: "Equal", Argsf: "nil, b"},
+			{Fn: "Nil", Argsf: "elems"},
+			{Fn: "Nil", Argsf: "b"},
+			{Fn: "Equal", Argsf: "[]byte(nil), b"},
 
 			{Fn: "NotEqual", Argsf: "len(elems), len(elems)"},
 			{Fn: "NotEqual", Argsf: "len(elems), 1"},
 			{Fn: "NotEqual", Argsf: "1, len(elems)"},
+			{Fn: "NotEqual", Argsf: "nil, elems"},
+			{Fn: "NotEqual", Argsf: "nil, b"},
+			{Fn: "NotNil", Argsf: "elems"},
+			{Fn: "NotNil", Argsf: "b"},
+			{Fn: "NotEqual", Argsf: "[]byte(nil), b"},
 
 			{Fn: "Greater", Argsf: "len(elems), len(elems)"},
 			{Fn: "Greater", Argsf: "len(elems), 2"},
