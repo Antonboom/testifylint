@@ -66,6 +66,18 @@ func (s *ValidSuite) SetupSubTest() {}
 func (s *ValidSuite) TearDownSubTest() {}
 func (s *ValidSuite) TestTrue() { s.True(true) }
 
+var (
+	_ suite.SetupAllSuite     = (*ValidSuite)(nil)
+	_ suite.SetupTestSuite    = (*ValidSuite)(nil)
+	_ suite.TearDownAllSuite  = (*ValidSuite)(nil)
+	_ suite.TearDownTestSuite = (*ValidSuite)(nil)
+	_ suite.BeforeTest        = (*ValidSuite)(nil)
+	_ suite.AfterTest         = (*ValidSuite)(nil)
+	_ suite.WithStats         = (*ValidSuite)(nil)
+	_ suite.SetupSubTest      = (*ValidSuite)(nil)
+	_ suite.TearDownSubTest   = (*ValidSuite)(nil)
+)
+
 type InvalidSuite struct {
 	suite.Suite
 }
