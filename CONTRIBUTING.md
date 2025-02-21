@@ -354,3 +354,18 @@ func (s *HandlersSuite) Test_UsecaseSuccess()
 
 Any other figments of your imagination are welcome 🙏<br>
 List of `testify` functions [here](https://pkg.go.dev/github.com/stretchr/testify@master/assert#pkg-functions).
+
+# FAQ
+
+### Why do we use `internal/testify` instead of `github.com/stretchr/testify`?
+
+1) [internal/testify](./internal/testify) is not a local copy of `stretchr/testify`. The package contains domain (for 
+linter context) entities, which absent in `testify` itself.
+
+2) We cannot depend on `stretch/testify`, because it causes dependency bomb for linter's module. We should keep as min
+   dependencies as possible.
+
+### Why do we import `github.com/stretchr/testify` in tests?
+
+Such imports in `testdata` do not affect linter module's dependencies. Moreover, of course, tests should use the real
+`testify`.

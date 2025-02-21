@@ -25,7 +25,7 @@ issues:
     - path: "_test\\.go"
       linters: [ "lll" ]
 
-    - source: ' // want "'
+    - source: ' // want '
       linters: [ "lll" ]
 
 linters-settings:

@@ -57,6 +57,7 @@ func TestAll(t *testing.T) {
 		"go-require",
 		"require-error",
 		"suite-broken-parallel",
+		"suite-method-signature",
 		"suite-subtest-run",
 		"suite-thelper",
 	}
@@ -95,6 +96,7 @@ func TestEnabledByDefault(t *testing.T) {
 		"go-require",
 		"require-error",
 		"suite-broken-parallel",
+		"suite-method-signature",
 		"suite-subtest-run",
 	}
 	if !slices.Equal(expected, checkerList) {
