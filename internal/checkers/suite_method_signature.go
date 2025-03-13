@@ -11,8 +11,9 @@ import (
 	"github.com/Antonboom/testifylint/internal/testify"
 )
 
-// SuiteMethodSignature warns when suite's test methods have arguments or returning values,
-// or when suite's custom (user) methods conflicts (shadows/overrides) with suite functionality methods.
+// SuiteMethodSignature warns, when
+//   - suite's test methods have arguments or returning values;
+//   - suite's custom (user) methods conflicts with (shadows/overrides) suite functionality methods.
 type SuiteMethodSignature struct{}
 
 // NewSuiteMethodSignature constructs SuiteMethodSignature checker.
