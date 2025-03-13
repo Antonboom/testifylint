@@ -246,34 +246,59 @@ assert.NotContains(t, a, "abc123")
 ```go
 ❌
 assert.Len(t, arr, 0)
+assert.Zero(t, str)
+assert.Zero(t, len(arr))
 assert.Equal(t, 0, len(arr))
 assert.EqualValues(t, 0, len(arr))
 assert.Exactly(t, 0, len(arr))
 assert.LessOrEqual(t, len(arr), 0)
 assert.GreaterOrEqual(t, 0, len(arr))
-assert.Less(t, len(arr), 0)
-assert.Greater(t, 0, len(arr))
 assert.Less(t, len(arr), 1)
 assert.Greater(t, 1, len(arr))
-assert.Zero(t, len(arr))
-assert.Empty(t, len(arr))
+assert.Equal(t, "", str)
+assert.EqualValues(t, "", str)
+assert.Exactly(t, "", str)
+assert.Equal(t, ``, str)
+assert.EqualValues(t, ``, str)
+assert.Exactly(t, ``, str)
 
+assert.Positive(t, len(arr))
+assert.NotZero(t, str)
+assert.NotZero(t, len(arr))
 assert.NotEqual(t, 0, len(arr))
 assert.NotEqualValues(t, 0, len(arr))
-assert.Less(t, 0, len(arr))
 assert.Greater(t, len(arr), 0)
-assert.Positive(t, len(arr))
-assert.NotZero(t, len(arr))
-assert.NotEmpty(t, len(arr))
+assert.Less(t, 0, len(arr))
+assert.NotEqual(t, "", str)
+assert.NotEqualValues(t, "", str)
+assert.NotEqual(t, ``, str)
+assert.NotEqualValues(t, ``, str)
 
 ✅
 assert.Empty(t, arr)
-assert.NotEmpty(t, err)
+assert.NotEmpty(t, arr)
 ```
 
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
+
+Also `empty` removes extra `len` call in `*Emtpy` assertions:
+
+```go
+❌
+assert.Empty(t, len(arr))
+assert.NotEmpty(t, len(arr))
+
+✅
+assert.Empty(t, arr)
+assert.NotEmpty(t, arr)
+```
+
+P.S. `empty` does not remove the string conversion and keeps as is:
+
+- `string(bytes)` – to keep assert failure message readability;
+- `string(str)` – in favor of [unconvert](https://golangci-lint.run/usage/linters/#unconvert).
 
 ---
 
@@ -1074,25 +1099,40 @@ assert.False(t, num != num)
 And against these meaningless assertions:
 
 ```go
-assert.Empty(t, "")
-assert.False(t, false)
+assert.Empty(t, "value") // Any string literal.
+assert.Error(t, nil)
+assert.False(t, false) // Any bool literal.
 assert.Implements(t, (*any)(nil), new(Conn))
-assert.Negative(t, -42)
+assert.Negative(t, 42) // Any int literal.
 assert.Nil(t, nil)
 assert.NoError(t, nil)
-assert.NotEmpty(t, "value")
-assert.NotZero(t, 42)
-assert.NotZero(t, "value")
-assert.Positive(t, 42)
-assert.True(t, true)
-assert.Zero(t, 0)
-assert.Zero(t, "")
+assert.NotEmpty(t, "value") // Any string literal.
+assert.NotImplements(t, (*any)(nil), new(Conn))
+assert.NotNil(t, nil)
+assert.NotZero(t, 42)      // Any int literal.
+assert.NotZero(t, "value") // Any string literal.
+assert.NotZero(t, nil)
+assert.NotZero(t, false) // Any bool literal.
+assert.Positive(t, 42)   // Any int literal.
+assert.True(t, true)     // Any bool literal.
+assert.Zero(t, 42)       // Any int literal.
+assert.Zero(t, "value")  // Any string literal.
 assert.Zero(t, nil)
+assert.Zero(t, false) // Any bool literal.
 
-assert.GreaterOrEqual(t, uintVal, 0)
-assert.LessOrEqual(t, 0, uintVal)
-assert.GreaterOrEqual(t, len(x), 0)
-assert.LessOrEqual(t, 0, len(x))
+assert.Negative(len(x))
+assert.Less(len(x), 0)
+assert.Greater(0, len(x))
+assert.Positive(len(x))
+assert.GreaterOrEqual(len(x), 0)
+assert.LessOrEqual(0, len(x))
+
+assert.Negative(uintVal)
+assert.Less(uintVal, 0)
+assert.Greater(0, uintVal)
+assert.Positive(uintVal)
+assert.GreaterOrEqual(uintVal, 0)
+assert.LessOrEqual(0, uintVal)
 ```
 
 **Autofix**: false. <br>
