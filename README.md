@@ -1075,25 +1075,40 @@ assert.False(t, num != num)
 And against these meaningless assertions:
 
 ```go
-assert.Empty(t, "")
-assert.False(t, false)
+assert.Empty(t, "value") // Any string literal.
+assert.Error(t, nil)
+assert.False(t, false) // Any bool literal.
 assert.Implements(t, (*any)(nil), new(Conn))
-assert.Negative(t, -42)
+assert.Negative(t, 42) // Any int literal.
 assert.Nil(t, nil)
 assert.NoError(t, nil)
-assert.NotEmpty(t, "value")
-assert.NotZero(t, 42)
-assert.NotZero(t, "value")
-assert.Positive(t, 42)
-assert.True(t, true)
-assert.Zero(t, 0)
-assert.Zero(t, "")
+assert.NotEmpty(t, "value") // Any string literal.
+assert.NotImplements(t, (*any)(nil), new(Conn))
+assert.NotNil(t, nil)
+assert.NotZero(t, 42)      // Any int literal.
+assert.NotZero(t, "value") // Any string literal.
+assert.NotZero(t, nil)
+assert.NotZero(t, false) // Any bool literal.
+assert.Positive(t, 42)   // Any int literal.
+assert.True(t, true)     // Any bool literal.
+assert.Zero(t, 42)       // Any int literal.
+assert.Zero(t, "value")  // Any string literal.
 assert.Zero(t, nil)
+assert.Zero(t, false) // Any bool literal.
 
-assert.GreaterOrEqual(t, uintVal, 0)
-assert.LessOrEqual(t, 0, uintVal)
-assert.GreaterOrEqual(t, len(x), 0)
-assert.LessOrEqual(t, 0, len(x))
+assert.Negative(len(x))
+assert.Less(len(x), 0)
+assert.Greater(0, len(x))
+assert.Positive(len(x))
+assert.GreaterOrEqual(len(x), 0)
+assert.LessOrEqual(0, len(x))
+
+assert.Negative(uintVal)
+assert.Less(uintVal, 0)
+assert.Greater(0, uintVal)
+assert.Positive(uintVal)
+assert.GreaterOrEqual(uintVal, 0)
+assert.LessOrEqual(0, uintVal)
 ```
 
 **Autofix**: false. <br>
