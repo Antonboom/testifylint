@@ -25,8 +25,8 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 	for _, zeroType := range []string{
 		"", "int", "int8", "int16", "int32", "int64",
 	} {
-		v := fmt.Sprintf("%s(a)", zeroType)
-		zero := fmt.Sprintf("%s(0)", zeroType)
+		v := zeroType + "(a)"
+		zero := zeroType + "(0)"
 
 		if zeroType == "" {
 			v, zero = "a", "0"
@@ -46,8 +46,8 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		"", "int", "int8", "int16", "int32", "int64",
 		"uint", "uint8", "uint16", "uint32", "uint64",
 	} {
-		v := fmt.Sprintf("%s(a)", zeroType)
-		zero := fmt.Sprintf("%s(0)", zeroType)
+		v := zeroType + "(a)"
+		zero := zeroType + "(0)"
 
 		if zeroType == "" {
 			v, zero = "a", "0"
@@ -85,8 +85,8 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 			"uint", "uint8", "uint16", "uint32", "uint64",
 			"CustomInt16",
 		} {
-			v := fmt.Sprintf("%s(a)", zeroType)
-			zero := fmt.Sprintf("%s(0)", zeroType)
+			v := zeroType + "(a)"
+			zero := zeroType + "(0)"
 
 			ignoredAssertions = append(ignoredAssertions,
 				Assertion{Fn: fn, Argsf: zero + ", " + v},
@@ -120,8 +120,8 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		"uint", "uint8", "uint16", "uint32", "uint64",
 		"CustomInt16",
 	} {
-		v := fmt.Sprintf("%s(a)", zeroType)
-		zero := fmt.Sprintf("%s(0)", zeroType)
+		v := zeroType + "(a)"
+		zero := zeroType + "(0)"
 
 		if zeroType == "" {
 			v, zero = "a", "0"
@@ -140,8 +140,8 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		"uint", "uint8", "uint16", "uint32", "uint64",
 		"CustomInt16",
 	} {
-		v := fmt.Sprintf("%s(a)", zeroType)
-		zero := fmt.Sprintf("%s(0)", zeroType)
+		v := zeroType + "(a)"
+		zero := zeroType + "(0)"
 
 		if zeroType == "" {
 			v, zero = "a", "0"
@@ -160,8 +160,8 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 		"uint", "uint8", "uint16", "uint32", "uint64",
 		"CustomInt16",
 	} {
-		v := fmt.Sprintf("%s(a)", zeroType)
-		zero := fmt.Sprintf("%s(0)", zeroType)
+		v := zeroType + "(a)"
+		zero := zeroType + "(0)"
 
 		ignoredAssertions = append(ignoredAssertions,
 			Assertion{Fn: "Less", Argsf: v + ", " + zero},

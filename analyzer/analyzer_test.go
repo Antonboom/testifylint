@@ -14,8 +14,6 @@ func TestTestifyLint(t *testing.T) {
 	t.Parallel()
 
 	for _, checker := range checkers.All() {
-		checker := checker
-
 		t.Run(checker, func(t *testing.T) {
 			t.Parallel()
 
@@ -176,8 +174,6 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 	}
 
 	for _, tt := range cases {
-		tt := tt
-
 		t.Run(tt.dir, func(t *testing.T) {
 			t.Parallel()
 

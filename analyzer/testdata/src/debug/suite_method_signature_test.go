@@ -27,7 +27,8 @@ func (s *BrokenSuite) TestTypo(_ *testing.T) { // value.go:424: test panicked: r
 
 /*
 1) Flagged by govet (copylocks).
-2) Related to https://github.com/go-critic/go-critic/issues/331.
+2) Flagged by https://golangci-lint.run/usage/linters/#recvcheck.
+3) Related to https://github.com/go-critic/go-critic/issues/331.
 */
 func (s BrokenSuite) TestValueReceiver() {
 	s.True(true)
