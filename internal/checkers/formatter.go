@@ -259,7 +259,8 @@ func getMsgPosition(sig *types.Signature) int {
 	for i := 0; i < sig.Params().Len(); i++ {
 		param := sig.Params().At(i)
 
-		if b, ok := param.Type().(*types.Basic); ok && b.Kind() == types.String && param.Name() == "msg" {
+		if b, ok := param.Type().(*types.Basic); ok && b.Kind() == types.String && (param.Name() == "msg" ||
+			param.Name() == "format") { // NOTE(a.telyshev): assert.CollectT case.
 			return i
 		}
 	}

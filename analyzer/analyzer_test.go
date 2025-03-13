@@ -77,6 +77,10 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewErrorIsAs().Name()},
 		},
 		{
+			dir:   "error-is-as-issue231",
+			flags: map[string]string{"enable-all": "true"},
+		},
+		{
 			dir:   "error-nil-issue95",
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewErrorNil().Name()},
 		},
