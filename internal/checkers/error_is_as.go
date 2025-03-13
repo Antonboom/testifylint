@@ -6,6 +6,9 @@ import (
 	"go/types"
 
 	"golang.org/x/tools/go/analysis"
+
+	"github.com/Antonboom/testifylint/internal/analysisutil"
+	"github.com/Antonboom/testifylint/internal/testify"
 )
 
 // ErrorIsAs detects situations like
@@ -34,7 +37,7 @@ func (ErrorIsAs) Name() string { return "error-is-as" }
 func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	switch call.Fn.NameFTrimmed {
 	case "Error":
-		if len(call.Args) >= 2 && isError(pass, call.Args[1]) {
+		if len(call.Args) >= 2 && isError(pass, call.Args[1]) && !isAssertCollectT(pass, call.Selector.X) {
 			const proposed = "ErrorIs"
 			msg := fmt.Sprintf("invalid usage of %[1]s.Error, use %[1]s.%[2]s instead", call.SelectorXStr, proposed)
 			return newDiagnostic(checker.Name(), call, msg, newSuggestedFuncReplacement(call, proposed))
@@ -145,4 +148,19 @@ func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Di
 		}
 	}
 	return nil
+}
+
+func isAssertCollectT(pass *analysis.Pass, e ast.Expr) bool {
+	ptr, ok := pass.TypesInfo.TypeOf(e).(*types.Pointer)
+	if !ok {
+		return false
+	}
+
+	named, ok := ptr.Elem().(*types.Named)
+	if !ok {
+		return false
+	}
+
+	collectT := analysisutil.ObjectOf(pass.Pkg, testify.AssertPkgPath, "CollectT")
+	return named.Obj() == collectT
 }
