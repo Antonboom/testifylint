@@ -61,24 +61,14 @@ func isIntNumber(e ast.Expr, rhs int) bool {
 	return ok && (lhs == rhs)
 }
 
-func isNegativeIntNumber(e ast.Expr) bool {
-	v, ok := isIntBasicLit(e)
-	return ok && v < 0
-}
-
-func isPositiveIntNumber(e ast.Expr) bool {
-	v, ok := isIntBasicLit(e)
-	return ok && v > 0
+func isStringLit(e ast.Expr) bool {
+	bl, ok := e.(*ast.BasicLit)
+	return ok && bl.Kind == token.STRING
 }
 
 func isEmptyStringLit(e ast.Expr) bool {
 	bl, ok := e.(*ast.BasicLit)
-	return ok && bl.Kind == token.STRING && bl.Value == `""`
-}
-
-func isNotEmptyStringLit(e ast.Expr) bool {
-	bl, ok := e.(*ast.BasicLit)
-	return ok && bl.Kind == token.STRING && bl.Value != `""`
+	return ok && bl.Kind == token.STRING && (bl.Value == `""` || bl.Value == "``")
 }
 
 func isBasicLit(e ast.Expr) bool {
