@@ -112,6 +112,7 @@ https://golangci-lint.run/usage/linters/#testifylint
 | [suite-broken-parallel](#suite-broken-parallel)     | ✅                  | ✅       |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
 | [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
+| [suite-method-signature](#suite-method-signature)   | ✅                  | ❌       |
 | [suite-subtest-run](#suite-subtest-run)             | ✅                  | ❌       |
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
 | [useless-assert](#useless-assert)                   | ✅                  | ❌       |
@@ -960,6 +961,29 @@ You can enable such behavior through `--suite-extra-assert-call.mode=require`.
 **Autofix**: true. <br>
 **Enabled by default**: true, in the `remove` mode. <br>
 **Reason**: More simple or uniform code.
+
+---
+
+### suite-method-signature
+
+```go
+❌
+func (s *MySuite) SetupTest(i int) { /* ... */ }
+func (s *MySuite) TestAlice(t *testing.T) { s.SetupTest(rand()) /* ... */ }
+func (s *MySuite) TestBob() { s.SetupTest(rand()) /* ... */ }
+
+✅
+func (s *MySuite) SetupTest() { s.setupTest(rand()) } // Use inversion-of-control's methods from suite interfaces.  
+func (s *MySuite) TestAlice() { /* ... */  }          // Keep test methods clean from args and returning values.
+func (s *MySuite) TestBob() { /* ... */  }
+func (s *MySuite) setupTest(i int) { /* ... */ }
+```
+
+**Autofix**: false. <br>
+**Enabled by default**: true. <br>
+**Reason**: Protection from panics and bugs.
+
+All suite functionality methods are presented [here](https://github.com/stretchr/testify/blob/master/suite/interfaces.go).
 
 ---
 
