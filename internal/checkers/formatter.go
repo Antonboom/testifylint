@@ -230,7 +230,7 @@ func assertHasFormattedAnalogue(pass *analysis.Pass, call *CallMeta) bool {
 	if !ok {
 		return false
 	}
-	for i := 0; i < suite.NumMethods(); i++ {
+	for i := range suite.NumMethods() {
 		if suite.Method(i).Name() == call.Fn.Name+"f" {
 			return true
 		}
@@ -256,7 +256,7 @@ func getMsgAndArgsPosition(sig *types.Signature) int {
 }
 
 func getMsgPosition(sig *types.Signature) int {
-	for i := 0; i < sig.Params().Len(); i++ {
+	for i := range sig.Params().Len() {
 		param := sig.Params().At(i)
 
 		if b, ok := param.Type().(*types.Basic); ok && b.Kind() == types.String && (param.Name() == "msg" ||

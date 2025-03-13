@@ -103,10 +103,13 @@ linters:
     - asasalint
     - asciicheck
     - bidichk
+    - copyloopvar
     - depguard
+    - durationcheck
     - errcheck
     - errname
     - exhaustive
+    - exptostd
     - forbidigo
     - gci
     - gocheckcompilerdirectives
@@ -120,21 +123,23 @@ linters:
     - gosimple
     - govet
     - ineffassign
+    - intrange
     - lll
     - makezero
     - mirror
     - misspell
     - nakedret
     - nilerr
+    - nilnesserr
     - nestif
     - nolintlint
+    - perfsprint
     - prealloc
     - predeclared
     - reassign
     - revive
     - staticcheck
     - stylecheck
-    - tenv
     - testableexamples
     - testpackage
     - thelper
@@ -142,5 +147,6 @@ linters:
     - unparam
     - unused
     - usestdlibvars
+    - usetesting
     - wastedassign
     - whitespace
