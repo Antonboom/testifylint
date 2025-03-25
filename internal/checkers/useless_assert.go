@@ -94,7 +94,13 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 	case "LessOrEqual", "Greater":
 		isMeaningless = (len(call.Args) >= 2) && isAnyZero(call.Args[0]) && canNotBeNegative(pass, call.Args[1])
 
-	case "Negative", "Positive":
+	case "Positive":
+		if len(call.Args) < 1 {
+			return nil
+		}
+		_, isMeaningless = isIntBasicLit(call.Args[0])
+
+	case "Negative":
 		if len(call.Args) < 1 {
 			return nil
 		}
