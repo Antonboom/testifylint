@@ -23,3 +23,7 @@ func TestUselessAsserts(t *testing.T) {
 	assert.Zero(t, "")
 	assert.Zero(t, nil)
 }
+
+func TestPositiveZero(t *testing.T) {
+	assert.Positive(t, uint64(0))
+}

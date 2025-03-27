@@ -54,14 +54,12 @@ import (
 //	assert.Negative(len(x))
 //	assert.Less(len(x), 0)
 //	assert.Greater(0, len(x))
-//	assert.Positive(len(x))
 //	assert.GreaterOrEqual(len(x), 0)
 //	assert.LessOrEqual(0, len(x))
 //
 //	assert.Negative(uintVal)
 //	assert.Less(uintVal, 0)
 //	assert.Greater(0, uintVal)
-//	assert.Positive(uintVal)
 //	assert.GreaterOrEqual(uintVal, 0)
 //	assert.LessOrEqual(0, uintVal)
 type UselessAssert struct{}
@@ -94,7 +92,13 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 	case "LessOrEqual", "Greater":
 		isMeaningless = (len(call.Args) >= 2) && isAnyZero(call.Args[0]) && canNotBeNegative(pass, call.Args[1])
 
-	case "Negative", "Positive":
+	case "Positive":
+		if len(call.Args) < 1 {
+			return nil
+		}
+		_, isMeaningless = isIntBasicLit(call.Args[0])
+
+	case "Negative":
 		if len(call.Args) < 1 {
 			return nil
 		}

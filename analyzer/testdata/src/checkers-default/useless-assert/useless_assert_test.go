@@ -364,13 +364,6 @@ func TestUselessAssertChecker(t *testing.T) {
 		assert.Greaterf(t, 0, len(x), "msg")                                                              // want "useless-assert: meaningless assertion"
 		assert.Greaterf(t, 0, len(x), "msg with arg %d", 42)                                              // want "useless-assert: meaningless assertion"
 		assert.Greaterf(t, 0, len(x), "msg with args %d %s", 42, "42")                                    // want "useless-assert: meaningless assertion"
-		assert.Positive(t, len(x))                                                                        // want "useless-assert: meaningless assertion"
-		assert.Positive(t, len(x), "msg")                                                                 // want "useless-assert: meaningless assertion"
-		assert.Positive(t, len(x), "msg with arg %d", 42)                                                 // want "useless-assert: meaningless assertion"
-		assert.Positive(t, len(x), "msg with args %d %s", 42, "42")                                       // want "useless-assert: meaningless assertion"
-		assert.Positivef(t, len(x), "msg")                                                                // want "useless-assert: meaningless assertion"
-		assert.Positivef(t, len(x), "msg with arg %d", 42)                                                // want "useless-assert: meaningless assertion"
-		assert.Positivef(t, len(x), "msg with args %d %s", 42, "42")                                      // want "useless-assert: meaningless assertion"
 		assert.GreaterOrEqual(t, len(x), 0)                                                               // want "useless-assert: meaningless assertion"
 		assert.GreaterOrEqual(t, len(x), 0, "msg")                                                        // want "useless-assert: meaningless assertion"
 		assert.GreaterOrEqual(t, len(x), 0, "msg with arg %d", 42)                                        // want "useless-assert: meaningless assertion"
@@ -406,13 +399,6 @@ func TestUselessAssertChecker(t *testing.T) {
 		assert.Greaterf(t, 0, uint(42), "msg")                                                            // want "useless-assert: meaningless assertion"
 		assert.Greaterf(t, 0, uint(42), "msg with arg %d", 42)                                            // want "useless-assert: meaningless assertion"
 		assert.Greaterf(t, 0, uint(42), "msg with args %d %s", 42, "42")                                  // want "useless-assert: meaningless assertion"
-		assert.Positive(t, uint(42))                                                                      // want "useless-assert: meaningless assertion"
-		assert.Positive(t, uint(42), "msg")                                                               // want "useless-assert: meaningless assertion"
-		assert.Positive(t, uint(42), "msg with arg %d", 42)                                               // want "useless-assert: meaningless assertion"
-		assert.Positive(t, uint(42), "msg with args %d %s", 42, "42")                                     // want "useless-assert: meaningless assertion"
-		assert.Positivef(t, uint(42), "msg")                                                              // want "useless-assert: meaningless assertion"
-		assert.Positivef(t, uint(42), "msg with arg %d", 42)                                              // want "useless-assert: meaningless assertion"
-		assert.Positivef(t, uint(42), "msg with args %d %s", 42, "42")                                    // want "useless-assert: meaningless assertion"
 		assert.GreaterOrEqual(t, uint(42), 0)                                                             // want "useless-assert: meaningless assertion"
 		assert.GreaterOrEqual(t, uint(42), 0, "msg")                                                      // want "useless-assert: meaningless assertion"
 		assert.GreaterOrEqual(t, uint(42), 0, "msg with arg %d", 42)                                      // want "useless-assert: meaningless assertion"
@@ -696,6 +682,34 @@ func TestUselessAssertChecker(t *testing.T) {
 		assert.Zerof(t, b, "msg")
 		assert.Zerof(t, b, "msg with arg %d", 42)
 		assert.Zerof(t, b, "msg with args %d %s", 42, "42")
+		assert.Positive(t, len(x))
+		assert.Positive(t, len(x), "msg")
+		assert.Positive(t, len(x), "msg with arg %d", 42)
+		assert.Positive(t, len(x), "msg with args %d %s", 42, "42")
+		assert.Positivef(t, len(x), "msg")
+		assert.Positivef(t, len(x), "msg with arg %d", 42)
+		assert.Positivef(t, len(x), "msg with args %d %s", 42, "42")
+		assert.Positive(t, uint(42))
+		assert.Positive(t, uint(42), "msg")
+		assert.Positive(t, uint(42), "msg with arg %d", 42)
+		assert.Positive(t, uint(42), "msg with args %d %s", 42, "42")
+		assert.Positivef(t, uint(42), "msg")
+		assert.Positivef(t, uint(42), "msg with arg %d", 42)
+		assert.Positivef(t, uint(42), "msg with args %d %s", 42, "42")
+		assert.Greater(t, len(x), 0)
+		assert.Greater(t, len(x), 0, "msg")
+		assert.Greater(t, len(x), 0, "msg with arg %d", 42)
+		assert.Greater(t, len(x), 0, "msg with args %d %s", 42, "42")
+		assert.Greaterf(t, len(x), 0, "msg")
+		assert.Greaterf(t, len(x), 0, "msg with arg %d", 42)
+		assert.Greaterf(t, len(x), 0, "msg with args %d %s", 42, "42")
+		assert.Greater(t, uint(42), 0)
+		assert.Greater(t, uint(42), 0, "msg")
+		assert.Greater(t, uint(42), 0, "msg with arg %d", 42)
+		assert.Greater(t, uint(42), 0, "msg with args %d %s", 42, "42")
+		assert.Greaterf(t, uint(42), 0, "msg")
+		assert.Greaterf(t, uint(42), 0, "msg with arg %d", 42)
+		assert.Greaterf(t, uint(42), 0, "msg with args %d %s", 42, "42")
 	}
 }
 
