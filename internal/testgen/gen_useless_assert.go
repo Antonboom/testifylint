@@ -134,14 +134,12 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 			{Fn: "Negative", Argsf: "len(x)", ReportMsgf: defaultReport},
 			{Fn: "Less", Argsf: "len(x), 0", ReportMsgf: defaultReport},
 			{Fn: "Greater", Argsf: "0, len(x)", ReportMsgf: defaultReport},
-			{Fn: "Positive", Argsf: "len(x)", ReportMsgf: defaultReport},
 			{Fn: "GreaterOrEqual", Argsf: "len(x), 0", ReportMsgf: defaultReport},
 			{Fn: "LessOrEqual", Argsf: "0, len(x)", ReportMsgf: defaultReport},
 
 			{Fn: "Negative", Argsf: "uint(42)", ReportMsgf: defaultReport},
 			{Fn: "Less", Argsf: "uint(42), 0", ReportMsgf: defaultReport},
 			{Fn: "Greater", Argsf: "0, uint(42)", ReportMsgf: defaultReport},
-			{Fn: "Positive", Argsf: "uint(42)", ReportMsgf: defaultReport},
 			{Fn: "GreaterOrEqual", Argsf: "uint(42), 0", ReportMsgf: defaultReport},
 			{Fn: "LessOrEqual", Argsf: "0, uint(42)", ReportMsgf: defaultReport},
 		},
@@ -173,6 +171,12 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 			{Fn: "Zero", Argsf: "str"},
 			{Fn: "Zero", Argsf: "new(testCase)"},
 			{Fn: "Zero", Argsf: "b"},
+
+			// NOTE(a.telyshev): An unsigned value can be 0.
+			{Fn: "Positive", Argsf: "len(x)"},
+			{Fn: "Positive", Argsf: "uint(42)"},
+			{Fn: "Greater", Argsf: "len(x), 0"},
+			{Fn: "Greater", Argsf: "uint(42), 0"},
 		},
 	}
 }

@@ -18,8 +18,7 @@ func (s *BrokenSuite) SetupTest() {
 	var _ suite.TearDownSubTest
 }
 
-func (s *BrokenSuite) SetT() { // *BrokenSuite does not implement suite.TestingSuite (wrong type for method SetT)
-}
+//func (s *BrokenSuite) SetT() {} // *BrokenSuite does not implement suite.TestingSuite (wrong type for method SetT)
 
 func (s *BrokenSuite) TestTypo(_ *testing.T) { // value.go:424: test panicked: reflect: Call with too few input arguments
 	s.True(true)

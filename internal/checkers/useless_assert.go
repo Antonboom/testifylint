@@ -54,14 +54,12 @@ import (
 //	assert.Negative(len(x))
 //	assert.Less(len(x), 0)
 //	assert.Greater(0, len(x))
-//	assert.Positive(len(x))
 //	assert.GreaterOrEqual(len(x), 0)
 //	assert.LessOrEqual(0, len(x))
 //
 //	assert.Negative(uintVal)
 //	assert.Less(uintVal, 0)
 //	assert.Greater(0, uintVal)
-//	assert.Positive(uintVal)
 //	assert.GreaterOrEqual(uintVal, 0)
 //	assert.LessOrEqual(0, uintVal)
 type UselessAssert struct{}
