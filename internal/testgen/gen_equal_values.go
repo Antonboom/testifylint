@@ -67,6 +67,7 @@ func (g EqualValuesTestsGenerator) TemplateData() any {
 
 			{Fn: "EqualValues", Argsf: `2048, mm["Etype"]`},
 			{Fn: "EqualValues", Argsf: `req, dto`},
+			{Fn: "EqualValues", Argsf: `anyInt, anyFloat`},
 			{Fn: "EqualValues", Argsf: `req, reqWithTags`},
 			{Fn: "EqualValues", Argsf: `S{"1"}, []string{"1"}`},
 			{Fn: "EqualValues", Argsf: `f, (func())(nil)`},
@@ -131,6 +132,12 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 		b   []byte
 		f   func() bool
 	)
+
+	var (
+		anyInt any = 42
+		anyFloat any = 42.0
+	)
+
 	tlsConf := new(tls.Config)
 
 	// Invalid.
