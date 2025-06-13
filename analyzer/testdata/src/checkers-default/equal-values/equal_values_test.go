@@ -43,6 +43,12 @@ func TestEqualValuesChecker(t *testing.T) {
 		b           []byte
 		f           func() bool
 	)
+
+	var (
+		anyInt   any = 42
+		anyFloat any = 42.0
+	)
+
 	tlsConf := new(tls.Config)
 
 	// Invalid.
@@ -127,6 +133,8 @@ func TestEqualValuesChecker(t *testing.T) {
 		assert.EqualValuesf(t, 2048, mm["Etype"], "msg with args %d %s", 42, "42")
 		assert.EqualValues(t, req, dto)
 		assert.EqualValuesf(t, req, dto, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, anyInt, anyFloat)
+		assert.EqualValuesf(t, anyInt, anyFloat, "msg with args %d %s", 42, "42")
 		assert.EqualValues(t, req, reqWithTags)
 		assert.EqualValuesf(t, req, reqWithTags, "msg with args %d %s", 42, "42")
 		assert.EqualValues(t, S{"1"}, []string{"1"})
