@@ -62,6 +62,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewSuiteBrokenParallel(),
 		checkers.NewSuiteMethodSignature(),
 		checkers.NewSuiteSubtestRun(),
+		checkers.NewSuiteNoTestingT(),
 	}
 	allAdvancedCheckers := []checkers.AdvancedChecker{
 		checkers.NewBlankImport(),
@@ -70,6 +71,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewSuiteBrokenParallel(),
 		checkers.NewSuiteMethodSignature(),
 		checkers.NewSuiteSubtestRun(),
+		checkers.NewSuiteNoTestingT(),
 		checkers.NewSuiteTHelper(),
 	}
 
