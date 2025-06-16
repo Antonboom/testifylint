@@ -32,6 +32,7 @@ var registry = checkersRegistry{
 	{factory: asCheckerFactory(NewSuiteBrokenParallel), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteMethodSignature), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteSubtestRun), enabledByDefault: true},
+	{factory: asCheckerFactory(NewSuiteNoTestingT), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteTHelper), enabledByDefault: false},
 }
 
