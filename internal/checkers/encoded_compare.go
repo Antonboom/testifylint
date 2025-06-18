@@ -50,23 +50,32 @@ func (checker EncodedCompare) Check(pass *analysis.Pass, call *CallMeta) *analys
 		proposed = "JSONEq"
 	case isYAMLStyleExpr(pass, a), isYAMLStyleExpr(pass, b):
 		proposed = "YAMLEq"
+	default:
+		return nil
 	}
 
-	if proposed != "" {
-		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
-			analysis.TextEdit{
-				Pos:     lhs.Pos(),
-				End:     lhs.End(),
-				NewText: formatWithStringCastForBytes(pass, a),
-			},
-			analysis.TextEdit{
-				Pos:     rhs.Pos(),
-				End:     rhs.End(),
-				NewText: formatWithStringCastForBytes(pass, b),
-			},
-		)
+	formattedA, ok := formatToString(pass, a)
+	if !ok {
+		return nil
 	}
-	return nil
+
+	formattedB, ok := formatToString(pass, b)
+	if !ok {
+		return nil
+	}
+
+	return newUseFunctionDiagnostic(checker.Name(), call, proposed,
+		analysis.TextEdit{
+			Pos:     lhs.Pos(),
+			End:     lhs.End(),
+			NewText: formattedA,
+		},
+		analysis.TextEdit{
+			Pos:     rhs.Pos(),
+			End:     rhs.End(),
+			NewText: formattedB,
+		},
+	)
 }
 
 // unwrap unwraps expression from string, []byte, strings.Replace(All), strings.Trim(Space) and json.RawMessage conversions.

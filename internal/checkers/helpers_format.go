@@ -26,15 +26,20 @@ func formatAsCallArgs(pass *analysis.Pass, args ...ast.Expr) []byte {
 	return buf.Bytes()
 }
 
-func formatWithStringCastForBytes(pass *analysis.Pass, e ast.Expr) []byte {
-	if !hasBytesType(pass, e) {
-		return analysisutil.NodeBytes(pass.Fset, e)
+// formatToString formats the expression e as a string.
+func formatToString(pass *analysis.Pass, e ast.Expr) ([]byte, bool) {
+	switch {
+	case hasStringType(pass, e):
+		return analysisutil.NodeBytes(pass.Fset, e), true
+	case hasBytesType(pass, e):
+		if se, ok := isBufferBytesCall(pass, e); ok {
+			return []byte(analysisutil.NodeString(pass.Fset, se) + ".String()"), true
+		}
+		return []byte("string(" + analysisutil.NodeString(pass.Fset, e) + ")"), true
 	}
 
-	if se, ok := isBufferBytesCall(pass, e); ok {
-		return []byte(analysisutil.NodeString(pass.Fset, se) + ".String()")
-	}
-	return []byte("string(" + analysisutil.NodeString(pass.Fset, e) + ")")
+	// we cannot format this expression as a string
+	return nil, false
 }
 
 func isBufferBytesCall(pass *analysis.Pass, e ast.Expr) (ast.Node, bool) {
