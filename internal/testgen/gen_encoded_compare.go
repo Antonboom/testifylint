@@ -273,6 +273,19 @@ images:
 			{Fn: "YAMLEq", Argsf: `"kind: Kustomization", "kind: Kustomization"`}, // Not supported.
 			{Fn: "YAMLEq", Argsf: "raw, conf"},
 			{Fn: "YAMLEq", Argsf: "raw, string(respBytes)"},
+
+			// these are meaningless, they should be ignored.
+			{Fn: "Equal", Argsf: "42, resultJSON"},
+			{Fn: "EqualValues", Argsf: "42, resultJSON"},
+			{Fn: "Exactly", Argsf: "42, resultJSON"},
+			{Fn: "Equal", Argsf: "42, conf"},
+			{Fn: "EqualValues", Argsf: "42, conf"},
+			{Fn: "Exactly", Argsf: "42, conf"},
+			{Fn: "Equal", Argsf: "`{\"foo\":\"bar\"}`, respJSONRawMessage"},
+			{Fn: "Exactly", Argsf: "`{\"foo\":\"bar\"}`, respJSONRawMessage"},
+
+			// this one is valid, but is not supported by this checker (yet).
+			{Fn: "EqualValues", Argsf: "`{\"foo\":\"bar\"}`, respJSONRawMessage"},
 		},
 	}
 }
@@ -312,6 +325,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var batch interface { ParentSummary() []byte }
 	var res [1]struct{ Data []byte }
 	var output bytes.Buffer
+	var respJSONRawMessage json.RawMessage
 
 	const expBody = ` + "`{\"status\":\"healthy\",\"message\":\"\",\"peer_count\":1}`" + `
 
