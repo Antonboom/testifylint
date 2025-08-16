@@ -105,6 +105,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [formatter](#formatter)                             | ✅                  | 🤏      |
 | [go-require](#go-require)                           | ✅                  | ❌       |
 | [len](#len)                                         | ✅                  | ✅       |
+| [mock-expect](#mock-expect)                         | ✅                  | ✅       |
 | [negative-positive](#negative-positive)             | ✅                  | ✅       |
 | [nil-compare](#nil-compare)                         | ✅                  | ✅       |
 | [regexp](#regexp)                                   | ✅                  | ✅       |
@@ -771,6 +772,24 @@ assert.Len(t, arr, len(expArr))
 > ```go
 > assert.Equal(t, len(arr), value)
 > ```
+
+---
+
+### mock-expect
+
+```go
+❌
+m.On("CreateUser", mock.Anything, User{}).Return(nil)
+m.On("CountUsers").Return(123)
+
+✅
+m.EXPECT().CreateUser(mock.Anything, User{}).Return(nil)
+m.EXPECT().CountUsers().Return(123)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: More simple `mockery` API with argument hints and type safety.
 
 ---
 
