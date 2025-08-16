@@ -28,6 +28,7 @@ var registry = checkersRegistry{
 	// Advanced checkers.
 	{factory: asCheckerFactory(NewBlankImport), enabledByDefault: true},
 	{factory: asCheckerFactory(NewGoRequire), enabledByDefault: true},
+	{factory: asCheckerFactory(NewMockExpect), enabledByDefault: true},
 	{factory: asCheckerFactory(NewRequireError), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteBrokenParallel), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteMethodSignature), enabledByDefault: true},

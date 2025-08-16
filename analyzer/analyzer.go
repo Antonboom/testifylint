@@ -53,7 +53,7 @@ type testifyLint struct {
 func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
 	filesToAnalysis := make([]*ast.File, 0, len(pass.Files))
 	for _, f := range pass.Files {
-		if !analysisutil.Imports(f, testify.AssertPkgPath, testify.RequirePkgPath, testify.SuitePkgPath) {
+		if !analysisutil.Imports(f, testify.AssertPkgPath, testify.RequirePkgPath, testify.SuitePkgPath, testify.MockPkgPath) {
 			continue
 		}
 		filesToAnalysis = append(filesToAnalysis, f)
