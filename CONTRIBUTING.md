@@ -1,12 +1,10 @@
 # Contribution guideline
 
-### 1) Install developer tools
+### 1) Install `task`
 
 ```bash
 # https://taskfile.dev/installation/
 $ go install github.com/go-task/task/v3/cmd/task@latest
-$ task tools:install
-Install dev tools...
 ```
 
 ### 2) Create a checker skeleton in `internal/checkers/{checker_name}.go`

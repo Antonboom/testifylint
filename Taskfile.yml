@@ -17,12 +17,6 @@ tasks:
       - task: fmt
       - task: lint
       - task: test
-      - task: install
-
-  tools:install:
-    - echo "Install dev tools..."
-    - go install github.com/daixiang0/gci@latest
-    - go install mvdan.cc/gofumpt@latest
 
   tidy:
     cmds:
@@ -32,8 +26,7 @@ tasks:
   fmt:
     cmds:
       - echo "Fmt..."
-      - gofumpt -w .
-      - gci write -s standard -s default -s "Prefix(github.com/Antonboom/testifylint)" . 2> /dev/null
+      - golangci-lint fmt -v ./...
 
   lint:
     cmds:
@@ -53,8 +46,6 @@ tasks:
       - go test -count 1 -run TestTestifyLint/{{.CLI_ARGS}} ./analyzer
 
   test:coverage:
-    env:
-      GOEXPERIMENT: nocoverageredesign # https://github.com/golang/go/issues/65653#issuecomment-1955872134
     cmds:
       - echo "Test with coverage..."
       - go test -coverpkg={{ .COVERED_PKGS | trim | splitLines | join "," }} -coverprofile=coverage.out ./...
