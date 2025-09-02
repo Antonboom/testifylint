@@ -1,104 +1,30 @@
+version: "2"
+
 run:
   tests: true
 
 issues:
   max-same-issues: 0
 
-  # revive should check comments for exported (and not internal) code.
-  include: [ EXC0012, EXC0013, EXC0014 ]
+formatters:
+  enable:
+    - gci
+    - gofumpt
 
-  exclude-dirs:
-    - internal/checkers/printf # A patched fork of go vet's printf.
+  settings:
+    gci:
+      sections:
+        - standard # A standard section: captures all standard packages.
+        - default  # Default section: contains all imports that could not be matched to another section type.
+        - prefix(github.com/Antonboom/testifylint)
 
-  exclude-rules:
-    - path: "internal/testgen"
-      linters: [ "revive" ]
-      text: "exported"
-
-    - path: "internal/testgen"
-      linters: [ "forbidigo", "gochecknoinits", "prealloc" ] # Internal test generation tool.
-
-    - path: "internal"
-      linters: [ "revive" ]
-      text: "exported (method|const)"
-
-    - path: "_test\\.go"
-      linters: [ "lll" ]
-
-    - source: ' // want '
-      linters: [ "lll" ]
-
-linters-settings:
-  depguard:
-    rules:
-      analysisutil:
-        files: [ "**/internal/analysisutil/*.go" ]
-        deny:
-          - pkg: golang.org/x/tools/go/analysis
-            desc: Please, implement helpers without usage of x/tools
-
-  forbidigo:
-    forbid:
-      - p: panic
-        msg: Please, don't panic
-
-      - p: types\.ExprString
-        msg: Please, use analysisutil.NodeBytes/NodeString instead
-
-  gocritic:
-    disabled-checks:
-      - singleCaseSwitch
-
-  gosec:
-    excludes:
-      - "G306" # Expect WriteFile permissions to be 0600 or less
-
-  govet:
-    enable-all: true
-    disable:
-      - fieldalignment
-
-  gci:
-    sections:
-      - standard
-      - default
-      - prefix(github.com/Antonboom/testifylint)
-
-  lll:
-    line-length: 130
-
-  revive:
-    rules:
-      - name: blank-imports
-      - name: context-as-argument
-      - name: context-keys-type
-      - name: dot-imports
-      - name: early-return
-        arguments:
-          - "preserveScope"
-      - name: empty-block
-      - name: error-naming
-      - name: error-return
-      - name: error-strings
-      - name: errorf
-      - name: identical-branches
-      - name: if-return
-      - name: increment-decrement
-      - name: indent-error-flow
-      - name: range
-      - name: receiver-naming
-      - name: redefines-builtin-id
-      - name: superfluous-else
-      - name: time-naming
-      - name: unexported-return
-      - name: unreachable-code
-      - name: unused-parameter
-      - name: useless-break
-      - name: var-declaration
-      - name: var-naming
+  exclusions:
+    generated: lax
+    paths:
+      - internal/checkers/printf # A patched fork of go vet's printf.
 
 linters:
-  disable-all: true
+  default: none
   enable:
     - asasalint
     - asciicheck
@@ -111,17 +37,15 @@ linters:
     - exhaustive
     - exptostd
     - forbidigo
-    - gci
     - gocheckcompilerdirectives
     - gochecknoinits
     - gocritic
     - godot
     - godox
-    - gofumpt
     - goprintffuncname
     - gosec
-    - gosimple
     - govet
+    - importas
     - ineffassign
     - intrange
     - lll
@@ -129,9 +53,9 @@ linters:
     - mirror
     - misspell
     - nakedret
+    - nestif
     - nilerr
     - nilnesserr
-    - nestif
     - nolintlint
     - perfsprint
     - prealloc
@@ -139,7 +63,6 @@ linters:
     - reassign
     - revive
     - staticcheck
-    - stylecheck
     - testableexamples
     - testpackage
     - thelper
@@ -150,3 +73,95 @@ linters:
     - usetesting
     - wastedassign
     - whitespace
+
+  exclusions:
+    generated: lax
+    presets:
+      - common-false-positives
+      - legacy
+      - std-error-handling
+
+    rules:
+      - path: "internal/testgen"
+        linters: [ "revive" ]
+        text: "exported"
+
+      - path: "internal/testgen"
+        linters: [ "forbidigo", "gochecknoinits", "prealloc" ] # Internal test generation tool.
+
+      - path: "internal"
+        linters: [ "revive" ]
+        text: "exported (method|const)"
+
+      - path: "_test\\.go"
+        linters: [ "lll" ]
+
+      - source: ' // want '
+        linters: [ "lll" ]
+
+    paths:
+      - internal/checkers/printf # A patched fork of go vet's printf.
+
+  settings:
+    depguard:
+      rules:
+        analysisutil:
+          files:
+            - '**/internal/analysisutil/*.go'
+          deny:
+            - pkg: golang.org/x/tools/go/analysis
+              desc: Please, implement helpers without usage of x/tools
+
+    forbidigo:
+      forbid:
+        - pattern: panic
+          msg: Please, don't panic
+
+        - pattern: types\.ExprString
+          msg: Please, use analysisutil.NodeBytes/NodeString instead
+
+    gocritic:
+      disabled-checks:
+        - singleCaseSwitch
+
+    gosec:
+      excludes:
+        - G306 # Expect WriteFile permissions to be 0600 or less.
+
+    govet:
+      disable:
+        - fieldalignment
+      enable-all: true
+
+    lll:
+      line-length: 130
+
+    revive:
+      rules:
+        - name: blank-imports
+        - name: context-as-argument
+        - name: context-keys-type
+        - name: dot-imports
+        - name: early-return
+          arguments:
+            - preserveScope
+        - name: empty-block
+        - name: error-naming
+        - name: error-return
+        - name: error-strings
+        - name: errorf
+        - name: identical-branches
+        - name: if-return
+        - name: increment-decrement
+        - name: indent-error-flow
+        - name: range
+        - name: receiver-naming
+        - name: redefines-builtin-id
+        - name: superfluous-else
+        - name: time-naming
+        - name: unexported-return
+        - name: unreachable-code
+        - name: unused-parameter
+        - name: useless-break
+        - name: var-declaration
+        - name: var-naming
