@@ -46,8 +46,6 @@ tasks:
       - go test -count 1 -run TestTestifyLint/{{.CLI_ARGS}} ./analyzer
 
   test:coverage:
-    env:
-      GOEXPERIMENT: nocoverageredesign # https://github.com/golang/go/issues/65653#issuecomment-1955872134
     cmds:
       - echo "Test with coverage..."
       - go test -coverpkg={{ .COVERED_PKGS | trim | splitLines | join "," }} -coverprofile=coverage.out ./...
