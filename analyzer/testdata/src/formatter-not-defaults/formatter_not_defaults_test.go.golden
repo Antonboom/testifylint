@@ -252,6 +252,11 @@ func TestFormatterChecker_AllAssertions(t *testing.T) {
 	assert.IsNonIncreasingf(t, nil, "msg")
 	assert.IsNonIncreasingf(t, nil, "msg with arg", 42)
 	assert.IsNonIncreasingf(t, nil, "msg with arg %d", 42)
+	assert.IsNotType(t, nil, nil)
+	assert.IsNotTypef(t, nil, nil, "msg") // want "formatter: use assert\\.IsNotTypef"
+	assert.IsNotTypef(t, nil, nil, "msg")
+	assert.IsNotTypef(t, nil, nil, "msg with arg", 42)
+	assert.IsNotTypef(t, nil, nil, "msg with arg %d", 42)
 	assert.IsType(t, nil, nil)
 	assert.IsTypef(t, nil, nil, "msg") // want "formatter: use assert\\.IsTypef"
 	assert.IsTypef(t, nil, nil, "msg")

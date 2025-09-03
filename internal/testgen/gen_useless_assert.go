@@ -37,6 +37,7 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 		"InDeltaSlice":        "value, value, 0.01",
 		"InEpsilon":           "value, value, 0.0001",
 		"InEpsilonSlice":      "value, value, 0.0001",
+		"IsNotType":           "value, value",
 		"IsType":              "value, value",
 		"JSONEq":              "str, str",
 		"Less":                "value, value",
@@ -88,6 +89,7 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: "value, value", ReportMsgf: sameVarReport},
 			{Fn: "Equal", Argsf: "tc.A(), tc.A()", ReportMsgf: sameVarReport},
 			{Fn: "Equal", Argsf: "testCase{}.A().B().C(), testCase{}.A().B().C()", ReportMsgf: sameVarReport},
+			{Fn: "IsNotType", Argsf: "(*testCase)(nil), (*testCase)(nil)", ReportMsgf: sameVarReport},
 			{Fn: "IsType", Argsf: "(*testCase)(nil), (*testCase)(nil)", ReportMsgf: sameVarReport},
 
 			{Fn: "Empty", Argsf: `""`, ReportMsgf: defaultReport},
@@ -149,6 +151,7 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: `value, "value"`},
 			{Fn: "Equal", Argsf: `tc.A(), "tc.A()"`},
 			{Fn: "Equal", Argsf: "testCase{}.A().B().C(), tc.A().B().C()"},
+			{Fn: "IsNotType", Argsf: "tc, testCase{}"},
 			{Fn: "IsType", Argsf: "tc, testCase{}"},
 
 			{Fn: "Empty", Argsf: "str"},

@@ -337,6 +337,12 @@ func TestExpectedActualChecker_Other(t *testing.T) {
 		assert.InEpsilonSlicef(t, expected, result, 0.0001, "msg with args %d %s", 42, "42")                                                      // want "expected-actual: need to reverse actual and expected values"
 		assert.InEpsilonSlice(t, []float64{0.9801, 0.9902}, result, 0.0001)                                                                       // want "expected-actual: need to reverse actual and expected values"
 		assert.InEpsilonSlicef(t, []float64{0.9801, 0.9902}, result, 0.0001, "msg with args %d %s", 42, "42")                                     // want "expected-actual: need to reverse actual and expected values"
+		assert.IsNotType(t, expected, result)                                                                                                     // want "expected-actual: need to reverse actual and expected values"
+		assert.IsNotTypef(t, expected, result, "msg with args %d %s", 42, "42")                                                                   // want "expected-actual: need to reverse actual and expected values"
+		assert.IsNotType(t, user{}, result)                                                                                                       // want "expected-actual: need to reverse actual and expected values"
+		assert.IsNotTypef(t, user{}, result, "msg with args %d %s", 42, "42")                                                                     // want "expected-actual: need to reverse actual and expected values"
+		assert.IsNotType(t, (*user)(nil), result)                                                                                                 // want "expected-actual: need to reverse actual and expected values"
+		assert.IsNotTypef(t, (*user)(nil), result, "msg with args %d %s", 42, "42")                                                               // want "expected-actual: need to reverse actual and expected values"
 		assert.IsType(t, expected, result)                                                                                                        // want "expected-actual: need to reverse actual and expected values"
 		assert.IsTypef(t, expected, result, "msg with args %d %s", 42, "42")                                                                      // want "expected-actual: need to reverse actual and expected values"
 		assert.IsType(t, user{}, result)                                                                                                          // want "expected-actual: need to reverse actual and expected values"
@@ -393,6 +399,12 @@ func TestExpectedActualChecker_Other(t *testing.T) {
 		assert.InEpsilonf(t, expected, result, 0.0001, "msg with args %d %s", 42, "42")
 		assert.InEpsilon(t, 42.42, result, 0.0001)
 		assert.InEpsilonf(t, 42.42, result, 0.0001, "msg with args %d %s", 42, "42")
+		assert.IsNotType(t, expected, result)
+		assert.IsNotTypef(t, expected, result, "msg with args %d %s", 42, "42")
+		assert.IsNotType(t, user{}, result)
+		assert.IsNotTypef(t, user{}, result, "msg with args %d %s", 42, "42")
+		assert.IsNotType(t, (*user)(nil), result)
+		assert.IsNotTypef(t, (*user)(nil), result, "msg with args %d %s", 42, "42")
 		assert.IsType(t, expected, result)
 		assert.IsTypef(t, expected, result, "msg with args %d %s", 42, "42")
 		assert.IsType(t, user{}, result)

@@ -59,6 +59,7 @@ var allAssertions = []Assertion{
 	{Fn: "IsIncreasing", Argsf: "nil"},
 	{Fn: "IsNonDecreasing", Argsf: "nil"},
 	{Fn: "IsNonIncreasing", Argsf: "nil"},
+	{Fn: "IsNotType", Argsf: "nil, nil"},
 	{Fn: "IsType", Argsf: "nil, nil"},
 	{Fn: "JSONEq", Argsf: `"", ""`},
 	{Fn: "Len", Argsf: "nil, 0"},
