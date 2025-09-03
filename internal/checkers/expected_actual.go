@@ -73,6 +73,7 @@ func (checker ExpectedActual) Check(pass *analysis.Pass, call *CallMeta) *analys
 		"InDeltaSlice",
 		"InEpsilon",
 		"InEpsilonSlice",
+		"IsNotType",
 		"IsType",
 		"JSONEq",
 		"NotEqual",
