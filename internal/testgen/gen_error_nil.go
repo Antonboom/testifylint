@@ -97,6 +97,11 @@ func (g ErrorNilTestsGenerator) TemplateData() any {
 			{Fn: "NotEmpty", Argsf: "errs"},
 			{Fn: "Zero", Argsf: "errs"},
 			{Fn: "NotZero", Argsf: "errs"},
+
+			{Fn: "IsType", Argsf: "err, (*http.MaxBytesError)(nil)"},
+			{Fn: "IsType", Argsf: "(*http.MaxBytesError)(nil), err"},
+			{Fn: "IsNotType", Argsf: "err, (*http.MaxBytesError)(nil)"},
+			{Fn: "IsNotType", Argsf: "(*http.MaxBytesError)(nil), err"},
 		},
 	}
 }
@@ -119,6 +124,7 @@ package {{ .CheckerName.AsPkgName }}
 
 import (
 	"io"
+	"net/http"
 	"testing"
 	"unsafe"
 

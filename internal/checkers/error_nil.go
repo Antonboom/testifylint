@@ -54,7 +54,7 @@ func (checker ErrorNil) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 				return errorFn, call.Args[0], call.Args[0].End()
 			}
 
-		case "Equal", "EqualValues", "Exactly", "ErrorIs":
+		case "Equal", "EqualValues", "Exactly", "ErrorIs", "IsType":
 			if len(call.Args) < 2 {
 				return "", nil, token.NoPos
 			}
@@ -67,7 +67,7 @@ func (checker ErrorNil) Check(pass *analysis.Pass, call *CallMeta) *analysis.Dia
 				return noErrorFn, b, b.End()
 			}
 
-		case "NotEqual", "NotEqualValues", "NotErrorIs":
+		case "NotEqual", "NotEqualValues", "NotErrorIs", "IsNotType":
 			if len(call.Args) < 2 {
 				return "", nil, token.NoPos
 			}

@@ -4,6 +4,7 @@ package errornil
 
 import (
 	"io"
+	"net/http"
 	"testing"
 	"unsafe"
 
@@ -104,6 +105,14 @@ func TestErrorNilChecker(t *testing.T) {
 		assert.Zerof(t, errs, "msg with args %d %s", 42, "42")
 		assert.NotZero(t, errs)
 		assert.NotZerof(t, errs, "msg with args %d %s", 42, "42")
+		assert.IsType(t, err, (*http.MaxBytesError)(nil))
+		assert.IsTypef(t, err, (*http.MaxBytesError)(nil), "msg with args %d %s", 42, "42")
+		assert.IsType(t, (*http.MaxBytesError)(nil), err)
+		assert.IsTypef(t, (*http.MaxBytesError)(nil), err, "msg with args %d %s", 42, "42")
+		assert.IsNotType(t, err, (*http.MaxBytesError)(nil))
+		assert.IsNotTypef(t, err, (*http.MaxBytesError)(nil), "msg with args %d %s", 42, "42")
+		assert.IsNotType(t, (*http.MaxBytesError)(nil), err)
+		assert.IsNotTypef(t, (*http.MaxBytesError)(nil), err, "msg with args %d %s", 42, "42")
 	}
 }
 
