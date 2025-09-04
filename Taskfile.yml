@@ -51,6 +51,8 @@ tasks:
       - go test -coverpkg={{ .COVERED_PKGS | trim | splitLines | join "," }} -coverprofile=coverage.out ./...
 
   test:gen:
+    sources:
+      - internal/testgen/*.go
     cmds:
       - echo "Generate analyzer tests..."
       - go run ./internal/testgen
