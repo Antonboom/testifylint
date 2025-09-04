@@ -50,6 +50,18 @@ func (checker ErrorIsAs) Check(pass *analysis.Pass, call *CallMeta) *analysis.Di
 			return newDiagnostic(checker.Name(), call, msg, newSuggestedFuncReplacement(call, proposed))
 		}
 
+	case "IsType":
+		if len(call.Args) >= 2 && isError(pass, call.Args[0]) || isError(pass, call.Args[1]) {
+			msg := fmt.Sprintf("use %[1]s.ErrorIs or %[1]s.ErrorAs", call.SelectorXStr)
+			return newDiagnostic(checker.Name(), call, msg)
+		}
+
+	case "IsNotType":
+		if len(call.Args) >= 2 && isError(pass, call.Args[0]) || isError(pass, call.Args[1]) {
+			msg := fmt.Sprintf("use %[1]s.NotErrorIs or %[1]s.NotErrorAs", call.SelectorXStr)
+			return newDiagnostic(checker.Name(), call, msg)
+		}
+
 	case "True":
 		if len(call.Args) < 1 {
 			return nil

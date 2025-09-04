@@ -60,6 +60,8 @@ func (g ErrorNilTestsGenerator) TemplateData() any {
 			{Fn: "Exactly", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 			{Fn: "Exactly", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 			{Fn: "ErrorIs", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
+			{Fn: "IsType", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
+			{Fn: "IsType", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 
 			{Fn: "NotNil", Argsf: "err", ReportMsgf: report, ProposedFn: "Error"},
 			{Fn: "NotEmpty", Argsf: "err", ReportMsgf: report, ProposedFn: "Error"},
@@ -69,6 +71,8 @@ func (g ErrorNilTestsGenerator) TemplateData() any {
 			{Fn: "NotEqualValues", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
 			{Fn: "NotEqualValues", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
 			{Fn: "NotErrorIs", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
+			{Fn: "IsNotType", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
+			{Fn: "IsNotType", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "NoError", Argsf: "err"},

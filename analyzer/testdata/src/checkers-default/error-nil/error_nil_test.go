@@ -36,6 +36,10 @@ func TestErrorNilChecker(t *testing.T) {
 		assert.Exactlyf(t, nil, err, "msg with args %d %s", 42, "42")        // want "error-nil: use assert\\.NoErrorf"
 		assert.ErrorIs(t, err, nil)                                          // want "error-nil: use assert\\.NoError"
 		assert.ErrorIsf(t, err, nil, "msg with args %d %s", 42, "42")        // want "error-nil: use assert\\.NoErrorf"
+		assert.IsType(t, err, nil)                                           // want "error-nil: use assert\\.NoError"
+		assert.IsTypef(t, err, nil, "msg with args %d %s", 42, "42")         // want "error-nil: use assert\\.NoErrorf"
+		assert.IsType(t, nil, err)                                           // want "error-nil: use assert\\.NoError"
+		assert.IsTypef(t, nil, err, "msg with args %d %s", 42, "42")         // want "error-nil: use assert\\.NoErrorf"
 		assert.NotNil(t, err)                                                // want "error-nil: use assert\\.Error"
 		assert.NotNilf(t, err, "msg with args %d %s", 42, "42")              // want "error-nil: use assert\\.Errorf"
 		assert.NotEmpty(t, err)                                              // want "error-nil: use assert\\.Error"
@@ -52,6 +56,10 @@ func TestErrorNilChecker(t *testing.T) {
 		assert.NotEqualValuesf(t, nil, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.Errorf"
 		assert.NotErrorIs(t, err, nil)                                       // want "error-nil: use assert\\.Error"
 		assert.NotErrorIsf(t, err, nil, "msg with args %d %s", 42, "42")     // want "error-nil: use assert\\.Errorf"
+		assert.IsNotType(t, err, nil)                                        // want "error-nil: use assert\\.Error"
+		assert.IsNotTypef(t, err, nil, "msg with args %d %s", 42, "42")      // want "error-nil: use assert\\.Errorf"
+		assert.IsNotType(t, nil, err)                                        // want "error-nil: use assert\\.Error"
+		assert.IsNotTypef(t, nil, err, "msg with args %d %s", 42, "42")      // want "error-nil: use assert\\.Errorf"
 	}
 
 	// Valid.
