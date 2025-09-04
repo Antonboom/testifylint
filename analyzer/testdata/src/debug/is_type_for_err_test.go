@@ -10,6 +10,7 @@ import (
 
 func TestIsTypeForError(t *testing.T) {
 	var err error
+	assert.ErrorIs(t, nil, err)
 	assert.IsType(t, nil, err)
 	assert.IsType(t, error(nil), err)
 
