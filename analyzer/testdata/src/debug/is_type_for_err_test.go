@@ -25,4 +25,8 @@ func TestIsTypeForError(t *testing.T) {
 	assert.ErrorAs(t, err, new(*http.MaxBytesError))
 
 	assert.IsType(t, io.EOF, err)
+
+	if mbErr := new(http.MaxBytesError); assert.ErrorAs(t, err, &mbErr) {
+		assert.Equal(t, 100, mbErr.Limit)
+	}
 }

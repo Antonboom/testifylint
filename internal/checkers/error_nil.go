@@ -18,6 +18,7 @@ import (
 //	assert.EqualValues(t, nil, err)
 //	assert.Exactly(t, nil, err)
 //	assert.ErrorIs(t, err, nil)
+//	assert.IsType(t, err, nil)
 //
 //	assert.NotNil(t, err)
 //	assert.NotEmpty(t, err)
@@ -25,6 +26,7 @@ import (
 //	assert.NotEqual(t, nil, err)
 //	assert.NotEqualValues(t, nil, err)
 //	assert.NotErrorIs(t, err, nil)
+//	assert.IsNotType(t, err, nil)
 //
 // and requires
 //

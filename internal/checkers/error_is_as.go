@@ -15,6 +15,10 @@ import (
 //
 //	assert.Error(t, err, errSentinel)
 //	assert.NoError(t, err, errSentinel)
+//	assert.IsType(t, err, errSentinel)
+//	assert.IsType(t, (*http.MaxBytesError)(nil), err)
+//	assert.IsNotType(t, err, errSentinel)
+//	assert.IsNotType(t, store.NotFoundError{}, err)
 //	assert.True(t, errors.Is(err, errSentinel))
 //	assert.False(t, errors.Is(err, errSentinel))
 //	assert.True(t, errors.As(err, &target))
