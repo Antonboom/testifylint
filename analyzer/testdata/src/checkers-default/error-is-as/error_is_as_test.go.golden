@@ -4,6 +4,7 @@ package errorisas
 
 import (
 	"errors"
+	"net/http"
 	"os"
 	"testing"
 
@@ -19,24 +20,48 @@ func TestErrorIsAsChecker(t *testing.T) {
 
 	// Invalid.
 	{
+		// F-assertions don't allow error as the second arg, because string required.
 		assert.ErrorIs(t, err, errSentinel)                                  // want "error-is-as: invalid usage of assert\\.Error, use assert\\.ErrorIs instead"
 		assert.ErrorIs(t, err, errSentinel, "msg")                           // want "error-is-as: invalid usage of assert\\.Error, use assert\\.ErrorIs instead"
 		assert.ErrorIs(t, err, errSentinel, "msg with arg %d", 42)           // want "error-is-as: invalid usage of assert\\.Error, use assert\\.ErrorIs instead"
 		assert.ErrorIs(t, err, errSentinel, "msg with args %d %s", 42, "42") // want "error-is-as: invalid usage of assert\\.Error, use assert\\.ErrorIs instead"
 
+		// F-assertions don't allow error as the second arg, because string required.
 		assert.NotErrorIs(t, err, errSentinel)                                  // want "error-is-as: invalid usage of assert\\.NoError, use assert\\.NotErrorIs instead"
 		assert.NotErrorIs(t, err, errSentinel, "msg")                           // want "error-is-as: invalid usage of assert\\.NoError, use assert\\.NotErrorIs instead"
 		assert.NotErrorIs(t, err, errSentinel, "msg with arg %d", 42)           // want "error-is-as: invalid usage of assert\\.NoError, use assert\\.NotErrorIs instead"
 		assert.NotErrorIs(t, err, errSentinel, "msg with args %d %s", 42, "42") // want "error-is-as: invalid usage of assert\\.NoError, use assert\\.NotErrorIs instead"
 
-		assert.ErrorIs(t, err, errSentinel)                                      // want "error-is-as: use assert\\.ErrorIs"
-		assert.ErrorIsf(t, err, errSentinel, "msg with args %d %s", 42, "42")    // want "error-is-as: use assert\\.ErrorIsf"
+		// F-assertions don't allow error as the second arg, because string required.
+		assert.ErrorIs(t, err, errSentinel)                                   // want "error-is-as: use assert\\.ErrorIs"
+		assert.ErrorIsf(t, err, errSentinel, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.ErrorIsf"
+		// F-assertions don't allow error as the second arg, because string required.
 		assert.NotErrorIs(t, err, errSentinel)                                   // want "error-is-as: use assert\\.NotErrorIs"
 		assert.NotErrorIsf(t, err, errSentinel, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.NotErrorIsf"
-		assert.ErrorAs(t, err, &target)                                          // want "error-is-as: use assert\\.ErrorAs"
-		assert.ErrorAsf(t, err, &target, "msg with args %d %s", 42, "42")        // want "error-is-as: use assert\\.ErrorAsf"
-		assert.NotErrorAs(t, err, &target)                                       // want "error-is-as: use assert\\.NotErrorAs"
-		assert.NotErrorAsf(t, err, &target, "msg with args %d %s", 42, "42")     // want "error-is-as: use assert\\.NotErrorAsf"
+		// F-assertions don't allow error as the second arg, because string required.
+		assert.ErrorAs(t, err, &target)                                   // want "error-is-as: use assert\\.ErrorAs"
+		assert.ErrorAsf(t, err, &target, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.ErrorAsf"
+		// F-assertions don't allow error as the second arg, because string required.
+		assert.NotErrorAs(t, err, &target)                                   // want "error-is-as: use assert\\.NotErrorAs"
+		assert.NotErrorAsf(t, err, &target, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.NotErrorAsf"
+		// F-assertions don't allow error as the second arg, because string required.
+		assert.IsType(t, &http.MaxBytesError{}, err)                                   // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs"
+		assert.IsTypef(t, &http.MaxBytesError{}, err, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs"
+		// F-assertions don't allow error as the second arg, because string required.
+		assert.IsType(t, (*http.MaxBytesError)(nil), err)                                   // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs"
+		assert.IsTypef(t, (*http.MaxBytesError)(nil), err, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs"
+		// F-assertions don't allow error as the second arg, because string required.
+		assert.IsType(t, err, os.ErrClosed)                                   // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs"
+		assert.IsTypef(t, err, os.ErrClosed, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs"
+		// F-assertions don't allow error as the second arg, because string required.
+		assert.IsNotType(t, &http.MaxBytesError{}, err)                                   // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs"
+		assert.IsNotTypef(t, &http.MaxBytesError{}, err, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs"
+		// F-assertions don't allow error as the second arg, because string required.
+		assert.IsNotType(t, (*http.MaxBytesError)(nil), err)                                   // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs"
+		assert.IsNotTypef(t, (*http.MaxBytesError)(nil), err, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs"
+		// F-assertions don't allow error as the second arg, because string required.
+		assert.IsNotType(t, err, os.ErrClosed)                                   // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs"
+		assert.IsNotTypef(t, err, os.ErrClosed, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs"
 	}
 
 	// Valid.
@@ -49,14 +74,6 @@ func TestErrorIsAsChecker(t *testing.T) {
 		assert.Errorf(t, err, "msg with arg %d", 42)
 		assert.Errorf(t, err, "msg with args %d %s", 42, "42")
 
-		assert.ErrorIs(t, err, errSentinel)
-		assert.ErrorIs(t, err, errSentinel, "msg")
-		assert.ErrorIs(t, err, errSentinel, "msg with arg %d", 42)
-		assert.ErrorIs(t, err, errSentinel, "msg with args %d %s", 42, "42")
-		assert.ErrorIsf(t, err, errSentinel, "msg")
-		assert.ErrorIsf(t, err, errSentinel, "msg with arg %d", 42)
-		assert.ErrorIsf(t, err, errSentinel, "msg with args %d %s", 42, "42")
-
 		assert.NoError(t, err)
 		assert.NoError(t, err, "msg")
 		assert.NoError(t, err, "msg with arg %d", 42)
@@ -64,6 +81,14 @@ func TestErrorIsAsChecker(t *testing.T) {
 		assert.NoErrorf(t, err, "msg")
 		assert.NoErrorf(t, err, "msg with arg %d", 42)
 		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42")
+
+		assert.ErrorIs(t, err, errSentinel)
+		assert.ErrorIs(t, err, errSentinel, "msg")
+		assert.ErrorIs(t, err, errSentinel, "msg with arg %d", 42)
+		assert.ErrorIs(t, err, errSentinel, "msg with args %d %s", 42, "42")
+		assert.ErrorIsf(t, err, errSentinel, "msg")
+		assert.ErrorIsf(t, err, errSentinel, "msg with arg %d", 42)
+		assert.ErrorIsf(t, err, errSentinel, "msg with args %d %s", 42, "42")
 
 		assert.NotErrorIs(t, err, errSentinel)
 		assert.NotErrorIs(t, err, errSentinel, "msg")
@@ -81,6 +106,14 @@ func TestErrorIsAsChecker(t *testing.T) {
 		assert.ErrorAsf(t, err, &target, "msg with arg %d", 42)
 		assert.ErrorAsf(t, err, &target, "msg with args %d %s", 42, "42")
 
+		assert.ErrorAs(t, err, new(*http.MaxBytesError))
+		assert.ErrorAs(t, err, new(*http.MaxBytesError), "msg")
+		assert.ErrorAs(t, err, new(*http.MaxBytesError), "msg with arg %d", 42)
+		assert.ErrorAs(t, err, new(*http.MaxBytesError), "msg with args %d %s", 42, "42")
+		assert.ErrorAsf(t, err, new(*http.MaxBytesError), "msg")
+		assert.ErrorAsf(t, err, new(*http.MaxBytesError), "msg with arg %d", 42)
+		assert.ErrorAsf(t, err, new(*http.MaxBytesError), "msg with args %d %s", 42, "42")
+
 		assert.NotErrorAs(t, err, &target)
 		assert.NotErrorAs(t, err, &target, "msg")
 		assert.NotErrorAs(t, err, &target, "msg with arg %d", 42)
@@ -88,5 +121,13 @@ func TestErrorIsAsChecker(t *testing.T) {
 		assert.NotErrorAsf(t, err, &target, "msg")
 		assert.NotErrorAsf(t, err, &target, "msg with arg %d", 42)
 		assert.NotErrorAsf(t, err, &target, "msg with args %d %s", 42, "42")
+
+		assert.NotErrorAs(t, err, new(*http.MaxBytesError))
+		assert.NotErrorAs(t, err, new(*http.MaxBytesError), "msg")
+		assert.NotErrorAs(t, err, new(*http.MaxBytesError), "msg with arg %d", 42)
+		assert.NotErrorAs(t, err, new(*http.MaxBytesError), "msg with args %d %s", 42, "42")
+		assert.NotErrorAsf(t, err, new(*http.MaxBytesError), "msg")
+		assert.NotErrorAsf(t, err, new(*http.MaxBytesError), "msg with arg %d", 42)
+		assert.NotErrorAsf(t, err, new(*http.MaxBytesError), "msg with args %d %s", 42, "42")
 	}
 }

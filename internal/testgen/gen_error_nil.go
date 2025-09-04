@@ -60,6 +60,9 @@ func (g ErrorNilTestsGenerator) TemplateData() any {
 			{Fn: "Exactly", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 			{Fn: "Exactly", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 			{Fn: "ErrorIs", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
+			{Fn: "ErrorIs", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
+			{Fn: "IsType", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
+			{Fn: "IsType", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "NoError", ProposedArgsf: "err"},
 
 			{Fn: "NotNil", Argsf: "err", ReportMsgf: report, ProposedFn: "Error"},
 			{Fn: "NotEmpty", Argsf: "err", ReportMsgf: report, ProposedFn: "Error"},
@@ -69,6 +72,9 @@ func (g ErrorNilTestsGenerator) TemplateData() any {
 			{Fn: "NotEqualValues", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
 			{Fn: "NotEqualValues", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
 			{Fn: "NotErrorIs", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
+			{Fn: "NotErrorIs", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
+			{Fn: "IsNotType", Argsf: "err, nil", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
+			{Fn: "IsNotType", Argsf: "nil, err", ReportMsgf: report, ProposedFn: "Error", ProposedArgsf: "err"},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "NoError", Argsf: "err"},
@@ -93,6 +99,11 @@ func (g ErrorNilTestsGenerator) TemplateData() any {
 			{Fn: "NotEmpty", Argsf: "errs"},
 			{Fn: "Zero", Argsf: "errs"},
 			{Fn: "NotZero", Argsf: "errs"},
+
+			{Fn: "IsType", Argsf: "err, (*http.MaxBytesError)(nil)"},
+			{Fn: "IsType", Argsf: "(*http.MaxBytesError)(nil), err"},
+			{Fn: "IsNotType", Argsf: "err, (*http.MaxBytesError)(nil)"},
+			{Fn: "IsNotType", Argsf: "(*http.MaxBytesError)(nil), err"},
 		},
 	}
 }
@@ -115,6 +126,7 @@ package {{ .CheckerName.AsPkgName }}
 
 import (
 	"io"
+	"net/http"
 	"testing"
 	"unsafe"
 

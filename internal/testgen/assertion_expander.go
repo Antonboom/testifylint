@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cmp"
 	"fmt"
 	"regexp"
 	"slices"
@@ -76,9 +77,9 @@ func (e *AssertionExpander) Expand(assrn Assertion, selector, testingTParam stri
 	fn, args := assrn.Fn, assrn.Argsf
 
 	if e.asGolden {
-		selector = or(assrn.ProposedSelector, selector)
-		fn = or(assrn.ProposedFn, fn)
-		args = or(assrn.ProposedArgsf, args)
+		selector = cmp.Or(assrn.ProposedSelector, selector)
+		fn = cmp.Or(assrn.ProposedFn, fn)
+		args = cmp.Or(assrn.ProposedArgsf, args)
 	}
 
 	if testingTParam != "" {
@@ -121,8 +122,8 @@ func buildAssertion(selector, fn, args, reportedMsgf, proposedSel, proposedFn st
 	s := fmt.Sprintf("%s.%s(%s)", selector, fn, args)
 
 	if reportedMsgf != "" {
-		if or(proposedSel, proposedFn) != "" {
-			reportedMsgf = fmt.Sprintf(reportedMsgf, or(proposedSel, selector), or(proposedFn, fn))
+		if cmp.Or(proposedSel, proposedFn) != "" {
+			reportedMsgf = fmt.Sprintf(reportedMsgf, cmp.Or(proposedSel, selector), cmp.Or(proposedFn, fn))
 		}
 		s += " // want " + QuoteReport(reportedMsgf)
 	}
@@ -131,13 +132,6 @@ func buildAssertion(selector, fn, args, reportedMsgf, proposedSel, proposedFn st
 
 func buildFmtAssertion(selector, fn, args, reportedMsgf, proposedSel, proposedFn string) string {
 	return buildAssertion(selector, withSuffixF(fn), args, reportedMsgf, proposedSel, withSuffixF(proposedFn))
-}
-
-func or(a, b string) string {
-	if a != "" {
-		return a
-	}
-	return b
 }
 
 func withSuffixF(s string) string {
