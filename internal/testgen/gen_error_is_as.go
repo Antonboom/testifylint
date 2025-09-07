@@ -153,7 +153,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	// Invalid.
 	{
 		{{- range $ai, $assrn := $.InvalidAssertions }}
-			// F-assertions don't allow error as the second arg, because string required.
+			{{/* F-assertions don't allow error as the second arg, because string required. */}}
 			{{- if or (eq $assrn.Fn "Error") (eq $assrn.Fn "NoError") }}
 				{{ NewAssertionExpander.NotFmtSetMode.Expand $assrn "assert" "t" nil }}
 			{{ else }}
