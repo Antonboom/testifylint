@@ -4,6 +4,7 @@ package errornil
 
 import (
 	"io"
+	"net/http"
 	"testing"
 	"unsafe"
 
@@ -36,6 +37,18 @@ func TestErrorNilChecker(t *testing.T) {
 		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.NoErrorf"
 		assert.NoError(t, err)                                   // want "error-nil: use assert\\.NoError"
 		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.NoErrorf"
+		assert.NoError(t, err)                                   // want "error-nil: use assert\\.NoError"
+		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.NoErrorf"
+		assert.NoError(t, err)                                   // want "error-nil: use assert\\.NoError"
+		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.NoErrorf"
+		assert.NoError(t, err)                                   // want "error-nil: use assert\\.NoError"
+		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.NoErrorf"
+		assert.Error(t, err)                                     // want "error-nil: use assert\\.Error"
+		assert.Errorf(t, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
+		assert.Error(t, err)                                     // want "error-nil: use assert\\.Error"
+		assert.Errorf(t, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
+		assert.Error(t, err)                                     // want "error-nil: use assert\\.Error"
+		assert.Errorf(t, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
 		assert.Error(t, err)                                     // want "error-nil: use assert\\.Error"
 		assert.Errorf(t, err, "msg with args %d %s", 42, "42")   // want "error-nil: use assert\\.Errorf"
 		assert.Error(t, err)                                     // want "error-nil: use assert\\.Error"
@@ -96,6 +109,14 @@ func TestErrorNilChecker(t *testing.T) {
 		assert.Zerof(t, errs, "msg with args %d %s", 42, "42")
 		assert.NotZero(t, errs)
 		assert.NotZerof(t, errs, "msg with args %d %s", 42, "42")
+		assert.IsType(t, err, (*http.MaxBytesError)(nil))
+		assert.IsTypef(t, err, (*http.MaxBytesError)(nil), "msg with args %d %s", 42, "42")
+		assert.IsType(t, (*http.MaxBytesError)(nil), err)
+		assert.IsTypef(t, (*http.MaxBytesError)(nil), err, "msg with args %d %s", 42, "42")
+		assert.IsNotType(t, err, (*http.MaxBytesError)(nil))
+		assert.IsNotTypef(t, err, (*http.MaxBytesError)(nil), "msg with args %d %s", 42, "42")
+		assert.IsNotType(t, (*http.MaxBytesError)(nil), err)
+		assert.IsNotTypef(t, (*http.MaxBytesError)(nil), err, "msg with args %d %s", 42, "42")
 	}
 }
 

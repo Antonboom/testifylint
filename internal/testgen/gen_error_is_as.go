@@ -63,14 +63,57 @@ func (g ErrorIsAsTestsGenerator) TemplateData() any {
 				ProposedFn:    "NotErrorAs",
 				ProposedArgsf: "err, &target",
 			},
+
+			// Type cases.
+			{
+				Fn:         "IsType",
+				Argsf:      "&http.MaxBytesError{}, err",
+				ReportMsgf: checker + ": use %[1]s.ErrorIs or %[1]s.ErrorAs depending on the case",
+				ProposedFn: "IsType",
+			},
+			{
+				Fn:         "IsType",
+				Argsf:      "(*http.MaxBytesError)(nil), err",
+				ReportMsgf: checker + ": use %[1]s.ErrorIs or %[1]s.ErrorAs depending on the case",
+				ProposedFn: "IsType",
+			},
+			{
+				Fn:         "IsType",
+				Argsf:      "err, os.ErrClosed",
+				ReportMsgf: checker + ": use %[1]s.ErrorIs or %[1]s.ErrorAs depending on the case",
+				ProposedFn: "IsType",
+			},
+
+			{
+				Fn:         "IsNotType",
+				Argsf:      "&http.MaxBytesError{}, err",
+				ReportMsgf: checker + ": use %[1]s.NotErrorIs or %[1]s.NotErrorAs depending on the case",
+				ProposedFn: "IsNotType",
+			},
+			{
+				Fn:         "IsNotType",
+				Argsf:      "(*http.MaxBytesError)(nil), err",
+				ReportMsgf: checker + ": use %[1]s.NotErrorIs or %[1]s.NotErrorAs depending on the case",
+				ProposedFn: "IsNotType",
+			},
+			{
+				Fn:         "IsNotType",
+				Argsf:      "err, os.ErrClosed",
+				ReportMsgf: checker + ": use %[1]s.NotErrorIs or %[1]s.NotErrorAs depending on the case",
+				ProposedFn: "IsNotType",
+			},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "Error", Argsf: "err"},
-			{Fn: "ErrorIs", Argsf: "err, errSentinel"},
 			{Fn: "NoError", Argsf: "err"},
+
+			{Fn: "ErrorIs", Argsf: "err, errSentinel"},
 			{Fn: "NotErrorIs", Argsf: "err, errSentinel"},
+
 			{Fn: "ErrorAs", Argsf: "err, &target"},
+			{Fn: "ErrorAs", Argsf: "err, new(*http.MaxBytesError)"},
 			{Fn: "NotErrorAs", Argsf: "err, &target"},
+			{Fn: "NotErrorAs", Argsf: "err, new(*http.MaxBytesError)"},
 		},
 	}
 }
@@ -93,6 +136,7 @@ package {{ .CheckerName.AsPkgName }}
 
 import (
 	"errors"
+	"net/http"
 	"os"
 	"testing"
 
@@ -109,6 +153,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	// Invalid.
 	{
 		{{- range $ai, $assrn := $.InvalidAssertions }}
+			{{/* F-assertions don't allow error as the second arg, because string required. */}}
 			{{- if or (eq $assrn.Fn "Error") (eq $assrn.Fn "NoError") }}
 				{{ NewAssertionExpander.NotFmtSetMode.Expand $assrn "assert" "t" nil }}
 			{{ else }}
