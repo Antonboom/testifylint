@@ -43,23 +43,23 @@ func TestErrorIsAsChecker(t *testing.T) {
 		assert.False(t, errors.As(err, &target))                                   // want "error-is-as: use assert\\.NotErrorAs"
 		assert.Falsef(t, errors.As(err, &target), "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.NotErrorAsf"
 
-		assert.IsType(t, &http.MaxBytesError{}, err)                                   // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs"
-		assert.IsTypef(t, &http.MaxBytesError{}, err, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs"
+		assert.IsType(t, &http.MaxBytesError{}, err)                                   // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs depending on the case"
+		assert.IsTypef(t, &http.MaxBytesError{}, err, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs depending on the case"
 
-		assert.IsType(t, (*http.MaxBytesError)(nil), err)                                   // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs"
-		assert.IsTypef(t, (*http.MaxBytesError)(nil), err, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs"
+		assert.IsType(t, (*http.MaxBytesError)(nil), err)                                   // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs depending on the case"
+		assert.IsTypef(t, (*http.MaxBytesError)(nil), err, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs depending on the case"
 
-		assert.IsType(t, err, os.ErrClosed)                                   // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs"
-		assert.IsTypef(t, err, os.ErrClosed, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs"
+		assert.IsType(t, err, os.ErrClosed)                                   // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs depending on the case"
+		assert.IsTypef(t, err, os.ErrClosed, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.ErrorIs or assert\\.ErrorAs depending on the case"
 
-		assert.IsNotType(t, &http.MaxBytesError{}, err)                                   // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs"
-		assert.IsNotTypef(t, &http.MaxBytesError{}, err, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs"
+		assert.IsNotType(t, &http.MaxBytesError{}, err)                                   // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs depending on the case"
+		assert.IsNotTypef(t, &http.MaxBytesError{}, err, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs depending on the case"
 
-		assert.IsNotType(t, (*http.MaxBytesError)(nil), err)                                   // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs"
-		assert.IsNotTypef(t, (*http.MaxBytesError)(nil), err, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs"
+		assert.IsNotType(t, (*http.MaxBytesError)(nil), err)                                   // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs depending on the case"
+		assert.IsNotTypef(t, (*http.MaxBytesError)(nil), err, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs depending on the case"
 
-		assert.IsNotType(t, err, os.ErrClosed)                                   // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs"
-		assert.IsNotTypef(t, err, os.ErrClosed, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs"
+		assert.IsNotType(t, err, os.ErrClosed)                                   // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs depending on the case"
+		assert.IsNotTypef(t, err, os.ErrClosed, "msg with args %d %s", 42, "42") // want "error-is-as: use assert\\.NotErrorIs or assert\\.NotErrorAs depending on the case"
 	}
 
 	// Valid.
