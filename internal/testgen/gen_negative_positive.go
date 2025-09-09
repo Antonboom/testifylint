@@ -174,7 +174,7 @@ func (g NegativePositiveTestsGenerator) TemplateData() any {
 	}
 
 	// These one will be reported by useless-assert.
-	ignoredAssertions = append(ignoredAssertions,
+	ignoredAssertions = append(ignoredAssertions, //nolint:gocritic // Worse performance in favor of readability.
 		Assertion{Fn: "Equal", Argsf: "0, 0"},
 		Assertion{Fn: "Equal", Argsf: "a, a"},
 		Assertion{Fn: "NotEqual", Argsf: "0, 0"},

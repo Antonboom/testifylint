@@ -50,7 +50,7 @@ var _ = make(chan int, 1)
 func TestNodeFormatting_Invalid(t *testing.T) {
 	t.Run("NodeBytes", func(t *testing.T) {
 		b := analysisutil.NodeBytes(token.NewFileSet(), nil)
-		if string(b) != "" {
+		if len(b) != 0 {
 			t.Fatalf("%s", b)
 		}
 	})
