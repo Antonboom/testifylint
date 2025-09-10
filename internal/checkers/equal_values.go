@@ -47,8 +47,8 @@ func (checker EqualValues) Check(pass *analysis.Pass, call *CallMeta) *analysis.
 		return nil
 	}
 
-	switch ft.String() {
-	case "any", "interface {}":
+	// one argument type is equivalent to any
+	if isEmptyInterfaceType(ft) || isEmptyInterfaceType(st) {
 		// EqualValues is ok here.
 		// Equal would check their types and would fail
 		return nil
