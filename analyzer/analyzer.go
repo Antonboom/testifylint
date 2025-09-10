@@ -7,7 +7,6 @@ import (
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/ast/inspector"
 
-	"github.com/Antonboom/testifylint/internal/analysisutil"
 	"github.com/Antonboom/testifylint/internal/checkers"
 	"github.com/Antonboom/testifylint/internal/config"
 	"github.com/Antonboom/testifylint/internal/testify"
@@ -51,15 +50,10 @@ type testifyLint struct {
 }
 
 func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
-	filesToAnalysis := make([]*ast.File, 0, len(pass.Files))
-	for _, f := range pass.Files {
-		if !analysisutil.Imports(f, testify.AssertPkgPath, testify.RequirePkgPath, testify.SuitePkgPath) {
-			continue
-		}
-		filesToAnalysis = append(filesToAnalysis, f)
-	}
-
-	insp := inspector.New(filesToAnalysis)
+	// NOTE(a.telyshev): There are no premature optimizations like "scan only _test.go" or
+	// "scan only files with testify imports", since it is possible to skip files
+	// with assertions (etc. test helpers in regular Go files or suite methods).
+	insp := inspector.New(pass.Files)
 
 	// Regular checkers.
 	insp.Preorder([]ast.Node{(*ast.CallExpr)(nil)}, func(node ast.Node) {
