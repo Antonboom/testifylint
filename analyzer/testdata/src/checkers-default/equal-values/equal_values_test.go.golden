@@ -16,6 +16,7 @@ type RequestWithTags struct {
 	ID string `json:"name"`
 }
 type Arg struct{ ID string }
+type customAnyAlias any
 
 func TestEqualValuesChecker(t *testing.T) {
 	var (
@@ -43,6 +44,13 @@ func TestEqualValuesChecker(t *testing.T) {
 		b           []byte
 		f           func() bool
 	)
+
+	var (
+		fortyTwoAny       any            = 42
+		fortyTwoInterface interface{}    = float32(42.0)
+		fortyTwoAnyAlias  customAnyAlias = uint8(42)
+	)
+
 	tlsConf := new(tls.Config)
 
 	// Invalid.
@@ -127,6 +135,16 @@ func TestEqualValuesChecker(t *testing.T) {
 		assert.EqualValuesf(t, 2048, mm["Etype"], "msg with args %d %s", 42, "42")
 		assert.EqualValues(t, req, dto)
 		assert.EqualValuesf(t, req, dto, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, 42, fortyTwoAny)
+		assert.EqualValuesf(t, 42, fortyTwoAny, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, 42, fortyTwoAny)
+		assert.EqualValuesf(t, 42, fortyTwoAny, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, 42, fortyTwoInterface)
+		assert.EqualValuesf(t, 42, fortyTwoInterface, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, 42, fortyTwoAnyAlias)
+		assert.EqualValuesf(t, 42, fortyTwoAnyAlias, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, fortyTwoAny, fortyTwoInterface)
+		assert.EqualValuesf(t, fortyTwoAny, fortyTwoInterface, "msg with args %d %s", 42, "42")
 		assert.EqualValues(t, req, reqWithTags)
 		assert.EqualValuesf(t, req, reqWithTags, "msg with args %d %s", 42, "42")
 		assert.EqualValues(t, S{"1"}, []string{"1"})
