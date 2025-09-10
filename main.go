@@ -12,10 +12,10 @@ import (
 )
 
 // Populated by goreleaser during build.
-const (
+var (
 	version = "unknown"
-	commit
-	date
+	commit  = "unknown"
+	date    = "unknown"
 )
 
 func main() {
