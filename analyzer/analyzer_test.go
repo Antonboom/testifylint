@@ -83,6 +83,10 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewErrorNil().Name()},
 		},
 		{
+			dir:   "expected-actual-issue174",
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewExpectedActual().Name()},
+		},
+		{
 			dir: "expected-var-custom-pattern",
 			flags: map[string]string{
 				"disable-all":             "true",
