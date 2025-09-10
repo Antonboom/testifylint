@@ -1,9 +1,10 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"os"
 	"runtime/debug"
+	"slices"
 
 	"golang.org/x/tools/go/analysis/singlechecker"
 
@@ -18,18 +19,21 @@ const (
 )
 
 func main() {
-	showVersion := flag.Bool("V", false, "print version and exit")
-	flag.Parse()
-
-	if *showVersion {
-		goVersion := "go???"
-		if buildInfo, ok := debug.ReadBuildInfo(); ok {
-			goVersion = buildInfo.GoVersion
+	for _, arg := range os.Args[1:] {
+		if slices.Contains([]string{"--version", "-version", "-V", "--V"}, arg) {
+			printVersion()
+			return
 		}
-
-		fmt.Printf("version %s built with %s from %s on %s\n", version, goVersion, commit, date)
-		return
 	}
 
 	singlechecker.Main(analyzer.New())
+}
+
+func printVersion() {
+	goVersion := "go???"
+	if buildInfo, ok := debug.ReadBuildInfo(); ok {
+		goVersion = buildInfo.GoVersion
+	}
+
+	fmt.Printf("version %s built with %s from %s on %s\n", version, goVersion, commit, date)
 }
