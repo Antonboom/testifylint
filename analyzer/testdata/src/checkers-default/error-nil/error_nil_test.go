@@ -4,6 +4,7 @@ package errornil
 
 import (
 	"io"
+	"net/http"
 	"testing"
 	"unsafe"
 
@@ -36,6 +37,12 @@ func TestErrorNilChecker(t *testing.T) {
 		assert.Exactlyf(t, nil, err, "msg with args %d %s", 42, "42")        // want "error-nil: use assert\\.NoErrorf"
 		assert.ErrorIs(t, err, nil)                                          // want "error-nil: use assert\\.NoError"
 		assert.ErrorIsf(t, err, nil, "msg with args %d %s", 42, "42")        // want "error-nil: use assert\\.NoErrorf"
+		assert.ErrorIs(t, nil, err)                                          // want "error-nil: use assert\\.NoError"
+		assert.ErrorIsf(t, nil, err, "msg with args %d %s", 42, "42")        // want "error-nil: use assert\\.NoErrorf"
+		assert.IsType(t, err, nil)                                           // want "error-nil: use assert\\.NoError"
+		assert.IsTypef(t, err, nil, "msg with args %d %s", 42, "42")         // want "error-nil: use assert\\.NoErrorf"
+		assert.IsType(t, nil, err)                                           // want "error-nil: use assert\\.NoError"
+		assert.IsTypef(t, nil, err, "msg with args %d %s", 42, "42")         // want "error-nil: use assert\\.NoErrorf"
 		assert.NotNil(t, err)                                                // want "error-nil: use assert\\.Error"
 		assert.NotNilf(t, err, "msg with args %d %s", 42, "42")              // want "error-nil: use assert\\.Errorf"
 		assert.NotEmpty(t, err)                                              // want "error-nil: use assert\\.Error"
@@ -52,6 +59,12 @@ func TestErrorNilChecker(t *testing.T) {
 		assert.NotEqualValuesf(t, nil, err, "msg with args %d %s", 42, "42") // want "error-nil: use assert\\.Errorf"
 		assert.NotErrorIs(t, err, nil)                                       // want "error-nil: use assert\\.Error"
 		assert.NotErrorIsf(t, err, nil, "msg with args %d %s", 42, "42")     // want "error-nil: use assert\\.Errorf"
+		assert.NotErrorIs(t, nil, err)                                       // want "error-nil: use assert\\.Error"
+		assert.NotErrorIsf(t, nil, err, "msg with args %d %s", 42, "42")     // want "error-nil: use assert\\.Errorf"
+		assert.IsNotType(t, err, nil)                                        // want "error-nil: use assert\\.Error"
+		assert.IsNotTypef(t, err, nil, "msg with args %d %s", 42, "42")      // want "error-nil: use assert\\.Errorf"
+		assert.IsNotType(t, nil, err)                                        // want "error-nil: use assert\\.Error"
+		assert.IsNotTypef(t, nil, err, "msg with args %d %s", 42, "42")      // want "error-nil: use assert\\.Errorf"
 	}
 
 	// Valid.
@@ -96,6 +109,14 @@ func TestErrorNilChecker(t *testing.T) {
 		assert.Zerof(t, errs, "msg with args %d %s", 42, "42")
 		assert.NotZero(t, errs)
 		assert.NotZerof(t, errs, "msg with args %d %s", 42, "42")
+		assert.IsType(t, err, (*http.MaxBytesError)(nil))
+		assert.IsTypef(t, err, (*http.MaxBytesError)(nil), "msg with args %d %s", 42, "42")
+		assert.IsType(t, (*http.MaxBytesError)(nil), err)
+		assert.IsTypef(t, (*http.MaxBytesError)(nil), err, "msg with args %d %s", 42, "42")
+		assert.IsNotType(t, err, (*http.MaxBytesError)(nil))
+		assert.IsNotTypef(t, err, (*http.MaxBytesError)(nil), "msg with args %d %s", 42, "42")
+		assert.IsNotType(t, (*http.MaxBytesError)(nil), err)
+		assert.IsNotTypef(t, (*http.MaxBytesError)(nil), err, "msg with args %d %s", 42, "42")
 	}
 }
 

@@ -1,4 +1,4 @@
-package analyzer //nolint:testpackage
+package analyzer //nolint:testpackage // Testing of private api.
 
 import (
 	"reflect"

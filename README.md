@@ -81,7 +81,7 @@ $ testifylint --suite-extra-assert-call.mode=require ./...
 
 ### golangci-lint
 
-https://golangci-lint.run/usage/linters/#testifylint
+https://golangci-lint.run/docs/linters/configuration/#testifylint
 
 ## Checkers
 
@@ -365,6 +365,10 @@ In additional:
 ❌
 assert.Error(t, err, errSentinel) // Typo, errSentinel hits `msgAndArgs`.
 assert.NoError(t, err, errSentinel)
+assert.IsType(t, err, errSentinel)
+assert.IsType(t, (*http.MaxBytesError)(nil), err)
+assert.IsNotType(t, err, errSentinel)
+assert.IsNotType(t, store.NotFoundError{}, err)
 assert.True(t, errors.Is(err, errSentinel))
 assert.False(t, errors.Is(err, errSentinel))
 assert.True(t, errors.As(err, &target))
@@ -386,6 +390,20 @@ Also `error-is-as` repeats `go vet`'s
 [errorsas check](https://cs.opensource.google/go/x/tools/+/master:go/analysis/passes/errorsas/errorsas.go)
 logic, but without autofix.
 
+`assert.ErrorAs` cheatsheet:
+```go
+assert.ErrorAs(t, err, new(*http.MaxBytesError))
+assert.ErrorAs(t, err, store.NotFoundError{})
+
+mbErr := new(http.MaxBytesError)
+require.ErrorAs(t, err, &mbErr)
+assert.Equal(t, 100, mbErr.Limit)
+
+if mbErr := new(http.MaxBytesError); assert.ErrorAs(t, err, &mbErr) {
+    assert.Equal(t, 100, mbErr.Limit)
+}
+```
+
 ---
 
 ### error-nil
@@ -399,6 +417,7 @@ assert.Equal(t, nil, err)
 assert.EqualValues(t, nil, err)
 assert.Exactly(t, nil, err)
 assert.ErrorIs(t, err, nil)
+assert.IsType(t, err, nil)
 
 assert.NotNil(t, err)
 assert.NotEmpty(t, err)
@@ -406,6 +425,7 @@ assert.NotZero(t, err)
 assert.NotEqual(t, nil, err)
 assert.NotEqualValues(t, nil, err)
 assert.NotErrorIs(t, err, nil)
+assert.IsNotType(t, err, nil)
 
 ✅
 assert.NoError(t, err)

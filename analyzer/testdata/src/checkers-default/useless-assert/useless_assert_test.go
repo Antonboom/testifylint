@@ -56,6 +56,13 @@ func TestUselessAssertChecker(t *testing.T) {
 		assert.Equalf(t, testCase{}.A().B().C(), testCase{}.A().B().C(), "msg")                           // want "useless-assert: asserting of the same variable"
 		assert.Equalf(t, testCase{}.A().B().C(), testCase{}.A().B().C(), "msg with arg %d", 42)           // want "useless-assert: asserting of the same variable"
 		assert.Equalf(t, testCase{}.A().B().C(), testCase{}.A().B().C(), "msg with args %d %s", 42, "42") // want "useless-assert: asserting of the same variable"
+		assert.IsNotType(t, (*testCase)(nil), (*testCase)(nil))                                           // want "useless-assert: asserting of the same variable"
+		assert.IsNotType(t, (*testCase)(nil), (*testCase)(nil), "msg")                                    // want "useless-assert: asserting of the same variable"
+		assert.IsNotType(t, (*testCase)(nil), (*testCase)(nil), "msg with arg %d", 42)                    // want "useless-assert: asserting of the same variable"
+		assert.IsNotType(t, (*testCase)(nil), (*testCase)(nil), "msg with args %d %s", 42, "42")          // want "useless-assert: asserting of the same variable"
+		assert.IsNotTypef(t, (*testCase)(nil), (*testCase)(nil), "msg")                                   // want "useless-assert: asserting of the same variable"
+		assert.IsNotTypef(t, (*testCase)(nil), (*testCase)(nil), "msg with arg %d", 42)                   // want "useless-assert: asserting of the same variable"
+		assert.IsNotTypef(t, (*testCase)(nil), (*testCase)(nil), "msg with args %d %s", 42, "42")         // want "useless-assert: asserting of the same variable"
 		assert.IsType(t, (*testCase)(nil), (*testCase)(nil))                                              // want "useless-assert: asserting of the same variable"
 		assert.IsType(t, (*testCase)(nil), (*testCase)(nil), "msg")                                       // want "useless-assert: asserting of the same variable"
 		assert.IsType(t, (*testCase)(nil), (*testCase)(nil), "msg with arg %d", 42)                       // want "useless-assert: asserting of the same variable"
@@ -457,6 +464,8 @@ func TestUselessAssertChecker(t *testing.T) {
 		assert.InEpsilonf(t, value, value, 0.0001, "msg with args %d %s", 42, "42")                       // want "useless-assert: asserting of the same variable"
 		assert.InEpsilonSlice(t, value, value, 0.0001)                                                    // want "useless-assert: asserting of the same variable"
 		assert.InEpsilonSlicef(t, value, value, 0.0001, "msg with args %d %s", 42, "42")                  // want "useless-assert: asserting of the same variable"
+		assert.IsNotType(t, value, value)                                                                 // want "useless-assert: asserting of the same variable"
+		assert.IsNotTypef(t, value, value, "msg with args %d %s", 42, "42")                               // want "useless-assert: asserting of the same variable"
 		assert.IsType(t, value, value)                                                                    // want "useless-assert: asserting of the same variable"
 		assert.IsTypef(t, value, value, "msg with args %d %s", 42, "42")                                  // want "useless-assert: asserting of the same variable"
 		assert.JSONEq(t, str, str)                                                                        // want "useless-assert: asserting of the same variable"
@@ -535,6 +544,13 @@ func TestUselessAssertChecker(t *testing.T) {
 		assert.Equalf(t, testCase{}.A().B().C(), tc.A().B().C(), "msg")
 		assert.Equalf(t, testCase{}.A().B().C(), tc.A().B().C(), "msg with arg %d", 42)
 		assert.Equalf(t, testCase{}.A().B().C(), tc.A().B().C(), "msg with args %d %s", 42, "42")
+		assert.IsNotType(t, tc, testCase{})
+		assert.IsNotType(t, tc, testCase{}, "msg")
+		assert.IsNotType(t, tc, testCase{}, "msg with arg %d", 42)
+		assert.IsNotType(t, tc, testCase{}, "msg with args %d %s", 42, "42")
+		assert.IsNotTypef(t, tc, testCase{}, "msg")
+		assert.IsNotTypef(t, tc, testCase{}, "msg with arg %d", 42)
+		assert.IsNotTypef(t, tc, testCase{}, "msg with args %d %s", 42, "42")
 		assert.IsType(t, tc, testCase{})
 		assert.IsType(t, tc, testCase{}, "msg")
 		assert.IsType(t, tc, testCase{}, "msg with arg %d", 42)

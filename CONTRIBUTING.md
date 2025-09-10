@@ -1,12 +1,10 @@
 # Contribution guideline
 
-### 1) Install developer tools
+### 1) Install `task`
 
 ```bash
 # https://taskfile.dev/installation/
 $ go install github.com/go-task/task/v3/cmd/task@latest
-$ task tools:install
-Install dev tools...
 ```
 
 ### 2) Create a checker skeleton in `internal/checkers/{checker_name}.go`
@@ -104,6 +102,8 @@ Usually 100-200 lines are enough for checker testing. You need to find balance b
 common sense, and processing of boundary conditions. See existing tests as example.
 
 For testing checker replacements use [testdata/src/debug](./analyzer/testdata/src/debug).
+
+Example of test cases search – https://github.com/search?q=language%3Ago+%2Fassert%5C.IsType%5C%28t%5C%2C.*err%2F&type=code
 
 ### 9) Run the `task` command from the project's root directory
 
