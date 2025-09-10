@@ -67,7 +67,11 @@ func (g EqualValuesTestsGenerator) TemplateData() any {
 
 			{Fn: "EqualValues", Argsf: `2048, mm["Etype"]`},
 			{Fn: "EqualValues", Argsf: `req, dto`},
-			{Fn: "EqualValues", Argsf: `anyInt, anyFloat`},
+			{Fn: "EqualValues", Argsf: `42, fortyTwoAny`},
+			{Fn: "EqualValues", Argsf: `42, fortyTwoAny`},
+			{Fn: "EqualValues", Argsf: `42, fortyTwoInterface`},
+			{Fn: "EqualValues", Argsf: `42, fortyTwoAnyAlias`},
+			{Fn: "EqualValues", Argsf: `fortyTwoAny, fortyTwoInterface`},
 			{Fn: "EqualValues", Argsf: `req, reqWithTags`},
 			{Fn: "EqualValues", Argsf: `S{"1"}, []string{"1"}`},
 			{Fn: "EqualValues", Argsf: `f, (func())(nil)`},
@@ -105,6 +109,7 @@ type S []string
 type Request struct { ID string }
 type RequestWithTags struct { ID string ` + "`json:\"name\"` }" + `
 type Arg struct { ID string }
+type customAnyAlias any
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var (
@@ -134,8 +139,9 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	)
 
 	var (
-		anyInt any = 42
-		anyFloat any = 42.0
+		fortyTwoAny       any            = 42
+		fortyTwoInterface interface{}    = float32(42.0)
+		fortyTwoAnyAlias  customAnyAlias = uint8(42)
 	)
 
 	tlsConf := new(tls.Config)
