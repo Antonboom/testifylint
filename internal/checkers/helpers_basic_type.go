@@ -72,6 +72,12 @@ func isEmptyStringLit(e ast.Expr) bool {
 }
 
 func isBasicLit(e ast.Expr) bool {
+	if un, ok := e.(*ast.UnaryExpr); ok {
+		if un.Op == token.SUB {
+			return isBasicLit(un.X)
+		}
+	}
+
 	_, ok := e.(*ast.BasicLit)
 	return ok
 }
