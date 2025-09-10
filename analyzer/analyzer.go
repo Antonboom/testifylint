@@ -51,7 +51,7 @@ type testifyLint struct {
 
 func (tl *testifyLint) run(pass *analysis.Pass) (any, error) {
 	// NOTE(a.telyshev): There are no premature optimizations like "scan only _test.go" or
-	// "scan only files with testify imports", since it is possible to skip files
+	// "scan only files with testify imports", since it could lead to skip files
 	// with assertions (etc. test helpers in regular Go files or suite methods).
 	insp := inspector.New(pass.Files)
 
