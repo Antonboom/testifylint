@@ -81,7 +81,7 @@ $ testifylint --suite-extra-assert-call.mode=require ./...
 
 ### golangci-lint
 
-https://golangci-lint.run/usage/linters/#testifylint
+https://golangci-lint.run/docs/linters/configuration/#testifylint
 
 ## Checkers
 
