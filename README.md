@@ -30,9 +30,6 @@ and speed up the search for a problem.
 But it has a terrible ambiguous API in places, and **the purpose of this linter is to protect you from annoying
 mistakes**.
 
-Most checkers are stylistic, but checkers like [error-is-as](#error-is-as), [require-error](#require-error),
-[expected-actual](#expected-actual), [float-compare](#float-compare) are really helpful.
-
 _* JetBrains "The State of Go Ecosystem" reports
 [2021](https://www.jetbrains.com/lp/devecosystem-2021/go/#Go_which-testing-frameworks-do-you-use-regularly-if-any)
 and [2022](https://www.jetbrains.com/lp/devecosystem-2022/go/#which-testing-frameworks-do-you-use-regularly-if-any-)._
@@ -94,7 +91,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [blank-import](#blank-import)                       | ✅                  | ❌       |
 | [bool-compare](#bool-compare)                       | ✅                  | ✅       |
 | [compares](#compares)                               | ✅                  | ✅       |
-| [contains](#contains)                               | ✅                  | ✅       |
+| [contains](#contains)                               | ✅                  | 🤏      |
 | [empty](#empty)                                     | ✅                  | ✅       |
 | [encoded-compare](#encoded-compare)                 | ✅                  | ✅       |
 | [equal-values](#equal-values)                       | ✅                  | ✅       |
@@ -226,18 +223,73 @@ due to the inappropriate recursive nature of `assert.Equal` (based on
 ❌
 assert.True(t, strings.Contains(a, "abc123"))
 assert.False(t, !strings.Contains(a, "abc123"))
-
 assert.False(t, strings.Contains(a, "abc123"))
 assert.True(t, !strings.Contains(a, "abc123"))
+assert.Contains(t, arr, 1, 2)
+assert.NotContains(t, arr, 1, 2)
 
 ✅
 assert.Contains(t, a, "abc123")
 assert.NotContains(t, a, "abc123")
+assert.Subset(t, arr, 1, 2)
+assert.NotSubset(t, arr, 1, 2)
 ```
 
-**Autofix**: true. <br>
+**Autofix**: partially. <br>
 **Enabled by default**: true. <br>
-**Reason**: Code simplification and more appropriate `testify` API with clearer failure message.
+**Reason**: Protection from bugs, code simplification and more appropriate `testify` API with clearer failure message.
+
+#### An example of bug in Kubernetes tests
+
+<details>
+
+<summary>Click to expand...</summary>
+
+```go
+❌
+assert.Contains(t, cadvisorInfoToUserDefinedMetrics(&cInfo), 
+    statsapi.UserDefinedMetric{
+        UserDefinedMetricDescriptor: statsapi.UserDefinedMetricDescriptor{
+            Name:  "qos",
+            Type:  statsapi.MetricGauge,
+            Units: "per second",
+        },
+        Time:  metav1.NewTime(timestamp2),
+        Value: 100,
+    },
+    statsapi.UserDefinedMetric{
+        UserDefinedMetricDescriptor: statsapi.UserDefinedMetricDescriptor{
+            Name:  "cpuLoad",
+            Type:  statsapi.MetricCumulative,
+            Units: "count",
+        },
+        Time:  metav1.NewTime(timestamp2),
+        Value: 2.1,
+    })
+
+✅
+assert.Subset(t, cadvisorInfoToUserDefinedMetrics(&cInfo), []statsapi.UserDefinedMetric{
+    {
+        UserDefinedMetricDescriptor: statsapi.UserDefinedMetricDescriptor{
+            Name:  "qos",
+            Type:  statsapi.MetricGauge,
+            Units: "per second",
+        },
+        Time:  metav1.NewTime(timestamp2),
+        Value: 100,
+    },
+    {
+        UserDefinedMetricDescriptor: statsapi.UserDefinedMetricDescriptor{
+            Name:  "cpuLoad",
+            Type:  statsapi.MetricCumulative,
+            Units: "count",
+        },
+        Time:  metav1.NewTime(timestamp2),
+        Value: 2.1,
+    }})
+```
+
+</details>
 
 ---
 
