@@ -208,11 +208,11 @@ func TestMockExpectChecker(t *testing.T) {
 
 	// Invalid.
 	{
-		u.On("CreateUser", mock.Anything, User{}).Return(nil)    // want "mock-expect: use u.EXPECT().CreateUser(...)"
-		u.On("GetUser", t.Context(), "test").Return(User{}, nil) // want "mock-expect: use u.EXPECT().GetUser(...)"
-		u.On("Void")                                             // want "mock-expect: use u.EXPECT().Void(...)"
-		u.On("Void").Once()                                      // want "mock-expect: use u.EXPECT().Void(...)"
-		u.On("CountUsers").Return(123)                           // want "mock-expect: use u.EXPECT().CountUsers(...)"
+		u.On("CreateUser", mock.Anything, User{}).Return(nil)    // want "mock-expect: use u\\.EXPECT\\(\\)\\.CreateUser\\(\\.\\.\\.\\)"
+		u.On("GetUser", t.Context(), "test").Return(User{}, nil) // want "mock-expect: use u\\.EXPECT\\(\\)\\.GetUser\\(\\.\\.\\.\\)"
+		u.On("Void")                                             // want "mock-expect: use u\\.EXPECT\\(\\)\\.Void\\(\\.\\.\\.\\)"
+		u.On("Void").Once()                                      // want "mock-expect: use u\\.EXPECT\\(\\)\\.Void\\(\\.\\.\\.\\)"
+		u.On("CountUsers").Return(123)                           // want "mock-expect: use u\\.EXPECT\\(\\)\\.CountUsers\\(\\.\\.\\.\\)"
 	}
 
 	// Ignored.
