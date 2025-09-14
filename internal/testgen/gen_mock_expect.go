@@ -15,7 +15,7 @@ func (MockExpectTestsGenerator) Checker() checkers.Checker {
 func (g MockExpectTestsGenerator) TemplateData() any {
 	var (
 		checker = g.Checker().Name()
-		report  = checker + ": use u.EXPECT().%s(...)"
+		report  = checker + `: use u\\.EXPECT\\(\\)\\.%s\\(\\.\\.\\.\\)`
 	)
 
 	return struct {

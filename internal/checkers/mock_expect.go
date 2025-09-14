@@ -69,7 +69,7 @@ func (checker MockExpect) Check(pass *analysis.Pass, insp *inspector.Inspector) 
 			}
 
 			diagnostics = append(diagnostics, *newDiagnostic(
-				checker.Name(), callExpr, "use "+ident.Name+".EXPECT."+methodName+"(...)",
+				checker.Name(), callExpr, "use "+ident.Name+".EXPECT()."+methodName+"(...)",
 				analysis.SuggestedFix{
 					Message: "Replace mock.On with mock.EXPECT",
 					TextEdits: []analysis.TextEdit{
