@@ -187,7 +187,7 @@ func (checker Formatter) checkFmtAssertion(pass *analysis.Pass, call *CallMeta) 
 }
 
 func isPrintfLikeCall(pass *analysis.Pass, call *CallMeta) (int, bool) {
-	if call.Call.Ellipsis.IsValid() {
+	if call.Call.Ellipsis.IsValid() { // msgAndArgs... case.
 		return -1, false
 	}
 

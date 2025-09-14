@@ -5,55 +5,92 @@ package contains
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
+type metric struct {
+	time int
+}
+
 func TestContainsChecker(t *testing.T) {
 	var (
 		s           = "abc123"
 		b           = []byte(s)
 		errSentinel = errors.New("user not found")
+		metrics     = []metric{}
+		log         = []string{}
 	)
 
 	// Invalid.
 	{
-		assert.True(t, strings.Contains(s, "abc123"))                                             // want "contains: use assert\\.Contains"
-		assert.Truef(t, strings.Contains(s, "abc123"), "msg with args %d %s", 42, "42")           // want "contains: use assert\\.Containsf"
-		assert.True(t, strings.Contains(string(b), "abc123"))                                     // want "contains: use assert\\.Contains"
-		assert.Truef(t, strings.Contains(string(b), "abc123"), "msg with args %d %s", 42, "42")   // want "contains: use assert\\.Containsf"
-		assert.False(t, !strings.Contains(s, "abc123"))                                           // want "contains: use assert\\.Contains"
-		assert.Falsef(t, !strings.Contains(s, "abc123"), "msg with args %d %s", 42, "42")         // want "contains: use assert\\.Containsf"
-		assert.False(t, !strings.Contains(string(b), "abc123"))                                   // want "contains: use assert\\.Contains"
-		assert.Falsef(t, !strings.Contains(string(b), "abc123"), "msg with args %d %s", 42, "42") // want "contains: use assert\\.Containsf"
-		assert.False(t, strings.Contains(s, "abc123"))                                            // want "contains: use assert\\.NotContains"
-		assert.Falsef(t, strings.Contains(s, "abc123"), "msg with args %d %s", 42, "42")          // want "contains: use assert\\.NotContainsf"
-		assert.False(t, strings.Contains(string(b), "abc123"))                                    // want "contains: use assert\\.NotContains"
-		assert.Falsef(t, strings.Contains(string(b), "abc123"), "msg with args %d %s", 42, "42")  // want "contains: use assert\\.NotContainsf"
-		assert.True(t, !strings.Contains(s, "abc123"))                                            // want "contains: use assert\\.NotContains"
-		assert.Truef(t, !strings.Contains(s, "abc123"), "msg with args %d %s", 42, "42")          // want "contains: use assert\\.NotContainsf"
-		assert.True(t, !strings.Contains(string(b), "abc123"))                                    // want "contains: use assert\\.NotContains"
-		assert.Truef(t, !strings.Contains(string(b), "abc123"), "msg with args %d %s", 42, "42")  // want "contains: use assert\\.NotContainsf"
+		assert.True(t, strings.Contains(s, "abc123"))                                                                            // want "contains: use assert\\.Contains"
+		assert.Truef(t, strings.Contains(s, "abc123"), "msg with args %d %s", 42, "42")                                          // want "contains: use assert\\.Containsf"
+		assert.True(t, strings.Contains(string(b), "abc123"))                                                                    // want "contains: use assert\\.Contains"
+		assert.Truef(t, strings.Contains(string(b), "abc123"), "msg with args %d %s", 42, "42")                                  // want "contains: use assert\\.Containsf"
+		assert.False(t, !strings.Contains(s, "abc123"))                                                                          // want "contains: use assert\\.Contains"
+		assert.Falsef(t, !strings.Contains(s, "abc123"), "msg with args %d %s", 42, "42")                                        // want "contains: use assert\\.Containsf"
+		assert.False(t, !strings.Contains(string(b), "abc123"))                                                                  // want "contains: use assert\\.Contains"
+		assert.Falsef(t, !strings.Contains(string(b), "abc123"), "msg with args %d %s", 42, "42")                                // want "contains: use assert\\.Containsf"
+		assert.False(t, strings.Contains(s, "abc123"))                                                                           // want "contains: use assert\\.NotContains"
+		assert.Falsef(t, strings.Contains(s, "abc123"), "msg with args %d %s", 42, "42")                                         // want "contains: use assert\\.NotContainsf"
+		assert.False(t, strings.Contains(string(b), "abc123"))                                                                   // want "contains: use assert\\.NotContains"
+		assert.Falsef(t, strings.Contains(string(b), "abc123"), "msg with args %d %s", 42, "42")                                 // want "contains: use assert\\.NotContainsf"
+		assert.True(t, !strings.Contains(s, "abc123"))                                                                           // want "contains: use assert\\.NotContains"
+		assert.Truef(t, !strings.Contains(s, "abc123"), "msg with args %d %s", 42, "42")                                         // want "contains: use assert\\.NotContainsf"
+		assert.True(t, !strings.Contains(string(b), "abc123"))                                                                   // want "contains: use assert\\.NotContains"
+		assert.Truef(t, !strings.Contains(string(b), "abc123"), "msg with args %d %s", 42, "42")                                 // want "contains: use assert\\.NotContainsf"
+		assert.Contains(t, metrics, metric{time: 1}, metric{time: 2})                                                            // want "contains: invalid usage of assert\\.Contains, use assert\\.Subset for multi elements assertion"
+		assert.Contains(t, metrics, metric{time: 1}, metric{time: 2}, "msg")                                                     // want "contains: invalid usage of assert\\.Contains, use assert\\.Subset for multi elements assertion"
+		assert.Contains(t, metrics, metric{time: 1}, metric{time: 2}, "msg with arg %d", 42)                                     // want "contains: invalid usage of assert\\.Contains, use assert\\.Subset for multi elements assertion"
+		assert.Contains(t, metrics, metric{time: 1}, metric{time: 2}, "msg with args %d %s", 42, "42")                           // want "contains: invalid usage of assert\\.Contains, use assert\\.Subset for multi elements assertion"
+		assert.Contains(t, log, "params", map[string]interface{}{"query": "test statement"})                                     // want "contains: invalid usage of assert\\.Contains, use assert\\.Subset for multi elements assertion"
+		assert.Contains(t, log, "params", map[string]interface{}{"query": "test statement"}, "msg")                              // want "contains: invalid usage of assert\\.Contains, use assert\\.Subset for multi elements assertion"
+		assert.Contains(t, log, "params", map[string]interface{}{"query": "test statement"}, "msg with arg %d", 42)              // want "contains: invalid usage of assert\\.Contains, use assert\\.Subset for multi elements assertion"
+		assert.Contains(t, log, "params", map[string]interface{}{"query": "test statement"}, "msg with args %d %s", 42, "42")    // want "contains: invalid usage of assert\\.Contains, use assert\\.Subset for multi elements assertion"
+		assert.NotContains(t, metrics, metric{time: 1}, metric{time: 2})                                                         // want "contains: invalid usage of assert\\.NotContains, use assert\\.NotSubset for multi elements assertion"
+		assert.NotContains(t, metrics, metric{time: 1}, metric{time: 2}, "msg")                                                  // want "contains: invalid usage of assert\\.NotContains, use assert\\.NotSubset for multi elements assertion"
+		assert.NotContains(t, metrics, metric{time: 1}, metric{time: 2}, "msg with arg %d", 42)                                  // want "contains: invalid usage of assert\\.NotContains, use assert\\.NotSubset for multi elements assertion"
+		assert.NotContains(t, metrics, metric{time: 1}, metric{time: 2}, "msg with args %d %s", 42, "42")                        // want "contains: invalid usage of assert\\.NotContains, use assert\\.NotSubset for multi elements assertion"
+		assert.NotContains(t, log, "params", map[string]interface{}{"query": "test statement"})                                  // want "contains: invalid usage of assert\\.NotContains, use assert\\.NotSubset for multi elements assertion"
+		assert.NotContains(t, log, "params", map[string]interface{}{"query": "test statement"}, "msg")                           // want "contains: invalid usage of assert\\.NotContains, use assert\\.NotSubset for multi elements assertion"
+		assert.NotContains(t, log, "params", map[string]interface{}{"query": "test statement"}, "msg with arg %d", 42)           // want "contains: invalid usage of assert\\.NotContains, use assert\\.NotSubset for multi elements assertion"
+		assert.NotContains(t, log, "params", map[string]interface{}{"query": "test statement"}, "msg with args %d %s", 42, "42") // want "contains: invalid usage of assert\\.NotContains, use assert\\.NotSubset for multi elements assertion"
 	}
 
 	// Valid.
 	{
 		assert.Contains(t, s, "abc123")
 		assert.Containsf(t, s, "abc123", "msg with args %d %s", 42, "42")
-		assert.Contains(t, string(b), "abc123")
-		assert.Containsf(t, string(b), "abc123", "msg with args %d %s", 42, "42")
-		assert.NotContains(t, s, "abc123")
-		assert.NotContainsf(t, s, "abc123", "msg with args %d %s", 42, "42")
 		assert.NotContains(t, string(b), "abc123")
 		assert.NotContainsf(t, string(b), "abc123", "msg with args %d %s", 42, "42")
+		assert.Subset(t, metrics, []metric{{time: 1}, {time: 2}})
+		assert.Subsetf(t, metrics, []metric{{time: 1}, {time: 2}}, "msg with args %d %s", 42, "42")
+		assert.NotSubset(t, metrics, []metric{{time: 1}, {time: 2}})
+		assert.NotSubsetf(t, metrics, []metric{{time: 1}, {time: 2}}, "msg with args %d %s", 42, "42")
 	}
 
 	// Ignored.
 	{
 		assert.Contains(t, errSentinel.Error(), "user")
 		assert.Containsf(t, errSentinel.Error(), "user", "msg with args %d %s", 42, "42")
+		assert.NotContains(t, errSentinel.Error(), "user")
+		assert.NotContainsf(t, errSentinel.Error(), "user", "msg with args %d %s", 42, "42")
+		assert.Contains(t, string(b), "MASKED_KEY=[MASKED]")
+		assert.Containsf(t, string(b), "MASKED_KEY=[MASKED]", "msg with args %d %s", 42, "42")
+		assert.Contains(t, metrics, metrics)
+		assert.Containsf(t, metrics, metrics, "msg with args %d %s", 42, "42")
+		assert.Contains(t, metrics, 1, fmt.Sprintf("should contain %d", 1))
+		assert.Containsf(t, metrics, 1, fmt.Sprintf("should contain %d", 1), "msg with args %d %s", 42, "42")
+		assert.NotContains(t, string(b), "MASKED_KEY=[MASKED]")
+		assert.NotContainsf(t, string(b), "MASKED_KEY=[MASKED]", "msg with args %d %s", 42, "42")
+		assert.NotContains(t, metrics, metrics)
+		assert.NotContainsf(t, metrics, metrics, "msg with args %d %s", 42, "42")
+		assert.NotContains(t, metrics, 1, fmt.Sprintf("should contain %d", 1))
+		assert.NotContainsf(t, metrics, 1, fmt.Sprintf("should contain %d", 1), "msg with args %d %s", 42, "42")
 		assert.True(t, bytes.Contains(b, []byte("a")))
 		assert.Truef(t, bytes.Contains(b, []byte("a")), "msg with args %d %s", 42, "42")
 		assert.False(t, !bytes.Contains(b, []byte("a")))
@@ -62,5 +99,12 @@ func TestContainsChecker(t *testing.T) {
 		assert.Falsef(t, bytes.Contains(b, []byte("a")), "msg with args %d %s", 42, "42")
 		assert.True(t, !bytes.Contains(b, []byte("a")))
 		assert.Truef(t, !bytes.Contains(b, []byte("a")), "msg with args %d %s", 42, "42")
+	}
+}
+
+// ErrorContains returns an assertion to check if the error contains the given string.
+func ErrorContains(contains string) assert.ErrorAssertionFunc {
+	return func(t assert.TestingT, err error, msgAndArgs ...interface{}) bool {
+		return assert.Contains(t, err.Error(), contains, msgAndArgs...)
 	}
 }
