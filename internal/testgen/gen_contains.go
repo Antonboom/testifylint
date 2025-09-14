@@ -67,8 +67,18 @@ func (g ContainsTestsGenerator) TemplateData() any {
 				ReportMsgf: checker + ": invalid usage of assert.Contains, use assert.Subset for multi elements assertion",
 			},
 			{
+				Fn:         "Contains",
+				Argsf:      `log, "params", map[string]interface{}{"query": "test statement"}`,
+				ReportMsgf: checker + ": invalid usage of assert.Contains, use assert.Subset for multi elements assertion",
+			},
+			{
 				Fn:         "NotContains",
 				Argsf:      `metrics, metric{time: 1}, metric{time: 2}`,
+				ReportMsgf: checker + ": invalid usage of assert.NotContains, use assert.NotSubset for multi elements assertion",
+			},
+			{
+				Fn:         "NotContains",
+				Argsf:      `log, "params", map[string]interface{}{"query": "test statement"}`,
 				ReportMsgf: checker + ": invalid usage of assert.NotContains, use assert.NotSubset for multi elements assertion",
 			},
 		},
@@ -135,6 +145,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
         b           = []byte(s)
         errSentinel = errors.New("user not found")
 		metrics     = []metric{}
+		log         = []string{}
     )
 
     // Invalid.

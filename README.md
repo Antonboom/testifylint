@@ -291,6 +291,35 @@ assert.Subset(t, cadvisorInfoToUserDefinedMetrics(&cInfo), []statsapi.UserDefine
 
 </details>
 
+#### An example of bug in Prometheus tests
+
+<details>
+
+<summary>Click to expand...</summary>
+
+```go
+❌
+logLines := getLogLines(t, ql1File)
+/*
+   {
+       "time": "2025-09-14T07:49:51.652292+03:00",
+       "params": { "query": "test statement" },
+       "error": "failure",
+       "spanID": "0000000000000000",
+       "foo": "bar"
+   }
+ */
+require.Contains(t, logLines[0], "error",  errors.New("failure"))
+require.Contains(t, logLines[0], "params", map[string]interface{}{"query": "test statement"})
+
+✅
+logLines := getLogLines(t, ql1File)
+require.Contains(t, logLines[0], `"error":"failure"`)
+require.Contains(t, logLines[0], `"params":{"query":"test statement"}`)
+```
+
+</details>
+
 ---
 
 ### empty
