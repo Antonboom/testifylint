@@ -21,6 +21,7 @@ func TestEncodedCompareChecker(t *testing.T) {
 	var batch interface{ ParentSummary() []byte }
 	var res [1]struct{ Data []byte }
 	var output bytes.Buffer
+	var respJSONRawMessage json.RawMessage
 
 	const expBody = `{"status":"healthy","message":"","peer_count":1}`
 
@@ -194,5 +195,23 @@ images:
 		assert.YAMLEqf(t, raw, conf, "msg with args %d %s", 42, "42")
 		assert.YAMLEq(t, raw, string(respBytes))
 		assert.YAMLEqf(t, raw, string(respBytes), "msg with args %d %s", 42, "42")
+		assert.Equal(t, 42, resultJSON)
+		assert.Equalf(t, 42, resultJSON, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, 42, resultJSON)
+		assert.EqualValuesf(t, 42, resultJSON, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, 42, resultJSON)
+		assert.Exactlyf(t, 42, resultJSON, "msg with args %d %s", 42, "42")
+		assert.Equal(t, 42, conf)
+		assert.Equalf(t, 42, conf, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, 42, conf)
+		assert.EqualValuesf(t, 42, conf, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, 42, conf)
+		assert.Exactlyf(t, 42, conf, "msg with args %d %s", 42, "42")
+		assert.Equal(t, `{"foo":"bar"}`, respJSONRawMessage)
+		assert.Equalf(t, `{"foo":"bar"}`, respJSONRawMessage, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, `{"foo":"bar"}`, respJSONRawMessage)
+		assert.Exactlyf(t, `{"foo":"bar"}`, respJSONRawMessage, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, `{"foo":"bar"}`, respJSONRawMessage)
+		assert.EqualValuesf(t, `{"foo":"bar"}`, respJSONRawMessage, "msg with args %d %s", 42, "42")
 	}
 }
