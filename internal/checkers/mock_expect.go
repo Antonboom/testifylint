@@ -26,66 +26,53 @@ func NewMockExpect() MockExpect { return MockExpect{} }
 func (MockExpect) Name() string { return "mock-expect" }
 
 func (checker MockExpect) Check(pass *analysis.Pass, insp *inspector.Inspector) (diagnostics []analysis.Diagnostic) {
-	insp.Preorder([]ast.Node{(*ast.FuncDecl)(nil)}, func(node ast.Node) {
-		funcDecl := node.(*ast.FuncDecl)
-		if !isSuiteTestMethod(funcDecl.Name.Name) {
-			// process only Test functions
+	insp.Preorder([]ast.Node{(*ast.CallExpr)(nil)}, func(node ast.Node) {
+		callExpr := node.(*ast.CallExpr)
+
+		selectorExpr, ok := callExpr.Fun.(*ast.SelectorExpr)
+		if !ok || selectorExpr.Sel.Name != "On" {
 			return
 		}
 
-		ast.Inspect(funcDecl.Body, func(n ast.Node) bool {
-			callExpr, ok := n.(*ast.CallExpr)
-			if !ok {
-				return true
-			}
+		methodName := firstArg(callExpr)
+		if methodName == "" {
+			return
+		}
 
-			selectorExpr, ok := callExpr.Fun.(*ast.SelectorExpr)
-			if !ok || selectorExpr.Sel.Name != "On" {
-				return true
-			}
+		ident, ok := selectorExpr.X.(*ast.Ident)
+		if !ok {
+			return
+		}
 
-			methodName := firstArg(callExpr)
-			if methodName == "" {
-				return false
-			}
+		pointer, ok := pass.TypesInfo.ObjectOf(ident).Type().(*types.Pointer)
+		if !ok {
+			return
+		}
 
-			ident, ok := selectorExpr.X.(*ast.Ident)
-			if !ok {
-				return false
-			}
+		named, ok := pointer.Elem().(*types.Named)
+		if !ok {
+			return
+		}
 
-			pointer, ok := pass.TypesInfo.ObjectOf(ident).Type().(*types.Pointer)
-			if !ok {
-				return false
-			}
+		if !hasExpect(named, methodName) {
+			return
+		}
 
-			named, ok := pointer.Elem().(*types.Named)
-			if !ok {
-				return false
-			}
-
-			if !hasExpect(named, methodName) {
-				return false
-			}
-
-			diagnostics = append(diagnostics, *newDiagnostic(
-				checker.Name(), callExpr, "use "+ident.Name+".EXPECT()."+methodName+"(...)",
-				analysis.SuggestedFix{
-					Message: "Replace mock.On with mock.EXPECT",
-					TextEdits: []analysis.TextEdit{
-						{
-							Pos: callExpr.Pos(),
-							End: callExpr.End(),
-							NewText: []byte(fmt.Sprintf(
-								"%s.EXPECT().%s(%s)", ident.Name, methodName, formatAsCallArgs(pass, callExpr.Args[1:]...),
-							)),
-						},
+		diagnostics = append(diagnostics, *newDiagnostic(
+			checker.Name(), callExpr, "use "+ident.Name+".EXPECT()."+methodName+"(...)",
+			analysis.SuggestedFix{
+				Message: "Replace mock.On with mock.EXPECT",
+				TextEdits: []analysis.TextEdit{
+					{
+						Pos: callExpr.Pos(),
+						End: callExpr.End(),
+						NewText: []byte(fmt.Sprintf(
+							"%s.EXPECT().%s(%s)", ident.Name, methodName, formatAsCallArgs(pass, callExpr.Args[1:]...),
+						)),
 					},
 				},
-			))
-
-			return true
-		})
+			},
+		))
 	})
 
 	return diagnostics
