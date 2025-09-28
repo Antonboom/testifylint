@@ -75,6 +75,11 @@ func (g EmptyTestsGenerator) TemplateData() any {
 					{Fn: "EqualValues", Argsf: "``, %s", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "%s"},
 					{Fn: "Exactly", Argsf: "``, %s", ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "%s"},
 
+					// Empty slice cases.
+					{Fn: "Equal", Argsf: `[]int{}, %s`, ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "%s"},
+					{Fn: "EqualValues", Argsf: `[]int{}, %s`, ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "%s"},
+					{Fn: "Exactly", Argsf: `[]int{}, %s`, ReportMsgf: reportUse, ProposedFn: "Empty", ProposedArgsf: "%s"},
+
 					// Simplification cases.
 					{Fn: "Empty", Argsf: "len(%s)", ReportMsgf: reportRemoveLen, ProposedArgsf: "%s"},
 				},
@@ -109,6 +114,10 @@ func (g EmptyTestsGenerator) TemplateData() any {
 
 					{Fn: "NotEqual", Argsf: "``, %s", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
 					{Fn: "NotEqualValues", Argsf: "``, %s", ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
+
+					// Empty slice cases.
+					{Fn: "NotEqual", Argsf: `[]int{}, %s`, ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
+					{Fn: "NotEqualValues", Argsf: `[]int{}, %s`, ReportMsgf: reportUse, ProposedFn: "NotEmpty", ProposedArgsf: "%s"},
 
 					// Simplification cases.
 					{Fn: "NotEmpty", Argsf: "len(%s)", ReportMsgf: reportRemoveLen, ProposedArgsf: "%s"},
