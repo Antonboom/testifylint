@@ -106,6 +106,10 @@ func (checker Empty) checkEmpty(pass *analysis.Pass, call *CallMeta) *analysis.D
 			return newUseEmptyDiagnostic(a.Pos(), b.End(), b)
 		}
 
+		if isEmptyArrayLit(a) {
+			return newUseEmptyDiagnostic(a.Pos(), b.End(), b)
+		}
+
 		arg1, ok1 := isLenCallAndZero(pass, a, b)
 		arg2, ok2 := isLenCallAndZero(pass, b, a)
 
@@ -180,6 +184,10 @@ func (checker Empty) checkNotEmpty(pass *analysis.Pass, call *CallMeta) *analysi
 	switch call.Fn.NameFTrimmed {
 	case "NotEqual", "NotEqualValues":
 		if isEmptyStringLit(a) {
+			return newUseNotEmptyDiagnostic(a.Pos(), b.End(), b)
+		}
+
+		if isEmptyArrayLit(a) {
 			return newUseNotEmptyDiagnostic(a.Pos(), b.End(), b)
 		}
 

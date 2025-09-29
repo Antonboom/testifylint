@@ -151,6 +151,15 @@ func isByteArray(e ast.Expr) bool {
 	return ok && isIdentWithName("byte", at.Elt)
 }
 
+func isEmptyArrayLit(e ast.Expr) bool {
+	if cl, ok := e.(*ast.CompositeLit); ok {
+		if at, ok := cl.Type.(*ast.ArrayType); ok && at.Len == nil {
+			return true
+		}
+	}
+	return false
+}
+
 // hasBytesType returns true if the expression is of `[]byte` type.
 func hasBytesType(pass *analysis.Pass, e ast.Expr) bool {
 	t := pass.TypesInfo.TypeOf(e)
