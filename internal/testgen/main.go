@@ -49,7 +49,6 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	SuiteMethodSignatureTestsGenerator{},
 	SuiteSubtestRunTestsGenerator{},
 	SuiteTHelperTestsGenerator{},
-	SuiteNoTestingTTestsGenerator{},
 	TimeCompareTestsGenerator{},
 	UselessAssertTestsGenerator{},
 	ZeroTestsGenerator{},

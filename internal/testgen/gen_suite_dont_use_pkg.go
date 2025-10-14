@@ -15,18 +15,21 @@ func (SuiteDontUsePkgTestsGenerator) Checker() checkers.Checker {
 
 func (g SuiteDontUsePkgTestsGenerator) TemplateData() any {
 	var (
-		checker = g.Checker().Name()
-		report  = checker + ": use %s.%s"
+		checker        = g.Checker().Name()
+		reportPkgFunc  = checker + ": use %s.%s"
+		reportTestingT = checker + ": suite method must not include a testing.T parameter"
 	)
 
 	return struct {
 		CheckerName  CheckerName
 		AssertAssrn  Assertion
 		RequireAssrn Assertion
+		Report       string
 	}{
 		CheckerName:  CheckerName(checker),
-		AssertAssrn:  Assertion{Fn: "Equal", Argsf: "42, result", ReportMsgf: report, ProposedSelector: "s"},
-		RequireAssrn: Assertion{Fn: "Equal", Argsf: "42, result", ReportMsgf: report, ProposedSelector: "s.Require()"},
+		AssertAssrn:  Assertion{Fn: "Equal", Argsf: "42, result", ReportMsgf: reportPkgFunc, ProposedSelector: "s"},
+		RequireAssrn: Assertion{Fn: "Equal", Argsf: "42, result", ReportMsgf: reportPkgFunc, ProposedSelector: "s.Require()"},
+		Report:       QuoteReport(reportTestingT),
 	}
 }
 
@@ -39,6 +42,14 @@ func (SuiteDontUsePkgTestsGenerator) ErroredTemplate() Executor {
 func (SuiteDontUsePkgTestsGenerator) GoldenTemplate() Executor {
 	golden := strings.ReplaceAll(suiteDontUsePkgTestTmpl, "NewAssertionExpander", "NewAssertionExpander.AsGolden")
 	golden = strings.Replace(golden, "s.T()", "", 4)
+	golden = strings.ReplaceAll(golden,
+		") joinRoom(t *testing.T, roomID int)",
+		") joinRoom(roomID int)",
+	)
+	golden = strings.ReplaceAll(golden,
+		") createRoom(t *testing.T)",
+		") createRoom()",
+	)
 	return template.Must(template.New("SuiteDontUsePkgTestsGenerator.GoldenTemplate").Funcs(fm).Parse(golden))
 }
 
@@ -96,5 +107,29 @@ func {{ .CheckerName.AsTestName }}_NoSuiteNoProblem(t *testing.T) {
 			{{ NewAssertionExpander.Expand $.AssertAssrn.WithoutReport $sel $t nil }}
 		{{- end }}
 	{{- end }}
+}
+
+type ChatSessionSuite struct {
+	suite.Suite
+}
+
+func TestChatSessionSuite(t *testing.T) {
+	suite.Run(t, &ChatSessionSuite{})
+}
+
+func (s *ChatSessionSuite) TestCreateRoom() {
+	s.createRoom(&testing.T{})
+}
+
+func (s *ChatSessionSuite) TestJoinRoom() {
+	s.joinRoom(&testing.T{}, 123)
+}
+
+func (suite *ChatSessionSuite) createRoom(t *testing.T) { // want {{ $.Report }}
+	suite.Require().True(true)
+}
+
+func (suite *ChatSessionSuite) joinRoom(t *testing.T, roomID int) { // want {{ $.Report }}
+	suite.Require().Equal(roomID, 123)
 }
 `

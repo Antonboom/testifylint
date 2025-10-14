@@ -33,7 +33,6 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewEqualValues(),
 		checkers.NewRegexp(),
 		checkers.NewSuiteExtraAssertCall(),
-		checkers.NewSuiteDontUsePkg(),
 		checkers.NewUselessAssert(),
 		checkers.NewFormatter(),
 	}
@@ -55,12 +54,12 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewEqualValues(),
 		checkers.NewRegexp(),
 		checkers.NewSuiteExtraAssertCall(),
-		checkers.NewSuiteDontUsePkg(),
 		checkers.NewUselessAssert(),
 		checkers.NewFormatter(),
 	}
 
 	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{
+		checkers.NewSuiteDontUsePkg(),
 		checkers.NewBlankImport(),
 		checkers.NewGoRequire(),
 		checkers.NewMockExpect(),
@@ -68,9 +67,9 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewSuiteBrokenParallel(),
 		checkers.NewSuiteMethodSignature(),
 		checkers.NewSuiteSubtestRun(),
-		checkers.NewSuiteNoTestingT(),
 	}
 	allAdvancedCheckers := []checkers.AdvancedChecker{
+		checkers.NewSuiteDontUsePkg(),
 		checkers.NewBlankImport(),
 		checkers.NewGoRequire(),
 		checkers.NewMockExpect(),
@@ -78,7 +77,6 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewSuiteBrokenParallel(),
 		checkers.NewSuiteMethodSignature(),
 		checkers.NewSuiteSubtestRun(),
-		checkers.NewSuiteNoTestingT(),
 		checkers.NewSuiteTHelper(),
 	}
 
