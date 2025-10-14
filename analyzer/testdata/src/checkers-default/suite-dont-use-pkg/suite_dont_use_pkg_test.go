@@ -74,3 +74,27 @@ func TestSuiteDontUsePkgChecker_NoSuiteNoProblem(t *testing.T) {
 	reqObj.Equal(42, result)
 	reqObj.Equalf(42, result, "msg with args %d %s", 42, "42")
 }
+
+type ChatSessionSuite struct {
+	suite.Suite
+}
+
+func TestChatSessionSuite(t *testing.T) {
+	suite.Run(t, &ChatSessionSuite{})
+}
+
+func (s *ChatSessionSuite) TestCreateRoom() {
+	s.createRoom(&testing.T{})
+}
+
+func (s *ChatSessionSuite) TestJoinRoom() {
+	s.joinRoom(&testing.T{}, 123)
+}
+
+func (suite *ChatSessionSuite) createRoom(t *testing.T) { // want "suite-dont-use-pkg: suite method must not include a testing\\.T parameter"
+	suite.Require().True(true)
+}
+
+func (suite *ChatSessionSuite) joinRoom(t *testing.T, roomID int) { // want "suite-dont-use-pkg: suite method must not include a testing\\.T parameter"
+	suite.Require().Equal(roomID, 123)
+}
