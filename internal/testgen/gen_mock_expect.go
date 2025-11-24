@@ -54,6 +54,8 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	{
 		u.On("", mock.Anything, User{}).Return(nil)
 		u.On("DoesNotExist", mock.Anything, User{}, 123).Return(nil)
+		u.On("Void").Run(func(mock.Arguments) {})
+		u.On("Void").Once().Run(func(mock.Arguments) {}).Twice()
 	}
 }`
 

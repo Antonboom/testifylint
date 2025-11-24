@@ -26,36 +26,44 @@ func NewMockExpect() MockExpect { return MockExpect{} }
 func (MockExpect) Name() string { return "mock-expect" }
 
 func (checker MockExpect) Check(pass *analysis.Pass, insp *inspector.Inspector) (diagnostics []analysis.Diagnostic) {
-	insp.Preorder([]ast.Node{(*ast.CallExpr)(nil)}, func(node ast.Node) {
+	insp.WithStack([]ast.Node{(*ast.CallExpr)(nil)}, func(node ast.Node, push bool, stack []ast.Node) bool {
+		if !push {
+			return false
+		}
+
 		callExpr := node.(*ast.CallExpr)
 
 		selectorExpr, ok := callExpr.Fun.(*ast.SelectorExpr)
 		if !ok || selectorExpr.Sel.Name != "On" {
-			return
+			return true
 		}
 
 		methodName := firstArg(callExpr)
 		if methodName == "" {
-			return
+			return false
 		}
 
 		ident, ok := selectorExpr.X.(*ast.Ident)
 		if !ok {
-			return
+			return false
 		}
 
 		pointer, ok := pass.TypesInfo.ObjectOf(ident).Type().(*types.Pointer)
 		if !ok {
-			return
+			return false
 		}
 
 		named, ok := pointer.Elem().(*types.Named)
 		if !ok {
-			return
+			return false
 		}
 
 		if !hasExpect(named, methodName) {
-			return
+			return false
+		}
+
+		if hasRunCall(stack) {
+			return false
 		}
 
 		diagnostics = append(diagnostics, *newDiagnostic(
@@ -73,6 +81,8 @@ func (checker MockExpect) Check(pass *analysis.Pass, insp *inspector.Inspector) 
 				},
 			},
 		))
+
+		return false
 	})
 
 	return diagnostics
@@ -109,6 +119,18 @@ func expectHasMethod(method *types.Func, methodName string) bool {
 
 	for i := range named.NumMethods() {
 		if named.Method(i).Name() == methodName {
+			return true
+		}
+	}
+
+	return false
+}
+
+// hasRunCall checks if there is chained .Run(...) call.
+func hasRunCall(stack []ast.Node) bool {
+	for i := range stack {
+		selectorExpr, ok := stack[i].(*ast.SelectorExpr)
+		if ok && selectorExpr.Sel.Name == "Run" {
 			return true
 		}
 	}
