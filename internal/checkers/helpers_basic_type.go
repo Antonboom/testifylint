@@ -10,6 +10,19 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
+func typeSafeBasicLit(e ast.Expr, typ token.Token) (*ast.BasicLit, bool) {
+	bl, ok := e.(*ast.BasicLit)
+	return bl, ok && bl.Kind == typ
+}
+
+func unquoteBasicLitValue(basicLit *ast.BasicLit) (string, bool) {
+	value, err := strconv.Unquote(basicLit.Value)
+	if err != nil {
+		return "", false
+	}
+	return value, true
+}
+
 func isZero(e ast.Expr) bool { return isIntNumber(e, 0) }
 
 func isOne(e ast.Expr) bool { return isIntNumber(e, 1) }

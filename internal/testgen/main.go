@@ -42,6 +42,8 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	NegativePositiveTestsGenerator{},
 	NilCompareTestsGenerator{},
 	RegexpTestsGenerator{},
+	HTTPMethodTestsGenerator{},
+	HTTPStatusCodeTestsGenerator{},
 	RequireErrorTestsGenerator{},
 	SuiteBrokenParallelTestsGenerator{},
 	SuiteDontUsePkgTestsGenerator{},
