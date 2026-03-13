@@ -2,10 +2,14 @@ package checkers
 
 import (
 	"go/ast"
+	"go/types"
 	"regexp"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/ast/inspector"
+
+	"github.com/Antonboom/testifylint/internal/analysisutil"
+	"github.com/Antonboom/testifylint/internal/testify"
 )
 
 const requireErrorReport = "for error assertions use require"
@@ -124,6 +128,13 @@ func (checker RequireError) Check(pass *analysis.Pass, insp *inspector.Inspector
 			default:
 				continue
 			case "Error", "ErrorIs", "ErrorAs", "EqualError", "ErrorContains", "NoError", "NotErrorIs":
+			}
+
+			// For non-package (method) calls, verify the method is defined on
+			// *assert.Assertions or *require.Assertions, not on other types like
+			// *assert.CollectT which implements testing.T but is not an assertion object.
+			if !c.testifyCall.IsPkg && !isAssertionsReceiverMethod(c.testifyCall) {
+				continue
 			}
 
 			if needToSkipBasedOnContext(c, i, calls, callsByBlock) {
@@ -246,4 +257,26 @@ type callMeta struct {
 
 func isNoErrorAssertion(fnName string) bool {
 	return (fnName == "NoError") || (fnName == "NoErrorf")
+}
+
+// isAssertionsReceiverMethod returns true if the method call is defined on *assert.Assertions
+// or *require.Assertions (including promoted methods on suite types), as opposed to other
+// types in those packages such as *assert.CollectT.
+func isAssertionsReceiverMethod(call *CallMeta) bool {
+	sig := call.Fn.Signature
+	recv := sig.Recv()
+	if recv == nil {
+		return false
+	}
+	recvType := recv.Type()
+	if ptr, isPtr := recvType.(*types.Pointer); isPtr {
+		recvType = ptr.Elem()
+	}
+	named, isNamed := recvType.(*types.Named)
+	if !isNamed || named.Obj().Name() != "Assertions" {
+		return false
+	}
+	pkg := named.Obj().Pkg()
+	return analysisutil.IsPkg(pkg, testify.AssertPkgName, testify.AssertPkgPath) ||
+		analysisutil.IsPkg(pkg, testify.RequirePkgName, testify.RequirePkgPath)
 }
