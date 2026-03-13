@@ -2,6 +2,7 @@ package checkers
 
 import (
 	"go/ast"
+	"go/types"
 
 	"golang.org/x/tools/go/analysis"
 )
@@ -33,4 +34,37 @@ func hasTestingTParam(pass *analysis.Pass, ft *ast.FuncType) bool {
 		}
 	}
 	return false
+}
+
+// hasStdTestingTParam reports whether the function type has a parameter of type *testing.T
+// from the standard library. Unlike hasTestingTParam, this does not require testify assert
+// or require packages to be imported.
+func hasStdTestingTParam(pass *analysis.Pass, ft *ast.FuncType) bool {
+	if ft == nil || ft.Params == nil {
+		return false
+	}
+	for _, param := range ft.Params.List {
+		if isStdTestingTType(pass, param.Type) {
+			return true
+		}
+	}
+	return false
+}
+
+// isStdTestingTType reports whether the expression has type *testing.T from the standard library.
+func isStdTestingTType(pass *analysis.Pass, expr ast.Expr) bool {
+	t := pass.TypesInfo.TypeOf(expr)
+	if t == nil {
+		return false
+	}
+	ptr, ok := t.(*types.Pointer)
+	if !ok {
+		return false
+	}
+	named, ok := ptr.Elem().(*types.Named)
+	if !ok {
+		return false
+	}
+	obj := named.Obj()
+	return obj.Pkg() != nil && obj.Pkg().Path() == "testing" && obj.Name() == "T"
 }

@@ -78,6 +78,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewSuiteMethodSignature(),
 		checkers.NewSuiteSubtestRun(),
 		checkers.NewSuiteTHelper(),
+		checkers.NewSuiteTestName(),
 	}
 
 	formatterWithoutEnabledOptions := checkers.RegularChecker(checkers.NewFormatter().
@@ -145,7 +146,7 @@ func Test_newCheckers(t *testing.T) {
 				},
 			},
 			expRegular:  replace(enabledByDefaultRegularCheckers, formatterWithoutEnabledOptions),
-			expAdvanced: allAdvancedCheckers,
+			expAdvanced: append(enabledByDefaultAdvancedCheckers, checkers.NewSuiteTHelper()),
 		},
 		{
 			name: "disable three checkers from enabled by default checkers",

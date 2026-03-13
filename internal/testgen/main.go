@@ -48,6 +48,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	SuiteExtraAssertCallTestsGenerator{},
 	SuiteMethodSignatureTestsGenerator{},
 	SuiteSubtestRunTestsGenerator{},
+	SuiteTestNameTestsGenerator{},
 	SuiteTHelperTestsGenerator{},
 	TimeCompareTestsGenerator{},
 	UselessAssertTestsGenerator{},
