@@ -37,6 +37,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	FloatCompareTestsGenerator{},
 	FormatterTestsGenerator{},
 	GoRequireTestsGenerator{},
+	HTTPMultipleTestsGenerator{},
 	LenTestsGenerator{},
 	MockExpectTestsGenerator{},
 	NegativePositiveTestsGenerator{},

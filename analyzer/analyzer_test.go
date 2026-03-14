@@ -202,6 +202,10 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 				"suite-extra-assert-call.mode": "require",
 			},
 		},
+		{
+			dir:   "http-multiple-add-import",
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewHTTPMultiple().Name()},
+		},
 	}
 
 	for _, tt := range cases {
