@@ -91,7 +91,7 @@ func (checker ExpectedActual) Check(pass *analysis.Pass, call *CallMeta) *analys
 	}
 	first, second := call.Args[0], call.Args[1]
 
-	if checker.isWrongExpectedActualOrder(pass, first, second) {
+	if checker.isWrongExpectedActualOrder(pass, call.Fn.NameFTrimmed, first, second) {
 		return newDiagnostic(checker.Name(), call, "need to reverse actual and expected values", analysis.SuggestedFix{
 			Message: "Reverse actual and expected values",
 			TextEdits: []analysis.TextEdit{
@@ -106,23 +106,23 @@ func (checker ExpectedActual) Check(pass *analysis.Pass, call *CallMeta) *analys
 	return nil
 }
 
-func (checker ExpectedActual) isWrongExpectedActualOrder(pass *analysis.Pass, first, second ast.Expr) bool {
-	leftIsCandidate := checker.isExpectedValueCandidate(pass, first)
-	rightIsCandidate := checker.isExpectedValueCandidate(pass, second)
+func (checker ExpectedActual) isWrongExpectedActualOrder(pass *analysis.Pass, fnName string, first, second ast.Expr) bool {
+	leftIsCandidate := checker.isExpectedValueCandidate(pass, fnName, first)
+	rightIsCandidate := checker.isExpectedValueCandidate(pass, fnName, second)
 	return rightIsCandidate && !leftIsCandidate
 }
 
-func (checker ExpectedActual) isExpectedValueCandidate(pass *analysis.Pass, expr ast.Expr) bool {
+func (checker ExpectedActual) isExpectedValueCandidate(pass *analysis.Pass, fnName string, expr ast.Expr) bool {
 	switch v := expr.(type) {
 	case *ast.ParenExpr:
-		return checker.isExpectedValueCandidate(pass, v.X)
+		return checker.isExpectedValueCandidate(pass, fnName, v.X)
 
 	case *ast.StarExpr: // *value
-		return checker.isExpectedValueCandidate(pass, v.X)
+		return checker.isExpectedValueCandidate(pass, fnName, v.X)
 
 	case *ast.UnaryExpr:
 		if v.Op == token.AND || v.Op == token.SUB { // &value, -value
-			return checker.isExpectedValueCandidate(pass, v.X)
+			return checker.isExpectedValueCandidate(pass, fnName, v.X)
 		}
 
 	case *ast.CompositeLit:
@@ -131,6 +131,16 @@ func (checker ExpectedActual) isExpectedValueCandidate(pass *analysis.Pass, expr
 	case *ast.CallExpr:
 		if lv, ok := isBuiltinLenCall(pass, expr); ok {
 			return isIdentNamedAfterPattern(checker.expVarPattern, lv)
+		}
+		// Typed nil (e.g. (*int)(nil), []int(nil)) is not an expected value for
+		// value comparison functions – nil-compare checker handles those cases.
+		if isTypedNil(pass, v) {
+			switch fnName {
+			case "IsType", "IsNotType":
+				// For type assertion functions, (*T)(nil) is used as a type witness.
+			default:
+				return false
+			}
 		}
 		return isParenExpr(v) ||
 			isCastedBasicLitOrExpectedValue(v, checker.expVarPattern) ||

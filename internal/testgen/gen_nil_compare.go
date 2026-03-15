@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 	"text/template"
 
@@ -19,27 +20,59 @@ func (g NilCompareTestsGenerator) TemplateData() any {
 		report  = checker + ": use %s.%s"
 	)
 
-	var unsupportedAssertions []Assertion
-	for _, fn := range []string{"Equal", "EqualValues", "Exactly", "NotEqual", "NotEqualValues"} {
-		unsupportedAssertions = append(unsupportedAssertions, []Assertion{
-			{Fn: fn, Argsf: "(chan struct{})(nil), ch"},
-			{Fn: fn, Argsf: "(func())(nil), fn"},
-			{Fn: fn, Argsf: "(any)(nil), iface"},
-			{Fn: fn, Argsf: "(map[int]int)(nil), mp"},
-			{Fn: fn, Argsf: "(*int)(nil), ptr"},
-			{Fn: fn, Argsf: "[]int(nil), slice"},
-			{Fn: fn, Argsf: "(unsafe.Pointer)(nil), unsafePtr"},
-		}...)
+	type typedNilCase struct {
+		TypedNil string // typed nil expression, e.g. "(*int)(nil)"
+		Var      string // non-nil variable, e.g. "ptr"
+	}
+
+	typedNilCases := []typedNilCase{
+		{"(chan struct{})(nil)", "ch"},
+		{"(func())(nil)", "fn"},
+		{"(any)(nil)", "iface"},
+		{"(map[int]int)(nil)", "mp"},
+		{"(*int)(nil)", "ptr"},
+		{"[]int(nil)", "slice"},
+		{"(unsafe.Pointer)(nil)", "unsafePtr"},
+	}
+
+	var typedNilAssertions []Assertion
+	for _, fn := range []string{"Equal", "EqualValues", "Exactly"} {
+		for _, tc := range typedNilCases {
+			typedNilAssertions = append(typedNilAssertions,
+				Assertion{
+					Fn: fn, Argsf: fmt.Sprintf("%s, %s", tc.TypedNil, tc.Var),
+					ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: tc.Var,
+				},
+				Assertion{
+					Fn: fn, Argsf: fmt.Sprintf("%s, %s", tc.Var, tc.TypedNil),
+					ReportMsgf: report, ProposedFn: "Nil", ProposedArgsf: tc.Var,
+				},
+			)
+		}
+	}
+	for _, fn := range []string{"NotEqual", "NotEqualValues"} {
+		for _, tc := range typedNilCases {
+			typedNilAssertions = append(typedNilAssertions,
+				Assertion{
+					Fn: fn, Argsf: fmt.Sprintf("%s, %s", tc.TypedNil, tc.Var),
+					ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: tc.Var,
+				},
+				Assertion{
+					Fn: fn, Argsf: fmt.Sprintf("%s, %s", tc.Var, tc.TypedNil),
+					ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: tc.Var,
+				},
+			)
+		}
 	}
 
 	return struct {
-		CheckerName           CheckerName
-		BullshitAssertions    []Assertion
-		InvalidAssertions     []Assertion
-		UnsupportedAssertions []Assertion
-		ValidAssertions       []Assertion
-		IgnoredAssertions     []Assertion
-		UntypedNilBug         []Assertion
+		CheckerName        CheckerName
+		BullshitAssertions []Assertion
+		InvalidAssertions  []Assertion
+		TypedNilAssertions []Assertion
+		ValidAssertions    []Assertion
+		IgnoredAssertions  []Assertion
+		UntypedNilBug      []Assertion
 	}{
 		CheckerName: CheckerName(checker),
 		BullshitAssertions: []Assertion{
@@ -62,7 +95,7 @@ func (g NilCompareTestsGenerator) TemplateData() any {
 			{Fn: "NotEqual", Argsf: "nil, iface", ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: "iface"},
 			{Fn: "NotEqualValues", Argsf: "nil, iface", ReportMsgf: report, ProposedFn: "NotNil", ProposedArgsf: "iface"},
 		},
-		UnsupportedAssertions: unsupportedAssertions,
+		TypedNilAssertions: typedNilAssertions,
 		ValidAssertions: []Assertion{
 			{Fn: "Nil", Argsf: "iface"},
 			{Fn: "NotNil", Argsf: "iface"},
@@ -166,9 +199,9 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 		{{- end }}
 	}
 
-	// Invalid, but unsupported.
+	// Invalid (typed nil).
 	{
-		{{- range $ai, $assrn := $.UnsupportedAssertions }}
+		{{- range $ai, $assrn := $.TypedNilAssertions }}
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 		{{- end }}
 	}

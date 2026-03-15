@@ -158,78 +158,148 @@ func TestNilCompareChecker(t *testing.T) {
 		assert.NotNilf(t, iface, "msg with args %d %s", 42, "42") // want "nil-compare: use assert\\.NotNilf"
 	}
 
-	// Invalid, but unsupported.
+	// Invalid (typed nil).
 	{
-		assert.Equal(t, (chan struct{})(nil), ch)
-		assert.Equalf(t, (chan struct{})(nil), ch, "msg with args %d %s", 42, "42")
-		assert.Equal(t, (func())(nil), fn)
-		assert.Equalf(t, (func())(nil), fn, "msg with args %d %s", 42, "42")
-		assert.Equal(t, (any)(nil), iface)
-		assert.Equalf(t, (any)(nil), iface, "msg with args %d %s", 42, "42")
-		assert.Equal(t, (map[int]int)(nil), mp)
-		assert.Equalf(t, (map[int]int)(nil), mp, "msg with args %d %s", 42, "42")
-		assert.Equal(t, (*int)(nil), ptr)
-		assert.Equalf(t, (*int)(nil), ptr, "msg with args %d %s", 42, "42")
-		assert.Equal(t, []int(nil), slice)
-		assert.Equalf(t, []int(nil), slice, "msg with args %d %s", 42, "42")
-		assert.Equal(t, (unsafe.Pointer)(nil), unsafePtr)
-		assert.Equalf(t, (unsafe.Pointer)(nil), unsafePtr, "msg with args %d %s", 42, "42")
-		assert.EqualValues(t, (chan struct{})(nil), ch)
-		assert.EqualValuesf(t, (chan struct{})(nil), ch, "msg with args %d %s", 42, "42")
-		assert.EqualValues(t, (func())(nil), fn)
-		assert.EqualValuesf(t, (func())(nil), fn, "msg with args %d %s", 42, "42")
-		assert.EqualValues(t, (any)(nil), iface)
-		assert.EqualValuesf(t, (any)(nil), iface, "msg with args %d %s", 42, "42")
-		assert.EqualValues(t, (map[int]int)(nil), mp)
-		assert.EqualValuesf(t, (map[int]int)(nil), mp, "msg with args %d %s", 42, "42")
-		assert.EqualValues(t, (*int)(nil), ptr)
-		assert.EqualValuesf(t, (*int)(nil), ptr, "msg with args %d %s", 42, "42")
-		assert.EqualValues(t, []int(nil), slice)
-		assert.EqualValuesf(t, []int(nil), slice, "msg with args %d %s", 42, "42")
-		assert.EqualValues(t, (unsafe.Pointer)(nil), unsafePtr)
-		assert.EqualValuesf(t, (unsafe.Pointer)(nil), unsafePtr, "msg with args %d %s", 42, "42")
-		assert.Exactly(t, (chan struct{})(nil), ch)
-		assert.Exactlyf(t, (chan struct{})(nil), ch, "msg with args %d %s", 42, "42")
-		assert.Exactly(t, (func())(nil), fn)
-		assert.Exactlyf(t, (func())(nil), fn, "msg with args %d %s", 42, "42")
-		assert.Exactly(t, (any)(nil), iface)
-		assert.Exactlyf(t, (any)(nil), iface, "msg with args %d %s", 42, "42")
-		assert.Exactly(t, (map[int]int)(nil), mp)
-		assert.Exactlyf(t, (map[int]int)(nil), mp, "msg with args %d %s", 42, "42")
-		assert.Exactly(t, (*int)(nil), ptr)
-		assert.Exactlyf(t, (*int)(nil), ptr, "msg with args %d %s", 42, "42")
-		assert.Exactly(t, []int(nil), slice)
-		assert.Exactlyf(t, []int(nil), slice, "msg with args %d %s", 42, "42")
-		assert.Exactly(t, (unsafe.Pointer)(nil), unsafePtr)
-		assert.Exactlyf(t, (unsafe.Pointer)(nil), unsafePtr, "msg with args %d %s", 42, "42")
-		assert.NotEqual(t, (chan struct{})(nil), ch)
-		assert.NotEqualf(t, (chan struct{})(nil), ch, "msg with args %d %s", 42, "42")
-		assert.NotEqual(t, (func())(nil), fn)
-		assert.NotEqualf(t, (func())(nil), fn, "msg with args %d %s", 42, "42")
-		assert.NotEqual(t, (any)(nil), iface)
-		assert.NotEqualf(t, (any)(nil), iface, "msg with args %d %s", 42, "42")
-		assert.NotEqual(t, (map[int]int)(nil), mp)
-		assert.NotEqualf(t, (map[int]int)(nil), mp, "msg with args %d %s", 42, "42")
-		assert.NotEqual(t, (*int)(nil), ptr)
-		assert.NotEqualf(t, (*int)(nil), ptr, "msg with args %d %s", 42, "42")
-		assert.NotEqual(t, []int(nil), slice)
-		assert.NotEqualf(t, []int(nil), slice, "msg with args %d %s", 42, "42")
-		assert.NotEqual(t, (unsafe.Pointer)(nil), unsafePtr)
-		assert.NotEqualf(t, (unsafe.Pointer)(nil), unsafePtr, "msg with args %d %s", 42, "42")
-		assert.NotEqualValues(t, (chan struct{})(nil), ch)
-		assert.NotEqualValuesf(t, (chan struct{})(nil), ch, "msg with args %d %s", 42, "42")
-		assert.NotEqualValues(t, (func())(nil), fn)
-		assert.NotEqualValuesf(t, (func())(nil), fn, "msg with args %d %s", 42, "42")
-		assert.NotEqualValues(t, (any)(nil), iface)
-		assert.NotEqualValuesf(t, (any)(nil), iface, "msg with args %d %s", 42, "42")
-		assert.NotEqualValues(t, (map[int]int)(nil), mp)
-		assert.NotEqualValuesf(t, (map[int]int)(nil), mp, "msg with args %d %s", 42, "42")
-		assert.NotEqualValues(t, (*int)(nil), ptr)
-		assert.NotEqualValuesf(t, (*int)(nil), ptr, "msg with args %d %s", 42, "42")
-		assert.NotEqualValues(t, []int(nil), slice)
-		assert.NotEqualValuesf(t, []int(nil), slice, "msg with args %d %s", 42, "42")
-		assert.NotEqualValues(t, (unsafe.Pointer)(nil), unsafePtr)
-		assert.NotEqualValuesf(t, (unsafe.Pointer)(nil), unsafePtr, "msg with args %d %s", 42, "42")
+		assert.Nil(t, ch)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, ch, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, ch)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, ch, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, fn)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, fn, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, fn)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, fn, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, iface)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, iface, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, iface)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, iface, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, mp)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, mp, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, mp)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, mp, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, ptr)                                            // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, ptr, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, ptr)                                            // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, ptr, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, slice)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, slice, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, slice)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, slice, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, unsafePtr)                                      // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, unsafePtr, "msg with args %d %s", 42, "42")    // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, unsafePtr)                                      // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, unsafePtr, "msg with args %d %s", 42, "42")    // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, ch)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, ch, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, ch)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, ch, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, fn)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, fn, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, fn)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, fn, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, iface)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, iface, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, iface)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, iface, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, mp)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, mp, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, mp)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, mp, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, ptr)                                            // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, ptr, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, ptr)                                            // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, ptr, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, slice)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, slice, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, slice)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, slice, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, unsafePtr)                                      // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, unsafePtr, "msg with args %d %s", 42, "42")    // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, unsafePtr)                                      // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, unsafePtr, "msg with args %d %s", 42, "42")    // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, ch)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, ch, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, ch)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, ch, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, fn)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, fn, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, fn)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, fn, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, iface)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, iface, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, iface)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, iface, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, mp)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, mp, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, mp)                                             // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, mp, "msg with args %d %s", 42, "42")           // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, ptr)                                            // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, ptr, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, ptr)                                            // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, ptr, "msg with args %d %s", 42, "42")          // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, slice)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, slice, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, slice)                                          // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, slice, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, unsafePtr)                                      // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, unsafePtr, "msg with args %d %s", 42, "42")    // want "nil-compare: use assert\\.Nilf"
+		assert.Nil(t, unsafePtr)                                      // want "nil-compare: use assert\\.Nil"
+		assert.Nilf(t, unsafePtr, "msg with args %d %s", 42, "42")    // want "nil-compare: use assert\\.Nilf"
+		assert.NotNil(t, ch)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, ch, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, ch)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, ch, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, fn)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, fn, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, fn)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, fn, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, iface)                                       // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, iface, "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, iface)                                       // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, iface, "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, mp)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, mp, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, mp)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, mp, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, ptr)                                         // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, ptr, "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, ptr)                                         // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, ptr, "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, slice)                                       // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, slice, "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, slice)                                       // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, slice, "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, unsafePtr)                                   // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, unsafePtr, "msg with args %d %s", 42, "42") // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, unsafePtr)                                   // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, unsafePtr, "msg with args %d %s", 42, "42") // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, ch)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, ch, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, ch)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, ch, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, fn)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, fn, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, fn)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, fn, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, iface)                                       // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, iface, "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, iface)                                       // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, iface, "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, mp)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, mp, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, mp)                                          // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, mp, "msg with args %d %s", 42, "42")        // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, ptr)                                         // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, ptr, "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, ptr)                                         // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, ptr, "msg with args %d %s", 42, "42")       // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, slice)                                       // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, slice, "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, slice)                                       // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, slice, "msg with args %d %s", 42, "42")     // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, unsafePtr)                                   // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, unsafePtr, "msg with args %d %s", 42, "42") // want "nil-compare: use assert\\.NotNilf"
+		assert.NotNil(t, unsafePtr)                                   // want "nil-compare: use assert\\.NotNil"
+		assert.NotNilf(t, unsafePtr, "msg with args %d %s", 42, "42") // want "nil-compare: use assert\\.NotNilf"
 	}
 
 	// Valid.
