@@ -36,11 +36,12 @@ func TestIsJSONLike(t *testing.T) {
 			expected: true,
 		},
 		{
-			in:       `apiVersion: 3`,
-			expected: false,
+			// Valid JSON array of objects is now detected.
+			in:       `[{}]`,
+			expected: true,
 		},
 		{
-			in:       `[{}]`,
+			in:       `apiVersion: 3`,
 			expected: false,
 		},
 		{
@@ -58,6 +59,69 @@ func TestIsJSONLike(t *testing.T) {
 			isJSON := analysisutil.IsJSONLike(tt.in)
 			if isJSON != tt.expected {
 				t.FailNow()
+			}
+		})
+	}
+}
+
+func TestIsYAMLLike(t *testing.T) {
+	cases := []struct {
+		in       string
+		expected bool
+	}{
+		{
+			// Multi-line YAML with multiple key-value pairs.
+			in: `
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+images:
+  - name: foo
+    newName: bar
+`,
+			expected: true,
+		},
+		{
+			// Simple multi-line YAML.
+			in:       "name: John\nage: 30\ncity: New York\n",
+			expected: true,
+		},
+		{
+			// Single-line YAML is not detected (could be any plain string).
+			in:       "kind: Kustomization",
+			expected: false,
+		},
+		{
+			// Valid JSON objects are handled by JSONEq, not YAMLEq.
+			in:       `{"foo": "bar"}`,
+			expected: false,
+		},
+		{
+			// Valid JSON arrays are handled by JSONEq, not YAMLEq.
+			in:       `[{"name": "foo"}]`,
+			expected: false,
+		},
+		{
+			// Multi-line string with fewer than 2 key-value lines is not detected.
+			in:       "kind: Kustomization\n",
+			expected: false,
+		},
+		{
+			// Quoted multi-line YAML (as it appears in Go source).
+			in:       "`\nkind: Kustomization\napiVersion: v1\nimages:\n  - name: foo\n    newName: bar\n`",
+			expected: true,
+		},
+		{
+			// Regular text without YAML structure.
+			in:       "hello world\nfoo bar\n",
+			expected: false,
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run("", func(t *testing.T) {
+			isYAML := analysisutil.IsYAMLLike(tt.in)
+			if isYAML != tt.expected {
+				t.Fatalf("IsYAMLLike(%q) = %v, want %v", tt.in, isYAML, tt.expected)
 			}
 		})
 	}

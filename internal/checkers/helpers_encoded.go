@@ -51,8 +51,20 @@ func isJSONStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
 }
 
 func isYAMLStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
-	id, ok := e.(*ast.Ident)
-	return ok && (hasBytesType(pass, e) || hasStringType(pass, e)) && hasWordAfterPattern(id.Name, yamlWordRe)
+	// Name-based detection: variable/constant name contains "yaml" or "yml".
+	if id, ok := e.(*ast.Ident); ok {
+		return (hasBytesType(pass, e) || hasStringType(pass, e)) && hasWordAfterPattern(id.Name, yamlWordRe)
+	}
+
+	// Content-based detection: string literals and constants containing multi-line YAML.
+	if t, ok := pass.TypesInfo.Types[e]; ok && t.Value != nil {
+		return analysisutil.IsYAMLLike(t.Value.String())
+	}
+	if bl, ok := e.(*ast.BasicLit); ok {
+		return bl.Kind == token.STRING && analysisutil.IsYAMLLike(bl.Value)
+	}
+
+	return false
 }
 
 func hasWordAfterPattern(s string, re *regexp.Regexp) bool {

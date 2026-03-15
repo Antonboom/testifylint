@@ -131,6 +131,28 @@ func TestEncodedCompareChecker(t *testing.T) {
 	"params": ["power","sat"]
 }
 `, raw, "msg with args %d %s", 42, "42")
+		assert.Equal(t, ` // want "encoded-compare: use assert\.YAMLEq"
+
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+images:
+  - name: foo
+    newName: bar
+  - name: bar
+    newName: baz
+    newTag: "123"
+`, conf)
+		assert.Equal(t, ` // want "encoded-compare: use assert\.YAMLEq"
+
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+images:
+  - name: foo
+    newName: bar
+  - name: bar
+    newName: baz
+    newTag: "123"
+`, conf, "msg with args %d %s", 42, "42")
 	}
 
 	// Valid.
