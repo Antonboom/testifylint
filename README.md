@@ -99,6 +99,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [error-is-as](#error-is-as)                         | ✅                  | 🤏      |
 | [error-nil](#error-nil)                             | ✅                  | ✅       |
 | [expected-actual](#expected-actual)                 | ✅                  | ✅       |
+| [fail-now](#fail-now)                               | ✅                  | ✅       |
 | [float-compare](#float-compare)                     | ✅                  | ❌       |
 | [formatter](#formatter)                             | ✅                  | 🤏      |
 | [go-require](#go-require)                           | ✅                  | ❌       |
@@ -579,6 +580,34 @@ The checker considers the expected value to be a basic literal, constant, or var
 It is
 planned [to change the order of assertion arguments](https://github.com/stretchr/testify/issues/1089#Argument_order) to
 more natural (actual, expected) in `v2` of `testify`.
+
+---
+
+### fail-now
+
+```go
+❌
+assert.Fail(t, "unexpected event")
+assert.Fail(t, "unexpected event", args...)
+assert.Failf(t, "unexpected event", "format %s", arg)
+assert.FailNow(t, "unexpected event")
+assert.FailNow(t, "unexpected event", args...)
+assert.FailNowf(t, "unexpected event", "format %s", arg)
+```
+
+```go
+✅
+t.Error("unexpected event")
+t.Errorf("format %s", arg)
+t.Fatal("unexpected event")
+t.Fatalf("format %s", arg)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: `assert.Fail` and `assert.FailNow` (and their `f` variants) are redundant wrappers around
+the standard `testing.T` methods. Using `t.Error`, `t.Fatal`, `t.Errorf`, and `t.Fatalf` directly is
+simpler and more idiomatic Go.
 
 ---
 
