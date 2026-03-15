@@ -3,6 +3,7 @@ package checkers
 import (
 	"bytes"
 	"go/ast"
+	"go/types"
 	"strings"
 
 	"golang.org/x/tools/go/analysis"
@@ -24,6 +25,14 @@ func formatAsCallArgs(pass *analysis.Pass, args ...ast.Expr) []byte {
 		}
 	}
 	return buf.Bytes()
+}
+
+// formatAsCast returns bytes for a type-cast expression T(expr), where T is the
+// string form of t relative to the current package.
+func formatAsCast(pass *analysis.Pass, e ast.Expr, t types.Type) []byte {
+	typeName := types.TypeString(t, types.RelativeTo(pass.Pkg))
+	exprStr := analysisutil.NodeString(pass.Fset, e)
+	return []byte(typeName + "(" + exprStr + ")")
 }
 
 func formatWithStringCastForBytes(pass *analysis.Pass, e ast.Expr) []byte {
