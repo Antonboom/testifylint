@@ -17,6 +17,7 @@ func TestEncodedCompareChecker(t *testing.T) {
 	var respBody, raw, hexString, toJSON, expJSON, resultJSON, jsonb, resJson string
 	var conf, expectedYAML, expYaml, ymlResult, yamlResult, expYML, outputYaml string
 	var respBytes, resultJSONBytes []byte
+	var respJSONRawMessage json.RawMessage
 	w := httptest.NewRecorder()
 	var batch interface{ ParentSummary() []byte }
 	var res [1]struct{ Data []byte }
@@ -98,6 +99,16 @@ func TestEncodedCompareChecker(t *testing.T) {
 		assert.Equalf(t, `{"bar":"foo"}`, strings.TrimSpace(string(w.Body.Bytes())), "msg with args %d %s", 42, "42")                                         // want "encoded-compare: use assert\\.JSONEqf"
 		assert.Equal(t, strings.TrimSpace(strings.ReplaceAll(expYaml, "\t", "  ")), strings.TrimSpace(string(respBytes)))                                     // want "encoded-compare: use assert\\.YAMLEq"
 		assert.Equalf(t, strings.TrimSpace(strings.ReplaceAll(expYaml, "\t", "  ")), strings.TrimSpace(string(respBytes)), "msg with args %d %s", 42, "42")   // want "encoded-compare: use assert\\.YAMLEqf"
+		assert.Equal(t, `{"foo":"bar"}`, respJSONRawMessage)                                                                                                  // want "encoded-compare: use assert\\.JSONEq"
+		assert.Equalf(t, `{"foo":"bar"}`, respJSONRawMessage, "msg with args %d %s", 42, "42")                                                                // want "encoded-compare: use assert\\.JSONEqf"
+		assert.Equal(t, expJSON, respJSONRawMessage)                                                                                                          // want "encoded-compare: use assert\\.JSONEq"
+		assert.Equalf(t, expJSON, respJSONRawMessage, "msg with args %d %s", 42, "42")                                                                        // want "encoded-compare: use assert\\.JSONEqf"
+		assert.Equal(t, respJSONRawMessage, expJSON)                                                                                                          // want "encoded-compare: use assert\\.JSONEq"
+		assert.Equalf(t, respJSONRawMessage, expJSON, "msg with args %d %s", 42, "42")                                                                        // want "encoded-compare: use assert\\.JSONEqf"
+		assert.EqualValues(t, `{"foo":"bar"}`, respJSONRawMessage)                                                                                            // want "encoded-compare: use assert\\.JSONEq"
+		assert.EqualValuesf(t, `{"foo":"bar"}`, respJSONRawMessage, "msg with args %d %s", 42, "42")                                                          // want "encoded-compare: use assert\\.JSONEqf"
+		assert.Exactly(t, `{"foo":"bar"}`, respJSONRawMessage)                                                                                                // want "encoded-compare: use assert\\.JSONEq"
+		assert.Exactlyf(t, `{"foo":"bar"}`, respJSONRawMessage, "msg with args %d %s", 42, "42")                                                              // want "encoded-compare: use assert\\.JSONEqf"
 		assert.EqualValues(t, expJSON, resJson)                                                                                                               // want "encoded-compare: use assert\\.JSONEq"
 		assert.EqualValuesf(t, expJSON, resJson, "msg with args %d %s", 42, "42")                                                                             // want "encoded-compare: use assert\\.JSONEqf"
 		assert.Exactly(t, expJSON, resJson)                                                                                                                   // want "encoded-compare: use assert\\.JSONEq"
@@ -168,6 +179,18 @@ func TestEncodedCompareChecker(t *testing.T) {
 		assert.NotEqualf(t, raw, resultJSON, "msg with args %d %s", 42, "42")
 		assert.NotEqualValues(t, resultJSON, resultJSON)
 		assert.NotEqualValuesf(t, resultJSON, resultJSON, "msg with args %d %s", 42, "42")
+		assert.Equal(t, 42, resultJSON)
+		assert.Equalf(t, 42, resultJSON, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, 42, resultJSON)
+		assert.EqualValuesf(t, 42, resultJSON, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, 42, resultJSON)
+		assert.Exactlyf(t, 42, resultJSON, "msg with args %d %s", 42, "42")
+		assert.Equal(t, 42, conf)
+		assert.Equalf(t, 42, conf, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, 42, conf)
+		assert.EqualValuesf(t, 42, conf, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, 42, conf)
+		assert.Exactlyf(t, 42, conf, "msg with args %d %s", 42, "42")
 		assert.YAMLEq(t, `
 kind: Kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1

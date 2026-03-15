@@ -53,16 +53,22 @@ func (checker EncodedCompare) Check(pass *analysis.Pass, call *CallMeta) *analys
 	}
 
 	if proposed != "" {
+		lhsFmt := formatWithStringCastForBytes(pass, a)
+		rhsFmt := formatWithStringCastForBytes(pass, b)
+		if lhsFmt == nil || rhsFmt == nil {
+			return nil
+		}
+
 		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
 			analysis.TextEdit{
 				Pos:     lhs.Pos(),
 				End:     lhs.End(),
-				NewText: formatWithStringCastForBytes(pass, a),
+				NewText: lhsFmt,
 			},
 			analysis.TextEdit{
 				Pos:     rhs.Pos(),
 				End:     rhs.End(),
-				NewText: formatWithStringCastForBytes(pass, b),
+				NewText: rhsFmt,
 			},
 		)
 	}

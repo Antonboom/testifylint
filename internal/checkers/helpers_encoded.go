@@ -19,6 +19,11 @@ var (
 
 func isJSONStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
 	if isIdentNamedAfterPattern(jsonIdentRe, e) {
+		// If this is a constant with a known value, verify it actually looks like JSON.
+		// This avoids false positives for constants like `const contentTypeJSON = "application/json"`.
+		if t, ok := pass.TypesInfo.Types[e]; ok && t.Value != nil {
+			return analysisutil.IsJSONLike(t.Value.String())
+		}
 		return hasBytesType(pass, e) || hasStringType(pass, e)
 	}
 

@@ -151,14 +151,15 @@ func isByteArray(e ast.Expr) bool {
 	return ok && isIdentWithName("byte", at.Elt)
 }
 
-// hasBytesType returns true if the expression is of `[]byte` type.
+// hasBytesType returns true if the expression is of `[]byte` type or an underlying `[]byte` type
+// (e.g. json.RawMessage which is type RawMessage []byte).
 func hasBytesType(pass *analysis.Pass, e ast.Expr) bool {
 	t := pass.TypesInfo.TypeOf(e)
 	if t == nil {
 		return false
 	}
 
-	sl, ok := t.(*types.Slice)
+	sl, ok := t.Underlying().(*types.Slice)
 	if !ok {
 		return false
 	}
