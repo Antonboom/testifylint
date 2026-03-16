@@ -49,6 +49,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	SuiteSubtestRunTestsGenerator{},
 	SuiteTHelperTestsGenerator{},
 	UselessAssertTestsGenerator{},
+	WrongTTestsGenerator{},
 }
 
 func init() {
