@@ -92,6 +92,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [bool-compare](#bool-compare)                       | ✅                  | ✅       |
 | [compares](#compares)                               | ✅                  | ✅       |
 | [contains](#contains)                               | ✅                  | 🤏      |
+| [elements-match](#elements-match)                   | ❌                  | ✅       |
 | [empty](#empty)                                     | ✅                  | ✅       |
 | [encoded-compare](#encoded-compare)                 | ✅                  | ✅       |
 | [equal-values](#equal-values)                       | ✅                  | ✅       |
@@ -319,6 +320,24 @@ require.Contains(t, logLines[0], `"params":{"query":"test statement"}`)
 ```
 
 </details>
+
+---
+
+### elements-match
+
+```go
+❌
+slices.Sort(expected)
+slices.Sort(result)
+assert.True(t, slices.Equal(expected, result))
+
+✅
+assert.ElementsMatch(t, expected, result)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: false. <br>
+**Reason**: Code simplification.
 
 ---
 

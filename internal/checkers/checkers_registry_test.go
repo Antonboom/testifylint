@@ -60,6 +60,7 @@ func TestAll(t *testing.T) {
 		"suite-method-signature",
 		"suite-subtest-run",
 		"suite-thelper",
+		"elements-match",
 	}
 	if !slices.Equal(expected, checkerList) {
 		t.Fatalf("unexpected list: %#v", checkerList)

@@ -131,7 +131,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
 
 # Open for contribution
 
-- [elements-match](#elements-match)
 - [error-compare](#error-compare)
 - [equal-values](#equal-values)
 - [graceful-teardown](#graceful-teardown)
