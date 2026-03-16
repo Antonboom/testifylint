@@ -102,6 +102,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [float-compare](#float-compare)                     | ✅                  | ❌       |
 | [formatter](#formatter)                             | ✅                  | 🤏      |
 | [go-require](#go-require)                           | ✅                  | ❌       |
+| [graceful-teardown](#graceful-teardown)             | ❌                  | ✅       |
 | [len](#len)                                         | ✅                  | ✅       |
 | [mock-expect](#mock-expect)                         | ✅                  | 🤏      |
 | [negative-positive](#negative-positive)             | ✅                  | ✅       |
@@ -836,6 +837,38 @@ tests. You can turn off the check using the `--go-require.ignore-http-handlers` 
 Indirect callbacks, such as `go callback()` or `wg.Go(callback)`, are not supported.
 
 P.S. Look at [testify's issue](https://github.com/stretchr/testify/issues/772), related to assertions in the goroutines.
+
+---
+
+### graceful-teardown
+
+```go
+❌
+func (s *ServiceIntegrationSuite) TearDownTest() {
+    if p := s.verdictsProducer; p != nil {
+        s.Require().NoError(p.Close())
+    }
+}
+
+t.Cleanup(func() {
+    require.NoError(t, err)
+})
+
+✅
+func (s *ServiceIntegrationSuite) TearDownTest() {
+    if p := s.verdictsProducer; p != nil {
+        s.Assert().NoError(p.Close())
+    }
+}
+
+t.Cleanup(func() {
+    assert.NoError(t, err)
+})
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: false. <br>
+**Reason**: Possible resource leaks, because `require` finishes the current goroutine.
 
 ---
 

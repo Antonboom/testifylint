@@ -131,7 +131,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [elements-match](#elements-match)
 - [error-compare](#error-compare)
 - [go-require](#go-require)
-- [graceful-teardown](#graceful-teardown)
 - [float-compare](#float-compare)
 - [http-const](#http-const)
 - [http-sugar](#http-sugar)
@@ -198,30 +197,6 @@ go callback()
 **Enabled by default**: true. <br>
 **Reason**: The `Error()` method on the `error` interface exists for humans, not code. <br>
 **Related issues**: [#47](https://github.com/Antonboom/testifylint/issues/47)
-
----
-
-### graceful-teardown
-
-Warns about usage of `require` in `t.Cleanup` functions and suite teardown methods:
-
-```go
-func (s *ServiceIntegrationSuite) TearDownTest() {
-    if p := s.verdictsProducer; p != nil {
-        s.Require().NoError(p.Close()) ❌
-    }
-    if c := s.dlqVerdictsConsumer; c != nil {
-        s.NoError(c.Close())
-    }
-    s.DBSuite.TearDownTest()
-    s.ks.TearDownTest()
-}
-```
-
-**Autofix**: false. <br>
-**Enabled by default**: false. <br>
-**Reason**: Possible resource leaks, because `require` finishes the current goroutine. <br>
-**Related issues**: [#142](https://github.com/Antonboom/testifylint/issues/142)
 
 ---
 
