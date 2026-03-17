@@ -22,7 +22,7 @@ func (n CheckerName) AsSuiteName() string {
 
 func (n CheckerName) toCamelCase() string {
 	var result strings.Builder
-	for _, word := range strings.Split(string(n), "-") {
+	for word := range strings.SplitSeq(string(n), "-") {
 		result.WriteString(title(word))
 	}
 	return result.String()

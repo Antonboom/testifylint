@@ -40,7 +40,7 @@ func TestSimple(t *testing.T) {
 	if analysisutil.Imports(f, notImported...) {
 		t.FailNow()
 	}
-	if !analysisutil.Imports(f, append(notImported, "testing")...) {
+	if !analysisutil.Imports(f, slices.Concat(notImported, []string{"testing"})...) {
 		t.FailNow()
 	}
 	if !analysisutil.Imports(f, "github.com/stretchr/testify/assert") {
