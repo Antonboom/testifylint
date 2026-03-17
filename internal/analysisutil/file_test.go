@@ -35,7 +35,7 @@ func TestSimple(t *testing.T) {
 		"github.com/stretchr/testify/suite",
 		"github.com/stretchr/testify/require",
 		"vendor/github.com/stretchr/testify/require",
-	)
+	}
 	if analysisutil.Imports(f, notImported...) {
 		t.FailNow()
 	}
