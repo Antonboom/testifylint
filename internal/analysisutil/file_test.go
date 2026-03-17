@@ -3,6 +3,7 @@ package analysisutil_test
 import (
 	"go/parser"
 	"go/token"
+	"slices"
 	"testing"
 
 	"github.com/Antonboom/testifylint/internal/analysisutil"
