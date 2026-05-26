@@ -71,9 +71,24 @@ func (checker GoRequire) Check(pass *analysis.Pass, insp *inspector.Inspector) (
 
 	var inGoroutineRunningTestFunc boolStack
 	processedFuncs := make(map[*ast.FuncDecl]goRequireVerdict)
+	waitGroupGoCallbacks := make(map[*ast.FuncLit]struct{})
+
+	insp.Preorder([]ast.Node{(*ast.CallExpr)(nil)}, func(node ast.Node) {
+		ce := node.(*ast.CallExpr)
+		if !isWaitGroupGoCall(pass, ce) {
+			return
+		}
+
+		for _, arg := range ce.Args {
+			if fl, ok := arg.(*ast.FuncLit); ok {
+				waitGroupGoCallbacks[fl] = struct{}{}
+			}
+		}
+	})
 
 	nodesFilter := []ast.Node{
 		(*ast.FuncDecl)(nil),
+		(*ast.FuncLit)(nil),
 		(*ast.FuncType)(nil),
 		(*ast.GoStmt)(nil),
 		(*ast.CallExpr)(nil),
@@ -86,6 +101,19 @@ func (checker GoRequire) Check(pass *analysis.Pass, insp *inspector.Inspector) (
 
 			if push {
 				inGoroutineRunningTestFunc.Push(true)
+			} else {
+				inGoroutineRunningTestFunc.Pop()
+			}
+			return true
+		}
+
+		if fl, ok := node.(*ast.FuncLit); ok {
+			if _, ok := waitGroupGoCallbacks[fl]; !ok {
+				return true
+			}
+
+			if push {
+				inGoroutineRunningTestFunc.Push(false)
 			} else {
 				inGoroutineRunningTestFunc.Pop()
 			}
@@ -234,6 +262,11 @@ func (checker GoRequire) checkFunc(
 		ce, ok := node.(*ast.CallExpr)
 		if !ok {
 			return true
+		}
+
+		if isWaitGroupGoCall(pass, ce) {
+			// wg.Go runs the callback in a new goroutine; don't recurse into it.
+			return false
 		}
 
 		testifyCall := NewCallMeta(pass, ce)

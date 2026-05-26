@@ -74,6 +74,35 @@ func TestGoRequireChecker_Smoke(t *testing.T) {
 			}
 		}(i)
 	}
+
+	wg.Go(func() {
+
+		run()
+		assertSomething(t)
+		requireSomething(t) // want "go-require: requireSomething contains assertions that must only be used in the goroutine running the test function"
+
+		assert.Fail(t, "boom!")
+		assert.Failf(t, "boom!", "msg with args %d %s", 42, "42")
+		assert.FailNow(t, "boom!")                                   // want "go-require: assert\\.FailNow must only be used in the goroutine running the test function"
+		assert.FailNowf(t, "boom!", "msg with args %d %s", 42, "42") // want "go-require: assert\\.FailNowf must only be used in the goroutine running the test function"
+		assert.NoError(t, err)
+		assert.NoErrorf(t, err, "msg with args %d %s", 42, "42")
+		assert.True(t, b)
+		assert.Truef(t, b, "msg with args %d %s", 42, "42")
+
+		require.Fail(t, "boom!")                                      // want "go-require: require must only be used in the goroutine running the test function"
+		require.Failf(t, "boom!", "msg with args %d %s", 42, "42")    // want "go-require: require must only be used in the goroutine running the test function"
+		require.FailNow(t, "boom!")                                   // want "go-require: require must only be used in the goroutine running the test function"
+		require.FailNowf(t, "boom!", "msg with args %d %s", 42, "42") // want "go-require: require must only be used in the goroutine running the test function"
+		require.NoError(t, err)                                       // want "go-require: require must only be used in the goroutine running the test function"
+		require.NoErrorf(t, err, "msg with args %d %s", 42, "42")     // want "go-require: require must only be used in the goroutine running the test function"
+		require.True(t, b)                                            // want "go-require: require must only be used in the goroutine running the test function"
+		require.Truef(t, b, "msg with args %d %s", 42, "42")          // want "go-require: require must only be used in the goroutine running the test function"
+	})
+
+	(*sync.WaitGroup).Go(&wg, func() {
+		require.NoError(t, err) // want "go-require: require must only be used in the goroutine running the test function"
+	})
 }
 
 func TestGoRequireChecker(t *testing.T) {
@@ -445,6 +474,30 @@ func TestGoRequireChecker(t *testing.T) {
 		genericHelper[*testing.T](t)           // want "go-require: genericHelper\\[\\*testing\\.T\\] contains assertions that must only be used in the goroutine running the test function"
 		superGenericHelper[*testing.T, int](t) // want "go-require: superGenericHelper\\[\\*testing\\.T, int\\] contains assertions that must only be used in the goroutine running the test function"
 	}()
+
+	var wg2 sync.WaitGroup
+	wg2.Go(func() {
+		run()
+		assertSomething(t)
+		requireSomething(t) // want "go-require: requireSomething contains assertions that must only be used in the goroutine running the test function"
+		assert.Fail(t, "boom!")
+		require.Fail(t, "boom!") // want "go-require: require must only be used in the goroutine running the test function"
+	})
+	wg2.Go(func() {
+		wg2.Go(func() {
+			run()
+			assertSomething(t)
+			requireSomething(t) // want "go-require: requireSomething contains assertions that must only be used in the goroutine running the test function"
+			assert.Fail(t, "boom!")
+			require.Fail(t, "boom!") // want "go-require: require must only be used in the goroutine running the test function"
+		})
+
+		run()
+		assertSomething(t)
+		requireSomething(t) // want "go-require: requireSomething contains assertions that must only be used in the goroutine running the test function"
+		assert.Fail(t, "boom!")
+		require.Fail(t, "boom!") // want "go-require: require must only be used in the goroutine running the test function"
+	})
 }
 
 type GoRequireCheckerSuite struct {
@@ -536,6 +589,16 @@ func (s *GoRequireCheckerSuite) TestAll() {
 
 	go s.T().Run("", requireSomething)
 	go s.Run("", s.suiteHelper)
+
+	var wg3 sync.WaitGroup
+	wg3.Go(func() {
+		run()
+		assertSomething(s.T())
+		requireSomething(s.T()) // want "go-require: requireSomething contains assertions that must only be used in the goroutine running the test function"
+		s.suiteHelper()         // want "go-require: s.suiteHelper contains assertions that must only be used in the goroutine running the test function"
+		s.Fail("boom!")
+		s.Require().Fail("boom!") // want "go-require: require must only be used in the goroutine running the test function"
+	})
 }
 
 func (s *GoRequireCheckerSuite) TestAsertFailNow() {

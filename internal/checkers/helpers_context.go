@@ -63,6 +63,11 @@ func findSurroundingFunc(pass *analysis.Pass, stack []ast.Node) *funcID {
 					if _, ok := stack[i-2].(*ast.GoStmt); ok {
 						isGoroutine = true
 					}
+
+					if isWaitGroupGoCall(pass, ce) {
+						// wg.Go runs the callback in a new goroutine.
+						isGoroutine = true
+					}
 				}
 			}
 

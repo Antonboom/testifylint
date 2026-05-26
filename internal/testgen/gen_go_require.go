@@ -134,6 +134,10 @@ func {{ .CheckerName.AsTestName }}_Smoke(t *testing.T) {
 			}
 		}(i)
 	}
+
+	wg.Go(func() {
+		{{ template "assertions" . }}
+	})
 }
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
@@ -345,6 +349,17 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 		genericHelper[*testing.T](t) // want {{ QuoteReport (printf .FnReport "genericHelper[*testing.T]") }}
 		superGenericHelper[*testing.T, int](t) // want {{ QuoteReport (printf .FnReport "superGenericHelper[*testing.T, int]") }}
 	}()
+
+	var wg2 sync.WaitGroup
+	wg2.Go(func() {
+		{{- template "assertions-short" . }}
+	})
+	wg2.Go(func() {
+		wg2.Go(func() {
+			{{- template "assertions-short" . }}
+		})
+		{{ template "assertions-short" . }}
+	})
 }
 
 {{ define "suite-assertions-short" }}
@@ -412,6 +427,11 @@ func (s *{{ $suiteName }}) TestAll() {
 
 	go s.T().Run("", requireSomething)
 	go s.Run("", s.suiteHelper)
+
+	var wg3 sync.WaitGroup
+	wg3.Go(func() {
+		{{- template "suite-assertions-short" . }}
+	})
 }
 
 func (s *{{ $suiteName }}) TestAsertFailNow() {
