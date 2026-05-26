@@ -37,8 +37,8 @@ func isWaitGroupGoCall(pass *analysis.Pass, ce *ast.CallExpr) bool {
 
 	recvType := sel.Recv()
 	if recvType == nil {
-		sig, ok := fn.Type().(*types.Signature)
-		if !ok {
+		sig, okSig := fn.Type().(*types.Signature)
+		if !okSig {
 			return false
 		}
 		recv := sig.Recv()
@@ -49,7 +49,7 @@ func isWaitGroupGoCall(pass *analysis.Pass, ce *ast.CallExpr) bool {
 	}
 
 	t := recvType
-	if ptr, ok := t.(*types.Pointer); ok {
+	if ptr, okPtr := t.(*types.Pointer); okPtr {
 		t = ptr.Elem()
 	}
 
