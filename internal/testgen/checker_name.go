@@ -21,11 +21,11 @@ func (n CheckerName) AsSuiteName() string {
 }
 
 func (n CheckerName) toCamelCase() string {
-	var result string
-	for _, word := range strings.Split(string(n), "-") {
-		result += title(word)
+	var result strings.Builder
+	for word := range strings.SplitSeq(string(n), "-") {
+		result.WriteString(title(word))
 	}
-	return result
+	return result.String()
 }
 
 // title is more simple analogue of deprecated strings.Title.

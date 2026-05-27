@@ -28,14 +28,15 @@ func TestSimple(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	notImported := []string{
+	notImported := make([]string, 0, 7)
+	notImported = append(notImported,
 		"",
 		"net/http",
 		"net/http/httptest",
 		"github.com/stretchr/testify/suite",
 		"github.com/stretchr/testify/require",
 		"vendor/github.com/stretchr/testify/require",
-	}
+	)
 	if analysisutil.Imports(f, notImported...) {
 		t.FailNow()
 	}
