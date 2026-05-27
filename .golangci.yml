@@ -40,6 +40,7 @@ linters:
     - gocheckcompilerdirectives
     - gochecknoinits
     - gocritic
+    - godoclint
     - godot
     - godox
     - goprintffuncname
@@ -48,10 +49,12 @@ linters:
     - importas
     - ineffassign
     - intrange
+    - iotamixing
     - lll
     - makezero
     - mirror
     - misspell
+    - modernize
     - nakedret
     - nestif
     - nilerr

@@ -1,7 +1,6 @@
 package errorisasissue231
 
 import (
-	"fmt"
 	"strconv"
 	"testing"
 	"time"

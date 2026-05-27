@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 env:
-  GO_VERSION: ^1.25
+  GO_VERSION: ^1.26
 
 jobs:
   release:
@@ -14,9 +14,9 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-        - uses: actions/checkout@v5
+        - uses: actions/checkout@v6
 
-        - uses: actions/setup-go@v5
+        - uses: actions/setup-go@v6
           with:
             go-version: ${{ env.GO_VERSION }}
 
