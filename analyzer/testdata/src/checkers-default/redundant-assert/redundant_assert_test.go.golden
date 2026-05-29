@@ -1,0 +1,60 @@
+package redundantassert
+
+import (
+	"errors"
+	"io"
+	"os"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestRedundantAssert(t *testing.T) {
+	t.Parallel()
+
+	var (
+		errA   = errors.New("err A")
+		errB   = errors.New("err B")
+		target *os.PathError
+	)
+
+	assObj := assert.New(t)
+
+	// Invalid.
+	{
+		assert.ErrorContains(t, errA, "err")
+
+		assert.EqualError(t, errA, "err A")
+
+		assObj.ErrorAs(errA, &target)
+
+		require.ErrorIs(t, errA, io.EOF)
+	}
+
+	// Valid.
+	{
+		{
+			assert.Error(t, errA)
+			assert.ErrorContains(t, errB, "err")
+		}
+
+		{
+			assert.Error(t, errA)
+		}
+
+		if assert.Error(t, errA) {
+			assert.ErrorContains(t, errA, "err")
+		}
+
+		{
+			{
+				assert.Error(t, errA)
+			}
+			assert.ErrorContains(t, errA, "err")
+		}
+
+		require.Error(t, errA)
+		require.ErrorContains(t, errA, "err")
+	}
+}
