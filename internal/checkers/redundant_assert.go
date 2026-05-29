@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
+	"go/types"
 	"math"
 
 	"golang.org/x/tools/go/analysis"
@@ -48,13 +49,14 @@ func (checker RedundantAssert) Check(pass *analysis.Pass, insp *inspector.Inspec
 			call:        callExpr,
 			testifyCall: testifyCall,
 			parentStmt:  parentStmt,
+			parentBlock: parentBlock,
 		})
 		return true
 	})
 
 	diagnostics := make([]analysis.Diagnostic, 0)
 
-	for _, calls := range callsByBlock {
+	for block, calls := range callsByBlock {
 		for currIdx, curr := range calls {
 			if !curr.testifyCall.IsAssert || curr.testifyCall.Fn.NameFTrimmed != "Error" {
 				continue
@@ -87,6 +89,15 @@ func (checker RedundantAssert) Check(pass *analysis.Pass, insp *inspector.Inspec
 				if currErr != otherErr {
 					continue
 				}
+
+				fromStmt, toStmt := curr.parentStmt, other.parentStmt
+				if fromStmt.Pos() > toStmt.Pos() {
+					fromStmt, toStmt = toStmt, fromStmt
+				}
+				if isReassignedBetween(block, curr.testifyCall.Args[0], fromStmt, toStmt, pass.Fset, pass.TypesInfo) {
+					continue
+				}
+
 				distance := absInt(currIdx - otherIdx)
 				if distance >= closestDistance {
 					continue
@@ -120,6 +131,91 @@ type redundantAssertCallMeta struct {
 	call        *ast.CallExpr
 	testifyCall *CallMeta
 	parentStmt  *ast.ExprStmt
+	parentBlock *ast.BlockStmt
+}
+
+func isReassignedBetween(
+	block *ast.BlockStmt,
+	errExpr ast.Expr,
+	fromStmt *ast.ExprStmt,
+	toStmt *ast.ExprStmt,
+	fset *token.FileSet,
+	info *types.Info,
+) bool {
+	if block == nil || errExpr == nil || fromStmt == nil || toStmt == nil {
+		return false
+	}
+
+	var (
+		errObj = referencedObject(errExpr, info)
+		errStr string
+	)
+	if errObj == nil {
+		errStr = analysisutil.NodeString(fset, errExpr)
+		if errStr == "" {
+			return false
+		}
+	}
+
+	fromPos, toPos := fromStmt.Pos(), toStmt.Pos()
+	if fromPos > toPos {
+		fromPos, toPos = toPos, fromPos
+	}
+
+	for _, stmt := range block.List {
+		if stmt.Pos() <= fromPos || stmt.Pos() >= toPos {
+			continue
+		}
+
+		reassigned := false
+		ast.Inspect(stmt, func(node ast.Node) bool {
+			assignStmt, ok := node.(*ast.AssignStmt)
+			if !ok {
+				return true
+			}
+
+			for _, lhs := range assignStmt.Lhs {
+				if sameErrTarget(lhs, errObj, errStr, fset, info) {
+					reassigned = true
+					return false
+				}
+			}
+			return true
+		})
+		if reassigned {
+			return true
+		}
+	}
+
+	return false
+}
+
+func sameErrTarget(lhs ast.Expr, errObj types.Object, errStr string, fset *token.FileSet, info *types.Info) bool {
+	if errObj != nil {
+		if lhsObj := referencedObject(lhs, info); lhsObj != nil && lhsObj == errObj {
+			return true
+		}
+	}
+
+	return errStr != "" && analysisutil.NodeString(fset, lhs) == errStr
+}
+
+func referencedObject(expr ast.Expr, info *types.Info) types.Object {
+	if info == nil {
+		return nil
+	}
+
+	switch expr := expr.(type) {
+	case *ast.Ident:
+		return info.ObjectOf(expr)
+	case *ast.SelectorExpr:
+		if sel, ok := info.Selections[expr]; ok && sel != nil {
+			return sel.Obj()
+		}
+		return info.ObjectOf(expr.Sel)
+	default:
+		return nil
+	}
 }
 
 func absInt(v int) int {
