@@ -142,29 +142,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
 
 ---
 
-### elements-match
-
-```go
-❌   require.Equal(t, len(expected), len(result)
-     sort.Slice(expected, /* ... */)
-     sort.Slice(result, /* ... */)
-     for i := range result {
-         assert.Equal(t, expected[i], result[i])
-     }
-     // Or for Go >= 1.21
-     slices.Sort(expected)
-     slices.Sort(result)
-     assert.True(t, slices.Equal(expected, result))
-
-✅   assert.ElementsMatch(t, expected, result)
-```
-
-**Autofix**: maybe (depends on implementation difficulty). <br>
-**Enabled by default**: maybe (depends on checker's stability). <br>
-**Reason**: Code simplification.
-
----
-
 ### error-compare
 
 ```go
