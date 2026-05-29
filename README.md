@@ -331,6 +331,12 @@ slices.Sort(expected)
 slices.Sort(result)
 assert.True(t, slices.Equal(expected, result))
 
+sort.Slice(expected, func(i, j int) bool { return expected[i] < expected[j] })
+sort.Slice(result, func(i, j int) bool { return result[i] < result[j] })
+for i := range result {
+    assert.Equal(t, expected[i], result[i])
+}
+
 ✅
 assert.ElementsMatch(t, expected, result)
 ```

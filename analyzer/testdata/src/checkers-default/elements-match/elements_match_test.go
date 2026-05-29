@@ -4,6 +4,7 @@ package elementsmatch
 
 import (
 	"slices"
+	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -38,6 +39,19 @@ func TestElementsMatchChecker(t *testing.T) {
 		slices.Sort(a)
 		slices.Sort(b)
 		assert.True(t, slices.Equal(b, a)) // want "elements-match: use assert\\.ElementsMatch"
+
+		sort.Slice(a, func(i, j int) bool { return a[i] < a[j] })
+		sort.Slice(b, func(i, j int) bool { return b[i] < b[j] })
+		for i := range b {
+			require.Equal(t, a[i], b[i]) // want "elements-match: use require\\.ElementsMatch"
+		}
+
+		assert.Equal(t, len(a), len(b))
+		sort.Slice(a, func(i, j int) bool { return a[i] < a[j] })
+		sort.Slice(b, func(i, j int) bool { return b[i] < b[j] })
+		for i := range b {
+			assert.Equal(t, a[i], b[i]) // want "elements-match: use assert\\.ElementsMatch"
+		}
 	}
 
 	// Valid.
@@ -62,5 +76,33 @@ func TestElementsMatchChecker(t *testing.T) {
 		slices.Sort(a)
 		slices.Sort(b)
 		assert.Equal(t, a, b)
+
+		// Only one sort call preceding loop.
+		sort.Slice(a, func(i, j int) bool { return a[i] < a[j] })
+		for i := range b {
+			assert.Equal(t, a[i], b[i])
+		}
+
+		// Sort args don't match loop args.
+		sort.Slice(a, func(i, j int) bool { return a[i] < a[j] })
+		sort.Slice(b, func(i, j int) bool { return b[i] < b[j] })
+		for i := range b {
+			assert.Equal(t, a[i], a[i])
+		}
+
+		// Not element-wise loop comparison.
+		sort.Slice(a, func(i, j int) bool { return a[i] < a[j] })
+		sort.Slice(b, func(i, j int) bool { return b[i] < b[j] })
+		for i := range b {
+			assert.True(t, a[i] == b[i])
+		}
+
+		// Loop body has extra statements.
+		sort.Slice(a, func(i, j int) bool { return a[i] < a[j] })
+		sort.Slice(b, func(i, j int) bool { return b[i] < b[j] })
+		for i := range b {
+			assert.Equal(t, a[i], b[i])
+			assert.NotZero(t, i)
+		}
 	}
 }
