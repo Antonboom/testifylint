@@ -55,7 +55,7 @@ func (checker ElementsMatch) checkPattern(
 	pass *analysis.Pass,
 	stmts []ast.Stmt,
 	start int,
-) (*analysis.Diagnostic, int) {
+) (d *analysis.Diagnostic, next int) {
 	if d, next := checker.checkSortAndLoopPattern(pass, stmts, start); d != nil {
 		return d, next
 	}
@@ -151,14 +151,15 @@ func (checker ElementsMatch) checkSortAndEqualPattern(
 // [assert/require.Equal(t, len(x), len(y))]
 // sort/slices.Sort(x)
 // sort/slices.Sort(y)
-// for i := range y {
-//     assert/require.Equal(t, x[i], y[i])
-// }
+//
+//	for i := range y {
+//	    assert/require.Equal(t, x[i], y[i])
+//	}
 func (checker ElementsMatch) checkSortAndLoopPattern(
 	pass *analysis.Pass,
 	stmts []ast.Stmt,
 	start int,
-) (*analysis.Diagnostic, int) {
+) (d *analysis.Diagnostic, next int) {
 	if start+2 >= len(stmts) {
 		return nil, start + 1
 	}
@@ -305,7 +306,7 @@ func extractSlicesEqualArgs(pass *analysis.Pass, expr ast.Expr) (x, y ast.Expr, 
 	return callExpr.Args[0], callExpr.Args[1], true
 }
 
-func extractLenEqualCallArgs(pass *analysis.Pass, stmt ast.Stmt) (ast.Expr, ast.Expr, bool) {
+func extractLenEqualCallArgs(pass *analysis.Pass, stmt ast.Stmt) (x, y ast.Expr, found bool) {
 	exprStmt, ok := stmt.(*ast.ExprStmt)
 	if !ok {
 		return nil, nil, false
@@ -323,11 +324,11 @@ func extractLenEqualCallArgs(pass *analysis.Pass, stmt ast.Stmt) (ast.Expr, ast.
 		return nil, nil, false
 	}
 
-	x, ok := extractLenArg(pass, testifyCall.Args[0])
+	x, ok = extractLenArg(pass, testifyCall.Args[0])
 	if !ok {
 		return nil, nil, false
 	}
-	y, ok := extractLenArg(pass, testifyCall.Args[1])
+	y, ok = extractLenArg(pass, testifyCall.Args[1])
 	if !ok {
 		return nil, nil, false
 	}
@@ -353,7 +354,7 @@ func extractLenArg(pass *analysis.Pass, expr ast.Expr) (ast.Expr, bool) {
 	return ce.Args[0], true
 }
 
-func extractLoopEqualCall(pass *analysis.Pass, loop *ast.RangeStmt) (*CallMeta, ast.Expr, ast.Expr, bool) {
+func extractLoopEqualCall(pass *analysis.Pass, loop *ast.RangeStmt) (call *CallMeta, x, y ast.Expr, found bool) {
 	idx, ok := loop.Key.(*ast.Ident)
 	if !ok || idx.Name == "_" {
 		return nil, nil, nil, false
@@ -385,11 +386,11 @@ func extractLoopEqualCall(pass *analysis.Pass, loop *ast.RangeStmt) (*CallMeta, 
 		return nil, nil, nil, false
 	}
 
-	x, ok := extractIndexedBy(testifyCall.Args[0], idx.Name)
+	x, ok = extractIndexedBy(testifyCall.Args[0], idx.Name)
 	if !ok {
 		return nil, nil, nil, false
 	}
-	y, ok := extractIndexedBy(testifyCall.Args[1], idx.Name)
+	y, ok = extractIndexedBy(testifyCall.Args[1], idx.Name)
 	if !ok {
 		return nil, nil, nil, false
 	}
@@ -437,11 +438,11 @@ func buildElementsMatchCallText(pass *analysis.Pass, call *CallMeta, x, y ast.Ex
 
 	var buf bytes.Buffer
 	buf.WriteString(call.SelectorXStr)
-	buf.WriteByte('.')
+	buf.WriteString(".")
 	buf.WriteString(fnName)
-	buf.WriteByte('(')
+	buf.WriteString("(")
 	buf.Write(formatAsCallArgs(pass, args...))
-	buf.WriteByte(')')
+	buf.WriteString(")")
 	return buf.Bytes()
 }
 
