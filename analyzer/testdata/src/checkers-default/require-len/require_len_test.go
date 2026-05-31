@@ -1,0 +1,18 @@
+package requirelen
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestRequireLenChecker(t *testing.T) {
+	arr := []int{0, 1}
+
+	assert.Len(t, arr, 2)      // want "require-len: for length assertions guarding index access use require"
+	assert.Positive(t, arr[1]) // want "require-len: for indexed access use require\\.Len guard"
+
+	require.Len(t, arr, 2)
+	assert.Positive(t, arr[1])
+}
