@@ -26,6 +26,7 @@ var freeTestsGenerators = map[string]TestsGenerator{ // by subdirectory.
 var checkerTestsGenerators = []CheckerTestsGenerator{
 	BlankImportTestsGenerator{},
 	BoolCompareTestsGenerator{},
+	ErrorFirstTestsGenerator{},
 	ComparesTestsGenerator{},
 	ContainsTestsGenerator{},
 	EmptyTestsGenerator{},

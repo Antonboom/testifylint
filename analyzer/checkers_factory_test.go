@@ -62,6 +62,7 @@ func Test_newCheckers(t *testing.T) {
 
 	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{
 		checkers.NewBlankImport(),
+		checkers.NewErrorFirst(),
 		checkers.NewGoRequire(),
 		checkers.NewMockExpect(),
 		checkers.NewRequireError(),
@@ -71,6 +72,7 @@ func Test_newCheckers(t *testing.T) {
 	}
 	allAdvancedCheckers := []checkers.AdvancedChecker{
 		checkers.NewBlankImport(),
+		checkers.NewErrorFirst(),
 		checkers.NewGoRequire(),
 		checkers.NewMockExpect(),
 		checkers.NewRequireError(),

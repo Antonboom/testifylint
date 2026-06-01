@@ -98,6 +98,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [equal-values](#equal-values)                       | ✅                  | ✅       |
 | [error-is-as](#error-is-as)                         | ✅                  | 🤏      |
 | [error-nil](#error-nil)                             | ✅                  | ✅       |
+| [error-first](#error-first)                         | ✅                  | ❌       |
 | [expected-actual](#expected-actual)                 | ✅                  | ✅       |
 | [float-compare](#float-compare)                     | ✅                  | ❌       |
 | [formatter](#formatter)                             | ✅                  | 🤏      |
@@ -533,6 +534,50 @@ assert.Error(t, err)
 **Autofix**: true. <br>
 **Enabled by default**: true. <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
+
+---
+
+### error-first
+
+```go
+❌
+res, err := myfunc()
+assert.NotNil(t, res) // error-first: assert error before making other assertions
+_ = err
+
+res, err := myfunc()
+assert.Equal(t, 0, res, err) // error-first: assert error before making other assertions (err is only a message argument)
+
+res, _ := myfunc()
+assert.NotNil(t, res) // error-first: error return value was discarded; assert the error before asserting the result
+
+✅
+res, err := myfunc()
+require.NoError(t, err)
+assert.NotNil(t, res)
+
+res, err := myfunc()
+assert.Nil(t, err) // any assertion on err counts
+assert.NotNil(t, res)
+
+res, err := myfunc()
+if assert.NoError(t, err) {
+    assert.NotNil(t, res)
+}
+
+res, err := myfunc()
+require.NoError(t, err)
+res, err = myfunc()
+require.NoError(t, err)
+assert.NotNil(t, res)
+```
+
+**Autofix**: false. <br>
+**Enabled by default**: true. <br>
+**Reason**: Asserting on a result before checking the error can hide the root cause of test failures.
+The error should always be asserted first.
+Any testify assertion counts only when the `err` variable is used in assertion arguments (not message arguments like `msgAndArgs`).
+Reassigning tracked variables from a new multi-return call requires a new error assertion.
 
 ---
 
