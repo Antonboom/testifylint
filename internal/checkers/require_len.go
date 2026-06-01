@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
+	"go/types"
 	"os"
+	"sort"
+	"strings"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/ast/inspector"
@@ -184,62 +187,77 @@ func newRequireLenGuardDiagnostic(
 	var (
 		exprStmt                  *ast.ExprStmt
 		ok                        bool
+		tArg                      string
 		requireQualifier          string
 		requireImportIsAccessible bool
 	)
 	if currCall.testifyCall.IsPkg && (len(currCall.testifyCall.ArgsRaw) >= 2) {
-		tArg := currCall.testifyCall.ArgsRaw[0]
-		if implementsTestingT(pass, tArg) {
+		rawTArg := currCall.testifyCall.ArgsRaw[0]
+		if implementsTestingT(pass, rawTArg) {
 			exprStmt, ok = findExprStmtForCall(currCall)
+			tArg = analysisutil.NodeString(pass.Fset, rawTArg)
 			requireQualifier, requireImportIsAccessible = analysisutil.LocalPkgName(
 				pass.Files, currCall.call.Pos(), testify.RequirePkgPath)
 		}
 	}
 
-	for _, target := range indexedAccesses(pass, currCall.call) {
-		requiredLen := target.maxIndex + 1
-		if hasLenGuard(pass, currCall, currCallIndex, otherCalls, target.collection, requiredLen) {
-			continue
-		}
+	needImportEdit := !requireImportIsAccessible || requireQualifier == ""
+	if ok && requireQualifier == "" {
+		requireQualifier = availableRequireQualifier(pass.Files, currCall.call.Pos())
+	}
 
-		diagnostic := newDiagnostic(checkerName, currCall.testifyCall, requireLenGuardReport)
-		if !ok {
+	missingGuards := make([]guardRequirement, 0, 4)
+	seenGuards := make(map[string]struct{}, 4)
+	for _, target := range indexedAccesses(pass, currCall.call) {
+		for _, guard := range missingGuardRequirements(
+			pass, currCall, currCallIndex, otherCalls, target, requireQualifier, tArg,
+		) {
+			if _, seen := seenGuards[guard.textKey]; seen {
+				continue
+			}
+			seenGuards[guard.textKey] = struct{}{}
+			missingGuards = append(missingGuards, guard)
+		}
+	}
+	if len(missingGuards) == 0 {
+		return nil
+	}
+
+	diagnostic := newDiagnostic(checkerName, currCall.testifyCall, requireLenGuardReport)
+	if !ok {
+		return diagnostic
+	}
+
+	additionalEdits := make([]analysis.TextEdit, 0, 2)
+	if needImportEdit {
+		importEdit, hasImportEdit := addRequireImportTextEdit(pass, currCall.call.Pos(), requireQualifier)
+		if !hasImportEdit {
 			return diagnostic
 		}
-
-		additionalEdits := make([]analysis.TextEdit, 0, 2)
-		if !requireImportIsAccessible || requireQualifier == "" {
-			requireQualifier = availableRequireQualifier(pass.Files, currCall.call.Pos())
-
-			importEdit, hasImportEdit := addRequireImportTextEdit(pass, currCall.call.Pos(), requireQualifier)
-			if !hasImportEdit {
-				return diagnostic
-			}
-			additionalEdits = append(additionalEdits, importEdit)
-		}
-
-		tArg := currCall.testifyCall.ArgsRaw[0]
-		indent := lineIndentAtPos(pass, currCall.call.Pos(), fileContentCache)
-		insertText := fmt.Sprintf("%s.Len(%s, %s, %d)\n%s",
-			requireQualifier, analysisutil.NodeString(pass.Fset, tArg), target.collection, requiredLen, indent)
-		fixMsg := "Insert `require.Len` guard"
-		if requiredLen == 1 {
-			insertText = fmt.Sprintf("%s.NotEmpty(%s, %s)\n%s",
-				requireQualifier, analysisutil.NodeString(pass.Fset, tArg), target.collection, indent)
-			fixMsg = "Insert `require.NotEmpty` guard"
-		}
-		return newDiagnostic(checkerName, currCall.testifyCall, requireLenGuardReport, analysis.SuggestedFix{
-			Message: fixMsg,
-			TextEdits: append(additionalEdits,
-				analysis.TextEdit{
-					Pos:     exprStmt.Pos(),
-					End:     exprStmt.Pos(),
-					NewText: []byte(insertText),
-				},
-			),
-		})
+		additionalEdits = append(additionalEdits, importEdit)
 	}
-	return nil
+
+	indent := lineIndentAtPos(pass, currCall.call.Pos(), fileContentCache)
+	var insertBuilder strings.Builder
+	for i, guard := range missingGuards {
+		if i > 0 {
+			insertBuilder.WriteString(indent)
+		}
+		insertBuilder.WriteString(guard.lineText)
+		insertBuilder.WriteByte('\n')
+	}
+	insertBuilder.WriteString(indent)
+
+	return newDiagnostic(checkerName, currCall.testifyCall, requireLenGuardReport, analysis.SuggestedFix{
+		Message: "Insert `require` guards",
+		TextEdits: append(additionalEdits,
+			analysis.TextEdit{
+				Pos:     exprStmt.Pos(),
+				End:     exprStmt.Pos(),
+				NewText: []byte(insertBuilder.String()),
+			},
+		),
+	})
 }
 
 func availableRequireQualifier(files []*ast.File, pos token.Pos) string {
@@ -323,6 +341,12 @@ func fileForPos(files []*ast.File, pos token.Pos) *ast.File {
 type indexedAccess struct {
 	collection string
 	maxIndex   int
+	mapKeys    map[string]ast.Expr
+}
+
+type guardRequirement struct {
+	textKey  string
+	lineText string
 }
 
 func indexedAccesses(pass *analysis.Pass, node ast.Node) []indexedAccess {
@@ -335,13 +359,22 @@ func indexedAccesses(pass *analysis.Pass, node ast.Node) []indexedAccess {
 			return true
 		}
 
-		idx, ok := isIntBasicLit(ie.Index)
-		if !ok || idx < 0 {
+		collection := analysisutil.NodeString(pass.Fset, ie.X)
+		if collection == "" {
 			return true
 		}
 
-		collection := analysisutil.NodeString(pass.Fset, ie.X)
-		if collection == "" {
+		tt := pass.TypesInfo.TypeOf(ie.X)
+		if tt == nil {
+			return true
+		}
+		_, isMap := tt.Underlying().(*types.Map)
+
+		idx := -1
+		if v, ok := isIntBasicLit(ie.Index); ok && v >= 0 {
+			idx = v
+		}
+		if !isMap && idx < 0 {
 			return true
 		}
 
@@ -349,15 +382,77 @@ func indexedAccesses(pass *analysis.Pass, node ast.Node) []indexedAccess {
 		if !exists {
 			indexByCollection[collection] = len(result)
 			result = append(result, indexedAccess{collection: collection, maxIndex: idx})
-			return true
+			i = len(result) - 1
 		}
+
 		if idx > result[i].maxIndex {
 			result[i].maxIndex = idx
 		}
+
+		if isMap {
+			if result[i].mapKeys == nil {
+				result[i].mapKeys = make(map[string]ast.Expr)
+			}
+			keyStr := analysisutil.NodeString(pass.Fset, ie.Index)
+			if keyStr != "" {
+				result[i].mapKeys[keyStr] = ie.Index
+			}
+		}
+
 		return true
 	})
 
 	return result
+}
+
+func missingGuardRequirements(
+	pass *analysis.Pass,
+	currCall *callMeta,
+	currCallIndex int,
+	otherCalls []*callMeta,
+	target indexedAccess,
+	requireQualifier string,
+	tArg string,
+) []guardRequirement {
+	var reqs []guardRequirement
+
+	if len(target.mapKeys) > 0 {
+		mapKeys := make([]string, 0, len(target.mapKeys))
+		for key := range target.mapKeys {
+			mapKeys = append(mapKeys, key)
+		}
+		sort.Strings(mapKeys)
+
+		for _, mapKey := range mapKeys {
+			if hasContainsGuard(pass, currCall, currCallIndex, otherCalls, target.collection, mapKey) {
+				continue
+			}
+			reqs = append(reqs, guardRequirement{
+				textKey:  "contains:" + target.collection + ":" + mapKey,
+				lineText: fmt.Sprintf("%s.Contains(%s, %s, %s)", requireQualifier, tArg, target.collection, mapKey),
+			})
+		}
+		return reqs
+	}
+
+	requiredLen := target.maxIndex + 1
+	if requiredLen <= 0 || hasLenGuard(pass, currCall, currCallIndex, otherCalls, target.collection, requiredLen) {
+		return reqs
+	}
+
+	if requiredLen == 1 {
+		reqs = append(reqs, guardRequirement{
+			textKey:  "notempty:" + target.collection,
+			lineText: fmt.Sprintf("%s.NotEmpty(%s, %s)", requireQualifier, tArg, target.collection),
+		})
+		return reqs
+	}
+
+	reqs = append(reqs, guardRequirement{
+		textKey:  fmt.Sprintf("gte:%s:%d", target.collection, requiredLen),
+		lineText: fmt.Sprintf("%s.GreaterOrEqual(%s, len(%s), %d)", requireQualifier, tArg, target.collection, requiredLen),
+	})
+	return reqs
 }
 
 func hasLenGuard(
@@ -368,42 +463,147 @@ func hasLenGuard(
 	collection string,
 	requiredLen int,
 ) bool {
+	for i := guardSearchStartIndex(pass, currCall, currCallIndex, otherCalls); i < currCallIndex; i++ {
+		c := otherCalls[i]
+		if c.parentBlock != currCall.parentBlock || c.testifyCall == nil || c.testifyCall.IsAssert {
+			continue
+		}
+
+		switch c.testifyCall.Fn.NameFTrimmed {
+		case "Len":
+			if len(c.testifyCall.Args) < 2 {
+				continue
+			}
+			lenCollection := analysisutil.NodeString(pass.Fset, c.testifyCall.Args[0])
+			assertedLen, isBasicLit := isIntBasicLit(c.testifyCall.Args[1])
+			if lenCollection == collection && isBasicLit && assertedLen >= requiredLen {
+				return true
+			}
+		case "NotEmpty":
+			if requiredLen != 1 || len(c.testifyCall.Args) < 1 {
+				continue
+			}
+			notEmptyCollection := analysisutil.NodeString(pass.Fset, c.testifyCall.Args[0])
+			if notEmptyCollection == collection {
+				return true
+			}
+		case "GreaterOrEqual":
+			if len(c.testifyCall.Args) < 2 {
+				continue
+			}
+			lenArg, ok := isBuiltinLenCall(pass, c.testifyCall.Args[0])
+			if !ok || analysisutil.NodeString(pass.Fset, lenArg) != collection {
+				continue
+			}
+			assertedMinLen, isBasicLit := isIntBasicLit(c.testifyCall.Args[1])
+			if isBasicLit && assertedMinLen >= requiredLen {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func hasContainsGuard(
+	pass *analysis.Pass,
+	currCall *callMeta,
+	currCallIndex int,
+	otherCalls []*callMeta,
+	collection string,
+	key string,
+) bool {
+	for i := guardSearchStartIndex(pass, currCall, currCallIndex, otherCalls); i < currCallIndex; i++ {
+		c := otherCalls[i]
+		if c.parentBlock != currCall.parentBlock || c.testifyCall == nil || c.testifyCall.IsAssert {
+			continue
+		}
+		if c.testifyCall.Fn.NameFTrimmed != "Contains" || len(c.testifyCall.Args) < 2 {
+			continue
+		}
+		containsCollection := analysisutil.NodeString(pass.Fset, c.testifyCall.Args[0])
+		if containsCollection != collection {
+			continue
+		}
+		containsKey := analysisutil.NodeString(pass.Fset, c.testifyCall.Args[1])
+		if containsKey == key {
+			return true
+		}
+	}
+	return false
+}
+
+func guardSearchStartIndex(pass *analysis.Pass, currCall *callMeta, currCallIndex int, otherCalls []*callMeta) int {
+	start := 0
 	for i := range currCallIndex {
 		c := otherCalls[i]
 		if c.parentBlock != currCall.parentBlock || c.testifyCall == nil {
 			continue
 		}
-		switch c.testifyCall.Fn.NameFTrimmed {
-		case "Len", "Lenf":
-			if c.testifyCall.IsAssert {
-				continue
-			}
-			if len(c.testifyCall.Args) < 2 {
-				continue
-			}
-			lenCollection := analysisutil.NodeString(pass.Fset, c.testifyCall.Args[0])
-			if lenCollection != collection {
-				continue
-			}
-			if assertedLen, isBasicLit := isIntBasicLit(c.testifyCall.Args[1]); isBasicLit && (assertedLen < requiredLen) {
-				continue
-			}
-			return true
-		case "NotEmpty":
-			if c.testifyCall.IsAssert {
-				continue
-			}
-			if requiredLen != 1 || len(c.testifyCall.Args) < 1 {
-				continue
-			}
-			notEmptyCollection := analysisutil.NodeString(pass.Fset, c.testifyCall.Args[0])
-			if notEmptyCollection != collection {
-				continue
-			}
+		if isRequireLenErrorCheck(c.testifyCall.Fn.NameFTrimmed) || callContainsErrorArg(pass, c.testifyCall) {
+			start = i + 1
+		}
+	}
+	return start
+}
+
+func isRequireLenErrorCheck(nameFTrimmed string) bool {
+	switch nameFTrimmed {
+	case "Error", "ErrorIs", "ErrorAs", "EqualError", "ErrorContains", "NoError", "NotErrorIs":
+		return true
+	}
+	return false
+}
+
+// callContainsErrorArg returns true if any non-message/args argument in the
+// testify call has an error type. This covers cases like assert.Equal(t, err, nil)
+// or assert.Nil(t, err) where the error is outside of msg and args.
+func callContainsErrorArg(pass *analysis.Pass, cm *CallMeta) bool {
+	limit := nonMessageArgLimit(pass, cm)
+	for _, arg := range cm.Args[:limit] {
+		t := pass.TypesInfo.TypeOf(arg)
+		if t == nil {
+			continue
+		}
+		if types.Implements(t, errorIface) || types.Implements(types.NewPointer(t), errorIface) {
 			return true
 		}
 	}
 	return false
+}
+
+// nonMessageArgLimit returns the number of non-message/args arguments in a
+// testify call. Message/format arguments are at the end (variadic msgAndArgs
+// or explicit msgfmt+args for formatted variants).
+func nonMessageArgLimit(pass *analysis.Pass, cm *CallMeta) int {
+	sig := cm.Fn.Signature
+	if sig == nil {
+		return len(cm.Args)
+	}
+
+	paramsLen := sig.Params().Len()
+	if len(cm.ArgsRaw) > 0 && implementsTestingT(pass, cm.ArgsRaw[0]) {
+		paramsLen--
+	}
+	if paramsLen < 0 {
+		return 0
+	}
+
+	limit := len(cm.Args)
+	if sig.Variadic() {
+		// Variadic parameter is msgAndArgs; base assertion args are fixed params.
+		limit = paramsLen - 1
+		// Formatted assertions have explicit message arg before msgAndArgs.
+		if cm.Fn.IsFmt {
+			limit--
+		}
+	}
+	if limit < 0 {
+		return 0
+	}
+	if limit > len(cm.Args) {
+		return len(cm.Args)
+	}
+	return limit
 }
 
 func needToSkipForLenGuardContext(currCall *callMeta, otherCalls []*callMeta) bool {

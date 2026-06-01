@@ -10,6 +10,6 @@ import (
 func TestLenGuardWithoutRequireImport(t *testing.T) {
 	arr := []int{0, 1}
 
-	require.Len(t, arr, 2)
+	require.GreaterOrEqual(t, len(arr), 2)
 	assert.Positive(t, arr[1]) // want "require-len: for indexed access use require\\.Len guard"
 }

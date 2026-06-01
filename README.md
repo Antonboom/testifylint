@@ -1054,8 +1054,13 @@ assert.Positive(t, arr[1])
 assert.Positive(t, arr[1])
 
 ✅
-require.Len(t, arr, 2)
+require.GreaterOrEqual(t, len(arr), 2)
 assert.Positive(t, arr[1])
+
+✅
+require.Contains(t, want, 1)
+require.Contains(t, res, 1)
+assert.Equal(t, want[1], res[1])
 ```
 
 **Autofix**: true (for direct indexed access assertions without existing guards). <br>
@@ -1069,8 +1074,9 @@ assert.Positive(t, arr[1])
 
 For direct indexed assertions, autofix inserts:
 
-- `require.Len(t, collection, maxIndex+1)` based on the greatest literal index used;
+- `require.GreaterOrEqual(t, len(collection), maxIndex+1)` based on the greatest literal index used;
 - `require.NotEmpty(t, collection)` when the greatest used index is `0`.
+- for map accesses with known key expressions: `require.Contains(t, collection, key)` per accessed key.
 
 ---
 
