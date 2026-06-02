@@ -36,8 +36,7 @@ func (ErrorFirst) Name() string  { return "error-first" }
 // assignment that includes at least one error-typed return value.
 type errorFirstAssignInfo struct {
 	pos         token.Pos
-	errObj      *types.Var // nil if the error return was blank (_)
-	isBlank     bool
+	errObj      *types.Var
 	parentBlock *ast.BlockStmt
 }
 
@@ -123,20 +122,23 @@ func (checker ErrorFirst) Check(pass *analysis.Pass, insp *inspector.Inspector) 
 		}
 
 		// Build the errorFirstAssignInfo for the error variable at errIdx.
+		// If the error return was discarded (_), skip tracking — this is
+		// already caught by errcheck.
+		if isIdentWithName("_", as.Lhs[errIdx]) {
+			return true
+		}
+
 		info := &errorFirstAssignInfo{
 			pos:         as.Pos(),
-			isBlank:     isIdentWithName("_", as.Lhs[errIdx]),
 			parentBlock: parentBlock,
 		}
 
-		if !info.isBlank {
-			if id, ok := as.Lhs[errIdx].(*ast.Ident); ok {
-				if obj, ok := pass.TypesInfo.ObjectOf(id).(*types.Var); ok {
-					info.errObj = obj
-					// On reassignment, overwrite the old entry for this error var.
-					delete(fa.errToAssign, obj)
-					fa.errToAssign[obj] = info
-				}
+		if id, ok := as.Lhs[errIdx].(*ast.Ident); ok {
+			if obj, ok := pass.TypesInfo.ObjectOf(id).(*types.Var); ok {
+				info.errObj = obj
+				// On reassignment, overwrite the old entry for this error var.
+				delete(fa.errToAssign, obj)
+				fa.errToAssign[obj] = info
 			}
 		}
 
@@ -264,13 +266,7 @@ func (checker ErrorFirst) Check(pass *analysis.Pass, insp *inspector.Inspector) 
 					continue
 				}
 
-				if info.isBlank {
-					diagnostics = append(diagnostics, *newDiagnostic(
-						checker.Name(), c.testifyCall,
-						"error return value was discarded; assert the error before asserting the result",
-					))
-					reportedAssigns[info] = struct{}{}
-				} else if !errorFirstIsErrChecked(pass, info, c, calls) {
+				if !errorFirstIsErrChecked(pass, info, c, calls) {
 					diagnostics = append(diagnostics, *newDiagnostic(
 						checker.Name(), c.testifyCall,
 						"assert error before making other assertions",
@@ -341,7 +337,7 @@ func errorFirstIsErrChecked(
 	c *callMeta,
 	allCalls []*callMeta,
 ) bool {
-	if info.isBlank || info.errObj == nil {
+	if info.errObj == nil {
 		return false
 	}
 

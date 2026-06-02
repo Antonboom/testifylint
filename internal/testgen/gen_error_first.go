@@ -14,19 +14,16 @@ func (ErrorFirstTestsGenerator) Checker() checkers.Checker {
 
 func (g ErrorFirstTestsGenerator) TemplateData() any {
 	var (
-		checker         = g.Checker().Name()
-		reportDiscarded = checker + ": error return value was discarded; assert the error before asserting the result"
-		reportNotFirst  = checker + ": assert error before making other assertions"
+		checker        = g.Checker().Name()
+		reportNotFirst = checker + ": assert error before making other assertions"
 	)
 
 	return struct {
-		CheckerName     CheckerName
-		ReportDiscarded string
-		ReportNotFirst  string
+		CheckerName    CheckerName
+		ReportNotFirst string
 	}{
-		CheckerName:     CheckerName(checker),
-		ReportDiscarded: reportDiscarded,
-		ReportNotFirst:  reportNotFirst,
+		CheckerName:    CheckerName(checker),
+		ReportNotFirst: reportNotFirst,
 	}
 }
 
@@ -65,12 +62,6 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 		_ = err
 	}
 
-	// Invalid: error discarded with blank identifier.
-	{
-		res, _ := resultAndErr()
-		assert.NotNil(t, res) // want "{{ .ReportDiscarded }}"
-	}
-
 	// Invalid: error in first position (not last), not checked.
 	{
 		err, res := errAndResult()
@@ -94,13 +85,6 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 		assert.NotNil(t, res)  // want "{{ .ReportNotFirst }}"
 		assert.NotEmpty(t, msg)
 		_ = err
-	}
-
-	// Invalid: error discarded; report only first result assertion.
-	{
-		res, msg, _ := resultAndErrAndMore()
-		assert.NotNil(t, res)   // want "{{ .ReportDiscarded }}"
-		assert.NotEmpty(t, msg)
 	}
 
 	// Valid: error checked first with require.NoError.

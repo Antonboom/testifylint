@@ -29,7 +29,7 @@ var registry = checkersRegistry{
 	{factory: asCheckerFactory(NewFormatter), enabledByDefault: true},
 	// Advanced checkers.
 	{factory: asCheckerFactory(NewBlankImport), enabledByDefault: true},
-	{factory: asCheckerFactory(NewErrorFirst), enabledByDefault: true},
+	{factory: asCheckerFactory(NewErrorFirst), enabledByDefault: false},
 	{factory: asCheckerFactory(NewGoRequire), enabledByDefault: true},
 	{factory: asCheckerFactory(NewMockExpect), enabledByDefault: true},
 	{factory: asCheckerFactory(NewRequireError), enabledByDefault: true},

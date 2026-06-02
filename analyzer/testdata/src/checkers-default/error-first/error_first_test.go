@@ -23,12 +23,6 @@ func TestErrorFirstChecker(t *testing.T) {
 		_ = err
 	}
 
-	// Invalid: error discarded with blank identifier.
-	{
-		res, _ := resultAndErr()
-		assert.NotNil(t, res) // want "error-first: error return value was discarded; assert the error before asserting the result"
-	}
-
 	// Invalid: error in first position (not last), not checked.
 	{
 		err, res := errAndResult()
@@ -52,13 +46,6 @@ func TestErrorFirstChecker(t *testing.T) {
 		assert.NotNil(t, res) // want "error-first: assert error before making other assertions"
 		assert.NotEmpty(t, msg)
 		_ = err
-	}
-
-	// Invalid: error discarded; report only first result assertion.
-	{
-		res, msg, _ := resultAndErrAndMore()
-		assert.NotNil(t, res) // want "error-first: error return value was discarded; assert the error before asserting the result"
-		assert.NotEmpty(t, msg)
 	}
 
 	// Valid: error checked first with require.NoError.

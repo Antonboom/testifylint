@@ -14,6 +14,7 @@ func Test_newCheckers(t *testing.T) {
 	expVarPattern := regexp.MustCompile(`^expected[A-Z0-9].*`)
 	fnPattern := regexp.MustCompile(`^NoErrorf?$`)
 	timeCallsPattern := regexp.MustCompile(`Round|UTC`)
+	enabledByDefaultAdvancedCheckers := make([]checkers.AdvancedChecker, 0, 8)
 
 	enabledByDefaultRegularCheckers := []checkers.RegularChecker{
 		checkers.NewZero(),
@@ -60,16 +61,16 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewFormatter(),
 	}
 
-	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{
+	enabledByDefaultAdvancedCheckers = append(enabledByDefaultAdvancedCheckers,
 		checkers.NewBlankImport(),
-		checkers.NewErrorFirst(),
 		checkers.NewGoRequire(),
 		checkers.NewMockExpect(),
 		checkers.NewRequireError(),
 		checkers.NewSuiteBrokenParallel(),
 		checkers.NewSuiteMethodSignature(),
 		checkers.NewSuiteSubtestRun(),
-	}
+	)
+
 	allAdvancedCheckers := []checkers.AdvancedChecker{
 		checkers.NewBlankImport(),
 		checkers.NewErrorFirst(),
@@ -146,8 +147,11 @@ func Test_newCheckers(t *testing.T) {
 					checkers.NewSuiteTHelper().Name(),
 				},
 			},
-			expRegular:  replace(enabledByDefaultRegularCheckers, formatterWithoutEnabledOptions),
-			expAdvanced: allAdvancedCheckers,
+			expRegular: replace(enabledByDefaultRegularCheckers, formatterWithoutEnabledOptions),
+			expAdvanced: append(
+				enabledByDefaultAdvancedCheckers,
+				checkers.NewSuiteTHelper(),
+			),
 		},
 		{
 			name: "disable three checkers from enabled by default checkers",
