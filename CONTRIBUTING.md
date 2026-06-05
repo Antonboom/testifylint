@@ -135,7 +135,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [float-compare](#float-compare)
 - [http-const](#http-const)
 - [http-sugar](#http-sugar)
-- [require-len](#require-len)
 - [suite-test-name](#suite-test-name)
 - [zero](#zero)
 
@@ -305,27 +304,6 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 **Enabled by default**: maybe? <br>
 **Reason**: Code simplification. <br>
 **Related issues**: [#140](https://github.com/Antonboom/testifylint/issues/140)
-
----
-
-### require-len
-
-The main idea: if code contains array/slice indexing,
-then before that there must be a length constraint through `require`.
-
-```go
-❌   assert.Len(t, arr, 3) // Or assert.NotEmpty(t, arr) and other variations.
-     assert.Equal(t, "gopher", arr[1])
-
-✅   require.Len(t, arr, 3) // Or require.NotEmpty(t, arr) and other variations.
-     assert.Equal(t, "gopher", arr[1])
-```
-
-**Autofix**: false? <br>
-**Enabled by default**: maybe? <br>
-**Reason**: Similar to [require-error](README.md#require-error). Save you from annoying panics.
-
-Or maybe do something similar for maps? And come up with better name for the checker.
 
 ---
 

@@ -191,7 +191,7 @@ func newRequireLenGuardDiagnostic(
 		requireQualifier          string
 		requireImportIsAccessible bool
 	)
-	if currCall.testifyCall.IsPkg && (len(currCall.testifyCall.ArgsRaw) >= 2) {
+	if currCall.testifyCall.IsPkg() && (len(currCall.testifyCall.ArgsRaw) >= 2) {
 		rawTArg := currCall.testifyCall.ArgsRaw[0]
 		if implementsTestingT(pass, rawTArg) {
 			exprStmt, ok = findExprStmtForCall(currCall)
@@ -244,7 +244,7 @@ func newRequireLenGuardDiagnostic(
 			insertBuilder.WriteString(indent)
 		}
 		insertBuilder.WriteString(guard.lineText)
-		insertBuilder.WriteByte('\n')
+		_ = insertBuilder.WriteByte('\n')
 	}
 	insertBuilder.WriteString(indent)
 
@@ -322,7 +322,7 @@ func addRequireImportTextEdit(pass *analysis.Pass, pos token.Pos, requireQualifi
 		return analysis.TextEdit{
 			Pos:     file.Name.End(),
 			End:     file.Name.End(),
-			NewText: []byte(fmt.Sprintf("\n\nimport %s\n", importSpec)),
+			NewText: fmt.Appendf(nil, "\n\nimport %s\n", importSpec),
 		}, true
 	}
 
