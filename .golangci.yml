@@ -102,6 +102,9 @@ linters:
 
       - source: ' // want '
         linters: [ "lll" ]
+      
+      - path: "internal/analysisutil/file_test.go"
+        linters: ["prealloc"]
 
     paths:
       - internal/checkers/printf # A patched fork of go vet's printf.
@@ -146,6 +149,8 @@ linters:
 
     modernize:
       disable:
+        # Replace loops with slices.Contains or slices.ContainsFunc.
+        - slicescontains
         # Replace += with strings.Builder.
         - stringsbuilder
 
