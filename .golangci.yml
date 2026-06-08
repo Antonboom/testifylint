@@ -221,3 +221,6 @@ linters:
         - name: var-declaration
         - name: var-naming
         - name: waitgroup-by-value
+
+    perfsprint:
+      concat-loop: false
