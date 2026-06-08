@@ -141,6 +141,11 @@ linters:
         - fieldalignment
       enable-all: true
 
+    modernize:
+      disable:
+        # Replace += with strings.Builder.
+        - stringsbuilder
+
     nolintlint:
       require-explanation: true
       allow-no-explanation: [ lll ]
