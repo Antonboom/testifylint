@@ -40,14 +40,17 @@ linters:
     - gocheckcompilerdirectives
     - gochecknoinits
     - gocritic
+    - godoclint
     - godot
     - godox
+    - gomodguard_v2
     - goprintffuncname
     - gosec
     - govet
     - importas
     - ineffassign
     - intrange
+    - iotamixing
     - lll
     - makezero
     - mirror
