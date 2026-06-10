@@ -1,7 +1,6 @@
 package formatterissue170
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
