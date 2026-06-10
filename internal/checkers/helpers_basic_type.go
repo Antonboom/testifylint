@@ -113,6 +113,59 @@ func isTypedConst(pass *analysis.Pass, e ast.Expr) bool {
 	return ok && tt.IsValue() && tt.Value != nil
 }
 
+// untypedConstObjectType returns the declared (original, non-contextual) type of
+// a constant expression when it is an untyped constant, otherwise returns nil.
+//
+// This is necessary because TypesInfo.Types stores the contextually-typed form of
+// constants inside binary expressions. For example, in `var v int32; _ = v <= math.MaxInt16`,
+// the type of math.MaxInt16 in TypesInfo.Types is int32 (contextual), not untyped int.
+// When passed as interface{} to a function, the constant reverts to its default type (int),
+// which can cause a runtime type mismatch in testify's comparison functions.
+func untypedConstObjectType(pass *analysis.Pass, e ast.Expr) types.Type {
+	tv, ok := pass.TypesInfo.Types[e]
+	if !ok || tv.Value == nil {
+		return nil // not a constant
+	}
+
+	var objType types.Type
+	switch expr := e.(type) {
+	case *ast.BasicLit:
+		objType = untypedBasicLitType(expr.Kind)
+	case *ast.Ident:
+		if obj := pass.TypesInfo.Uses[expr]; obj != nil {
+			objType = obj.Type()
+		}
+	case *ast.SelectorExpr:
+		if obj := pass.TypesInfo.Uses[expr.Sel]; obj != nil {
+			objType = obj.Type()
+		}
+	case *ast.UnaryExpr:
+		return untypedConstObjectType(pass, expr.X)
+	}
+
+	if basic, ok := objType.(*types.Basic); ok && basic.Info()&types.IsUntyped != 0 {
+		return objType
+	}
+	return nil
+}
+
+func untypedBasicLitType(kind token.Token) types.Type {
+	switch kind {
+	case token.INT:
+		return types.Typ[types.UntypedInt]
+	case token.FLOAT:
+		return types.Typ[types.UntypedFloat]
+	case token.IMAG:
+		return types.Typ[types.UntypedComplex]
+	case token.CHAR:
+		return types.Typ[types.UntypedRune]
+	case token.STRING:
+		return types.Typ[types.UntypedString]
+	default:
+		return nil
+	}
+}
+
 func isFloat(pass *analysis.Pass, e ast.Expr) bool {
 	return isUnderlying(pass, e, types.IsFloat)
 }
