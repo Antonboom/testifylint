@@ -113,6 +113,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [suite-subtest-run](#suite-subtest-run)             | ✅                  | ❌       |
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
 | [useless-assert](#useless-assert)                   | ✅                  | ❌       |
+| [wrong-t](#wrong-t)                                 | ✅                  | ❌       |
 
 > ⚠️ Also look at open for contribution [checkers](CONTRIBUTING.md#open-for-contribution)
 
@@ -1237,6 +1238,58 @@ assert.LessOrEqual(0, uintVal)
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
 **Reason**: Protection from bugs and dead code.
+
+---
+
+### wrong-t
+
+```go
+❌
+func TestFoo(t *testing.T) {
+    assert.Equal(nil, expected, actual)
+
+    u := &testing.T{}
+    assert.Equal(u, expected, actual)
+}
+
+func TestBar(t *testing.T) {
+    a := assert.New(t)
+
+    t.Run("subtest", func(t *testing.T) {
+        a.Equal(expected, actual) // a was created with the outer t
+    })
+}
+
+✅
+func TestFoo(t *testing.T) {
+    assert.Equal(t, expected, actual)
+}
+
+func TestBar(t *testing.T) {
+    t.Run("subtest", func(t *testing.T) {
+        a := assert.New(t)
+        a.Equal(expected, actual)
+    })
+}
+```
+
+**Autofix**: false. <br>
+**Enabled by default**: true. <br>
+**Reason**: Protection from bugs and misleading test output.
+
+The checker handles two related cases of incorrect `testing.T` usage:
+
+#### 1) Nil or freshly created `testing.T` in package-level assertions
+
+Passing `nil` or a freshly allocated `&testing.T{}` / `new(testing.T)` as the `t` argument will
+cause a panic at runtime (nil dereference) or silently misattribute test failures.
+
+#### 2) Assertion object created with outer `t` used in a subtest
+
+When `assert.New(t)` or `require.New(t)` is called in an outer scope, the resulting
+`*Assertions` object is bound to the outer `testing.T`. Using it inside a `t.Run` subtest
+(which receives its own fresh `t`) causes test failures to be reported against the parent
+test rather than the subtest, breaking the display of test names in failure output.
 
 ---
 
