@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/token"
 	"regexp"
+	"slices"
 
 	"golang.org/x/tools/go/analysis"
 
@@ -43,12 +44,7 @@ func isYAMLStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
 }
 
 func hasWordAfterPattern(s string, re *regexp.Regexp) bool {
-	for _, w := range splitIntoWords(s) {
-		if re.MatchString(w) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(splitIntoWords(s), re.MatchString)
 }
 
 func splitIntoWords(s string) []string {

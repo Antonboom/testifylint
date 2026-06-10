@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 
@@ -36,12 +37,7 @@ func (kcv *KnownCheckersValue) Set(v string) error {
 }
 
 func (kcv KnownCheckersValue) Contains(v string) bool {
-	for _, checker := range kcv {
-		if checker == v {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(kcv, v)
 }
 
 // RegexpValue is a special wrapper for support of flag.FlagSet over regexp.Regexp.

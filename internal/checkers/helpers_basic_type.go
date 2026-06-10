@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/token"
 	"go/types"
+	"slices"
 	"strconv"
 
 	"golang.org/x/tools/go/analysis"
@@ -48,10 +49,8 @@ func isTypedIntNumber(e ast.Expr, v int, goTypes ...string) bool {
 		return false
 	}
 
-	for _, t := range goTypes {
-		if fn.Name == t {
-			return isIntNumber(ce.Args[0], v)
-		}
+	if slices.Contains(goTypes, fn.Name) {
+		return isIntNumber(ce.Args[0], v)
 	}
 	return false
 }
