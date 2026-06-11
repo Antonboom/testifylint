@@ -132,6 +132,7 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 			{Fn: "Zero", Argsf: "nil", ReportMsgf: defaultReport},
 			{Fn: "Zero", Argsf: "false", ReportMsgf: defaultReport},
 			{Fn: "Zero", Argsf: "true", ReportMsgf: defaultReport},
+			// TODO zero time cases
 
 			{Fn: "Negative", Argsf: "len(x)", ReportMsgf: defaultReport},
 			{Fn: "Less", Argsf: "len(x), 0", ReportMsgf: defaultReport},

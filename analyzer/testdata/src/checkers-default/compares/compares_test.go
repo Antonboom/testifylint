@@ -4,6 +4,7 @@ package compares
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -12,41 +13,92 @@ func TestComparesChecker(t *testing.T) {
 	var a, b int
 	var c, d bool
 	var ptrA, ptrB *int
+	var t1, t2 time.Time
 
 	// Invalid.
 	{
-		assert.True(t, a == b)                                          // want "compares: use assert\\.Equal"
-		assert.Truef(t, a == b, "msg with args %d %s", 42, "42")        // want "compares: use assert\\.Equalf"
-		assert.True(t, a != b)                                          // want "compares: use assert\\.NotEqual"
-		assert.Truef(t, a != b, "msg with args %d %s", 42, "42")        // want "compares: use assert\\.NotEqualf"
-		assert.True(t, a > b)                                           // want "compares: use assert\\.Greater"
-		assert.Truef(t, a > b, "msg with args %d %s", 42, "42")         // want "compares: use assert\\.Greaterf"
-		assert.True(t, a >= b)                                          // want "compares: use assert\\.GreaterOrEqual"
-		assert.Truef(t, a >= b, "msg with args %d %s", 42, "42")        // want "compares: use assert\\.GreaterOrEqualf"
-		assert.True(t, a < b)                                           // want "compares: use assert\\.Less"
-		assert.Truef(t, a < b, "msg with args %d %s", 42, "42")         // want "compares: use assert\\.Lessf"
-		assert.True(t, a <= b)                                          // want "compares: use assert\\.LessOrEqual"
-		assert.Truef(t, a <= b, "msg with args %d %s", 42, "42")        // want "compares: use assert\\.LessOrEqualf"
-		assert.False(t, a == b)                                         // want "compares: use assert\\.NotEqual"
-		assert.Falsef(t, a == b, "msg with args %d %s", 42, "42")       // want "compares: use assert\\.NotEqualf"
-		assert.False(t, a != b)                                         // want "compares: use assert\\.Equal"
-		assert.Falsef(t, a != b, "msg with args %d %s", 42, "42")       // want "compares: use assert\\.Equalf"
-		assert.False(t, a > b)                                          // want "compares: use assert\\.LessOrEqual"
-		assert.Falsef(t, a > b, "msg with args %d %s", 42, "42")        // want "compares: use assert\\.LessOrEqualf"
-		assert.False(t, a >= b)                                         // want "compares: use assert\\.Less"
-		assert.Falsef(t, a >= b, "msg with args %d %s", 42, "42")       // want "compares: use assert\\.Lessf"
-		assert.False(t, a < b)                                          // want "compares: use assert\\.GreaterOrEqual"
-		assert.Falsef(t, a < b, "msg with args %d %s", 42, "42")        // want "compares: use assert\\.GreaterOrEqualf"
-		assert.False(t, a <= b)                                         // want "compares: use assert\\.Greater"
-		assert.Falsef(t, a <= b, "msg with args %d %s", 42, "42")       // want "compares: use assert\\.Greaterf"
-		assert.True(t, ptrA == ptrB)                                    // want "compares: use assert\\.Same"
-		assert.Truef(t, ptrA == ptrB, "msg with args %d %s", 42, "42")  // want "compares: use assert\\.Samef"
-		assert.True(t, ptrA != ptrB)                                    // want "compares: use assert\\.NotSame"
-		assert.Truef(t, ptrA != ptrB, "msg with args %d %s", 42, "42")  // want "compares: use assert\\.NotSamef"
-		assert.False(t, ptrA == ptrB)                                   // want "compares: use assert\\.NotSame"
-		assert.Falsef(t, ptrA == ptrB, "msg with args %d %s", 42, "42") // want "compares: use assert\\.NotSamef"
-		assert.False(t, ptrA != ptrB)                                   // want "compares: use assert\\.Same"
-		assert.Falsef(t, ptrA != ptrB, "msg with args %d %s", 42, "42") // want "compares: use assert\\.Samef"
+		assert.True(t, a == b)                                                        // want "compares: use assert\\.Equal"
+		assert.Truef(t, a == b, "msg with args %d %s", 42, "42")                      // want "compares: use assert\\.Equalf"
+		assert.True(t, a != b)                                                        // want "compares: use assert\\.NotEqual"
+		assert.Truef(t, a != b, "msg with args %d %s", 42, "42")                      // want "compares: use assert\\.NotEqualf"
+		assert.True(t, a > b)                                                         // want "compares: use assert\\.Greater"
+		assert.Truef(t, a > b, "msg with args %d %s", 42, "42")                       // want "compares: use assert\\.Greaterf"
+		assert.True(t, a >= b)                                                        // want "compares: use assert\\.GreaterOrEqual"
+		assert.Truef(t, a >= b, "msg with args %d %s", 42, "42")                      // want "compares: use assert\\.GreaterOrEqualf"
+		assert.True(t, a < b)                                                         // want "compares: use assert\\.Less"
+		assert.Truef(t, a < b, "msg with args %d %s", 42, "42")                       // want "compares: use assert\\.Lessf"
+		assert.True(t, a <= b)                                                        // want "compares: use assert\\.LessOrEqual"
+		assert.Truef(t, a <= b, "msg with args %d %s", 42, "42")                      // want "compares: use assert\\.LessOrEqualf"
+		assert.False(t, a == b)                                                       // want "compares: use assert\\.NotEqual"
+		assert.Falsef(t, a == b, "msg with args %d %s", 42, "42")                     // want "compares: use assert\\.NotEqualf"
+		assert.False(t, a != b)                                                       // want "compares: use assert\\.Equal"
+		assert.Falsef(t, a != b, "msg with args %d %s", 42, "42")                     // want "compares: use assert\\.Equalf"
+		assert.False(t, a > b)                                                        // want "compares: use assert\\.LessOrEqual"
+		assert.Falsef(t, a > b, "msg with args %d %s", 42, "42")                      // want "compares: use assert\\.LessOrEqualf"
+		assert.False(t, a >= b)                                                       // want "compares: use assert\\.Less"
+		assert.Falsef(t, a >= b, "msg with args %d %s", 42, "42")                     // want "compares: use assert\\.Lessf"
+		assert.False(t, a < b)                                                        // want "compares: use assert\\.GreaterOrEqual"
+		assert.Falsef(t, a < b, "msg with args %d %s", 42, "42")                      // want "compares: use assert\\.GreaterOrEqualf"
+		assert.False(t, a <= b)                                                       // want "compares: use assert\\.Greater"
+		assert.Falsef(t, a <= b, "msg with args %d %s", 42, "42")                     // want "compares: use assert\\.Greaterf"
+		assert.True(t, ptrA == ptrB)                                                  // want "compares: use assert\\.Same"
+		assert.Truef(t, ptrA == ptrB, "msg with args %d %s", 42, "42")                // want "compares: use assert\\.Samef"
+		assert.True(t, ptrA != ptrB)                                                  // want "compares: use assert\\.NotSame"
+		assert.Truef(t, ptrA != ptrB, "msg with args %d %s", 42, "42")                // want "compares: use assert\\.NotSamef"
+		assert.False(t, ptrA == ptrB)                                                 // want "compares: use assert\\.NotSame"
+		assert.Falsef(t, ptrA == ptrB, "msg with args %d %s", 42, "42")               // want "compares: use assert\\.NotSamef"
+		assert.False(t, ptrA != ptrB)                                                 // want "compares: use assert\\.Same"
+		assert.Falsef(t, ptrA != ptrB, "msg with args %d %s", 42, "42")               // want "compares: use assert\\.Samef"
+		assert.True(t, t1 == t2)                                                      // want "compares: use assert\\.Equal"
+		assert.Truef(t, t1 == t2, "msg with args %d %s", 42, "42")                    // want "compares: use assert\\.Equalf"
+		assert.True(t, t1 != t2)                                                      // want "compares: use assert\\.NotEqual"
+		assert.Truef(t, t1 != t2, "msg with args %d %s", 42, "42")                    // want "compares: use assert\\.NotEqualf"
+		assert.True(t, t1.After(t2))                                                  // want "compares: use assert\\.Greater"
+		assert.Truef(t, t1.After(t2), "msg with args %d %s", 42, "42")                // want "compares: use assert\\.Greaterf"
+		assert.True(t, t1.Before(t2))                                                 // want "compares: use assert\\.Less"
+		assert.Truef(t, t1.Before(t2), "msg with args %d %s", 42, "42")               // want "compares: use assert\\.Lessf"
+		assert.False(t, t1 == t2)                                                     // want "compares: use assert\\.NotEqual"
+		assert.Falsef(t, t1 == t2, "msg with args %d %s", 42, "42")                   // want "compares: use assert\\.NotEqualf"
+		assert.False(t, t1 != t2)                                                     // want "compares: use assert\\.Equal"
+		assert.Falsef(t, t1 != t2, "msg with args %d %s", 42, "42")                   // want "compares: use assert\\.Equalf"
+		assert.False(t, t1.After(t2))                                                 // want "compares: use assert\\.LessOrEqual"
+		assert.Falsef(t, t1.After(t2), "msg with args %d %s", 42, "42")               // want "compares: use assert\\.LessOrEqualf"
+		assert.False(t, t1.Before(t2))                                                // want "compares: use assert\\.GreaterOrEqual"
+		assert.Falsef(t, t1.Before(t2), "msg with args %d %s", 42, "42")              // want "compares: use assert\\.GreaterOrEqualf"
+		assert.Equal(t, 0, t1.Compare(t2))                                            // want "compares: use t1\\.Equal"
+		assert.Equalf(t, 0, t1.Compare(t2), "msg with args %d %s", 42, "42")          // want "compares: use t1\\.Equal"
+		assert.EqualValues(t, 0, t1.Compare(t2))                                      // want "compares: use t1\\.Equal"
+		assert.EqualValuesf(t, 0, t1.Compare(t2), "msg with args %d %s", 42, "42")    // want "compares: use t1\\.Equal"
+		assert.Exactly(t, 0, t1.Compare(t2))                                          // want "compares: use t1\\.Equal"
+		assert.Exactlyf(t, 0, t1.Compare(t2), "msg with args %d %s", 42, "42")        // want "compares: use t1\\.Equal"
+		assert.NotEqual(t, 0, t1.Compare(t2))                                         // want "compares: use t1\\.Equal"
+		assert.NotEqualf(t, 0, t1.Compare(t2), "msg with args %d %s", 42, "42")       // want "compares: use t1\\.Equal"
+		assert.NotEqualValues(t, 0, t1.Compare(t2))                                   // want "compares: use t1\\.Equal"
+		assert.NotEqualValuesf(t, 0, t1.Compare(t2), "msg with args %d %s", 42, "42") // want "compares: use t1\\.Equal"
+		assert.Greater(t, t1.Compare(t2), 0)                                          // want "compares: use assert\\.Greater"
+		assert.Greaterf(t, t1.Compare(t2), 0, "msg with args %d %s", 42, "42")        // want "compares: use assert\\.Greaterf"
+		assert.Less(t, 0, t1.Compare(t2))                                             // want "compares: use assert\\.Greater"
+		assert.Lessf(t, 0, t1.Compare(t2), "msg with args %d %s", 42, "42")           // want "compares: use assert\\.Greaterf"
+		assert.GreaterOrEqual(t, t1.Compare(t2), 0)                                   // want "compares: use assert\\.GreaterOrEqual"
+		assert.GreaterOrEqualf(t, t1.Compare(t2), 0, "msg with args %d %s", 42, "42") // want "compares: use assert\\.GreaterOrEqualf"
+		assert.LessOrEqual(t, 0, t1.Compare(t2))                                      // want "compares: use assert\\.GreaterOrEqual"
+		assert.LessOrEqualf(t, 0, t1.Compare(t2), "msg with args %d %s", 42, "42")    // want "compares: use assert\\.GreaterOrEqualf"
+		assert.Less(t, t1.Compare(t2), 0)                                             // want "compares: use assert\\.Less"
+		assert.Lessf(t, t1.Compare(t2), 0, "msg with args %d %s", 42, "42")           // want "compares: use assert\\.Lessf"
+		assert.Greater(t, 0, t1.Compare(t2))                                          // want "compares: use assert\\.Less"
+		assert.Greaterf(t, 0, t1.Compare(t2), "msg with args %d %s", 42, "42")        // want "compares: use assert\\.Lessf"
+		assert.LessOrEqual(t, t1.Compare(t2), 0)                                      // want "compares: use assert\\.LessOrEqual"
+		assert.LessOrEqualf(t, t1.Compare(t2), 0, "msg with args %d %s", 42, "42")    // want "compares: use assert\\.LessOrEqualf"
+		assert.GreaterOrEqual(t, 0, t1.Compare(t2))                                   // want "compares: use assert\\.LessOrEqual"
+		assert.GreaterOrEqualf(t, 0, t1.Compare(t2), "msg with args %d %s", 42, "42") // want "compares: use assert\\.LessOrEqualf"
+		assert.Equal(t, 1, t1.Compare(t2))                                            // want "compares: use assert\\.Greater"
+		assert.Equalf(t, 1, t1.Compare(t2), "msg with args %d %s", 42, "42")          // want "compares: use assert\\.Greaterf"
+		assert.NotEqual(t, -1, t1.Compare(t2))                                        // want "compares: use assert\\.GreaterOrEqual"
+		assert.NotEqualf(t, -1, t1.Compare(t2), "msg with args %d %s", 42, "42")      // want "compares: use assert\\.GreaterOrEqualf"
+		assert.Equal(t, -1, t1.Compare(t2))                                           // want "compares: use assert\\.Less"
+		assert.Equalf(t, -1, t1.Compare(t2), "msg with args %d %s", 42, "42")         // want "compares: use assert\\.Lessf"
+		assert.NotEqual(t, 1, t1.Compare(t2))                                         // want "compares: use assert\\.LessOrEqual"
+		assert.NotEqualf(t, 1, t1.Compare(t2), "msg with args %d %s", 42, "42")       // want "compares: use assert\\.LessOrEqualf"
 	}
 
 	// Valid.
@@ -67,6 +119,26 @@ func TestComparesChecker(t *testing.T) {
 		assert.Samef(t, ptrA, ptrB, "msg with args %d %s", 42, "42")
 		assert.NotSame(t, ptrA, ptrB)
 		assert.NotSamef(t, ptrA, ptrB, "msg with args %d %s", 42, "42")
+		assert.True(t, t1.Equal(t2))
+		assert.Truef(t, t1.Equal(t2), "msg with args %d %s", 42, "42")
+		assert.False(t, t1.Equal(t2))
+		assert.Falsef(t, t1.Equal(t2), "msg with args %d %s", 42, "42")
+		assert.Greater(t, t1, t2)
+		assert.Greaterf(t, t1, t2, "msg with args %d %s", 42, "42")
+		assert.Less(t, t1, t2)
+		assert.Lessf(t, t1, t2, "msg with args %d %s", 42, "42")
+		assert.LessOrEqual(t, t1, t2)
+		assert.LessOrEqualf(t, t1, t2, "msg with args %d %s", 42, "42")
+		assert.Equal(t, t1, t2)
+		assert.Equalf(t, t1, t2, "msg with args %d %s", 42, "42")
+		assert.EqualValues(t, t1, t2)
+		assert.EqualValuesf(t, t1, t2, "msg with args %d %s", 42, "42")
+		assert.Exactly(t, t1, t2)
+		assert.Exactlyf(t, t1, t2, "msg with args %d %s", 42, "42")
+		assert.NotEqual(t, t1, t2)
+		assert.NotEqualf(t, t1, t2, "msg with args %d %s", 42, "42")
+		assert.NotEqualValues(t, t1, t2)
+		assert.NotEqualValuesf(t, t1, t2, "msg with args %d %s", 42, "42")
 	}
 
 	// Ignored.
@@ -79,5 +151,13 @@ func TestComparesChecker(t *testing.T) {
 		assert.Truef(t, c || d, "msg with args %d %s", 42, "42")
 		assert.False(t, d || c)
 		assert.Falsef(t, d || c, "msg with args %d %s", 42, "42")
+		assert.Equal(t, 2, t1.Compare(t2))
+		assert.Equalf(t, 2, t1.Compare(t2), "msg with args %d %s", 42, "42")
+		assert.Equal(t, 2, t1.Compare(t2))
+		assert.Equalf(t, 2, t1.Compare(t2), "msg with args %d %s", 42, "42")
+		assert.Equal(t, 2, t1.Compare(t2))
+		assert.Equalf(t, 2, t1.Compare(t2), "msg with args %d %s", 42, "42")
+		assert.Equal(t, 2, t1.Compare(t2))
+		assert.Equalf(t, 2, t1.Compare(t2), "msg with args %d %s", 42, "42")
 	}
 }

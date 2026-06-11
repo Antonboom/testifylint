@@ -68,6 +68,10 @@ func newCheckers(cfg config.Config) ([]checkers.RegularChecker, []checkers.Advan
 
 		case *checkers.SuiteExtraAssertCall:
 			c.SetMode(cfg.SuiteExtraAssertCall.Mode)
+
+		case *checkers.TimeCompare:
+			c.SetWarnOnTimeEquality(cfg.TimeCompare.WarnOnTimeEquality)
+			c.SetTimeEqualitySuppressCallsPattern(cfg.TimeCompare.TimeEqualitySuppressCallsPattern.Regexp)
 		}
 
 		switch casted := ch.(type) {

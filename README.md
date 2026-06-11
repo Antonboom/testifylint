@@ -113,6 +113,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [suite-subtest-run](#suite-subtest-run)             | ✅                  | ❌       |
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
 | [useless-assert](#useless-assert)                   | ✅                  | ❌       |
+| [zero](#useless-assert)                             | ✅                  | ✅       |
 
 > ⚠️ Also look at open for contribution [checkers](CONTRIBUTING.md#open-for-contribution)
 
@@ -1237,6 +1238,36 @@ assert.LessOrEqual(0, uintVal)
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
 **Reason**: Protection from bugs and dead code.
+
+---
+
+### zero
+
+Currently only `time.Time` is supported (open for contributions):
+
+```go
+❌
+assert.Equal(t, time.Time{}, ts)
+assert.EqualValues(t, time.Time{}, ts)
+assert.Exactly(t, time.Time{}, ts)
+assert.True(t, ts.IsZero())
+assert.True(t, ts.Equal(time.Time{}))
+
+assert.NotEqual(t, time.Time{}, ts)
+assert.NotEqualValues(t, time.Time{}, ts)
+assert.False(t, ts.IsZero())
+assert.False(t, ts.Equal(time.Time{}))
+
+✅
+assert.Zero(t, ts)
+assert.NotZero(t, ts)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true <br>
+**Reason**: More appropriate `testify` API with clearer failure message.
+
+P.S. Additionally, variables starting with `zero` are considered to have zero values.
 
 ---
 

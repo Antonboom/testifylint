@@ -212,6 +212,19 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 					Fn: "WithinDuration", Argsf: "resultTime, time.Date(2023, 01, 12, 11, 46, 33, 0, nil), 100*time.Millisecond",
 					ReportMsgf: report, ProposedArgsf: "time.Date(2023, 01, 12, 11, 46, 33, 0, nil), resultTime, 100*time.Millisecond",
 				},
+
+				{
+					Fn: "Equal", Argsf: "resultTime.Compare(expectedTime), 0",
+					ReportMsgf: report, ProposedArgsf: "0, resultTime.Compare(expectedTime)",
+				},
+				{
+					Fn: "NotEqual", Argsf: "resultTime.Compare(expectedTime), 1",
+					ReportMsgf: report, ProposedArgsf: "1, resultTime.Compare(expectedTime)",
+				},
+				{
+					Fn: "Equal", Argsf: "resultTime, time.Time{}",
+					ReportMsgf: report, ProposedArgsf: "time.Time{}, resultTime",
+				},
 			},
 			ValidAssertions: []Assertion{
 				{Fn: "EqualExportedValues", Argsf: "expectedObj, resultObj"},

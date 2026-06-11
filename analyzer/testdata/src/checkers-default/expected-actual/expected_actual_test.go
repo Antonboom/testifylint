@@ -365,6 +365,12 @@ func TestExpectedActualChecker_Other(t *testing.T) {
 		assert.WithinDurationf(t, resultTime, expectedTime, time.Second, "msg with args %d %s", 42, "42")                                         // want "expected-actual: need to reverse actual and expected values"
 		assert.WithinDuration(t, resultTime, time.Date(2023, 01, 12, 11, 46, 33, 0, nil), 100*time.Millisecond)                                   // want "expected-actual: need to reverse actual and expected values"
 		assert.WithinDurationf(t, resultTime, time.Date(2023, 01, 12, 11, 46, 33, 0, nil), 100*time.Millisecond, "msg with args %d %s", 42, "42") // want "expected-actual: need to reverse actual and expected values"
+		assert.Equal(t, resultTime.Compare(expectedTime), 0)                                                                                      // want "expected-actual: need to reverse actual and expected values"
+		assert.Equalf(t, resultTime.Compare(expectedTime), 0, "msg with args %d %s", 42, "42")                                                    // want "expected-actual: need to reverse actual and expected values"
+		assert.NotEqual(t, resultTime.Compare(expectedTime), 1)                                                                                   // want "expected-actual: need to reverse actual and expected values"
+		assert.NotEqualf(t, resultTime.Compare(expectedTime), 1, "msg with args %d %s", 42, "42")                                                 // want "expected-actual: need to reverse actual and expected values"
+		assert.Equal(t, resultTime, time.Time{})                                                                                                  // want "expected-actual: need to reverse actual and expected values"
+		assert.Equalf(t, resultTime, time.Time{}, "msg with args %d %s", 42, "42")                                                                // want "expected-actual: need to reverse actual and expected values"
 	}
 
 	// Valid.
