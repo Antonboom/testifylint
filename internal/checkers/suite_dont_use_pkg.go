@@ -5,12 +5,19 @@ import (
 	"go/ast"
 
 	"golang.org/x/tools/go/analysis"
+	"golang.org/x/tools/go/ast/inspector"
 )
 
 // SuiteDontUsePkg detects situations like
 //
 //	func (s *MySuite) TestSomething() {
 //		assert.Equal(s.T(), 42, value)
+//	}
+//
+// or
+//
+//	func (s *MySuite) checkSomething(t *testing.T) {
+//		assert.Equal(t, 42, value)
 //	}
 //
 // and requires
@@ -24,7 +31,7 @@ type SuiteDontUsePkg struct{}
 func NewSuiteDontUsePkg() SuiteDontUsePkg { return SuiteDontUsePkg{} }
 func (SuiteDontUsePkg) Name() string      { return "suite-dont-use-pkg" }
 
-func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
+func (checker SuiteDontUsePkg) CheckUsingPkg(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	if !call.IsPkg {
 		return nil
 	}
@@ -77,4 +84,75 @@ func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analy
 			},
 		},
 	})
+}
+
+func (checker SuiteDontUsePkg) CheckBareTestingT(pass *analysis.Pass, inspector *inspector.Inspector) (diagnostics []analysis.Diagnostic) {
+	inspector.Preorder([]ast.Node{(*ast.FuncDecl)(nil)}, func(node ast.Node) {
+		fd := node.(*ast.FuncDecl)
+		if !isSuiteMethod(pass, fd) {
+			return
+		}
+
+		if ident := fd.Name; ident == nil || isSuiteTestMethod(ident.Name) || isSuiteServiceMethod(ident.Name) {
+			return
+		}
+
+		for i, param := range fd.Type.Params.List {
+			var sel *ast.SelectorExpr
+			switch t := param.Type.(type) {
+			case *ast.SelectorExpr:
+				sel = t
+			case *ast.StarExpr:
+				if s, ok := t.X.(*ast.SelectorExpr); ok {
+					sel = s
+				}
+			}
+
+			if sel == nil {
+				continue
+			}
+			if pkgIdent, ok := sel.X.(*ast.Ident); !ok || pkgIdent.Name != "testing" {
+				continue
+			}
+			if sel.Sel.Name != "T" {
+				continue
+			}
+
+			textEditEnd := param.End()
+			if i < len(fd.Type.Params.List)-1 {
+				textEditEnd = fd.Type.Params.List[i+1].Pos()
+			}
+
+			msg := "suite method must not include a testing.T parameter"
+			d := newDiagnostic(checker.Name(), fd, msg, analysis.SuggestedFix{
+				Message: "Remove testing.T parameter",
+				TextEdits: []analysis.TextEdit{
+					{
+						Pos: param.Pos(),
+						End: textEditEnd,
+					},
+				},
+			})
+			diagnostics = append(diagnostics, *d)
+		}
+	})
+	return diagnostics
+}
+
+func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, inspector *inspector.Inspector) (diagnostics []analysis.Diagnostic) {
+	inspector.Preorder([]ast.Node{(*ast.CallExpr)(nil)}, func(node ast.Node) {
+		call := NewCallMeta(pass, node.(*ast.CallExpr))
+		if call == nil {
+			return
+		}
+		pkgCall := checker.CheckUsingPkg(pass, call)
+		if pkgCall != nil {
+			diagnostics = append(diagnostics, *pkgCall)
+		}
+	})
+
+	bareTestingTCall := checker.CheckBareTestingT(pass, inspector)
+	diagnostics = append(diagnostics, bareTestingTCall...)
+
+	return diagnostics
 }
