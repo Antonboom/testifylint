@@ -20,8 +20,8 @@ type CallMeta struct {
 	Call *ast.CallExpr
 	// Range contains start and end position of assertion call.
 	analysis.Range
-	// IsPkg true if this is package (not object) call.
-	IsPkg bool
+	// Obj contains Assertions or CollectT object, can be nil in case of package (not object) call.
+	Obj types.Object
 	// IsAssert true if this is "testify/assert" package (or object) call.
 	IsAssert bool
 	// Selector is the AST expression of "assert.Equal".
@@ -42,6 +42,11 @@ func (c CallMeta) String() string {
 	return c.SelectorXStr + "." + c.Fn.Name
 }
 
+// IsPkg true if this is package (not object) call.
+func (c CallMeta) IsPkg() bool {
+	return c.Obj == nil
+}
+
 // FnMeta stores meta info about assertion function itself, for example "Equal".
 type FnMeta struct {
 	// Range contains start and end position of function Name.
@@ -59,53 +64,57 @@ type FnMeta struct {
 // NewCallMeta returns meta information about testify assertion call.
 // Returns nil if ast.CallExpr is not testify call.
 func NewCallMeta(pass *analysis.Pass, ce *ast.CallExpr) *CallMeta {
+	funcObj, ok := typeutil.Callee(pass.TypesInfo, ce).(*types.Func)
+	if !ok {
+		return nil
+	}
+
+	sig := funcObj.Type().(*types.Signature) // NOTE(a.telyshev): Func's Type() is always a *Signature.
+
 	se, ok := ce.Fun.(*ast.SelectorExpr)
 	if !ok || se.Sel == nil {
 		return nil
 	}
 	fnName := se.Sel.Name
 
-	initiatorPkg, isPkgCall := func() (*types.Package, bool) {
-		// Examples:
-		// s.Assert         -> method of *suite.Suite        -> package suite ("vendor/github.com/stretchr/testify/suite")
-		// s.Assert().Equal -> method of *assert.Assertions  -> package assert ("vendor/github.com/stretchr/testify/assert")
-		// s.Equal          -> method of *assert.Assertions  -> package assert ("vendor/github.com/stretchr/testify/assert")
-		// reqObj.Falsef    -> method of *require.Assertions -> package require ("vendor/github.com/stretchr/testify/require")
-		if sel, isSel := pass.TypesInfo.Selections[se]; isSel {
-			return sel.Obj().Pkg(), false
-		}
+	var obj types.Object
+	var pkg *types.Package
 
-		// Examples:
-		// assert.False      -> assert  -> package assert ("vendor/github.com/stretchr/testify/assert")
-		// require.NotEqualf -> require -> package require ("vendor/github.com/stretchr/testify/require")
-		if id, isIdent := se.X.(*ast.Ident); isIdent {
-			if selObj := pass.TypesInfo.ObjectOf(id); selObj != nil {
-				if pkg, isPkgName := selObj.(*types.PkgName); isPkgName {
-					return pkg.Imported(), true
-				}
+	if rcv := sig.Recv(); rcv != nil { //nolint:nestif // Types hell.
+		if ptr, ok := rcv.Type().(*types.Pointer); ok {
+			// Examples:
+			// s.Assert         -> method of *suite.Suite        -> package suite ("vendor/github.com/stretchr/testify/suite")
+			// s.Assert().Equal -> method of *assert.Assertions  -> package assert ("vendor/github.com/stretchr/testify/assert")
+			// s.Equal          -> method of *assert.Assertions  -> package assert ("vendor/github.com/stretchr/testify/assert")
+			// reqObj.Falsef    -> method of *require.Assertions -> package require ("vendor/github.com/stretchr/testify/require")
+			// collect.Errorf   -> method of *assert.CollectT    -> package assert ("vendor/github.com/stretchr/testify/assert")
+			obj = ptr.Elem().(*types.Named).Obj()
+			pkg = obj.Pkg()
+		}
+	} else if id, isIdent := se.X.(*ast.Ident); isIdent {
+		if selObj := pass.TypesInfo.ObjectOf(id); selObj != nil {
+			if pkgName, ok := selObj.(*types.PkgName); ok {
+				// Examples:
+				// assert.False      -> assert  -> package assert ("vendor/github.com/stretchr/testify/assert")
+				// require.NotEqualf -> require -> package require ("vendor/github.com/stretchr/testify/require")
+				pkg = pkgName.Imported()
 			}
 		}
-		return nil, false
-	}()
-	if initiatorPkg == nil {
+	}
+	if pkg == nil {
 		return nil
 	}
 
-	isAssert := analysisutil.IsPkg(initiatorPkg, testify.AssertPkgName, testify.AssertPkgPath)
-	isRequire := analysisutil.IsPkg(initiatorPkg, testify.RequirePkgName, testify.RequirePkgPath)
+	isAssert := analysisutil.IsPkg(pkg, testify.AssertPkgName, testify.AssertPkgPath)
+	isRequire := analysisutil.IsPkg(pkg, testify.RequirePkgName, testify.RequirePkgPath)
 	if !isAssert && !isRequire {
-		return nil
-	}
-
-	funcObj, ok := typeutil.Callee(pass.TypesInfo, ce).(*types.Func)
-	if !ok {
 		return nil
 	}
 
 	return &CallMeta{
 		Call:         ce,
 		Range:        ce,
-		IsPkg:        isPkgCall,
+		Obj:          obj,
 		IsAssert:     isAssert,
 		Selector:     se,
 		SelectorXStr: analysisutil.NodeString(pass.Fset, se.X),
@@ -114,7 +123,7 @@ func NewCallMeta(pass *analysis.Pass, ce *ast.CallExpr) *CallMeta {
 			Name:         fnName,
 			NameFTrimmed: strings.TrimSuffix(fnName, "f"),
 			IsFmt:        strings.HasSuffix(fnName, "f"),
-			Signature:    funcObj.Type().(*types.Signature), // NOTE(a.telyshev): Func's Type() is always a *Signature.
+			Signature:    sig,
 		},
 		Args:    trimTArg(pass, ce.Args),
 		ArgsRaw: ce.Args,
