@@ -3,7 +3,7 @@ package checkers
 import (
 	"go/ast"
 	"go/token"
-	"strings"
+	"regexp"
 
 	"golang.org/x/tools/go/analysis"
 
@@ -131,9 +131,11 @@ func isTimeEqualZeroCall(pass *analysis.Pass, e ast.Expr) (ast.Expr, bool) {
 	return nil, false
 }
 
+var zeroVarPattern = regexp.MustCompile("^zero")
+
 func isZeroTimeInstance(pass *analysis.Pass, e ast.Expr) bool {
 	// `var zero time.Time` case.
-	if isTimeInstance(pass, e) && strings.HasPrefix(analysisutil.NodeString(pass.Fset, e), "zero") {
+	if isTimeInstance(pass, e) && isIdentNamedAfterPattern(zeroVarPattern, e) {
 		return true
 	}
 

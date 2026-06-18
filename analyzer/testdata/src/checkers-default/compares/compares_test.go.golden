@@ -12,6 +12,7 @@ import (
 func TestComparesChecker(t *testing.T) {
 	var a, b int
 	var c, d bool
+	var wantCmp int
 	var ptrA, ptrB *int
 	var t1, t2 time.Time
 
@@ -93,10 +94,18 @@ func TestComparesChecker(t *testing.T) {
 		assert.LessOrEqualf(t, t1, t2, "msg with args %d %s", 42, "42")    // want "compares: use assert\\.LessOrEqualf"
 		assert.Greater(t, t1, t2)                                          // want "compares: use assert\\.Greater"
 		assert.Greaterf(t, t1, t2, "msg with args %d %s", 42, "42")        // want "compares: use assert\\.Greaterf"
+		assert.Greater(t, t1, t2)                                          // want "compares: use assert\\.Greater"
+		assert.Greaterf(t, t1, t2, "msg with args %d %s", 42, "42")        // want "compares: use assert\\.Greaterf"
+		assert.GreaterOrEqual(t, t1, t2)                                   // want "compares: use assert\\.GreaterOrEqual"
+		assert.GreaterOrEqualf(t, t1, t2, "msg with args %d %s", 42, "42") // want "compares: use assert\\.GreaterOrEqualf"
 		assert.GreaterOrEqual(t, t1, t2)                                   // want "compares: use assert\\.GreaterOrEqual"
 		assert.GreaterOrEqualf(t, t1, t2, "msg with args %d %s", 42, "42") // want "compares: use assert\\.GreaterOrEqualf"
 		assert.Less(t, t1, t2)                                             // want "compares: use assert\\.Less"
 		assert.Lessf(t, t1, t2, "msg with args %d %s", 42, "42")           // want "compares: use assert\\.Lessf"
+		assert.Less(t, t1, t2)                                             // want "compares: use assert\\.Less"
+		assert.Lessf(t, t1, t2, "msg with args %d %s", 42, "42")           // want "compares: use assert\\.Lessf"
+		assert.LessOrEqual(t, t1, t2)                                      // want "compares: use assert\\.LessOrEqual"
+		assert.LessOrEqualf(t, t1, t2, "msg with args %d %s", 42, "42")    // want "compares: use assert\\.LessOrEqualf"
 		assert.LessOrEqual(t, t1, t2)                                      // want "compares: use assert\\.LessOrEqual"
 		assert.LessOrEqualf(t, t1, t2, "msg with args %d %s", 42, "42")    // want "compares: use assert\\.LessOrEqualf"
 	}
@@ -151,13 +160,27 @@ func TestComparesChecker(t *testing.T) {
 		assert.Truef(t, c || d, "msg with args %d %s", 42, "42")
 		assert.False(t, d || c)
 		assert.Falsef(t, d || c, "msg with args %d %s", 42, "42")
+		assert.Equal(t, -3, t1.Compare(t2))
+		assert.Equalf(t, -3, t1.Compare(t2), "msg with args %d %s", 42, "42")
+		assert.Equal(t, t1.Compare(t2), -3)
+		assert.Equalf(t, t1.Compare(t2), -3, "msg with args %d %s", 42, "42")
+		assert.Equal(t, -2, t1.Compare(t2))
+		assert.Equalf(t, -2, t1.Compare(t2), "msg with args %d %s", 42, "42")
+		assert.Equal(t, t1.Compare(t2), -2)
+		assert.Equalf(t, t1.Compare(t2), -2, "msg with args %d %s", 42, "42")
 		assert.Equal(t, 2, t1.Compare(t2))
 		assert.Equalf(t, 2, t1.Compare(t2), "msg with args %d %s", 42, "42")
-		assert.Equal(t, 2, t1.Compare(t2))
-		assert.Equalf(t, 2, t1.Compare(t2), "msg with args %d %s", 42, "42")
-		assert.Equal(t, 2, t1.Compare(t2))
-		assert.Equalf(t, 2, t1.Compare(t2), "msg with args %d %s", 42, "42")
-		assert.Equal(t, 2, t1.Compare(t2))
-		assert.Equalf(t, 2, t1.Compare(t2), "msg with args %d %s", 42, "42")
+		assert.Equal(t, t1.Compare(t2), 2)
+		assert.Equalf(t, t1.Compare(t2), 2, "msg with args %d %s", 42, "42")
+		assert.Equal(t, 3, t1.Compare(t2))
+		assert.Equalf(t, 3, t1.Compare(t2), "msg with args %d %s", 42, "42")
+		assert.Equal(t, t1.Compare(t2), 3)
+		assert.Equalf(t, t1.Compare(t2), 3, "msg with args %d %s", 42, "42")
+		assert.Equal(t, wantCmp, t1.Compare(t2))
+		assert.Equalf(t, wantCmp, t1.Compare(t2), "msg with args %d %s", 42, "42")
+		assert.Equal(t, t1.Compare(t2), wantCmp)
+		assert.Equalf(t, t1.Compare(t2), wantCmp, "msg with args %d %s", 42, "42")
+		assert.Equal(t, t1.Compare(t2), t2.Compare(t1))
+		assert.Equalf(t, t1.Compare(t2), t2.Compare(t1), "msg with args %d %s", 42, "42")
 	}
 }

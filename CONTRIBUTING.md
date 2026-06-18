@@ -137,7 +137,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [http-sugar](#http-sugar)
 - [require-len](#require-len)
 - [suite-test-name](#suite-test-name)
-- [time-compare](#time-compare)
+- [zero](#zero)
 
 ---
 
@@ -347,6 +347,23 @@ func (s *HandlersSuite) Test_Usecase_Success()
 func (s *HandlersSuite) TestUsecaseSuccess()
 func (s *HandlersSuite) Test_UsecaseSuccess()
 ```
+
+---
+
+### time-compare
+
+Support compares of "time containers" (structs, slices, arrays, maps, something else?), e.g.
+
+```
+{Fn: "EqualExportedValues", Argsf: "expiringToken{t1}, expiringToken{time.Now()}", ReportMsgf: report},
+```
+
+---
+
+### zero
+
+More cases for `zero` checker:
+https://github.com/Antonboom/testifylint/issues/75#issuecomment-2143826065
 
 ---
 

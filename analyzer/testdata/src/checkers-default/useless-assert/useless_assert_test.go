@@ -12,7 +12,7 @@ import (
 func TestUselessAssertChecker(t *testing.T) {
 	var value any
 	var err error
-	var elapsed time.Time
+	var elapsed, zeroTime time.Time
 	var str string
 	var num int
 	var b bool
@@ -252,6 +252,20 @@ func TestUselessAssertChecker(t *testing.T) {
 		assert.NotZerof(t, true, "msg")                                                                   // want "useless-assert: meaningless assertion"
 		assert.NotZerof(t, true, "msg with arg %d", 42)                                                   // want "useless-assert: meaningless assertion"
 		assert.NotZerof(t, true, "msg with args %d %s", 42, "42")                                         // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, time.Time{})                                                                    // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, time.Time{}, "msg")                                                             // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, time.Time{}, "msg with arg %d", 42)                                             // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, time.Time{}, "msg with args %d %s", 42, "42")                                   // want "useless-assert: meaningless assertion"
+		assert.NotZerof(t, time.Time{}, "msg")                                                            // want "useless-assert: meaningless assertion"
+		assert.NotZerof(t, time.Time{}, "msg with arg %d", 42)                                            // want "useless-assert: meaningless assertion"
+		assert.NotZerof(t, time.Time{}, "msg with args %d %s", 42, "42")                                  // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, zeroTime)                                                                       // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, zeroTime, "msg")                                                                // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, zeroTime, "msg with arg %d", 42)                                                // want "useless-assert: meaningless assertion"
+		assert.NotZero(t, zeroTime, "msg with args %d %s", 42, "42")                                      // want "useless-assert: meaningless assertion"
+		assert.NotZerof(t, zeroTime, "msg")                                                               // want "useless-assert: meaningless assertion"
+		assert.NotZerof(t, zeroTime, "msg with arg %d", 42)                                               // want "useless-assert: meaningless assertion"
+		assert.NotZerof(t, zeroTime, "msg with args %d %s", 42, "42")                                     // want "useless-assert: meaningless assertion"
 		assert.Positive(t, 42)                                                                            // want "useless-assert: meaningless assertion"
 		assert.Positive(t, 42, "msg")                                                                     // want "useless-assert: meaningless assertion"
 		assert.Positive(t, 42, "msg with arg %d", 42)                                                     // want "useless-assert: meaningless assertion"
@@ -350,6 +364,20 @@ func TestUselessAssertChecker(t *testing.T) {
 		assert.Zerof(t, true, "msg")                                                                      // want "useless-assert: meaningless assertion"
 		assert.Zerof(t, true, "msg with arg %d", 42)                                                      // want "useless-assert: meaningless assertion"
 		assert.Zerof(t, true, "msg with args %d %s", 42, "42")                                            // want "useless-assert: meaningless assertion"
+		assert.Zero(t, time.Time{})                                                                       // want "useless-assert: meaningless assertion"
+		assert.Zero(t, time.Time{}, "msg")                                                                // want "useless-assert: meaningless assertion"
+		assert.Zero(t, time.Time{}, "msg with arg %d", 42)                                                // want "useless-assert: meaningless assertion"
+		assert.Zero(t, time.Time{}, "msg with args %d %s", 42, "42")                                      // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, time.Time{}, "msg")                                                               // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, time.Time{}, "msg with arg %d", 42)                                               // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, time.Time{}, "msg with args %d %s", 42, "42")                                     // want "useless-assert: meaningless assertion"
+		assert.Zero(t, zeroTime)                                                                          // want "useless-assert: meaningless assertion"
+		assert.Zero(t, zeroTime, "msg")                                                                   // want "useless-assert: meaningless assertion"
+		assert.Zero(t, zeroTime, "msg with arg %d", 42)                                                   // want "useless-assert: meaningless assertion"
+		assert.Zero(t, zeroTime, "msg with args %d %s", 42, "42")                                         // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, zeroTime, "msg")                                                                  // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, zeroTime, "msg with arg %d", 42)                                                  // want "useless-assert: meaningless assertion"
+		assert.Zerof(t, zeroTime, "msg with args %d %s", 42, "42")                                        // want "useless-assert: meaningless assertion"
 		assert.Negative(t, len(x))                                                                        // want "useless-assert: meaningless assertion"
 		assert.Negative(t, len(x), "msg")                                                                 // want "useless-assert: meaningless assertion"
 		assert.Negative(t, len(x), "msg with arg %d", 42)                                                 // want "useless-assert: meaningless assertion"

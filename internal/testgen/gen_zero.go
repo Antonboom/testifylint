@@ -49,6 +49,9 @@ func (g ZeroTestsGenerator) TemplateData() any {
 			{Fn: "Exactly", Argsf: "0, ts.Compare(zeroTime)"},
 			{Fn: "NotEqual", Argsf: "0, ts.Compare(time.Time{})"},
 			{Fn: "NotEqualValues", Argsf: "0, ts.Compare(time.Time{})"},
+
+			// tricky.
+			{Fn: "Equal", Argsf: "zeroTime.Add(time.Second), ts"},
 		},
 	}
 }

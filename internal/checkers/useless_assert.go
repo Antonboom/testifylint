@@ -116,7 +116,11 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 			return nil
 		}
 		_, isInt := isIntBasicLit(call.Args[0])
-		isMeaningless = isInt || isStringLit(call.Args[0]) || isNil(call.Args[0]) || isUntypedBool(pass, call.Args[0])
+		isMeaningless = isInt ||
+			isStringLit(call.Args[0]) ||
+			isNil(call.Args[0]) ||
+			isUntypedBool(pass, call.Args[0]) ||
+			isZeroTimeInstance(pass, call.Args[0])
 	}
 
 	if isMeaningless {

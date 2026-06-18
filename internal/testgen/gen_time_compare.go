@@ -38,8 +38,6 @@ func (g TimeCompareTestsGenerator) TemplateData() any {
 			{Fn: "NotEqualValues", Argsf: "time.Now(), t1", ReportMsgf: report},
 			{Fn: "NotEqualValues", Argsf: "t1, time.Now()", ReportMsgf: report},
 
-			{Fn: "EqualExportedValues", Argsf: "expiringToken{t1}, expiringToken{time.Now()}", ReportMsgf: report},
-
 			// Zero time equality.
 			{Fn: "Equal", Argsf: "time.Time{}, t1", ReportMsgf: report},
 			{Fn: "Equal", Argsf: "t1, time.Time{}", ReportMsgf: report},
@@ -62,6 +60,7 @@ func (g TimeCompareTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: "t1.Local(), t2.Local()"},
 			{Fn: "Equal", Argsf: "t1.In(time.UTC), t2.In(time.UTC)"},
 			{Fn: "Equal", Argsf: "t1.Add(time.Second), t2.Add(time.Second)"},
+			{Fn: "Equal", Argsf: "zeroTime.Add(time.Second), t1"},
 			{Fn: "Equal", Argsf: "t1.AddDate(0, 0, 1), t2.AddDate(0, 0, 1)"},
 			{Fn: "Equal", Argsf: "time.Date(2017, time.January, 24, 0, 0, 0, 0, time.UTC), d"},
 
@@ -107,7 +106,7 @@ import (
 )
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
-	var t1, t2 time.Time
+	var t1, t2, zeroTime time.Time
 	d := time.Now()
 	now := time.Now()
 	expectedTime, expiryTime := time.Now(), time.Now()

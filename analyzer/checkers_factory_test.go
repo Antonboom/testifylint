@@ -16,6 +16,7 @@ func Test_newCheckers(t *testing.T) {
 	timeCallsPattern := regexp.MustCompile(`Round|UTC`)
 
 	enabledByDefaultRegularCheckers := []checkers.RegularChecker{
+		checkers.NewZero(),
 		checkers.NewTimeCompare(),
 		checkers.NewFloatCompare(),
 		checkers.NewBoolCompare(),
@@ -37,6 +38,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewFormatter(),
 	}
 	allRegularCheckers := []checkers.RegularChecker{
+		checkers.NewZero(),
 		checkers.NewTimeCompare(),
 		checkers.NewFloatCompare(),
 		checkers.NewBoolCompare(),
@@ -239,14 +241,12 @@ func Test_newCheckers(t *testing.T) {
 				DisableAll:      true,
 				EnabledCheckers: config.KnownCheckersValue{checkers.NewTimeCompare().Name()},
 				TimeCompare: config.TimeCompareConfig{
-					WarnOnTimeEquality:               true,
-					TimeEqualitySuppressCallsPattern: config.RegexpValue{Regexp: timeCallsPattern},
+					SuppressCallsPattern: config.RegexpValue{Regexp: timeCallsPattern},
 				},
 			},
 			expRegular: []checkers.RegularChecker{
 				checkers.NewTimeCompare().
-					SetWarnOnTimeEquality(true).
-					SetTimeEqualitySuppressCallsPattern(timeCallsPattern),
+					SetSuppressCallsPattern(timeCallsPattern),
 			},
 			expAdvanced: []checkers.AdvancedChecker{},
 		},

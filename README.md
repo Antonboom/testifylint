@@ -69,11 +69,12 @@ $ testifylint --enable-all --disable=empty,error-is-as ./...
 
 # Checkers configuration.
 $ testifylint --bool-compare.ignore-custom-types ./...
-$ testifylint --expected-actual.pattern=^wanted$ ./...
+$ testifylint --expected-actual.pattern="^wanted$" ./...
 $ testifylint --formatter.check-format-string --formatter.require-f-funcs --formatter.require-string-msg ./...
 $ testifylint --go-require.ignore-http-handlers ./...
 $ testifylint --require-error.fn-pattern="^(Errorf?|NoErrorf?)$" ./...
 $ testifylint --suite-extra-assert-call.mode=require ./...
+$ testifylint --time-compare.suppress-calls-pattern="UTC|Round" ./...
 ```
 
 ### golangci-lint
@@ -113,7 +114,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [suite-subtest-run](#suite-subtest-run)             | ✅                  | ❌       |
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
 | [useless-assert](#useless-assert)                   | ✅                  | ❌       |
-| [zero](#useless-assert)                             | ✅                  | ✅       |
+| [zero](#zero)                                       | ✅                  | ✅       |
 
 > ⚠️ Also look at open for contribution [checkers](CONTRIBUTING.md#open-for-contribution)
 
@@ -215,6 +216,17 @@ assert.LessOrEqual(t, a, b)
 If `a` and `b` are pointers then `assert.Same`/`NotSame` is required instead,
 due to the inappropriate recursive nature of `assert.Equal` (based on
 [reflect.DeepEqual](https://pkg.go.dev/reflect#DeepEqual)).
+
+Compares also detects and simplifies equivalent time.Time comparisons, like
+
+```go
+❌
+assert.True(t, t1.After(t2))
+assert.Greater(t, t1.Compare(t2), 0)
+
+✅
+assert.Greater(t, t1, t2)
+```
 
 ---
 
@@ -1172,6 +1184,56 @@ a [checkers.AdvancedChecker](https://github.com/Antonboom/testifylint/blob/67632
 
 ---
 
+### time-compare
+
+The checker detects flaky time assertions like
+
+```
+❌
+assert.Equal(t, expTime, actualTime)
+assert.EqualValues(t, expTime, actualTime)
+assert.Exactly(t, expTime, actualTime)
+assert.NotEqual(t, expTime, actualTime)
+assert.NotEqualValues(t, expTime, actualTime)
+```
+
+Equality-based assertions on `time.Time` can be flaky because `time.Time` contains internal state such as
+[monotonic clock](https://pkg.go.dev/time#hdr-Monotonic_Clocks) readings and location data:
+
+```go
+type Time struct {
+    wall uint64
+    ext  int64
+    loc *Location
+}
+```
+
+A typical example: two values may print identically and describe the same moment, but `reflect.DeepEqual` will detect
+differences in their internal state. This is especially common when one value comes from `time.Now()` and retains a
+monotonic component, while the other was parsed, serialized, retrieved from a database/API, or created via `time.Date`
+and no longer has this monotonic component.
+
+So, prefer to use
+
+```go
+✅
+assert.True(t, t1.Equal(t2))
+assert.Equal(t, t1.Unix(), t2.Unix()) // Or UnixMilli, UnixMicro, UnixNano.
+assert.WithinDuration(t, t1, t2, time.Second)
+assert.Equal(t, t1.UTC(), t2.UTC()) // Or Local.
+assert.Equal(t, t1.Round(0), t2.Round(0)) // Or Truncate.
+...
+```
+
+depending on the case and your wants.
+
+`time-compare` ignores the entire assertion if the string representation of the call matches
+`--time-compare.suppress-calls-pattern`.
+
+P.S. `time.Compare` detection is on `compares` checker, and zero time comparison is on `zero` checker.
+
+---
+
 ### useless-assert
 
 The checker guards against assertion of the same variable:
@@ -1243,7 +1305,7 @@ assert.LessOrEqual(0, uintVal)
 
 ### zero
 
-Currently only `time.Time` is supported (open for contributions):
+Currently only `time.Time` is supported (open for contribution):
 
 ```go
 ❌

@@ -36,8 +36,7 @@ func NewDefault() Config {
 			Mode: checkers.DefaultSuiteExtraAssertCallMode,
 		},
 		TimeCompare: TimeCompareConfig{
-			WarnOnTimeEquality:               false,
-			TimeEqualitySuppressCallsPattern: RegexpValue{checkers.DefaultTimeEqualitySuppressCallsPattern},
+			SuppressCallsPattern: RegexpValue{checkers.DefaultTimeCompareSuppressCallsPattern},
 		},
 	}
 }
@@ -92,8 +91,7 @@ type SuiteExtraAssertCallConfig struct {
 
 // TimeCompareConfig implements configuration of checkers.TimeCompare.
 type TimeCompareConfig struct {
-	WarnOnTimeEquality               bool
-	TimeEqualitySuppressCallsPattern RegexpValue
+	SuppressCallsPattern RegexpValue
 }
 
 func (cfg Config) Validate() error {
@@ -163,12 +161,9 @@ func BindToFlags(cfg *Config, fs *flag.FlagSet) {
 		"suite-extra-assert-call.mode",
 		"to require or remove extra Assert() call")
 
-	fs.BoolVar(&cfg.TimeCompare.WarnOnTimeEquality,
-		"time-compare.warn-on-time-equality", false,
-		"to warn about possibly flaky time.Time assertions")
-	fs.Var(&cfg.TimeCompare.TimeEqualitySuppressCallsPattern,
-		"time-compare.time-equality-suppress-calls-pattern",
-		"regexp for assertions to skip")
+	fs.Var(&cfg.TimeCompare.SuppressCallsPattern,
+		"time-compare.suppress-calls-pattern",
+		"regexp for time.Time functions that make assertion safe")
 }
 
 var suiteExtraAssertCallModeAsString = map[string]checkers.SuiteExtraAssertCallMode{

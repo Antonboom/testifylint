@@ -9,61 +9,40 @@ import (
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-var DefaultTimeEqualitySuppressCallsPattern = regexp.MustCompile(`Add|AddDate|Date|In|Local|Round|Truncate|UTC`)
+// DefaultTimeCompareSuppressCallsPattern contains functions that usually make time equality safe.
+var DefaultTimeCompareSuppressCallsPattern = regexp.MustCompile(`Add|AddDate|Date|In|Local|Round|Truncate|UTC`)
 
-// TimeCompare detects situations like
+// TimeCompare detects flaky time assertions like
 //
 //	assert.Equal(t, expTime, actualTime)
-//
-// and requires
-//
-// TODO.
+//	assert.EqualValues(t, expTime, actualTime)
+//	assert.Exactly(t, expTime, actualTime)
+//	assert.NotEqual(t, expTime, actualTime)
+//	assert.NotEqualValues(t, expTime, actualTime)
 type TimeCompare struct {
-	warnOnTimeEquality               bool
-	timeEqualitySuppressCallsPattern *regexp.Regexp
+	suppressCallsPattern *regexp.Regexp
 }
 
 // NewTimeCompare constructs TimeCompare checker.
 func NewTimeCompare() *TimeCompare {
 	return &TimeCompare{
-		warnOnTimeEquality:               false,
-		timeEqualitySuppressCallsPattern: DefaultTimeEqualitySuppressCallsPattern,
+		suppressCallsPattern: DefaultTimeCompareSuppressCallsPattern,
 	}
 }
 
 func (TimeCompare) Name() string { return "time-compare" }
 
-func (checker *TimeCompare) SetWarnOnTimeEquality(v bool) *TimeCompare {
-	checker.warnOnTimeEquality = v
-	return checker
-}
-
-func (checker *TimeCompare) SetTimeEqualitySuppressCallsPattern(v *regexp.Regexp) *TimeCompare {
+func (checker *TimeCompare) SetSuppressCallsPattern(v *regexp.Regexp) *TimeCompare {
 	if v != nil {
-		checker.timeEqualitySuppressCallsPattern = v
+		checker.suppressCallsPattern = v
 	}
 	return checker
 }
 
 func (checker TimeCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	if d := checker.checkSimplification(pass, call); d != nil {
-		return d
-	}
-
-	return checker.checkTimeEquality(pass, call)
-}
-
-func (checker TimeCompare) checkSimplification(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	return nil
-}
-
-func (checker TimeCompare) checkTimeEquality(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	if !checker.warnOnTimeEquality {
-		return nil
-	}
-
-	switch call.Fn.NameFTrimmed {
-	case "Equal", "EqualValues", "Exactly", "NotEqual", "NotEqualValues", "NotExactly":
+	fn := call.Fn.NameFTrimmed
+	switch fn {
+	case "Equal", "EqualValues", "Exactly", "NotEqual", "NotEqualValues":
 	default:
 		return nil
 	}
@@ -86,7 +65,7 @@ func (checker TimeCompare) checkTimeEquality(pass *analysis.Pass, call *CallMeta
 }
 
 func (checker TimeCompare) needSuppressCall(pass *analysis.Pass, e ast.Expr) bool {
-	return checker.timeEqualitySuppressCallsPattern.Match(analysisutil.NodeBytes(pass.Fset, e))
+	return checker.suppressCallsPattern.Match(analysisutil.NodeBytes(pass.Fset, e))
 }
 
 func isTimeInstance(pass *analysis.Pass, e ast.Expr) bool {

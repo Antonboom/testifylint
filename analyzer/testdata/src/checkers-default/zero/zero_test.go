@@ -68,5 +68,7 @@ func TestZeroChecker(t *testing.T) {
 		assert.NotEqualf(t, 0, ts.Compare(time.Time{}), "msg with args %d %s", 42, "42")
 		assert.NotEqualValues(t, 0, ts.Compare(time.Time{}))
 		assert.NotEqualValuesf(t, 0, ts.Compare(time.Time{}), "msg with args %d %s", 42, "42")
+		assert.Equal(t, zeroTime.Add(time.Second), ts)
+		assert.Equalf(t, zeroTime.Add(time.Second), ts, "msg with args %d %s", 42, "42")
 	}
 }

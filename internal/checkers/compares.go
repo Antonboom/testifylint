@@ -2,12 +2,13 @@ package checkers
 
 import (
 	"fmt"
-	"github.com/Antonboom/testifylint/internal/analysisutil"
 	"go/ast"
 	"go/token"
 	"strings"
 
 	"golang.org/x/tools/go/analysis"
+
+	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
 // Compares detects situations like
@@ -32,6 +33,12 @@ import (
 //
 // If `a` and `b` are pointers then `assert.Same`/`NotSame` is required instead,
 // due to the inappropriate recursive nature of `assert.Equal` (based on `reflect.DeepEqual`).
+//
+// Compares also detects and simplifies equivalent time.Time comparisons, like
+//
+//	assert.True(t, t1.After(t2))
+//	assert.Greater(t, t1.Compare(t2), 0)
+//	assert.Greater(t, t1, t2)
 type Compares struct{}
 
 // NewCompares constructs Compares checker.
@@ -127,7 +134,7 @@ func (checker Compares) checkTimeCompares(pass *analysis.Pass, call *CallMeta) *
 			ok       bool
 		)
 
-		if a, b, ok = isTimeMethodCall(pass, expr, "After"); ok {
+		if a, b, ok = isTimeMethodCall(pass, expr, "After"); ok { //nolint:nestif // Cannot be simplified.
 			if fn == "True" {
 				proposed = "Greater"
 			} else {
@@ -162,15 +169,23 @@ func (checker Compares) checkTimeCompares(pass *analysis.Pass, call *CallMeta) *
 
 	// `t1.Compare(t2), 0`
 	if a, b, ok := isTimeMethodCall(pass, call.Args[0], "Compare"); ok {
+		n, ok := isIntBasicLit(call.Args[1])
+		if !ok {
+			return nil
+		}
 		lhs = timeCompareFn
-		rhs, _ = isIntBasicLit(call.Args[1])
+		rhs = n
 		cmpArg1, cmpArg2 = a, b
 	}
 
 	// `0, t1.Compare(t2)`
 	if a, b, ok := isTimeMethodCall(pass, call.Args[1], "Compare"); ok {
+		n, ok := isIntBasicLit(call.Args[0])
+		if !ok {
+			return nil
+		}
 		rhs = timeCompareFn
-		lhs, _ = isIntBasicLit(call.Args[0])
+		lhs = n
 		cmpArg1, cmpArg2 = a, b
 	}
 
@@ -193,9 +208,9 @@ func (checker Compares) checkTimeCompares(pass *analysis.Pass, call *CallMeta) *
 	argsReplacement := analysis.TextEdit{
 		Pos: call.Args[0].Pos(),
 		End: call.Args[1].End(),
-		NewText: []byte(fmt.Sprintf(proposed.argsFmt,
+		NewText: fmt.Appendf(nil, proposed.argsFmt,
 			analysisutil.NodeString(pass.Fset, cmpArg1),
-			analysisutil.NodeString(pass.Fset, cmpArg2))),
+			analysisutil.NodeString(pass.Fset, cmpArg2)),
 	}
 	return newDiagnostic(checker.Name(), call, msg,
 		newSuggestedFuncReplacement(call, proposed.fn, argsReplacement))
@@ -216,29 +231,32 @@ const (
 )
 
 var timeCompareTransformations = map[timeAssert]timeAssertProposed{
-	timeAssert{"Equal", 0, timeCompareFn}:          {"True", "%s.Equal(%s)"},
-	timeAssert{"EqualValues", 0, timeCompareFn}:    {"True", "%s.Equal(%s)"},
-	timeAssert{"Exactly", 0, timeCompareFn}:        {"True", "%s.Equal(%s)"},
-	timeAssert{"NotEqual", 0, timeCompareFn}:       {"False", "%s.Equal(%s)"},
-	timeAssert{"NotEqualValues", 0, timeCompareFn}: {"False", "%s.Equal(%s)"},
+	{"Equal", 0, timeCompareFn}:          {"True", "%s.Equal(%s)"},
+	{"EqualValues", 0, timeCompareFn}:    {"True", "%s.Equal(%s)"},
+	{"Exactly", 0, timeCompareFn}:        {"True", "%s.Equal(%s)"},
+	{"NotEqual", 0, timeCompareFn}:       {"False", "%s.Equal(%s)"},
+	{"NotEqualValues", 0, timeCompareFn}: {"False", "%s.Equal(%s)"},
 
-	timeAssert{"Greater", timeCompareFn, 0}:        {"Greater", "%s, %s"},
-	timeAssert{"Less", 0, timeCompareFn}:           {"Greater", "%s, %s"},
-	timeAssert{"GreaterOrEqual", timeCompareFn, 0}: {"GreaterOrEqual", "%s, %s"},
-	timeAssert{"LessOrEqual", 0, timeCompareFn}:    {"GreaterOrEqual", "%s, %s"},
-	timeAssert{"Less", timeCompareFn, 0}:           {"Less", "%s, %s"},
-	timeAssert{"Greater", 0, timeCompareFn}:        {"Less", "%s, %s"},
-	timeAssert{"LessOrEqual", timeCompareFn, 0}:    {"LessOrEqual", "%s, %s"},
-	timeAssert{"GreaterOrEqual", 0, timeCompareFn}: {"LessOrEqual", "%s, %s"},
+	{"Greater", timeCompareFn, 0}:        {"Greater", "%s, %s"},
+	{"Less", 0, timeCompareFn}:           {"Greater", "%s, %s"},
+	{"GreaterOrEqual", timeCompareFn, 0}: {"GreaterOrEqual", "%s, %s"},
+	{"LessOrEqual", 0, timeCompareFn}:    {"GreaterOrEqual", "%s, %s"},
+	{"Less", timeCompareFn, 0}:           {"Less", "%s, %s"},
+	{"Greater", 0, timeCompareFn}:        {"Less", "%s, %s"},
+	{"LessOrEqual", timeCompareFn, 0}:    {"LessOrEqual", "%s, %s"},
+	{"GreaterOrEqual", 0, timeCompareFn}: {"LessOrEqual", "%s, %s"},
 
-	// todo: reverse too
-	timeAssert{"Equal", 1, timeCompareFn}:     {"Greater", "%s, %s"},
-	timeAssert{"NotEqual", -1, timeCompareFn}: {"GreaterOrEqual", "%s, %s"},
-	timeAssert{"Equal", -1, timeCompareFn}:    {"Less", "%s, %s"},
-	timeAssert{"NotEqual", 1, timeCompareFn}:  {"LessOrEqual", "%s, %s"},
+	{"Equal", timeCompareFn, 1}:     {"Greater", "%s, %s"},
+	{"Equal", 1, timeCompareFn}:     {"Greater", "%s, %s"},
+	{"NotEqual", timeCompareFn, -1}: {"GreaterOrEqual", "%s, %s"},
+	{"NotEqual", -1, timeCompareFn}: {"GreaterOrEqual", "%s, %s"},
+	{"Equal", timeCompareFn, -1}:    {"Less", "%s, %s"},
+	{"Equal", -1, timeCompareFn}:    {"Less", "%s, %s"},
+	{"NotEqual", timeCompareFn, 1}:  {"LessOrEqual", "%s, %s"},
+	{"NotEqual", 1, timeCompareFn}:  {"LessOrEqual", "%s, %s"},
 }
 
-func isTimeMethodCall(pass *analysis.Pass, e ast.Expr, method string) (ast.Expr, ast.Expr, bool) {
+func isTimeMethodCall(pass *analysis.Pass, e ast.Expr, method string) (a ast.Expr, b ast.Expr, ok bool) {
 	ce, ok := e.(*ast.CallExpr)
 	if !ok {
 		return nil, nil, false

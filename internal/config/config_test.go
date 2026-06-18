@@ -44,11 +44,8 @@ func TestNewDefault(t *testing.T) {
 	if cfg.SuiteExtraAssertCall.Mode != checkers.SuiteExtraAssertCallModeRemove {
 		t.Fatal()
 	}
-	if cfg.TimeCompare.WarnOnTimeEquality {
-		t.Fatal()
-	}
-	if cfg.TimeCompare.TimeEqualitySuppressCallsPattern.String() !=
-		checkers.DefaultTimeEqualitySuppressCallsPattern.String() {
+	if cfg.TimeCompare.SuppressCallsPattern.String() !=
+		checkers.DefaultTimeCompareSuppressCallsPattern.String() {
 		t.Fatal()
 	}
 }
@@ -163,20 +160,19 @@ func TestBindToFlags(t *testing.T) {
 	config.BindToFlags(&cfg, fs)
 
 	for flagName, defaultVal := range map[string]string{
-		"enable-all":                                        "false",
-		"disable":                                           "",
-		"disable-all":                                       "false",
-		"enable":                                            "",
-		"bool-compare.ignore-custom-types":                  "false",
-		"expected-actual.pattern":                           cfg.ExpectedActual.ExpVarPattern.String(),
-		"formatter.check-format-string":                     "true",
-		"formatter.require-f-funcs":                         "false",
-		"formatter.require-string-msg":                      "true",
-		"go-require.ignore-http-handlers":                   "false",
-		"require-error.fn-pattern":                          cfg.RequireError.FnPattern.String(),
-		"suite-extra-assert-call.mode":                      "remove",
-		"time-compare.warn-on-time-equality":                "false",
-		"time-compare.time-equality-suppress-calls-pattern": cfg.TimeCompare.TimeEqualitySuppressCallsPattern.String(),
+		"enable-all":                          "false",
+		"disable":                             "",
+		"disable-all":                         "false",
+		"enable":                              "",
+		"bool-compare.ignore-custom-types":    "false",
+		"expected-actual.pattern":             cfg.ExpectedActual.ExpVarPattern.String(),
+		"formatter.check-format-string":       "true",
+		"formatter.require-f-funcs":           "false",
+		"formatter.require-string-msg":        "true",
+		"go-require.ignore-http-handlers":     "false",
+		"require-error.fn-pattern":            cfg.RequireError.FnPattern.String(),
+		"suite-extra-assert-call.mode":        "remove",
+		"time-compare.suppress-calls-pattern": cfg.TimeCompare.SuppressCallsPattern.String(),
 	} {
 		t.Run(flagName, func(t *testing.T) {
 			if v := fs.Lookup(flagName).DefValue; v != defaultVal {

@@ -7,6 +7,7 @@ import (
 // registry stores checkers meta information in checkers' priority order.
 var registry = checkersRegistry{
 	// Regular checkers.
+	{factory: asCheckerFactory(NewZero), enabledByDefault: true},
 	{factory: asCheckerFactory(NewTimeCompare), enabledByDefault: true},
 	{factory: asCheckerFactory(NewFloatCompare), enabledByDefault: true},
 	{factory: asCheckerFactory(NewBoolCompare), enabledByDefault: true},
@@ -26,7 +27,6 @@ var registry = checkersRegistry{
 	{factory: asCheckerFactory(NewSuiteDontUsePkg), enabledByDefault: true},
 	{factory: asCheckerFactory(NewUselessAssert), enabledByDefault: true},
 	{factory: asCheckerFactory(NewFormatter), enabledByDefault: true},
-	{factory: asCheckerFactory(NewZero), enabledByDefault: true},
 	// Advanced checkers.
 	{factory: asCheckerFactory(NewBlankImport), enabledByDefault: true},
 	{factory: asCheckerFactory(NewGoRequire), enabledByDefault: true},

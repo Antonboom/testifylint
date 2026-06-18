@@ -32,15 +32,18 @@ func (g ComparesTestsGenerator) TemplateData() any {
 		)
 	}
 
-	// time-compare cases.
-	for range []int{-2, 2} {
+	for _, n := range []int{-3, -2, 2, 3} {
 		ignored = append(ignored,
-			Assertion{Fn: "Equal", Argsf: "2, t1.Compare(t2)"},
-			Assertion{Fn: "Equal", Argsf: "2, t1.Compare(t2)"},
+			Assertion{Fn: "Equal", Argsf: fmt.Sprintf("%d, t1.Compare(t2)", n)},
+			Assertion{Fn: "Equal", Argsf: fmt.Sprintf("t1.Compare(t2), %d", n)},
 		)
 	}
+	ignored = append(ignored,
+		Assertion{Fn: "Equal", Argsf: "wantCmp, t1.Compare(t2)"},
+		Assertion{Fn: "Equal", Argsf: "t1.Compare(t2), wantCmp"},
+		Assertion{Fn: "Equal", Argsf: "t1.Compare(t2), t2.Compare(t1)"},
+	)
 
-	// todo Compare with 1, 2, 3
 	return struct {
 		CheckerName       CheckerName
 		InvalidAssertions []Assertion
@@ -97,9 +100,13 @@ func (g ComparesTestsGenerator) TemplateData() any {
 			{Fn: "GreaterOrEqual", Argsf: "0, t1.Compare(t2)", ReportMsgf: report, ProposedFn: "LessOrEqual", ProposedArgsf: "t1, t2"},
 
 			{Fn: "Equal", Argsf: "1, t1.Compare(t2)", ReportMsgf: report, ProposedFn: "Greater", ProposedArgsf: "t1, t2"},
+			{Fn: "Equal", Argsf: "t1.Compare(t2), 1", ReportMsgf: report, ProposedFn: "Greater", ProposedArgsf: "t1, t2"},
 			{Fn: "NotEqual", Argsf: "-1, t1.Compare(t2)", ReportMsgf: report, ProposedFn: "GreaterOrEqual", ProposedArgsf: "t1, t2"},
+			{Fn: "NotEqual", Argsf: "t1.Compare(t2), -1", ReportMsgf: report, ProposedFn: "GreaterOrEqual", ProposedArgsf: "t1, t2"},
 			{Fn: "Equal", Argsf: "-1, t1.Compare(t2)", ReportMsgf: report, ProposedFn: "Less", ProposedArgsf: "t1, t2"},
+			{Fn: "Equal", Argsf: "t1.Compare(t2), -1", ReportMsgf: report, ProposedFn: "Less", ProposedArgsf: "t1, t2"},
 			{Fn: "NotEqual", Argsf: "1, t1.Compare(t2)", ReportMsgf: report, ProposedFn: "LessOrEqual", ProposedArgsf: "t1, t2"},
+			{Fn: "NotEqual", Argsf: "t1.Compare(t2), 1", ReportMsgf: report, ProposedFn: "LessOrEqual", ProposedArgsf: "t1, t2"},
 		},
 		ValidAssertions: []Assertion{
 			{Fn: "Equal", Argsf: "a, b"},
@@ -155,6 +162,7 @@ import (
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var a, b int
 	var c, d bool
+	var wantCmp int
 	var ptrA, ptrB *int
 	var t1, t2 time.Time
 
