@@ -212,6 +212,19 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 					Fn: "WithinDuration", Argsf: "resultTime, time.Date(2023, 01, 12, 11, 46, 33, 0, nil), 100*time.Millisecond",
 					ReportMsgf: report, ProposedArgsf: "time.Date(2023, 01, 12, 11, 46, 33, 0, nil), resultTime, 100*time.Millisecond",
 				},
+
+				{
+					Fn: "Equal", Argsf: "t1.Compare(t2), 0",
+					ReportMsgf: report, ProposedArgsf: "0, t1.Compare(t2)",
+				},
+				{
+					Fn: "NotEqual", Argsf: "t1.Compare(t2), 1",
+					ReportMsgf: report, ProposedArgsf: "1, resultTime.Compare(expectedTime)",
+				},
+				{
+					Fn: "Equal", Argsf: "resultTime, time.Time{}",
+					ReportMsgf: report, ProposedArgsf: "time.Time{}, resultTime",
+				},
 			},
 			ValidAssertions: []Assertion{
 				{Fn: "EqualExportedValues", Argsf: "expectedObj, resultObj"},
@@ -385,7 +398,7 @@ func {{ .CheckerName.AsTestName }}_Other(t *testing.T) {
 		result, expected any
 		resultPtr, expectedPtr *int
 		resultObj, expectedObj user
-		resultTime, expectedTime time.Time
+		resultTime, expectedTime, t1, t2 time.Time
 		value int
 		actualFields, expectedFields []string
 	)

@@ -13,8 +13,11 @@ import (
 func Test_newCheckers(t *testing.T) {
 	expVarPattern := regexp.MustCompile(`^expected[A-Z0-9].*`)
 	fnPattern := regexp.MustCompile(`^NoErrorf?$`)
+	timeCallsPattern := regexp.MustCompile(`Round|UTC`)
 
 	enabledByDefaultRegularCheckers := []checkers.RegularChecker{
+		checkers.NewZero(),
+		checkers.NewTimeCompare(),
 		checkers.NewFloatCompare(),
 		checkers.NewBoolCompare(),
 		checkers.NewEmpty(),
@@ -35,6 +38,8 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewFormatter(),
 	}
 	allRegularCheckers := []checkers.RegularChecker{
+		checkers.NewZero(),
+		checkers.NewTimeCompare(),
 		checkers.NewFloatCompare(),
 		checkers.NewBoolCompare(),
 		checkers.NewEmpty(),
@@ -227,6 +232,21 @@ func Test_newCheckers(t *testing.T) {
 			},
 			expRegular: []checkers.RegularChecker{
 				checkers.NewSuiteExtraAssertCall().SetMode(checkers.SuiteExtraAssertCallModeRequire),
+			},
+			expAdvanced: []checkers.AdvancedChecker{},
+		},
+		{
+			name: "time-compare calls to suppress defined",
+			cfg: config.Config{
+				DisableAll:      true,
+				EnabledCheckers: config.KnownCheckersValue{checkers.NewTimeCompare().Name()},
+				TimeCompare: config.TimeCompareConfig{
+					SuppressCallsPattern: config.RegexpValue{Regexp: timeCallsPattern},
+				},
+			},
+			expRegular: []checkers.RegularChecker{
+				checkers.NewTimeCompare().
+					SetSuppressCallsPattern(timeCallsPattern),
 			},
 			expAdvanced: []checkers.AdvancedChecker{},
 		},

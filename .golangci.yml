@@ -103,6 +103,9 @@ linters:
       - source: ' // want '
         linters: [ "lll" ]
 
+      - source: '{Fn:'
+        linters: [ "lll" ]
+
     paths:
       - internal/checkers/printf # A patched fork of go vet's printf.
 

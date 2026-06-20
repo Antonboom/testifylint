@@ -183,12 +183,20 @@ func (g BoolCompareTestsGenerator) TemplateData() any {
 			Fn: "False", Argsf: `!result["flag"].(bool)`,
 			ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: `result["flag"].(bool)`,
 		},
+		Assertion{
+			Fn: "False", Argsf: "!t1.Equal(t2)",
+			ReportMsgf: reportUse, ProposedFn: "True", ProposedArgsf: "t1.Equal(t2)",
+		},
 	)
 
 	invalidAssertionsForFalse = append(invalidAssertionsForFalse,
 		Assertion{
 			Fn: "True", Argsf: `!result["flag"].(bool)`,
 			ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: `result["flag"].(bool)`,
+		},
+		Assertion{
+			Fn: "True", Argsf: "!t1.Equal(t2)",
+			ReportMsgf: reportUse, ProposedFn: "False", ProposedArgsf: "t1.Equal(t2)",
 		},
 	)
 
@@ -236,6 +244,7 @@ package {{ .CheckerName.AsPkgName }}
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -243,6 +252,7 @@ import (
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var predicate bool
 	result := map[string]any{}
+	var t1, t2 time.Time
 
 	{{ range $ti, $test := $.Tests }}
 		// {{ $test.Name }}.
