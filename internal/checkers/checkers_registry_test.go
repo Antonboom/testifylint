@@ -35,6 +35,8 @@ func TestAll(t *testing.T) {
 
 	// NOTE(a.telyshev): I don't use constants or checker's Name() method on purpose.
 	expected := []string{
+		"zero",
+		"time-compare",
 		"float-compare",
 		"bool-compare",
 		"empty",
@@ -74,6 +76,8 @@ func TestEnabledByDefault(t *testing.T) {
 
 	// NOTE(a.telyshev): I don't use constants or checker's Name() method on purpose.
 	expected := []string{
+		"zero",
+		"time-compare",
 		"float-compare",
 		"bool-compare",
 		"empty",

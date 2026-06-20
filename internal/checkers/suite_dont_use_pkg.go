@@ -25,7 +25,7 @@ func NewSuiteDontUsePkg() SuiteDontUsePkg { return SuiteDontUsePkg{} }
 func (SuiteDontUsePkg) Name() string      { return "suite-dont-use-pkg" }
 
 func (checker SuiteDontUsePkg) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	if !call.IsPkg {
+	if !call.IsPkg() {
 		return nil
 	}
 

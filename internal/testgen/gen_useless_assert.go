@@ -118,6 +118,8 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 			{Fn: "NotZero", Argsf: "nil", ReportMsgf: defaultReport},
 			{Fn: "NotZero", Argsf: "false", ReportMsgf: defaultReport},
 			{Fn: "NotZero", Argsf: "true", ReportMsgf: defaultReport},
+			{Fn: "NotZero", Argsf: "time.Time{}", ReportMsgf: defaultReport},
+			{Fn: "NotZero", Argsf: "zeroTime", ReportMsgf: defaultReport},
 			{Fn: "Positive", Argsf: "42", ReportMsgf: defaultReport},
 			{Fn: "Positive", Argsf: "0", ReportMsgf: defaultReport},
 			{Fn: "Positive", Argsf: "-42", ReportMsgf: defaultReport},
@@ -132,6 +134,8 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 			{Fn: "Zero", Argsf: "nil", ReportMsgf: defaultReport},
 			{Fn: "Zero", Argsf: "false", ReportMsgf: defaultReport},
 			{Fn: "Zero", Argsf: "true", ReportMsgf: defaultReport},
+			{Fn: "Zero", Argsf: "time.Time{}", ReportMsgf: defaultReport},
+			{Fn: "Zero", Argsf: "zeroTime", ReportMsgf: defaultReport},
 
 			{Fn: "Negative", Argsf: "len(x)", ReportMsgf: defaultReport},
 			{Fn: "Less", Argsf: "len(x), 0", ReportMsgf: defaultReport},
@@ -168,12 +172,14 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 			{Fn: "NotZero", Argsf: "str"},
 			{Fn: "NotZero", Argsf: "new(testCase)"},
 			{Fn: "NotZero", Argsf: "b"},
+			{Fn: "NotZero", Argsf: "elapsed"},
 			{Fn: "Positive", Argsf: "num"},
 			{Fn: "True", Argsf: "b"},
 			{Fn: "Zero", Argsf: "num"},
 			{Fn: "Zero", Argsf: "str"},
 			{Fn: "Zero", Argsf: "new(testCase)"},
 			{Fn: "Zero", Argsf: "b"},
+			{Fn: "Zero", Argsf: "elapsed"},
 
 			// NOTE(a.telyshev): An unsigned value can be 0.
 			{Fn: "Positive", Argsf: "len(x)"},
@@ -209,7 +215,7 @@ import (
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var value any
 	var err error
-	var elapsed time.Time
+	var elapsed, zeroTime time.Time
 	var str string
 	var num int
 	var b bool
