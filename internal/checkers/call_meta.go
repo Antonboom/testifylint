@@ -115,6 +115,11 @@ func NewCallMeta(pass *analysis.Pass, ce *ast.CallExpr) *CallMeta {
 		return nil
 	}
 
+	args := ce.Args
+	if obj == nil { // NOT(a.telyshev): Remove `t` from pkg-level assertions, if exists.
+		args = trimTArg(pass, args)
+	}
+
 	return &CallMeta{
 		Call:         ce,
 		Range:        ce,
@@ -129,7 +134,7 @@ func NewCallMeta(pass *analysis.Pass, ce *ast.CallExpr) *CallMeta {
 			IsFmt:        strings.HasSuffix(fnName, "f"),
 			Signature:    sig,
 		},
-		Args:    trimTArg(pass, ce.Args),
+		Args:    args,
 		ArgsRaw: ce.Args,
 	}
 }
