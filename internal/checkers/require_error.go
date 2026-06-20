@@ -117,6 +117,9 @@ func (checker RequireError) Check(pass *analysis.Pass, insp *inspector.Inspector
 			if c.testifyCall == nil {
 				continue
 			}
+			if c.testifyCall.Obj != nil && c.testifyCall.Obj.Name() != "Assertions" {
+				continue
+			}
 			if !c.testifyCall.IsAssert {
 				continue
 			}
