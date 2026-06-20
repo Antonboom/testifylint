@@ -217,7 +217,7 @@ If `a` and `b` are pointers then `assert.Same`/`NotSame` is required instead,
 due to the inappropriate recursive nature of `assert.Equal` (based on
 [reflect.DeepEqual](https://pkg.go.dev/reflect#DeepEqual)).
 
-Compares also detects and simplifies equivalent time.Time comparisons, like
+Compares also detects and simplifies equivalent `time.Time` comparisons, like
 
 ```go
 ❌
@@ -227,6 +227,9 @@ assert.Greater(t, t1.Compare(t2), 0)
 ✅
 assert.Greater(t, t1, t2)
 ```
+
+For `assert.Equal(t, 0, t1.Compare(t2))` case `compares` suggests `WithinDuration` as the assertion with the most readable
+message.
 
 ---
 
@@ -1188,7 +1191,7 @@ a [checkers.AdvancedChecker](https://github.com/Antonboom/testifylint/blob/67632
 
 The checker detects flaky time assertions like
 
-```
+```go
 ❌
 assert.Equal(t, expTime, actualTime)
 assert.EqualValues(t, expTime, actualTime)
@@ -1197,7 +1200,7 @@ assert.NotEqual(t, expTime, actualTime)
 assert.NotEqualValues(t, expTime, actualTime)
 ```
 
-Equality-based assertions on `time.Time` can be flaky because `time.Time` contains internal state such as
+Equality-based assertions on `time.Time` can be flaky because it contains internal state such as
 [monotonic clock](https://pkg.go.dev/time#hdr-Monotonic_Clocks) readings and location data:
 
 ```go
@@ -1277,12 +1280,16 @@ assert.NotZero(t, 42)      // Any int literal.
 assert.NotZero(t, "value") // Any string literal.
 assert.NotZero(t, nil)
 assert.NotZero(t, false) // Any bool literal.
+assert.NotZero(t, time.Time{})
+assert.NotZero(t, zeroTime)
 assert.Positive(t, 42)   // Any int literal.
 assert.True(t, true)     // Any bool literal.
 assert.Zero(t, 42)       // Any int literal.
 assert.Zero(t, "value")  // Any string literal.
 assert.Zero(t, nil)
 assert.Zero(t, false) // Any bool literal.
+assert.Zero(t, time.Time{})
+assert.Zero(t, zeroTime)
 
 assert.Negative(len(x))
 assert.Less(len(x), 0)
@@ -1329,7 +1336,7 @@ assert.NotZero(t, ts)
 **Enabled by default**: true <br>
 **Reason**: More appropriate `testify` API with clearer failure message.
 
-P.S. Additionally, variables starting with `zero` are considered to have zero values.
+Additionally, variables starting with `zero` are considered to have zero values.
 
 ---
 

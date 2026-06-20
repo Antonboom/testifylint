@@ -34,11 +34,14 @@ import (
 // If `a` and `b` are pointers then `assert.Same`/`NotSame` is required instead,
 // due to the inappropriate recursive nature of `assert.Equal` (based on `reflect.DeepEqual`).
 //
-// Compares also detects and simplifies equivalent time.Time comparisons, like
+// Compares also detects and simplifies equivalent `time.Time` comparisons, like
 //
 //	assert.True(t, t1.After(t2))
 //	assert.Greater(t, t1.Compare(t2), 0)
 //	assert.Greater(t, t1, t2)
+//
+// For `assert.Equal(t, 0, t1.Compare(t2))` case `compares` suggests `WithinDuration` as the assertion with the most
+// readable message.
 type Compares struct{}
 
 // NewCompares constructs Compares checker.
@@ -231,9 +234,9 @@ const (
 )
 
 var timeCompareTransformations = map[timeAssert]timeAssertProposed{
-	{"Equal", 0, timeCompareFn}:          {"True", "%s.Equal(%s)"},
-	{"EqualValues", 0, timeCompareFn}:    {"True", "%s.Equal(%s)"},
-	{"Exactly", 0, timeCompareFn}:        {"True", "%s.Equal(%s)"},
+	{"Equal", 0, timeCompareFn}:          {"WithinDuration", "%[1]s, %[0]s, 0)"},
+	{"EqualValues", 0, timeCompareFn}:    {"WithinDuration", "%[1]s, %[0]s, 0)"},
+	{"Exactly", 0, timeCompareFn}:        {"WithinDuration", "%[1]s, %[0]s, 0)"},
 	{"NotEqual", 0, timeCompareFn}:       {"False", "%s.Equal(%s)"},
 	{"NotEqualValues", 0, timeCompareFn}: {"False", "%s.Equal(%s)"},
 

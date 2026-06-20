@@ -83,10 +83,11 @@ func (g ComparesTestsGenerator) TemplateData() any {
 			{Fn: "False", Argsf: "t1.After(t2)", ReportMsgf: report, ProposedFn: "LessOrEqual", ProposedArgsf: "t1, t2"},
 			{Fn: "False", Argsf: "t1.Before(t2)", ReportMsgf: report, ProposedFn: "GreaterOrEqual", ProposedArgsf: "t1, t2"},
 
-			// Be careful, not assert.Equal(t, t1, t2) / assert.NotEqual(t, t1, t2)!
-			{Fn: "Equal", Argsf: "0, t1.Compare(t2)", ReportMsgf: reportUseT1Equal, ProposedFn: "True", ProposedArgsf: "t1.Equal(t2)"},
-			{Fn: "EqualValues", Argsf: "0, t1.Compare(t2)", ReportMsgf: reportUseT1Equal, ProposedFn: "True", ProposedArgsf: "t1.Equal(t2)"},
-			{Fn: "Exactly", Argsf: "0, t1.Compare(t2)", ReportMsgf: reportUseT1Equal, ProposedFn: "True", ProposedArgsf: "t1.Equal(t2)"},
+			// Be careful, not assert.Equal(t, t1, t2) or assert.NotEqual(t, t1, t2)!
+			// Because we cannot suggest invalid flaky assertions (see `time-compare`).
+			{Fn: "Equal", Argsf: "0, t1.Compare(t2)", ReportMsgf: report, ProposedFn: "WithinDuration", ProposedArgsf: "t2, t1, 0"},
+			{Fn: "EqualValues", Argsf: "0, t1.Compare(t2)", ReportMsgf: report, ProposedFn: "WithinDuration", ProposedArgsf: "t2, t1, 0"},
+			{Fn: "Exactly", Argsf: "0, t1.Compare(t2)", ReportMsgf: report, ProposedFn: "WithinDuration", ProposedArgsf: "t2, t1, 0"},
 			{Fn: "NotEqual", Argsf: "0, t1.Compare(t2)", ReportMsgf: reportUseT1Equal, ProposedFn: "False", ProposedArgsf: "t1.Equal(t2)"},
 			{Fn: "NotEqualValues", Argsf: "0, t1.Compare(t2)", ReportMsgf: reportUseT1Equal, ProposedFn: "False", ProposedArgsf: "t1.Equal(t2)"},
 

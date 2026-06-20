@@ -172,12 +172,14 @@ func (g UselessAssertTestsGenerator) TemplateData() any {
 			{Fn: "NotZero", Argsf: "str"},
 			{Fn: "NotZero", Argsf: "new(testCase)"},
 			{Fn: "NotZero", Argsf: "b"},
+			{Fn: "NotZero", Argsf: "elapsed"},
 			{Fn: "Positive", Argsf: "num"},
 			{Fn: "True", Argsf: "b"},
 			{Fn: "Zero", Argsf: "num"},
 			{Fn: "Zero", Argsf: "str"},
 			{Fn: "Zero", Argsf: "new(testCase)"},
 			{Fn: "Zero", Argsf: "b"},
+			{Fn: "Zero", Argsf: "elapsed"},
 
 			// NOTE(a.telyshev): An unsigned value can be 0.
 			{Fn: "Positive", Argsf: "len(x)"},

@@ -287,12 +287,12 @@ func TestExpectedActualChecker(t *testing.T) {
 
 func TestExpectedActualChecker_Other(t *testing.T) {
 	var (
-		result, expected             any
-		resultPtr, expectedPtr       *int
-		resultObj, expectedObj       user
-		resultTime, expectedTime     time.Time
-		value                        int
-		actualFields, expectedFields []string
+		result, expected                 any
+		resultPtr, expectedPtr           *int
+		resultObj, expectedObj           user
+		resultTime, expectedTime, t1, t2 time.Time
+		value                            int
+		actualFields, expectedFields     []string
 	)
 
 	// Invalid.
@@ -365,8 +365,8 @@ func TestExpectedActualChecker_Other(t *testing.T) {
 		assert.WithinDurationf(t, expectedTime, resultTime, time.Second, "msg with args %d %s", 42, "42")                                         // want "expected-actual: need to reverse actual and expected values"
 		assert.WithinDuration(t, time.Date(2023, 01, 12, 11, 46, 33, 0, nil), resultTime, 100*time.Millisecond)                                   // want "expected-actual: need to reverse actual and expected values"
 		assert.WithinDurationf(t, time.Date(2023, 01, 12, 11, 46, 33, 0, nil), resultTime, 100*time.Millisecond, "msg with args %d %s", 42, "42") // want "expected-actual: need to reverse actual and expected values"
-		assert.Equal(t, 0, resultTime.Compare(expectedTime))                                                                                      // want "expected-actual: need to reverse actual and expected values"
-		assert.Equalf(t, 0, resultTime.Compare(expectedTime), "msg with args %d %s", 42, "42")                                                    // want "expected-actual: need to reverse actual and expected values"
+		assert.Equal(t, 0, t1.Compare(t2))                                                                                                        // want "expected-actual: need to reverse actual and expected values"
+		assert.Equalf(t, 0, t1.Compare(t2), "msg with args %d %s", 42, "42")                                                                      // want "expected-actual: need to reverse actual and expected values"
 		assert.NotEqual(t, 1, resultTime.Compare(expectedTime))                                                                                   // want "expected-actual: need to reverse actual and expected values"
 		assert.NotEqualf(t, 1, resultTime.Compare(expectedTime), "msg with args %d %s", 42, "42")                                                 // want "expected-actual: need to reverse actual and expected values"
 		assert.Equal(t, time.Time{}, resultTime)                                                                                                  // want "expected-actual: need to reverse actual and expected values"

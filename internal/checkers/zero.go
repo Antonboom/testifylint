@@ -27,6 +27,8 @@ import (
 //
 //	assert.Zero(t, ts)
 //	assert.NotZero(t, ts)
+//
+// Additionally, variables starting with `zero` are considered to have zero values.
 type Zero struct{}
 
 // NewZero constructs Zero checker.
@@ -51,7 +53,7 @@ func (checker Zero) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnos
 
 		f1, f2 := isZeroTimeInstance(pass, lhs), isZeroTimeInstance(pass, rhs)
 		if xor(f1, f2) {
-			survivingArg, _ := anyVal([]bool{!f1, !f2}, lhs, rhs)
+			survivingArg, _ := anyVal([]bool{f1, f2}, rhs, lhs)
 			return newUseFnDiagnostic("Zero", survivingArg, lhs.Pos(), rhs.End())
 		}
 
@@ -63,7 +65,7 @@ func (checker Zero) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnos
 
 		f1, f2 := isZeroTimeInstance(pass, lhs), isZeroTimeInstance(pass, rhs)
 		if xor(f1, f2) {
-			survivingArg, _ := anyVal([]bool{!f1, !f2}, lhs, rhs)
+			survivingArg, _ := anyVal([]bool{f1, f2}, rhs, lhs)
 			return newUseFnDiagnostic("NotZero", survivingArg, lhs.Pos(), rhs.End())
 		}
 

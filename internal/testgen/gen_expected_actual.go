@@ -214,11 +214,11 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 				},
 
 				{
-					Fn: "Equal", Argsf: "resultTime.Compare(expectedTime), 0",
-					ReportMsgf: report, ProposedArgsf: "0, resultTime.Compare(expectedTime)",
+					Fn: "Equal", Argsf: "t1.Compare(t2), 0",
+					ReportMsgf: report, ProposedArgsf: "0, t1.Compare(t2)",
 				},
 				{
-					Fn: "NotEqual", Argsf: "resultTime.Compare(expectedTime), 1",
+					Fn: "NotEqual", Argsf: "t1.Compare(t2), 1",
 					ReportMsgf: report, ProposedArgsf: "1, resultTime.Compare(expectedTime)",
 				},
 				{
@@ -398,7 +398,7 @@ func {{ .CheckerName.AsTestName }}_Other(t *testing.T) {
 		result, expected any
 		resultPtr, expectedPtr *int
 		resultObj, expectedObj user
-		resultTime, expectedTime time.Time
+		resultTime, expectedTime, t1, t2 time.Time
 		value int
 		actualFields, expectedFields []string
 	)
