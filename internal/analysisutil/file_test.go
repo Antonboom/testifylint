@@ -28,7 +28,7 @@ func TestSimple(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	notImported := []string{
+	notImported := []string{ //nolint:prealloc // This is simple test.
 		"",
 		"net/http",
 		"net/http/httptest",

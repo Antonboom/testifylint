@@ -69,11 +69,12 @@ $ testifylint --enable-all --disable=empty,error-is-as ./...
 
 # Checkers configuration.
 $ testifylint --bool-compare.ignore-custom-types ./...
-$ testifylint --expected-actual.pattern=^wanted$ ./...
+$ testifylint --expected-actual.pattern="^wanted$" ./...
 $ testifylint --formatter.check-format-string --formatter.require-f-funcs --formatter.require-string-msg ./...
 $ testifylint --go-require.ignore-http-handlers ./...
 $ testifylint --require-error.fn-pattern="^(Errorf?|NoErrorf?)$" ./...
 $ testifylint --suite-extra-assert-call.mode=require ./...
+$ testifylint --time-compare.suppress-calls-pattern="UTC|Round" ./...
 ```
 
 ### golangci-lint
@@ -114,6 +115,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [suite-subtest-run](#suite-subtest-run)             | ✅                  | ❌       |
 | [suite-thelper](#suite-thelper)                     | ❌                  | ✅       |
 | [useless-assert](#useless-assert)                   | ✅                  | ❌       |
+| [zero](#zero)                                       | ✅                  | ✅       |
 
 > ⚠️ Also look at open for contribution [checkers](CONTRIBUTING.md#open-for-contribution)
 
@@ -215,6 +217,20 @@ assert.LessOrEqual(t, a, b)
 If `a` and `b` are pointers then `assert.Same`/`NotSame` is required instead,
 due to the inappropriate recursive nature of `assert.Equal` (based on
 [reflect.DeepEqual](https://pkg.go.dev/reflect#DeepEqual)).
+
+Compares also detects and simplifies equivalent `time.Time` comparisons, like
+
+```go
+❌
+assert.True(t, t1.After(t2))
+assert.Greater(t, t1.Compare(t2), 0)
+
+✅
+assert.Greater(t, t1, t2)
+```
+
+For `assert.Equal(t, 0, t1.Compare(t2))` case `compares` suggests `WithinDuration` as the assertion with the most readable
+message.
 
 ---
 
@@ -408,7 +424,7 @@ assert.YAMLEq(t, expectedYML, conf)
 **Enabled by default**: true. <br>
 **Reason**: Protection from bugs and more appropriate `testify` API with clearer failure message.
 
-`encoded-compare` detects JSON-style string constants (usable in `fmt.Sprintf` also) and JSON-style/YAML-style named
+`encoded-compare` detects valid JSON string constants (usable in `fmt.Sprintf` also) and JSON-style/YAML-style named
 variables. If variable is converted to `json.RawMessage`, then it is considered JSON unconditionally.
 
 When fixing, `encoded-compare` removes unnecessary conversions to `[]byte`, `string`, `json.RawMessage` and calls of
@@ -1190,6 +1206,56 @@ a [checkers.AdvancedChecker](https://github.com/Antonboom/testifylint/blob/67632
 
 ---
 
+### time-compare
+
+The checker detects flaky time assertions like
+
+```go
+❌
+assert.Equal(t, expTime, actualTime)
+assert.EqualValues(t, expTime, actualTime)
+assert.Exactly(t, expTime, actualTime)
+assert.NotEqual(t, expTime, actualTime)
+assert.NotEqualValues(t, expTime, actualTime)
+```
+
+Equality-based assertions on `time.Time` can be flaky because it contains internal state such as
+[monotonic clock](https://pkg.go.dev/time#hdr-Monotonic_Clocks) readings and location data:
+
+```go
+type Time struct {
+    wall uint64
+    ext  int64
+    loc *Location
+}
+```
+
+A typical example: two values may print identically and describe the same moment, but `reflect.DeepEqual` will detect
+differences in their internal state. This is especially common when one value comes from `time.Now()` and retains a
+monotonic component, while the other was parsed, serialized, retrieved from a database/API, or created via `time.Date`
+and no longer has this monotonic component.
+
+So, prefer to use
+
+```go
+✅
+assert.WithinDuration(t, t1, t2, 0) // The most readable error message.
+assert.True(t, t1.Equal(t2))
+assert.Equal(t, t1.Unix(), t2.Unix())     // Or UnixMilli, UnixMicro, UnixNano.
+assert.Equal(t, t1.UTC(), t2.UTC())       // Or Local.
+assert.Equal(t, t1.Round(0), t2.Round(0)) // Or Truncate.
+...
+```
+
+depending on the case and your wants.
+
+`time-compare` ignores the entire assertion if the string representation of the call matches
+`--time-compare.suppress-calls-pattern`.
+
+P.S. `time.Compare` detection is on `compares` checker, and zero time comparison is on `zero` checker.
+
+---
+
 ### useless-assert
 
 The checker guards against assertion of the same variable:
@@ -1233,12 +1299,16 @@ assert.NotZero(t, 42)      // Any int literal.
 assert.NotZero(t, "value") // Any string literal.
 assert.NotZero(t, nil)
 assert.NotZero(t, false) // Any bool literal.
+assert.NotZero(t, time.Time{})
+assert.NotZero(t, zeroTime)
 assert.Positive(t, 42)   // Any int literal.
 assert.True(t, true)     // Any bool literal.
 assert.Zero(t, 42)       // Any int literal.
 assert.Zero(t, "value")  // Any string literal.
 assert.Zero(t, nil)
 assert.Zero(t, false) // Any bool literal.
+assert.Zero(t, time.Time{})
+assert.Zero(t, zeroTime)
 
 assert.Negative(len(x))
 assert.Less(len(x), 0)
@@ -1256,6 +1326,36 @@ assert.LessOrEqual(0, uintVal)
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
 **Reason**: Protection from bugs and dead code.
+
+---
+
+### zero
+
+Currently only `time.Time` is supported (open for contribution):
+
+```go
+❌
+assert.Equal(t, time.Time{}, ts)
+assert.EqualValues(t, time.Time{}, ts)
+assert.Exactly(t, time.Time{}, ts)
+assert.True(t, ts.IsZero())
+assert.True(t, ts.Equal(time.Time{}))
+
+assert.NotEqual(t, time.Time{}, ts)
+assert.NotEqualValues(t, time.Time{}, ts)
+assert.False(t, ts.IsZero())
+assert.False(t, ts.Equal(time.Time{}))
+
+✅
+assert.Zero(t, ts)
+assert.NotZero(t, ts)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true <br>
+**Reason**: More appropriate `testify` API with clearer failure message.
+
+Additionally, variables starting with `zero` are considered to have zero values.
 
 ---
 

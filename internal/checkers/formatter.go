@@ -230,8 +230,8 @@ func assertHasFormattedAnalogue(pass *analysis.Pass, call *CallMeta) bool {
 	if !ok {
 		return false
 	}
-	for i := range suite.NumMethods() {
-		if suite.Method(i).Name() == call.Fn.Name+"f" {
+	for method := range suite.Methods() {
+		if method.Name() == call.Fn.Name+"f" {
 			return true
 		}
 	}

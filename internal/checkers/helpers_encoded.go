@@ -2,8 +2,8 @@ package checkers
 
 import (
 	"go/ast"
-	"go/token"
 	"regexp"
+	"slices"
 
 	"golang.org/x/tools/go/analysis"
 
@@ -13,21 +13,21 @@ import (
 var (
 	wordsRe = regexp.MustCompile(`[A-Z]+(?:[a-z]*|$)|[a-z]+`) // NOTE(a.telyshev): ChatGPT.
 
-	jsonIdentRe = regexp.MustCompile(`json|JSON|Json`)
-	yamlWordRe  = regexp.MustCompile(`yaml|YAML|Yaml|^(yml|YML|Yml)$`)
+	jsonIdentRe        = regexp.MustCompile(`json|JSON|Json`)
+	jsonNegativeWordRe = regexp.MustCompile(`(?i)^(invalid|bad|malformed|broken|corrupt|wrong)$`)
+	yamlWordRe         = regexp.MustCompile(`yaml|YAML|Yaml|^(yml|YML|Yml)$`)
 )
 
 func isJSONStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
-	if isIdentNamedAfterPattern(jsonIdentRe, e) {
-		return hasBytesType(pass, e) || hasStringType(pass, e)
-	}
-
 	if t, ok := pass.TypesInfo.Types[e]; ok && t.Value != nil {
-		return analysisutil.IsJSONLike(t.Value.String())
+		return analysisutil.IsJSONObjectOrArray(t.Value.String())
 	}
 
-	if bl, ok := e.(*ast.BasicLit); ok {
-		return bl.Kind == token.STRING && analysisutil.IsJSONLike(bl.Value)
+	if id, ok := e.(*ast.Ident); ok && jsonIdentRe.MatchString(id.Name) {
+		if hasWordAfterPattern(id.Name, jsonNegativeWordRe) {
+			return false
+		}
+		return hasBytesType(pass, e) || hasStringType(pass, e)
 	}
 
 	if args, ok := isFmtSprintfCall(pass, e); ok {
@@ -43,12 +43,7 @@ func isYAMLStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
 }
 
 func hasWordAfterPattern(s string, re *regexp.Regexp) bool {
-	for _, w := range splitIntoWords(s) {
-		if re.MatchString(w) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(splitIntoWords(s), re.MatchString)
 }
 
 func splitIntoWords(s string) []string {

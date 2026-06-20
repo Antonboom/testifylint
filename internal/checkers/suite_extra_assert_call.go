@@ -49,7 +49,7 @@ func (checker *SuiteExtraAssertCall) SetMode(m SuiteExtraAssertCallMode) *SuiteE
 }
 
 func (checker SuiteExtraAssertCall) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
-	if call.IsPkg {
+	if call.IsPkg() {
 		return nil
 	}
 
