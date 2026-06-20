@@ -87,6 +87,10 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 			flags: map[string]string{"enable-all": "true"},
 		},
 		{
+			dir:   "error-is-as-issue277",
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewErrorIsAs().Name()},
+		},
+		{
 			dir:   "error-nil-issue95",
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewErrorNil().Name()},
 		},
@@ -174,6 +178,13 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 		{
 			dir:   "require-error-skip-logic",
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewRequireError().Name()},
+		},
+		{
+			dir: "require-error-issue287",
+			flags: map[string]string{
+				"disable-all": "true",
+				"enable":      checkers.NewRequireError().Name() + "," + checkers.NewFormatter().Name(),
+			},
 		},
 		{
 			dir:   "suite-extra-assert-call-issue176",

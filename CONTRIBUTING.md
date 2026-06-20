@@ -35,16 +35,13 @@ The above code is enough to satisfy the `checkers.Checker` interface.
 
 The earlier the checker is in [the registry](internal/checkers/checkers_registry.go), the more priority it is.
 
-For example, the `TimeCompare` checker takes precedence over the `empty` and `expected-actual`,
+For example, the `TimeCompare` checker takes precedence over `expected-actual`,
 because its check is more "narrow" and when you fix the warning from `TimeCompare`,
 the rest of the checkers will become irrelevant.
 
 ```go
 var registry = checkersRegistry{
-    // ...
     {factory: asCheckerFactory(NewTimeCompare), enabledByDefault: true},
-    // ...
-    {factory: asCheckerFactory(NewEmpty), enabledByDefault: true},
     // ...
     {factory: asCheckerFactory(NewExpectedActual), enabledByDefault: true},
     // ...
@@ -140,6 +137,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [http-sugar](#http-sugar)
 - [require-len](#require-len)
 - [suite-test-name](#suite-test-name)
+- [zero](#zero)
 
 ---
 
@@ -349,6 +347,23 @@ func (s *HandlersSuite) Test_Usecase_Success()
 func (s *HandlersSuite) TestUsecaseSuccess()
 func (s *HandlersSuite) Test_UsecaseSuccess()
 ```
+
+---
+
+### time-compare
+
+Support compares of "time containers" (structs, slices, arrays, maps, something else?), e.g.
+
+```
+{Fn: "EqualExportedValues", Argsf: "expiringToken{t1}, expiringToken{time.Now()}", ReportMsgf: report},
+```
+
+---
+
+### zero
+
+More cases for `zero` checker:
+https://github.com/Antonboom/testifylint/issues/75#issuecomment-2143826065
 
 ---
 

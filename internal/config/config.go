@@ -35,6 +35,9 @@ func NewDefault() Config {
 		SuiteExtraAssertCall: SuiteExtraAssertCallConfig{
 			Mode: checkers.DefaultSuiteExtraAssertCallMode,
 		},
+		TimeCompare: TimeCompareConfig{
+			SuppressCallsPattern: RegexpValue{checkers.DefaultTimeCompareSuppressCallsPattern},
+		},
 	}
 }
 
@@ -51,6 +54,7 @@ type Config struct {
 	GoRequire            GoRequireConfig
 	RequireError         RequireErrorConfig
 	SuiteExtraAssertCall SuiteExtraAssertCallConfig
+	TimeCompare          TimeCompareConfig
 }
 
 // BoolCompareConfig implements configuration of checkers.BoolCompare.
@@ -83,6 +87,11 @@ type RequireErrorConfig struct {
 // SuiteExtraAssertCallConfig implements configuration of checkers.SuiteExtraAssertCall.
 type SuiteExtraAssertCallConfig struct {
 	Mode checkers.SuiteExtraAssertCallMode
+}
+
+// TimeCompareConfig implements configuration of checkers.TimeCompare.
+type TimeCompareConfig struct {
+	SuppressCallsPattern RegexpValue
 }
 
 func (cfg Config) Validate() error {
@@ -151,6 +160,10 @@ func BindToFlags(cfg *Config, fs *flag.FlagSet) {
 	fs.Var(NewEnumValue(suiteExtraAssertCallModeAsString, &cfg.SuiteExtraAssertCall.Mode),
 		"suite-extra-assert-call.mode",
 		"to require or remove extra Assert() call")
+
+	fs.Var(&cfg.TimeCompare.SuppressCallsPattern,
+		"time-compare.suppress-calls-pattern",
+		"regexp for time.Time functions that make assertion safe")
 }
 
 var suiteExtraAssertCallModeAsString = map[string]checkers.SuiteExtraAssertCallMode{
