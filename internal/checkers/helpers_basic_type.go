@@ -150,14 +150,14 @@ func isByteArray(e ast.Expr) bool {
 	return ok && isIdentWithName("byte", at.Elt)
 }
 
-// hasBytesType returns true if the expression is of `[]byte` type.
+// hasBytesType returns true if the expression is of `[]byte` type or its underlying is `[]byte` type.
 func hasBytesType(pass *analysis.Pass, e ast.Expr) bool {
 	t := pass.TypesInfo.TypeOf(e)
 	if t == nil {
 		return false
 	}
 
-	sl, ok := t.(*types.Slice)
+	sl, ok := t.Underlying().(*types.Slice)
 	if !ok {
 		return false
 	}
@@ -166,8 +166,8 @@ func hasBytesType(pass *analysis.Pass, e ast.Expr) bool {
 	return ok && el.Kind() == types.Uint8
 }
 
-// hasStringType returns true if the expression is of `string` type.
+// hasStringType returns true if the expression is of `string` type or its underlying is `string` type.
 func hasStringType(pass *analysis.Pass, e ast.Expr) bool {
-	basicType, ok := pass.TypesInfo.TypeOf(e).(*types.Basic)
+	basicType, ok := pass.TypesInfo.TypeOf(e).Underlying().(*types.Basic)
 	return ok && basicType.Kind() == types.String
 }
