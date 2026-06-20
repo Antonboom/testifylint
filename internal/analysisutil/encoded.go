@@ -6,9 +6,9 @@ import (
 	"strings"
 )
 
-// IsJSONLike returns true if the string contains a valid JSON object or array.
-func IsJSONLike(s string) bool {
-	if unquoted, err := strconv.Unquote(s); err == nil {
+// IsJSONObjectOrArray returns true if the string contains a valid JSON object or array.
+func IsJSONObjectOrArray(s string) bool {
+	if unquoted, err := strconv.Unquote(s); nil == err {
 		s = unquoted
 	}
 	s = strings.TrimSpace(s)

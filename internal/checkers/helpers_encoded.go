@@ -19,8 +19,8 @@ var (
 )
 
 func isJSONStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
-	if tv, ok := pass.TypesInfo.Types[e]; ok && tv.Value != nil {
-		return analysisutil.IsJSONLike(tv.Value.String())
+	if t, ok := pass.TypesInfo.Types[e]; ok && t.Value != nil {
+		return analysisutil.IsJSONObjectOrArray(t.Value.String())
 	}
 
 	if id, ok := e.(*ast.Ident); ok && jsonIdentRe.MatchString(id.Name) {

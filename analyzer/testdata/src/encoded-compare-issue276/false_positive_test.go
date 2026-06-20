@@ -7,9 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Regression test for https://github.com/Antonboom/testifylint/issues/276
 // Constants whose names contain "json"/"JSON" but whose values are not JSON
-// should not be flagged by the encoded-compare checker.
+// should not be flagged by the `encoded-compare` checker.
 func TestContentTypeHeader(t *testing.T) {
 	const contentTypeJSON = "application/json"
 	const contentTypeJson = "application/json"

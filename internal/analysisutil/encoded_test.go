@@ -6,7 +6,7 @@ import (
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-func TestIsJSONLike(t *testing.T) {
+func TestIsJSONObjectOrArray(t *testing.T) {
 	cases := []struct {
 		in       string
 		expected bool
@@ -36,7 +36,6 @@ func TestIsJSONLike(t *testing.T) {
 			expected: true,
 		},
 		{
-			// Valid JSON array of objects is now detected.
 			in:       `[{}]`,
 			expected: true,
 		},
@@ -52,11 +51,27 @@ func TestIsJSONLike(t *testing.T) {
 			in:       `{{-.TemplateVar}}`,
 			expected: false,
 		},
+		{
+			in:       `application/json`,
+			expected: false,
+		},
+		{
+			in:       `42`,
+			expected: false,
+		},
+		{
+			in:       `true`,
+			expected: false,
+		},
+		{
+			in:       `null`,
+			expected: false,
+		},
 	}
 
 	for _, tt := range cases {
 		t.Run("", func(t *testing.T) {
-			isJSON := analysisutil.IsJSONLike(tt.in)
+			isJSON := analysisutil.IsJSONObjectOrArray(tt.in)
 			if isJSON != tt.expected {
 				t.FailNow()
 			}

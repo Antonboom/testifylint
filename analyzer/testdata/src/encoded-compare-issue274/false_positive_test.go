@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Regression test: variables whose names contain a negative word (e.g. "invalid")
-// followed by "JSON" should not be flagged by the encoded-compare checker,
+// Variables whose names contain a negative word (e.g. "invalid")
+// followed by "JSON" should not be flagged by the `encoded-compare` checker,
 // because asserting JSONEq on invalid JSON would cause the test to fail at runtime.
 func TestInvalidJSON(t *testing.T) {
 	invalidJSON := []byte(`{invalid json`)
@@ -19,8 +19,8 @@ func TestInvalidJSON(t *testing.T) {
 	var other string
 
 	assert.Equal(t, badJSON, other)
-	assert.Equal(t, wrongJSON, other)
+	assert.EqualValues(t, wrongJSON, other)
 	assert.Equal(t, malformedJSON, other)
-	assert.Equal(t, brokenJSON, other)
+	assert.Exactly(t, brokenJSON, other)
 	assert.Equal(t, corruptJSON, other)
 }

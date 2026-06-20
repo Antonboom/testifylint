@@ -44,6 +44,14 @@ func (checker EncodedCompare) Check(pass *analysis.Pass, call *CallMeta) *analys
 	a, aIsExplicitJSON := checker.unwrap(pass, call.Args[0])
 	b, bIsExplicitJSON := checker.unwrap(pass, call.Args[1])
 
+	// NOTE(a.telyshev): Ignore bullshit arguments.
+	if !hasBytesType(pass, a) && !hasStringType(pass, a) {
+		return nil
+	}
+	if !hasBytesType(pass, b) && !hasStringType(pass, b) {
+		return nil
+	}
+
 	var proposed string
 	switch {
 	case aIsExplicitJSON, bIsExplicitJSON, isJSONStyleExpr(pass, a), isJSONStyleExpr(pass, b):
@@ -53,22 +61,16 @@ func (checker EncodedCompare) Check(pass *analysis.Pass, call *CallMeta) *analys
 	}
 
 	if proposed != "" {
-		lhsFmt, lhsOK := formatAsString(pass, a)
-		rhsFmt, rhsOK := formatAsString(pass, b)
-		if !lhsOK || !rhsOK {
-			return nil
-		}
-
 		return newUseFunctionDiagnostic(checker.Name(), call, proposed,
 			analysis.TextEdit{
 				Pos:     lhs.Pos(),
 				End:     lhs.End(),
-				NewText: lhsFmt,
+				NewText: formatAsString(pass, a),
 			},
 			analysis.TextEdit{
 				Pos:     rhs.Pos(),
 				End:     rhs.End(),
-				NewText: rhsFmt,
+				NewText: formatAsString(pass, b),
 			},
 		)
 	}

@@ -3,7 +3,6 @@ package checkers
 import (
 	"bytes"
 	"go/ast"
-	"go/types"
 	"strings"
 
 	"golang.org/x/tools/go/analysis"
@@ -27,24 +26,14 @@ func formatAsCallArgs(pass *analysis.Pass, args ...ast.Expr) []byte {
 	return buf.Bytes()
 }
 
-// formatAsString formats an expression as a string argument for JSONEq/YAMLEq.
-func formatAsString(pass *analysis.Pass, e ast.Expr) ([]byte, bool) {
-	if !hasBytesType(pass, e) {
-		t := pass.TypesInfo.TypeOf(e)
-		if t == nil {
-			return nil, false
-		}
-		bt, ok := t.Underlying().(*types.Basic)
-		if !ok || bt.Info()&types.IsString == 0 {
-			return nil, false
-		}
-		return analysisutil.NodeBytes(pass.Fset, e), true
-	}
-
+func formatAsString(pass *analysis.Pass, e ast.Expr) []byte {
 	if se, ok := isBufferBytesCall(pass, e); ok {
-		return []byte(analysisutil.NodeString(pass.Fset, se) + ".String()"), true
+		return []byte(analysisutil.NodeString(pass.Fset, se) + ".String()")
 	}
-	return []byte("string(" + analysisutil.NodeString(pass.Fset, e) + ")"), true
+	if hasBytesType(pass, e) {
+		return []byte("string(" + analysisutil.NodeString(pass.Fset, e) + ")")
+	}
+	return analysisutil.NodeBytes(pass.Fset, e)
 }
 
 func isBufferBytesCall(pass *analysis.Pass, e ast.Expr) (ast.Node, bool) {
