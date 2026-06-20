@@ -2,7 +2,6 @@ package checkers
 
 import (
 	"go/ast"
-	"go/token"
 	"regexp"
 	"slices"
 
@@ -20,28 +19,15 @@ var (
 )
 
 func isJSONStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
+	if tv, ok := pass.TypesInfo.Types[e]; ok && tv.Value != nil {
+		return analysisutil.IsJSONLike(tv.Value.String())
+	}
+
 	if id, ok := e.(*ast.Ident); ok && jsonIdentRe.MatchString(id.Name) {
-		// Skip identifiers that contain a "negative" word, e.g. "invalidJSON" or "badJSON".
-		// Such variables likely hold non-valid JSON (e.g. in error-path tests) and suggesting
-		// JSONEq would cause test failures at runtime.
 		if hasWordAfterPattern(id.Name, jsonNegativeWordRe) {
 			return false
 		}
-
-		// If this is a constant with a known value, verify it actually looks like JSON.
-		// This avoids false positives for constants like `const contentTypeJSON = "application/json"`.
-		if t, ok := pass.TypesInfo.Types[e]; ok && t.Value != nil {
-			return analysisutil.IsJSONLike(t.Value.String())
-		}
 		return hasBytesType(pass, e) || hasStringType(pass, e)
-	}
-
-	if t, ok := pass.TypesInfo.Types[e]; ok && t.Value != nil {
-		return analysisutil.IsJSONLike(t.Value.String())
-	}
-
-	if bl, ok := e.(*ast.BasicLit); ok {
-		return bl.Kind == token.STRING && analysisutil.IsJSONLike(bl.Value)
 	}
 
 	if args, ok := isFmtSprintfCall(pass, e); ok {
@@ -52,20 +38,8 @@ func isJSONStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
 }
 
 func isYAMLStyleExpr(pass *analysis.Pass, e ast.Expr) bool {
-	// Name-based detection: variable/constant name contains "yaml" or "yml".
-	if id, ok := e.(*ast.Ident); ok {
-		return (hasBytesType(pass, e) || hasStringType(pass, e)) && hasWordAfterPattern(id.Name, yamlWordRe)
-	}
-
-	// Content-based detection: string literals and constants containing multi-line YAML.
-	if t, ok := pass.TypesInfo.Types[e]; ok && t.Value != nil {
-		return analysisutil.IsYAMLLike(t.Value.String())
-	}
-	if bl, ok := e.(*ast.BasicLit); ok {
-		return bl.Kind == token.STRING && analysisutil.IsYAMLLike(bl.Value)
-	}
-
-	return false
+	id, ok := e.(*ast.Ident)
+	return ok && (hasBytesType(pass, e) || hasStringType(pass, e)) && hasWordAfterPattern(id.Name, yamlWordRe)
 }
 
 func hasWordAfterPattern(s string, re *regexp.Regexp) bool {

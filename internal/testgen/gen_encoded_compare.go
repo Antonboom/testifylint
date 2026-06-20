@@ -40,15 +40,10 @@ images:
     newTag: "123"
 `
 
-	multiLineYAMLCase := "assert.Equal(t, ` // want \"encoded-compare: use assert\\.YAMLEq\"\n" + multiLineYAML + "`, conf)"
-	multiLineYAMLCase += "\nassert.Equal(t, ` // want \"encoded-compare: use assert\\.YAMLEq\"\n" + multiLineYAML +
-		"`" + `, conf, "msg with args %d %s", 42, "42")`
-
 	return struct {
 		CheckerName       CheckerName
 		InvalidAssertions []Assertion
 		MultiLineJSONCase string
-		MultiLineYAMLCase string
 		ValidAssertions   []Assertion
 		IgnoredAssertions []Assertion
 	}{
@@ -274,7 +269,6 @@ images:
 			},
 		},
 		MultiLineJSONCase: multiLineCase,
-		MultiLineYAMLCase: multiLineYAMLCase,
 		ValidAssertions: []Assertion{
 			{Fn: "JSONEq", Argsf: "`{\"name\":\"name\",\"value\":1000}`, respBody"},
 			{Fn: "JSONEq", Argsf: "expJSON, resultJSON"},
@@ -310,11 +304,10 @@ images:
 			{Fn: "Equal", Argsf: "42, conf"},
 			{Fn: "EqualValues", Argsf: "42, conf"},
 			{Fn: "Exactly", Argsf: "42, conf"},
+			{Fn: "Equal", Argsf: "`{\"foo\": \"bar\"}`, i"},
 
-			// Multi-line YAML literal cases are tested via MultiLineYAMLCase.
-			{Fn: "YAMLEq", Argsf: "`" + multiLineYAML + "`, conf"},
-			// Single-line YAML is not detected; content-based YAML detection requires multi-line structure.
-			{Fn: "YAMLEq", Argsf: `"kind: Kustomization", "kind: Kustomization"`},
+			{Fn: "YAMLEq", Argsf: "`" + multiLineYAML + "`, conf"},                // Not supported.
+			{Fn: "YAMLEq", Argsf: `"kind: Kustomization", "kind: Kustomization"`}, // Not supported.
 			{Fn: "YAMLEq", Argsf: "raw, conf"},
 			{Fn: "YAMLEq", Argsf: "raw, string(respBytes)"},
 		},
@@ -353,6 +346,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	var conf, expectedYAML, expYaml, ymlResult, yamlResult, expYML, outputYaml string
 	var respBytes, resultJSONBytes []byte
 	var respJSONRawMessage json.RawMessage
+	var i int
 	w := httptest.NewRecorder()
 	var batch interface { ParentSummary() []byte }
 	var res [1]struct{ Data []byte }
@@ -366,7 +360,6 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 			{{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
 		{{- end }}
 		{{ .MultiLineJSONCase }}
-		{{ .MultiLineYAMLCase }}
 	}
 
 	// Valid.

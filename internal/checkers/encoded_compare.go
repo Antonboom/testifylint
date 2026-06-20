@@ -53,9 +53,9 @@ func (checker EncodedCompare) Check(pass *analysis.Pass, call *CallMeta) *analys
 	}
 
 	if proposed != "" {
-		lhsFmt := formatWithStringCastForBytes(pass, a)
-		rhsFmt := formatWithStringCastForBytes(pass, b)
-		if lhsFmt == nil || rhsFmt == nil {
+		lhsFmt, lhsOK := formatAsString(pass, a)
+		rhsFmt, rhsOK := formatAsString(pass, b)
+		if !lhsOK || !rhsOK {
 			return nil
 		}
 

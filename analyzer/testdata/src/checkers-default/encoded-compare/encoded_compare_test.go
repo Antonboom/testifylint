@@ -18,6 +18,7 @@ func TestEncodedCompareChecker(t *testing.T) {
 	var conf, expectedYAML, expYaml, ymlResult, yamlResult, expYML, outputYaml string
 	var respBytes, resultJSONBytes []byte
 	var respJSONRawMessage json.RawMessage
+	var i int
 	w := httptest.NewRecorder()
 	var batch interface{ ParentSummary() []byte }
 	var res [1]struct{ Data []byte }
@@ -131,28 +132,6 @@ func TestEncodedCompareChecker(t *testing.T) {
 	"params": ["power","sat"]
 }
 `, raw, "msg with args %d %s", 42, "42")
-		assert.Equal(t, ` // want "encoded-compare: use assert\.YAMLEq"
-
-kind: Kustomization
-apiVersion: kustomize.config.k8s.io/v1beta1
-images:
-  - name: foo
-    newName: bar
-  - name: bar
-    newName: baz
-    newTag: "123"
-`, conf)
-		assert.Equal(t, ` // want "encoded-compare: use assert\.YAMLEq"
-
-kind: Kustomization
-apiVersion: kustomize.config.k8s.io/v1beta1
-images:
-  - name: foo
-    newName: bar
-  - name: bar
-    newName: baz
-    newTag: "123"
-`, conf, "msg with args %d %s", 42, "42")
 	}
 
 	// Valid.
@@ -213,6 +192,8 @@ images:
 		assert.EqualValuesf(t, 42, conf, "msg with args %d %s", 42, "42")
 		assert.Exactly(t, 42, conf)
 		assert.Exactlyf(t, 42, conf, "msg with args %d %s", 42, "42")
+		assert.Equal(t, `{"foo": "bar"}`, i)
+		assert.Equalf(t, `{"foo": "bar"}`, i, "msg with args %d %s", 42, "42")
 		assert.YAMLEq(t, `
 kind: Kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1

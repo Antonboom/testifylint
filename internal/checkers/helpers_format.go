@@ -27,28 +27,24 @@ func formatAsCallArgs(pass *analysis.Pass, args ...ast.Expr) []byte {
 	return buf.Bytes()
 }
 
-// formatWithStringCastForBytes formats the expression as a string argument for JSONEq/YAMLEq.
-// It wraps []byte expressions with string() and replaces buffer.Bytes() with buffer.String().
-// Returns nil if the expression cannot be formatted as a string.
-func formatWithStringCastForBytes(pass *analysis.Pass, e ast.Expr) []byte {
+// formatAsString formats an expression as a string argument for JSONEq/YAMLEq.
+func formatAsString(pass *analysis.Pass, e ast.Expr) ([]byte, bool) {
 	if !hasBytesType(pass, e) {
 		t := pass.TypesInfo.TypeOf(e)
 		if t == nil {
-			// We cannot format this expression as a string.
-			return nil
+			return nil, false
 		}
-		bt, ok := t.(*types.Basic)
+		bt, ok := t.Underlying().(*types.Basic)
 		if !ok || bt.Info()&types.IsString == 0 {
-			// We cannot format this expression as a string.
-			return nil
+			return nil, false
 		}
-		return analysisutil.NodeBytes(pass.Fset, e)
+		return analysisutil.NodeBytes(pass.Fset, e), true
 	}
 
 	if se, ok := isBufferBytesCall(pass, e); ok {
-		return []byte(analysisutil.NodeString(pass.Fset, se) + ".String()")
+		return []byte(analysisutil.NodeString(pass.Fset, se) + ".String()"), true
 	}
-	return []byte("string(" + analysisutil.NodeString(pass.Fset, e) + ")")
+	return []byte("string(" + analysisutil.NodeString(pass.Fset, e) + ")"), true
 }
 
 func isBufferBytesCall(pass *analysis.Pass, e ast.Expr) (ast.Node, bool) {
