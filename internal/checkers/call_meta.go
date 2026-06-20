@@ -80,6 +80,10 @@ func NewCallMeta(pass *analysis.Pass, ce *ast.CallExpr) *CallMeta {
 	var obj types.Object
 	var pkg *types.Package
 
+	// NOTE(a.telyshev): It's not obvious, but Recv() returns enclosing type
+	// for methods from embedded types (like suite.Suite).
+	// But, for example, SelectorExpr.X returns the embedding type (e.g., MySuite).
+
 	if rcv := sig.Recv(); rcv != nil { //nolint:nestif // Types hell.
 		if ptr, ok := rcv.Type().(*types.Pointer); ok {
 			// Examples:
