@@ -1217,9 +1217,9 @@ So, prefer to use
 
 ```go
 ✅
+assert.WithinDuration(t, t1, t2, 0) // The most readable error message.
 assert.True(t, t1.Equal(t2))
 assert.Equal(t, t1.Unix(), t2.Unix()) // Or UnixMilli, UnixMicro, UnixNano.
-assert.WithinDuration(t, t1, t2, time.Second)
 assert.Equal(t, t1.UTC(), t2.UTC()) // Or Local.
 assert.Equal(t, t1.Round(0), t2.Round(0)) // Or Truncate.
 ...
