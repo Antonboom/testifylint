@@ -142,6 +142,10 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 			dir: "ginkgo",
 		},
 		{
+			dir:   "ginkgo-mock-expect",
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewMockExpect().Name()},
+		},
+		{
 			dir: "go-require-http-handlers",
 			flags: map[string]string{
 				"enable": checkers.NewGoRequire().Name() + "," + // https://github.com/Antonboom/testifylint/issues/66
