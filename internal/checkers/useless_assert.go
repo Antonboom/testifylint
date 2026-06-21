@@ -44,12 +44,16 @@ import (
 //	assert.NotZero(t, "value") // Any string literal.
 //	assert.NotZero(t, nil)
 //	assert.NotZero(t, false) // Any bool literal.
+//	assert.NotZero(t, time.Time{})
+//	assert.NotZero(t, zeroTime)
 //	assert.Positive(t, 42)   // Any int literal.
 //	assert.True(t, true)     // Any bool literal.
 //	assert.Zero(t, 42)       // Any int literal.
 //	assert.Zero(t, "value")  // Any string literal.
 //	assert.Zero(t, nil)
 //	assert.Zero(t, false) // Any bool literal.
+//	assert.Zero(t, time.Time{})
+//	assert.Zero(t, zeroTime).
 //
 //	assert.Negative(len(x))
 //	assert.Less(len(x), 0)
@@ -116,7 +120,11 @@ func (checker UselessAssert) Check(pass *analysis.Pass, call *CallMeta) *analysi
 			return nil
 		}
 		_, isInt := isIntBasicLit(call.Args[0])
-		isMeaningless = isInt || isStringLit(call.Args[0]) || isNil(call.Args[0]) || isUntypedBool(pass, call.Args[0])
+		isMeaningless = isInt ||
+			isStringLit(call.Args[0]) ||
+			isNil(call.Args[0]) ||
+			isUntypedBool(pass, call.Args[0]) ||
+			isZeroTimeInstance(pass, call.Args[0])
 	}
 
 	if isMeaningless {

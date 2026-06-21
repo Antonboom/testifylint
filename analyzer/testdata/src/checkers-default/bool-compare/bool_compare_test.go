@@ -4,6 +4,7 @@ package boolcompare
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -11,6 +12,7 @@ import (
 func TestBoolCompareChecker(t *testing.T) {
 	var predicate bool
 	result := map[string]any{}
+	var t1, t2 time.Time
 
 	// assert.True cases.
 	{
@@ -55,6 +57,8 @@ func TestBoolCompareChecker(t *testing.T) {
 		assert.Truef(t, false != predicate, "msg with args %d %s", 42, "42")         // want "bool-compare: need to simplify the assertion"
 		assert.False(t, !result["flag"].(bool))                                      // want "bool-compare: use assert\\.True"
 		assert.Falsef(t, !result["flag"].(bool), "msg with args %d %s", 42, "42")    // want "bool-compare: use assert\\.Truef"
+		assert.False(t, !t1.Equal(t2))                                               // want "bool-compare: use assert\\.True"
+		assert.Falsef(t, !t1.Equal(t2), "msg with args %d %s", 42, "42")             // want "bool-compare: use assert\\.Truef"
 
 		// Valid.
 		assert.True(t, predicate)
@@ -104,6 +108,8 @@ func TestBoolCompareChecker(t *testing.T) {
 		assert.Falsef(t, false != predicate, "msg with args %d %s", 42, "42")       // want "bool-compare: need to simplify the assertion"
 		assert.True(t, !result["flag"].(bool))                                      // want "bool-compare: use assert\\.False"
 		assert.Truef(t, !result["flag"].(bool), "msg with args %d %s", 42, "42")    // want "bool-compare: use assert\\.Falsef"
+		assert.True(t, !t1.Equal(t2))                                               // want "bool-compare: use assert\\.False"
+		assert.Truef(t, !t1.Equal(t2), "msg with args %d %s", 42, "42")             // want "bool-compare: use assert\\.Falsef"
 
 		// Valid.
 		assert.False(t, predicate)

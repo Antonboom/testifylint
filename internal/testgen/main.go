@@ -38,6 +38,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	FormatterTestsGenerator{},
 	GoRequireTestsGenerator{},
 	LenTestsGenerator{},
+	MockExpectTestsGenerator{},
 	NegativePositiveTestsGenerator{},
 	NilCompareTestsGenerator{},
 	RegexpTestsGenerator{},
@@ -48,7 +49,9 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	SuiteMethodSignatureTestsGenerator{},
 	SuiteSubtestRunTestsGenerator{},
 	SuiteTHelperTestsGenerator{},
+	TimeCompareTestsGenerator{},
 	UselessAssertTestsGenerator{},
+	ZeroTestsGenerator{},
 }
 
 func init() {
