@@ -21,6 +21,16 @@ var _ = Describe("service", func() {
 	})
 })
 
+func NewMockService(t interface {
+	mock.TestingT
+	Cleanup(func())
+}) *MockService {
+	service := &MockService{}
+	service.Mock.Test(t)
+	t.Cleanup(func() { service.AssertExpectations(t) })
+	return service
+}
+
 type MockService struct {
 	mock.Mock
 }
@@ -44,14 +54,4 @@ func (e *MockServiceExpecter) Fetch(id interface{}) *MockServiceFetchCall {
 func (c *MockServiceFetchCall) Return(result string, err error) *MockServiceFetchCall {
 	c.Call.Return(result, err)
 	return c
-}
-
-func NewMockService(t interface {
-	mock.TestingT
-	Cleanup(func())
-}) *MockService {
-	service := &MockService{}
-	service.Mock.Test(t)
-	t.Cleanup(func() { service.AssertExpectations(t) })
-	return service
 }
