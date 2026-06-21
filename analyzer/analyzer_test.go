@@ -142,7 +142,7 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 			dir: "ginkgo",
 		},
 		{
-			dir:   "mock-expect-ginkgo-suite",
+			dir:   "ginkgo-mock-expect",
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewMockExpect().Name()},
 		},
 		{

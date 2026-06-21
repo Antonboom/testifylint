@@ -1,9 +1,25 @@
-package mockexpectginkgo
+package ginkgomockexpect
 
 import (
 	. "github.com/onsi/ginkgo/v2"
 	"github.com/stretchr/testify/mock"
 )
+
+var _ = Describe("service", func() {
+	var service *MockService
+
+	BeforeEach(func() {
+		service = NewMockService(GinkgoT())
+	})
+
+	It("configures a mock with the legacy API", func() {
+		service.On("Fetch", mock.Anything).Return("result", nil) // want "mock-expect: use service\\.EXPECT\\(\\)\\.Fetch\\(\\.\\.\\.\\)"
+	})
+
+	It("accepts the expecter API", func() {
+		service.EXPECT().Fetch(mock.Anything).Return("result", nil)
+	})
+})
 
 type MockService struct {
 	mock.Mock
@@ -39,19 +55,3 @@ func NewMockService(t interface {
 	t.Cleanup(func() { service.AssertExpectations(t) })
 	return service
 }
-
-var _ = Describe("service", func() {
-	var service *MockService
-
-	BeforeEach(func() {
-		service = NewMockService(GinkgoT())
-	})
-
-	It("configures a mock with the legacy API", func() {
-		service.On("Fetch", mock.Anything).Return("result", nil) // want "mock-expect: use service\\.EXPECT\\(\\)\\.Fetch\\(\\.\\.\\.\\)"
-	})
-
-	It("accepts the expecter API", func() {
-		service.EXPECT().Fetch(mock.Anything).Return("result", nil)
-	})
-})
