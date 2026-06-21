@@ -37,6 +37,18 @@ func (MockExpectTestsGenerator) GoldenTemplate() Executor {
 		Parse(mockExpectGoldenTmpl))
 }
 
+const mockExpectTestHeader = header + `
+
+package {{ .CheckerName.AsPkgName }}
+
+import (
+	"context"
+	"testing"
+
+	"github.com/stretchr/testify/mock"
+)
+`
+
 const mockExpectTestTmpl = mockExpectTestHeader + `
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	u := NewMockUserIFace(t)
@@ -146,18 +158,6 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	}
 }
 ` + mockExpectBoilerPlate
-
-const mockExpectTestHeader = header + `
-
-package {{ .CheckerName.AsPkgName }}
-
-import (
-	"context"
-	"testing"
-
-	"github.com/stretchr/testify/mock"
-)
-`
 
 const mockExpectBoilerPlate = `
 

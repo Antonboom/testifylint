@@ -1,6 +1,10 @@
 package checkers
 
-import "go/types"
+import (
+	"go/types"
+
+	"golang.org/x/tools/go/analysis"
+)
 
 func isNamedType(t types.Type, pkgPath string, name string) bool {
 	n, ok := types.Unalias(t).(*types.Named)
@@ -14,4 +18,14 @@ func isNamedType(t types.Type, pkgPath string, name string) bool {
 	}
 
 	return obj.Name() == name
+}
+
+func lookupMethod(pass *analysis.Pass, typ types.Type, addressable bool, name string) *types.Func {
+	if typ == nil {
+		return nil
+	}
+
+	obj, _, _ := types.LookupFieldOrMethod(typ, addressable, pass.Pkg, name)
+	fn, _ := obj.(*types.Func)
+	return fn
 }

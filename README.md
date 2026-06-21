@@ -891,13 +891,12 @@ m.EXPECT().CreateUser(mock.Anything, User{}).Return(nil)
 m.EXPECT().CountUsers().Return(123)
 ```
 
-**Autofix**: true. <br>
+**Autofix**: partially. <br>
 **Enabled by default**: true. <br>
 **Reason**: Prefer the generated, compile-time checked `mockery` API over string-based expectations.
 
-> [!NOTE]
-> Calls chained with `Run` are reported without an autofix because their
-> callback signature cannot always be converted safely.
+Calls chained with `Run` are reported without an autofix because their callback signature cannot always be converted
+safely.
 
 ---
 

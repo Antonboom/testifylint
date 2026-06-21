@@ -139,16 +139,6 @@ func getMockMethodName(pass *analysis.Pass, callExpr *ast.CallExpr) (string, boo
 	return name, token.IsIdentifier(name)
 }
 
-func lookupMethod(pass *analysis.Pass, typ types.Type, addressable bool, name string) *types.Func {
-	if typ == nil {
-		return nil
-	}
-
-	obj, _, _ := types.LookupFieldOrMethod(typ, addressable, pass.Pkg, name)
-	fn, _ := obj.(*types.Func)
-	return fn
-}
-
 func inMockRunCall(pass *analysis.Pass, stack []ast.Node) bool {
 	for _, node := range stack {
 		callExpr, ok := node.(*ast.CallExpr)
