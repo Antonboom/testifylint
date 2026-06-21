@@ -3,11 +3,16 @@ package checkers
 import (
 	"fmt"
 	"go/ast"
+	"go/constant"
 	"go/token"
 	"go/types"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/ast/inspector"
+	"golang.org/x/tools/go/types/typeutil"
+
+	"github.com/Antonboom/testifylint/internal/analysisutil"
+	"github.com/Antonboom/testifylint/internal/testify"
 )
 
 // MockExpect detects situations like
@@ -31,52 +36,61 @@ func (checker MockExpect) Check(pass *analysis.Pass, insp *inspector.Inspector) 
 			return false
 		}
 
+		// -> u.On("CountUsers").Return(123)
 		callExpr := node.(*ast.CallExpr)
-
 		selectorExpr, ok := callExpr.Fun.(*ast.SelectorExpr)
-		if !ok || selectorExpr.Sel.Name != "On" {
+		if !ok || !isTestifyMockMethod(pass, callExpr, "On", "Mock") {
 			return true
 		}
 
-		methodName := firstArg(callExpr)
-		if methodName == "" {
-			return false
-		}
-
-		ident, ok := selectorExpr.X.(*ast.Ident)
+		// -> "CountUsers"
+		methodName, ok := getMockMethodName(pass, callExpr)
 		if !ok {
 			return false
 		}
 
-		pointer, ok := pass.TypesInfo.ObjectOf(ident).Type().(*types.Pointer)
-		if !ok {
+		// -> func (_m *MockUserIFace) EXPECT() *MockUserIFace_Expecter
+		receiverInfo := pass.TypesInfo.Types[selectorExpr.X]
+		expectMethod := lookupMethod(pass, receiverInfo.Type, receiverInfo.Addressable(), "EXPECT")
+		if expectMethod == nil {
 			return false
 		}
 
-		named, ok := pointer.Elem().(*types.Named)
-		if !ok {
+		expectSignature := expectMethod.Signature()
+		if expectSignature.Params().Len() != 0 || expectSignature.Results().Len() != 1 {
 			return false
 		}
 
-		if !hasExpect(named, methodName) {
+		// -> func (_e *MockUserIFace_Expecter) CountUsers() *MockUserIFace_CountUsers_Call
+		method := lookupMethod(pass, expectSignature.Results().At(0).Type(), false, methodName)
+		if method == nil || !callArgsMatch(pass, method.Signature(), callExpr.Args[1:], callExpr.Ellipsis.IsValid()) {
 			return false
 		}
 
-		if hasRunCall(stack) {
+		receiver := analysisutil.NodeString(pass.Fset, selectorExpr.X)
+		report := "use " + receiver + ".EXPECT()." + methodName + "(...)"
+
+		if inMockRunCall(pass, stack) {
+			diagnostics = append(diagnostics, *newDiagnostic(checker.Name(), callExpr, report))
 			return false
 		}
+
+		// -> u.EXPECT().CountUsers().Return(123)
+		args := string(formatAsCallArgs(pass, callExpr.Args[1:]...))
+		if callExpr.Ellipsis.IsValid() {
+			args += "..."
+		}
+		newCall := fmt.Sprintf("%s.EXPECT().%s(%s)", receiver, methodName, args)
 
 		diagnostics = append(diagnostics, *newDiagnostic(
-			checker.Name(), callExpr, "use "+ident.Name+".EXPECT()."+methodName+"(...)",
+			checker.Name(), callExpr, report,
 			analysis.SuggestedFix{
 				Message: "Replace mock.On with mock.EXPECT",
 				TextEdits: []analysis.TextEdit{
 					{
-						Pos: callExpr.Pos(),
-						End: callExpr.End(),
-						NewText: []byte(fmt.Sprintf(
-							"%s.EXPECT().%s(%s)", ident.Name, methodName, formatAsCallArgs(pass, callExpr.Args[1:]...),
-						)),
+						Pos:     callExpr.Pos(),
+						End:     callExpr.End(),
+						NewText: []byte(newCall),
 					},
 				},
 			},
@@ -88,52 +102,59 @@ func (checker MockExpect) Check(pass *analysis.Pass, insp *inspector.Inspector) 
 	return diagnostics
 }
 
-func firstArg(expr *ast.CallExpr) string {
-	arg1, ok := expr.Args[0].(*ast.BasicLit)
-	if !ok || arg1.Kind != token.STRING || len(arg1.Value) < 3 {
-		return ""
+func isTestifyMockMethod(pass *analysis.Pass, callExpr *ast.CallExpr, methodName, receiverName string) bool {
+	fn, ok := typeutil.Callee(pass.TypesInfo, callExpr).(*types.Func)
+	if !ok || fn.Name() != methodName || fn.Pkg() == nil {
+		return false
 	}
-	return arg1.Value[1 : len(arg1.Value)-1]
-}
-
-// hasExpect checks if instead of .On("MethodName", ...) there is callable .EXPECT().MethodName(...)
-func hasExpect(named *types.Named, methodName string) bool {
-	for i := range named.NumMethods() {
-		if named.Method(i).Name() == "EXPECT" && expectHasMethod(named.Method(i), methodName) {
-			return true
-		}
-	}
-	return false
-}
-
-func expectHasMethod(method *types.Func, methodName string) bool {
-	pointer, ok := method.Signature().Results().At(0).Type().(*types.Pointer)
-	if !ok {
+	if !analysisutil.IsPkg(fn.Pkg(), testify.MockPkgName, testify.MockPkgPath) {
 		return false
 	}
 
-	named, ok := pointer.Elem().(*types.Named)
-	if !ok {
+	rcv := fn.Signature().Recv()
+	if rcv == nil {
 		return false
 	}
 
-	for i := range named.NumMethods() {
-		if named.Method(i).Name() == methodName {
-			return true
-		}
+	rcvType := rcv.Type()
+	if ptr, isPtr := rcvType.(*types.Pointer); isPtr {
+		rcvType = ptr.Elem()
 	}
 
-	return false
+	named, ok := rcvType.(*types.Named)
+	return ok && named.Obj().Name() == receiverName
 }
 
-// hasRunCall checks if there is chained .Run(...) call.
-func hasRunCall(stack []ast.Node) bool {
-	for i := range stack {
-		selectorExpr, ok := stack[i].(*ast.SelectorExpr)
-		if ok && selectorExpr.Sel.Name == "Run" {
+func getMockMethodName(pass *analysis.Pass, callExpr *ast.CallExpr) (string, bool) {
+	if len(callExpr.Args) == 0 {
+		return "", false
+	}
+
+	value := pass.TypesInfo.Types[callExpr.Args[0]].Value
+	if value == nil || value.Kind() != constant.String {
+		return "", false
+	}
+
+	name := constant.StringVal(value)
+	return name, token.IsIdentifier(name)
+}
+
+func lookupMethod(pass *analysis.Pass, typ types.Type, addressable bool, name string) *types.Func {
+	if typ == nil {
+		return nil
+	}
+
+	obj, _, _ := types.LookupFieldOrMethod(typ, addressable, pass.Pkg, name)
+	fn, _ := obj.(*types.Func)
+	return fn
+}
+
+func inMockRunCall(pass *analysis.Pass, stack []ast.Node) bool {
+	for _, node := range stack {
+		callExpr, ok := node.(*ast.CallExpr)
+		if ok && isTestifyMockMethod(pass, callExpr, "Run", "Call") {
 			return true
 		}
 	}
-
 	return false
 }

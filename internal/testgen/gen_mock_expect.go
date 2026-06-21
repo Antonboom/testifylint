@@ -37,9 +37,11 @@ func (MockExpectTestsGenerator) GoldenTemplate() Executor {
 		Parse(mockExpectGoldenTmpl))
 }
 
-const mockExpectTestTmpl = boilerPlate + `
+const mockExpectTestTmpl = mockExpectTestHeader + `
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	u := NewMockUserIFace(t)
+	holder := mockHolder{user: u}
+	values := []interface{}{1, 2, 3}
 
 	// Invalid.
 	{
@@ -48,20 +50,53 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 		u.On("Void")                                             // want "{{ printf $.Report "Void" }}"
 		u.On("Void").Once()                                      // want "{{ printf $.Report "Void" }}"
 		u.On("CountUsers").Return(123)                           // want "{{ printf $.Report "CountUsers" }}"
+		u.On("Variadic", values...)                              // want "{{ printf $.Report "Variadic" }}"
+		u.On("Variadic", 1, 2, 3)                               // want "{{ printf $.Report "Variadic" }}"
+		u.On("Variadic")                                        // want "{{ printf $.Report "Variadic" }}"
+		u.On("VariadicWithPrefix", "prefix", 1, 2, 3)           // want "{{ printf $.Report "VariadicWithPrefix" }}"
+		holder.user.On("Void")                                  // want "mock-expect: use holder\\.user\\.EXPECT\\(\\)\\.Void\\(\\.\\.\\.\\)"
+		mockFrom(u).On("Void")                                  // want "mock-expect: use mockFrom\\(u\\)\\.EXPECT\\(\\)\\.Void\\(\\.\\.\\.\\)"
+		u.On(voidMethod)                                         // want "{{ printf $.Report "Void" }}"
+		u.On("Void").Run(func(mock.Arguments) {})                // want "{{ printf $.Report "Void" }}"
+		u.On("Void").Once().Run(func(mock.Arguments) {}).Twice() // want "{{ printf $.Report "Void" }}"
+	}
+
+	// Valid.
+	{
+		u.EXPECT().CreateUser(mock.Anything, User{}).Return(nil)
+		u.EXPECT().GetUser(t.Context(), "test").Return(User{}, nil)
+		u.EXPECT().Void()
+		u.EXPECT().CountUsers().Return(123)
+		u.EXPECT().Variadic(values...)
+		u.EXPECT().Variadic(1, 2, 3)
+		u.EXPECT().Variadic()
+		u.EXPECT().VariadicWithPrefix("prefix", 1, 2, 3)
+		holder.user.EXPECT().Void()
+		mockFrom(u).Void()
 	}
 
 	// Ignored.
 	{
 		u.On("", mock.Anything, User{}).Return(nil)
 		u.On("DoesNotExist", mock.Anything, User{}, 123).Return(nil)
-		u.On("Void").Run(func(mock.Arguments) {})
-		u.On("Void").Once().Run(func(mock.Arguments) {}).Twice()
-	}
-}`
+		u.On("Void", 123)
+		u.On("CreateUser", mock.Anything)
+		u.On("Void", values...)
+		u.On("VariadicWithPrefix")
+		u.On("VariadicWithPrefix", values...)
 
-const mockExpectGoldenTmpl = boilerPlate + `
+		other := &otherMock{}
+		other.On("Void")
+		(&variadicOn{}).On()
+		newNonAddressableMock().On("Void")
+	}
+}` + mockExpectBoilerPlate
+
+const mockExpectGoldenTmpl = mockExpectTestHeader + `
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
 	u := NewMockUserIFace(t)
+	holder := mockHolder{user: u}
+	values := []interface{}{1, 2, 3}
 
 	// Invalid.
 	{
@@ -70,17 +105,49 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 		u.EXPECT().Void()                                           // want "{{ printf $.Report "Void" }}"
 		u.EXPECT().Void().Once()                                    // want "{{ printf $.Report "Void" }}"
 		u.EXPECT().CountUsers().Return(123)                         // want "{{ printf $.Report "CountUsers" }}"
+		u.EXPECT().Variadic(values...)                              // want "{{ printf $.Report "Variadic" }}"
+		u.EXPECT().Variadic(1, 2, 3)                               // want "{{ printf $.Report "Variadic" }}"
+		u.EXPECT().Variadic()                                      // want "{{ printf $.Report "Variadic" }}"
+		u.EXPECT().VariadicWithPrefix("prefix", 1, 2, 3)           // want "{{ printf $.Report "VariadicWithPrefix" }}"
+		u.EXPECT().Void()                                           // want "{{ printf $.Report "Void" }}"
+		holder.user.EXPECT().Void()                                 // want "mock-expect: use holder\\.user\\.EXPECT\\(\\)\\.Void\\(\\.\\.\\.\\)"
+		mockFrom(u).EXPECT().Void()                                 // want "mock-expect: use mockFrom\\(u\\)\\.EXPECT\\(\\)\\.Void\\(\\.\\.\\.\\)"
+		u.EXPECT().Void()                                           // want "{{ printf $.Report "Void" }}"
+		u.On("Void").Run(func(mock.Arguments) {})                   // want "{{ printf $.Report "Void" }}"
+		u.On("Void").Once().Run(func(mock.Arguments) {}).Twice()    // want "{{ printf $.Report "Void" }}"
+	}
+
+	// Valid.
+	{
+		u.EXPECT().CreateUser(mock.Anything, User{}).Return(nil)
+		u.EXPECT().GetUser(t.Context(), "test").Return(User{}, nil)
+		u.EXPECT().Void()
+		u.EXPECT().CountUsers().Return(123)
+		u.EXPECT().Variadic(values...)
+		u.EXPECT().Variadic(1, 2, 3)
+		u.EXPECT().Variadic()
+		u.EXPECT().VariadicWithPrefix("prefix", 1, 2, 3)
 	}
 
 	// Ignored.
 	{
 		u.On("", mock.Anything, User{}).Return(nil)
 		u.On("DoesNotExist", mock.Anything, User{}, 123).Return(nil)
+		u.On("Void", 123)
+		u.On("CreateUser", mock.Anything)
+		u.On("Void", values...)
+		u.On("VariadicWithPrefix")
+		u.On("VariadicWithPrefix", values...)
+
+		other := &otherMock{}
+		other.On("Void")
+		(&variadicOn{}).On()
+		newNonAddressableMock().On("Void")
 	}
 }
-`
+` + mockExpectBoilerPlate
 
-const boilerPlate = header + `
+const mockExpectTestHeader = header + `
 
 package {{ .CheckerName.AsPkgName }}
 
@@ -90,6 +157,9 @@ import (
 
 	"github.com/stretchr/testify/mock"
 )
+`
+
+const mockExpectBoilerPlate = `
 
 type MockUserIFace struct {
 	mock.Mock
@@ -97,6 +167,38 @@ type MockUserIFace struct {
 
 type MockUserIFace_Expecter struct {
 	mock *mock.Mock
+}
+
+const voidMethod = "Void"
+
+type mockHolder struct {
+	user *MockUserIFace
+}
+
+func mockFrom(mock *MockUserIFace) *MockUserIFace { return mock }
+
+type otherExpecter struct{}
+
+func (*otherExpecter) Void() {}
+
+type otherMock struct{}
+
+func (*otherMock) On(string, ...interface{}) {}
+func (*otherMock) EXPECT() *otherExpecter     { return &otherExpecter{} }
+
+type variadicOn struct{}
+
+func (*variadicOn) On(...interface{}) {}
+func (*variadicOn) EXPECT()            {}
+
+type nonAddressableMock struct {
+	*mock.Mock
+}
+
+func (*nonAddressableMock) EXPECT() *MockUserIFace_Expecter { return nil }
+
+func newNonAddressableMock() nonAddressableMock {
+	return nonAddressableMock{Mock: &mock.Mock{}}
 }
 
 func (_m *MockUserIFace) EXPECT() *MockUserIFace_Expecter {
@@ -249,6 +351,17 @@ type MockUserIFace_Void_Call struct {
 
 func (_e *MockUserIFace_Expecter) Void() *MockUserIFace_Void_Call {
 	return &MockUserIFace_Void_Call{Call: _e.mock.On("Void")}
+}
+
+func (_e *MockUserIFace_Expecter) Variadic(values ...interface{}) *MockUserIFace_Void_Call {
+	return &MockUserIFace_Void_Call{Call: _e.mock.On("Variadic", values...)}
+}
+
+func (_e *MockUserIFace_Expecter) VariadicWithPrefix(
+	prefix interface{}, values ...interface{},
+) *MockUserIFace_Void_Call {
+	args := append([]interface{}{prefix}, values...)
+	return &MockUserIFace_Void_Call{Call: _e.mock.On("VariadicWithPrefix", args...)}
 }
 
 func (_c *MockUserIFace_Void_Call) Run(run func()) *MockUserIFace_Void_Call {
