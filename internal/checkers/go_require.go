@@ -20,8 +20,6 @@ const (
 // GoRequire takes idea from go vet's "testinggoroutine" check
 // and detects usage of require package's functions or assert.FailNow in the non-test goroutines
 // as well as inline function literals passed to sync.WaitGroup.Go.
-// Indirect goroutine callbacks, such as `go callback()` or `wg.Go(callback)`,
-// are not supported.
 //
 //	go func() {
 //		conn, err = lis.Accept()
@@ -31,6 +29,14 @@ const (
 //			assert.FailNow(t, msg)
 //		}
 //	}()
+//
+//	var wg sync.WaitGroup
+//	wg.Go(func() {
+//		conn, err = lis.Accept()
+//		require.NoError(t, err)
+//	})
+//
+// Indirect goroutine callbacks, such as `go callback()` or `wg.Go(callback)`, are not supported.
 type GoRequire struct {
 	ignoreHTTPHandlers bool
 }
@@ -126,6 +132,7 @@ func (checker GoRequire) Check(pass *analysis.Pass, insp *inspector.Inspector) (
 			}
 			return true
 		}
+
 		if isSubTestRun(pass, ce) {
 			if push {
 				// t.Run spawns the new testing goroutine and declines
@@ -331,10 +338,7 @@ func (fd funcDeclarations) Get(pass *analysis.Pass, ce *ast.CallExpr) *ast.FuncD
 	return nil
 }
 
-// isWaitGroupGoCall returns true if ce is a call to (*sync.WaitGroup).Go,
-// introduced in Go 1.25. Such calls run the callback in a new goroutine,
-// so any assertions inside the callback must follow the same rules as
-// assertions inside an explicit `go func() {...}()` statement.
+// isWaitGroupGoCall returns true if ce is a call to (*sync.WaitGroup).Go, introduced in Go 1.25.
 func isWaitGroupGoCall(pass *analysis.Pass, ce *ast.CallExpr) bool {
 	se, ok := ce.Fun.(*ast.SelectorExpr)
 	if !ok || se.Sel == nil || se.Sel.Name != "Go" {
@@ -347,17 +351,17 @@ func isWaitGroupGoCall(pass *analysis.Pass, ce *ast.CallExpr) bool {
 	}
 
 	fn, ok := sel.Obj().(*types.Func)
-	if !ok || fn.Pkg() == nil || fn.Pkg().Path() != "sync" {
+	if !ok {
 		return false
 	}
 
 	sig := fn.Type().(*types.Signature)
-	recv := sig.Recv()
-	if recv == nil {
+	rcv := sig.Recv()
+	if rcv == nil {
 		return false
 	}
 
-	t := recv.Type()
+	t := rcv.Type()
 	if ptr, ok := t.(*types.Pointer); ok {
 		t = ptr.Elem()
 	}

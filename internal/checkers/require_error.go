@@ -32,9 +32,10 @@ const requireErrorReport = "for error assertions use require"
 // - assertions in the bool expression;
 // - the entire `if-else[-if]` block, if there is an assertion in any `if` condition;
 // - the last assertion in the block, if there are no methods/functions calls after it;
-// - assertions in an explicit goroutine (including `http.Handler` and inline `sync.WaitGroup.Go` callbacks);
+// - assertions in an explicit goroutine (including `http.Handler` and inline `sync.WaitGroup.Go` calls);
 // - assertions in an explicit testing cleanup function or suite teardown methods;
 // - sequence of NoError assertions.
+//
 // Indirect goroutine callbacks, such as `go callback()` or `wg.Go(callback)`, are not supported.
 type RequireError struct {
 	fnPattern *regexp.Regexp
