@@ -94,9 +94,6 @@ func (checker Contains) checkErrorContains(pass *analysis.Pass, call *CallMeta) 
 	if call.Fn.NameFTrimmed != "Contains" {
 		return nil
 	}
-	if call.Call.Ellipsis.IsValid() {
-		return nil
-	}
 	if len(call.Args) < 2 {
 		return nil
 	}

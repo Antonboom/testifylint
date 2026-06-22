@@ -23,6 +23,7 @@ func TestContainsChecker(t *testing.T) {
 		errSentinel = errors.New("user not found")
 		metrics     = []metric{}
 		log         = []string{}
+		msgArgs     []any
 	)
 
 	// Invalid.
@@ -60,7 +61,7 @@ func TestContainsChecker(t *testing.T) {
 		assert.NotContains(t, log, "params", map[string]interface{}{"query": "test statement"}, "msg with arg %d", 42)           // want "contains: invalid usage of assert\\.NotContains, use assert\\.NotSubset for multi elements assertion"
 		assert.NotContains(t, log, "params", map[string]interface{}{"query": "test statement"}, "msg with args %d %s", 42, "42") // want "contains: invalid usage of assert\\.NotContains, use assert\\.NotSubset for multi elements assertion"
 		assert.Contains(t, errSentinel.Error(), "user")                                                                          // want "contains: use assert\\.ErrorContains"
-		assert.Containsf(t, errSentinel.Error(), "user", "msg with args %d %s", 42, "42")                                        // want "contains: use assert\\.ErrorContainsf"
+		assert.Contains(t, errSentinel.Error(), "user", msgArgs...)                                                              // want "contains: use assert\\.ErrorContains"
 	}
 
 	// Valid.
@@ -99,12 +100,5 @@ func TestContainsChecker(t *testing.T) {
 		assert.Falsef(t, bytes.Contains(b, []byte("a")), "msg with args %d %s", 42, "42")
 		assert.True(t, !bytes.Contains(b, []byte("a")))
 		assert.Truef(t, !bytes.Contains(b, []byte("a")), "msg with args %d %s", 42, "42")
-	}
-}
-
-// ErrorContains returns an assertion to check if the error contains the given string.
-func ErrorContains(contains string) assert.ErrorAssertionFunc {
-	return func(t assert.TestingT, err error, msgAndArgs ...interface{}) bool {
-		return assert.Contains(t, err.Error(), contains, msgAndArgs...)
 	}
 }

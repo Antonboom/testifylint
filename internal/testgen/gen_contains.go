@@ -98,6 +98,13 @@ func (g ContainsTestsGenerator) TemplateData() any {
 				ProposedFn:    "ErrorContains",
 				ProposedArgsf: `errSentinel, "user"`,
 			},
+			{
+				Fn:            "Contains",
+				Argsf:         `errSentinel.Error(), "user", msgArgs...`,
+				ReportMsgf:    report,
+				ProposedFn:    "ErrorContains",
+				ProposedArgsf: `errSentinel, "user", msgArgs...`,
+			},
 		},
 		IgnoredAssertions: []Assertion{
 			// NotErrorContains does not exist in testify, so we leave NotContains(err.Error(), ...) alone.
@@ -156,6 +163,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
         errSentinel = errors.New("user not found")
 		metrics     = []metric{}
 		log         = []string{}
+		msgArgs     []any
     )
 
     // Invalid.
@@ -171,7 +179,7 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
         {{- end }}
 
         {{- range $ai, $assrn := $.InvalidErrorContainsCases }}
-            {{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
+            {{ NewAssertionExpander.NotFmtSingleMode.Expand $assrn "assert" "t" nil }}
         {{- end }}
     }
 
@@ -188,12 +196,5 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
             {{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
         {{- end }}
     }
-}
-
-// ErrorContains returns an assertion to check if the error contains the given string.
-func ErrorContains(contains string) assert.ErrorAssertionFunc {
-	return func(t assert.TestingT, err error, msgAndArgs ...interface{}) bool {
-		return assert.Contains(t, err.Error(), contains, msgAndArgs...)
-	}
 }
 `
