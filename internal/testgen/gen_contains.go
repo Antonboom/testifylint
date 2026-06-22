@@ -20,12 +20,13 @@ func (g ContainsTestsGenerator) TemplateData() any {
 	)
 
 	return struct {
-		CheckerName        CheckerName
-		Vars               []string
-		InvalidAssertions  []Assertion
-		InvalidSubsetCases []Assertion
-		ValidAssertions    []Assertion
-		IgnoredAssertions  []Assertion
+		CheckerName               CheckerName
+		Vars                      []string
+		InvalidAssertions         []Assertion
+		InvalidSubsetCases        []Assertion
+		InvalidErrorContainsCases []Assertion
+		ValidAssertions           []Assertion
+		IgnoredAssertions         []Assertion
 	}{
 		CheckerName: CheckerName(checker),
 		Vars:        []string{"s", "string(b)"},
@@ -89,9 +90,18 @@ func (g ContainsTestsGenerator) TemplateData() any {
 			{Fn: "Subset", Argsf: `metrics, []metric{{time: 1}, {time: 2}}`},
 			{Fn: "NotSubset", Argsf: `metrics, []metric{{time: 1}, {time: 2}}`},
 		},
+		InvalidErrorContainsCases: []Assertion{
+			{
+				Fn:            "Contains",
+				Argsf:         `errSentinel.Error(), "user"`,
+				ReportMsgf:    report,
+				ProposedFn:    "ErrorContains",
+				ProposedArgsf: `errSentinel, "user"`,
+			},
+		},
 		IgnoredAssertions: []Assertion{
-			{Fn: "Contains", Argsf: `errSentinel.Error(), "user"`},    // error-compare case.
-			{Fn: "NotContains", Argsf: `errSentinel.Error(), "user"`}, // error-compare case.
+			// NotErrorContains does not exist in testify, so we leave NotContains(err.Error(), ...) alone.
+			{Fn: "NotContains", Argsf: `errSentinel.Error(), "user"`},
 
 			{Fn: "Contains", Argsf: `string(b), "MASKED_KEY=[MASKED]"`},
 			{Fn: "Contains", Argsf: `metrics, metrics`},
@@ -158,6 +168,10 @@ func {{ .CheckerName.AsTestName }}(t *testing.T) {
 
         {{- range $ai, $assrn := $.InvalidSubsetCases }}
             {{ NewAssertionExpander.NotFmtSetMode.Expand $assrn "assert" "t" nil }}
+        {{- end }}
+
+        {{- range $ai, $assrn := $.InvalidErrorContainsCases }}
+            {{ NewAssertionExpander.Expand $assrn "assert" "t" nil }}
         {{- end }}
     }
 

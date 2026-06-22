@@ -59,6 +59,8 @@ func TestContainsChecker(t *testing.T) {
 		assert.NotContains(t, log, "params", map[string]interface{}{"query": "test statement"}, "msg")                           // want "contains: invalid usage of assert\\.NotContains, use assert\\.NotSubset for multi elements assertion"
 		assert.NotContains(t, log, "params", map[string]interface{}{"query": "test statement"}, "msg with arg %d", 42)           // want "contains: invalid usage of assert\\.NotContains, use assert\\.NotSubset for multi elements assertion"
 		assert.NotContains(t, log, "params", map[string]interface{}{"query": "test statement"}, "msg with args %d %s", 42, "42") // want "contains: invalid usage of assert\\.NotContains, use assert\\.NotSubset for multi elements assertion"
+		assert.ErrorContains(t, errSentinel, "user")                                                                             // want "contains: use assert\\.ErrorContains"
+		assert.ErrorContainsf(t, errSentinel, "user", "msg with args %d %s", 42, "42")                                           // want "contains: use assert\\.ErrorContainsf"
 	}
 
 	// Valid.
@@ -75,8 +77,6 @@ func TestContainsChecker(t *testing.T) {
 
 	// Ignored.
 	{
-		assert.Contains(t, errSentinel.Error(), "user")
-		assert.Containsf(t, errSentinel.Error(), "user", "msg with args %d %s", 42, "42")
 		assert.NotContains(t, errSentinel.Error(), "user")
 		assert.NotContainsf(t, errSentinel.Error(), "user", "msg with args %d %s", 42, "42")
 		assert.Contains(t, string(b), "MASKED_KEY=[MASKED]")

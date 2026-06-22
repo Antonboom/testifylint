@@ -15,6 +15,7 @@ import (
 //	assert.True(t, !strings.Contains(a, "abc123"))
 //	assert.Contains(t, arr, 1, 2)
 //	assert.NotContains(t, arr, 1, 2)
+//	assert.Contains(t, err.Error(), "not found")
 //
 // and requires
 //
@@ -22,6 +23,7 @@ import (
 //	assert.NotContains(t, a, "abc123")
 //	assert.Subset(t, arr, 1, 2)
 //	assert.NotSubset(t, arr, 1, 2)
+//	assert.ErrorContains(t, err, "not found")
 type Contains struct{}
 
 // NewContains constructs Contains checker.
@@ -30,6 +32,9 @@ func (Contains) Name() string { return "contains" }
 
 func (checker Contains) Check(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
 	if d := checker.checkStringContains(pass, call); d != nil {
+		return d
+	}
+	if d := checker.checkErrorContains(pass, call); d != nil {
 		return d
 	}
 
@@ -79,6 +84,40 @@ func (checker Contains) checkStringContains(pass *analysis.Pass, call *CallMeta)
 			Pos:     call.Args[0].Pos(),
 			End:     call.Args[0].End(),
 			NewText: formatAsCallArgs(pass, ce.Args[0], ce.Args[1]),
+		})
+}
+
+// checkErrorContains rewrites `assert.Contains(t, err.Error(), substr)` to
+// `assert.ErrorContains(t, err, substr)`. No `NotErrorContains` exists in
+// testify, so the negative form is left alone.
+func (checker Contains) checkErrorContains(pass *analysis.Pass, call *CallMeta) *analysis.Diagnostic {
+	if call.Fn.NameFTrimmed != "Contains" {
+		return nil
+	}
+	if call.Call.Ellipsis.IsValid() {
+		return nil
+	}
+	if len(call.Args) < 2 {
+		return nil
+	}
+
+	errExprCall, ok := call.Args[0].(*ast.CallExpr)
+	if !ok || len(errExprCall.Args) != 0 {
+		return nil
+	}
+	se, ok := errExprCall.Fun.(*ast.SelectorExpr)
+	if !ok || se.Sel.Name != "Error" {
+		return nil
+	}
+	if !isError(pass, se.X) {
+		return nil
+	}
+
+	return newUseFunctionDiagnostic(checker.Name(), call, "ErrorContains",
+		analysis.TextEdit{
+			Pos:     call.Args[0].Pos(),
+			End:     call.Args[0].End(),
+			NewText: formatAsCallArgs(pass, se.X),
 		})
 }
 
