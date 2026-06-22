@@ -29,6 +29,9 @@ func NewDefault() Config {
 		GoRequire: GoRequireConfig{
 			IgnoreHTTPHandlers: false,
 		},
+		ManualAssert: ManualAssertConfig{
+			DropMessage: false,
+		},
 		RequireError: RequireErrorConfig{
 			FnPattern: RegexpValue{nil},
 		},
@@ -52,9 +55,15 @@ type Config struct {
 	ExpectedActual       ExpectedActualConfig
 	Formatter            FormatterConfig
 	GoRequire            GoRequireConfig
+	ManualAssert         ManualAssertConfig
 	RequireError         RequireErrorConfig
 	SuiteExtraAssertCall SuiteExtraAssertCallConfig
 	TimeCompare          TimeCompareConfig
+}
+
+// ManualAssertConfig implements configuration of checkers.ManualAssert.
+type ManualAssertConfig struct {
+	DropMessage bool
 }
 
 // BoolCompareConfig implements configuration of checkers.BoolCompare.
@@ -152,6 +161,10 @@ func BindToFlags(cfg *Config, fs *flag.FlagSet) {
 	fs.BoolVar(&cfg.GoRequire.IgnoreHTTPHandlers,
 		"go-require.ignore-http-handlers", false,
 		"to ignore HTTP handlers (like http.HandlerFunc)")
+
+	fs.BoolVar(&cfg.ManualAssert.DropMessage,
+		"manual-assert.drop-message", false,
+		"to drop the original t.Fatal/Errorf message instead of forwarding it as msgAndArgs")
 
 	fs.Var(&cfg.RequireError.FnPattern,
 		"require-error.fn-pattern",
