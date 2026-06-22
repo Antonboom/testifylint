@@ -49,6 +49,13 @@ func TestWaitGroupGo(t *testing.T) {
 		assert.Error(t, nil)
 	})
 
+	// Indirect callbacks are not supported, consistently with `go callback()`.
+	callback := func() {
+		assert.Error(t, nil) // want "require-error: for error assertions use require"
+		assert.Error(t, nil)
+	}
+	wg.Go(callback)
+
 	wg.Go(func() {
 		assert.NoError(t, nil)
 
@@ -63,10 +70,26 @@ func TestWaitGroupGo(t *testing.T) {
 		assert.Error(t, nil)
 	})
 
+	var embedded struct{ sync.WaitGroup }
+	embedded.Go(func() {
+		assert.NoError(t, nil)
+		assert.Error(t, nil)
+	})
+
+	var custom customGo
+	custom.Go(func() {
+		assert.Error(t, nil) // want "require-error: for error assertions use require"
+		assert.Error(t, nil)
+	})
+
 	assert.Error(t, nil) // want "require-error: for error assertions use require"
 	assert.Error(t, nil) // want "require-error: for error assertions use require"
 	wg.Wait()
 }
+
+type customGo struct{}
+
+func (customGo) Go(f func()) { f() }
 
 func concurrentOp(t *testing.T) {
 	assert.Error(t, nil) // want "require-error: for error assertions use require"

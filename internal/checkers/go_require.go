@@ -19,6 +19,9 @@ const (
 
 // GoRequire takes idea from go vet's "testinggoroutine" check
 // and detects usage of require package's functions or assert.FailNow in the non-test goroutines
+// as well as inline function literals passed to sync.WaitGroup.Go.
+// Indirect goroutine callbacks, such as `go callback()` or `wg.Go(callback)`,
+// are not supported.
 //
 //	go func() {
 //		conn, err = lis.Accept()
@@ -69,26 +72,11 @@ func (checker GoRequire) Check(pass *analysis.Pass, insp *inspector.Inspector) (
 		}
 	})
 
-	var inGoroutineRunningTestFunc boolStack
+	var inGoroutineRunningTestFunc stack[bool]
 	processedFuncs := make(map[*ast.FuncDecl]goRequireVerdict)
-	waitGroupGoCallbacks := make(map[*ast.FuncLit]struct{})
-
-	insp.Preorder([]ast.Node{(*ast.CallExpr)(nil)}, func(node ast.Node) {
-		ce := node.(*ast.CallExpr)
-		if !isWaitGroupGoCall(pass, ce) {
-			return
-		}
-
-		for _, arg := range ce.Args {
-			if fl, ok := arg.(*ast.FuncLit); ok {
-				waitGroupGoCallbacks[fl] = struct{}{}
-			}
-		}
-	})
 
 	nodesFilter := []ast.Node{
 		(*ast.FuncDecl)(nil),
-		(*ast.FuncLit)(nil),
 		(*ast.FuncType)(nil),
 		(*ast.GoStmt)(nil),
 		(*ast.CallExpr)(nil),
@@ -101,19 +89,6 @@ func (checker GoRequire) Check(pass *analysis.Pass, insp *inspector.Inspector) (
 
 			if push {
 				inGoroutineRunningTestFunc.Push(true)
-			} else {
-				inGoroutineRunningTestFunc.Pop()
-			}
-			return true
-		}
-
-		if fl, ok := node.(*ast.FuncLit); ok {
-			if _, ok := waitGroupGoCallbacks[fl]; !ok {
-				return true
-			}
-
-			if push {
-				inGoroutineRunningTestFunc.Push(false)
 			} else {
 				inGoroutineRunningTestFunc.Pop()
 			}
@@ -143,6 +118,14 @@ func (checker GoRequire) Check(pass *analysis.Pass, insp *inspector.Inspector) (
 		}
 
 		ce := node.(*ast.CallExpr)
+		if isWaitGroupGoCall(pass, ce) {
+			if push {
+				inGoroutineRunningTestFunc.Push(false)
+			} else {
+				inGoroutineRunningTestFunc.Pop()
+			}
+			return true
+		}
 		if isSubTestRun(pass, ce) {
 			if push {
 				// t.Run spawns the new testing goroutine and declines
@@ -348,31 +331,35 @@ func (fd funcDeclarations) Get(pass *analysis.Pass, ce *ast.CallExpr) *ast.FuncD
 	return nil
 }
 
-type boolStack []bool
-
-func (s boolStack) Len() int {
-	return len(s)
-}
-
-func (s *boolStack) Push(v bool) {
-	*s = append(*s, v)
-}
-
-func (s *boolStack) Pop() bool {
-	n := len(*s)
-	if n == 0 {
+// isWaitGroupGoCall returns true if ce is a call to (*sync.WaitGroup).Go,
+// introduced in Go 1.25. Such calls run the callback in a new goroutine,
+// so any assertions inside the callback must follow the same rules as
+// assertions inside an explicit `go func() {...}()` statement.
+func isWaitGroupGoCall(pass *analysis.Pass, ce *ast.CallExpr) bool {
+	se, ok := ce.Fun.(*ast.SelectorExpr)
+	if !ok || se.Sel == nil || se.Sel.Name != "Go" {
 		return false
 	}
 
-	last := (*s)[n-1]
-	*s = (*s)[:n-1]
-	return last
-}
-
-func (s boolStack) Last() bool {
-	n := len(s)
-	if n == 0 {
+	sel, ok := pass.TypesInfo.Selections[se]
+	if !ok {
 		return false
 	}
-	return s[n-1]
+
+	fn, ok := sel.Obj().(*types.Func)
+	if !ok || fn.Pkg() == nil || fn.Pkg().Path() != "sync" {
+		return false
+	}
+
+	sig := fn.Type().(*types.Signature)
+	recv := sig.Recv()
+	if recv == nil {
+		return false
+	}
+
+	t := recv.Type()
+	if ptr, ok := t.(*types.Pointer); ok {
+		t = ptr.Elem()
+	}
+	return isNamedType(t, "sync", "WaitGroup")
 }

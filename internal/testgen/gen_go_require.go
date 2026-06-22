@@ -138,6 +138,26 @@ func {{ .CheckerName.AsTestName }}_Smoke(t *testing.T) {
 	wg.Go(func() {
 		{{ template "assertions" . }}
 	})
+
+	// Indirect callbacks are not supported, consistently with an explicit go callback().
+	callback := func() {
+		{{- template "silent-assertions-short" . }}
+	}
+	wg.Go(callback)
+
+	var embedded embeddedWaitGroup
+	embedded.Go(func() {
+		{{- template "assertions-short" . }}
+	})
+
+	(*sync.WaitGroup).Go(&wg, func() {
+		{{- template "assertions-short" . }}
+	})
+
+	var custom customGo
+	custom.Go(func() {
+		{{- template "silent-assertions-short" . }}
+	})
 }
 
 func {{ .CheckerName.AsTestName }}(t *testing.T) {
@@ -520,4 +540,12 @@ func superGenericHelper[T testingT, T2 any](t T) T2 {
 	var zero T2
 	return zero
 }
+
+type embeddedWaitGroup struct {
+	sync.WaitGroup
+}
+
+type customGo struct{}
+
+func (customGo) Go(f func()) { f() }
 `

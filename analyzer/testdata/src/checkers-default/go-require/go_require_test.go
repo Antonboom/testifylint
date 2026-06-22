@@ -100,8 +100,40 @@ func TestGoRequireChecker_Smoke(t *testing.T) {
 		require.Truef(t, b, "msg with args %d %s", 42, "42")          // want "go-require: require must only be used in the goroutine running the test function"
 	})
 
+	// Indirect callbacks are not supported, consistently with an explicit go callback().
+	callback := func() {
+		run()
+		assertSomething(t)
+		requireSomething(t)
+		assert.Fail(t, "boom!")
+		require.Fail(t, "boom!")
+	}
+	wg.Go(callback)
+
+	var embedded embeddedWaitGroup
+	embedded.Go(func() {
+		run()
+		assertSomething(t)
+		requireSomething(t) // want "go-require: requireSomething contains assertions that must only be used in the goroutine running the test function"
+		assert.Fail(t, "boom!")
+		require.Fail(t, "boom!") // want "go-require: require must only be used in the goroutine running the test function"
+	})
+
 	(*sync.WaitGroup).Go(&wg, func() {
-		require.NoError(t, err) // want "go-require: require must only be used in the goroutine running the test function"
+		run()
+		assertSomething(t)
+		requireSomething(t) // want "go-require: requireSomething contains assertions that must only be used in the goroutine running the test function"
+		assert.Fail(t, "boom!")
+		require.Fail(t, "boom!") // want "go-require: require must only be used in the goroutine running the test function"
+	})
+
+	var custom customGo
+	custom.Go(func() {
+		run()
+		assertSomething(t)
+		requireSomething(t)
+		assert.Fail(t, "boom!")
+		require.Fail(t, "boom!")
 	})
 }
 
@@ -742,3 +774,11 @@ func superGenericHelper[T testingT, T2 any](t T) T2 {
 	var zero T2
 	return zero
 }
+
+type embeddedWaitGroup struct {
+	sync.WaitGroup
+}
+
+type customGo struct{}
+
+func (customGo) Go(f func()) { f() }

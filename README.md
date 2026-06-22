@@ -833,8 +833,9 @@ In addition, the checker warns about `require` in HTTP handlers (functions and m
 that services the HTTP connection. Terminating these goroutines can lead to undefined behaviour and difficulty debugging
 tests. You can turn off the check using the `--go-require.ignore-http-handlers` flag.
 
-The checker also detects `require` usage inside `sync.WaitGroup.Go` callbacks, since those run in a new goroutine
-(like `go func() {...}()`), and terminating them via `require`/`t.FailNow` has the same undefined behaviour.
+The checker also detects `require` usage inside inline `sync.WaitGroup.Go` callbacks, since those run in a new goroutine
+(like `go func() {...}()`), and terminating them via `require`/`t.FailNow` has the same undefined behaviour. Indirect
+callbacks, such as `go callback()` or `wg.Go(callback)`, are not supported.
 
 P.S. Look at [testify's issue](https://github.com/stretchr/testify/issues/772), related to assertions in the goroutines.
 
@@ -1036,7 +1037,8 @@ Also, to minimize false positives, `require-error` ignores:
 - assertions in the bool expression;
 - the entire `if-else[-if]` block, if there is an assertion in any `if` condition;
 - the last assertion in the block, if there are no methods/functions calls after it;
-- assertions in an explicit goroutine (including `http.Handler` and `sync.WaitGroup.Go` callbacks);
+- assertions in an explicit goroutine (including `http.Handler` and inline `sync.WaitGroup.Go` callbacks); indirect
+  callbacks, such as `go callback()` or `wg.Go(callback)`, are not supported;
 - assertions in an explicit testing cleanup function or suite teardown methods;
 - sequence of `NoError` assertions.
 
