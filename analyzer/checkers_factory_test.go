@@ -78,6 +78,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewSuiteMethodSignature(),
 		checkers.NewSuiteSubtestRun(),
 		checkers.NewSuiteTHelper(),
+		checkers.NewElementsMatch(),
 	}
 
 	formatterWithoutEnabledOptions := checkers.RegularChecker(checkers.NewFormatter().
@@ -138,10 +139,11 @@ func Test_newCheckers(t *testing.T) {
 			}),
 		},
 		{
-			name: "enable one checker in addition to enabled by default checkers",
+			name: "enable two non-default checkers in addition to enabled by default checkers",
 			cfg: config.Config{
 				EnabledCheckers: config.KnownCheckersValue{
 					checkers.NewSuiteTHelper().Name(),
+					checkers.NewElementsMatch().Name(),
 				},
 			},
 			expRegular:  replace(enabledByDefaultRegularCheckers, formatterWithoutEnabledOptions),
