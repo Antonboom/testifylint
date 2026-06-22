@@ -254,8 +254,7 @@ func (checker GoRequire) checkFunc(
 			return true
 		}
 
-		if isWaitGroupGoCall(pass, ce) {
-			// wg.Go runs the callback in a new goroutine; don't recurse into it.
+		if isWaitGroupGoCall(pass, ce) { // The similar to GoStmt.
 			return false
 		}
 
