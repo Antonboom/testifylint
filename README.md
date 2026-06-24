@@ -790,6 +790,12 @@ go func() {
         assert.FailNow(t, msg) ❌
     }
 }()
+
+var wg sync.WaitGroup
+wg.Go(func() {
+    conn, err = lis.Accept()
+    require.NoError(t, err) ❌
+})
 ```
 
 **Autofix**: false. <br>
@@ -825,7 +831,9 @@ In addition, the checker warns about `require` in HTTP handlers (functions and m
 [http.HandlerFunc](https://pkg.go.dev/net/http#HandlerFunc)), because handlers run in a separate
 [service goroutine](https://cs.opensource.google/go/go/+/refs/tags/go1.22.3:src/net/http/server.go;l=2782;drc=1d45a7ef560a76318ed59dfdb178cecd58caf948)
 that services the HTTP connection. Terminating these goroutines can lead to undefined behaviour and difficulty debugging
-tests. You can turn off the check using the `--go-require.ignore-http-handlers` flag.
+tests. You can turn off the check using the `--go-require.ignore-http-handlers` flag. 
+
+Indirect callbacks, such as `go callback()` or `wg.Go(callback)`, are not supported.
 
 P.S. Look at [testify's issue](https://github.com/stretchr/testify/issues/772), related to assertions in the goroutines.
 
@@ -1027,7 +1035,8 @@ Also, to minimize false positives, `require-error` ignores:
 - assertions in the bool expression;
 - the entire `if-else[-if]` block, if there is an assertion in any `if` condition;
 - the last assertion in the block, if there are no methods/functions calls after it;
-- assertions in an explicit goroutine (including `http.Handler`);
+- assertions in an explicit goroutine (including `http.Handler` and inline `sync.WaitGroup.Go` calls); indirect
+  callbacks, such as `go callback()` or `wg.Go(callback)`, are not supported;
 - assertions in an explicit testing cleanup function or suite teardown methods;
 - sequence of `NoError` assertions.
 

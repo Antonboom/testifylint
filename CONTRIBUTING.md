@@ -130,7 +130,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
 
 - [elements-match](#elements-match)
 - [error-compare](#error-compare)
-- [equal-values](#equal-values)
+- [go-require](#go-require)
 - [graceful-teardown](#graceful-teardown)
 - [float-compare](#float-compare)
 - [http-const](#http-const)
@@ -161,6 +161,22 @@ Describe a new checker in [checkers section](./README.md#checkers).
 **Autofix**: maybe (depends on implementation difficulty). <br>
 **Enabled by default**: maybe (depends on checker's stability). <br>
 **Reason**: Code simplification.
+
+---
+
+### go-require
+
+Support indirect (not inline) callbacks in `go-require` and `require-error` checkers:
+
+```go
+callback := func() {     // Error from `go-require` needed.
+    assert.Error(t, nil) // But no error from `require-error` is expected.
+    assert.Error(t, nil)
+}
+
+wg.Go(callback)
+go callback()
+```
 
 ---
 

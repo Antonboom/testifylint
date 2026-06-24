@@ -19,6 +19,7 @@ const (
 
 // GoRequire takes idea from go vet's "testinggoroutine" check
 // and detects usage of require package's functions or assert.FailNow in the non-test goroutines
+// as well as inline function literals passed to sync.WaitGroup.Go.
 //
 //	go func() {
 //		conn, err = lis.Accept()
@@ -28,6 +29,14 @@ const (
 //			assert.FailNow(t, msg)
 //		}
 //	}()
+//
+//	var wg sync.WaitGroup
+//	wg.Go(func() {
+//		conn, err = lis.Accept()
+//		require.NoError(t, err)
+//	})
+//
+// Indirect goroutine callbacks, such as `go callback()` or `wg.Go(callback)`, are not supported.
 type GoRequire struct {
 	ignoreHTTPHandlers bool
 }
@@ -69,7 +78,7 @@ func (checker GoRequire) Check(pass *analysis.Pass, insp *inspector.Inspector) (
 		}
 	})
 
-	var inGoroutineRunningTestFunc boolStack
+	var inGoroutineRunningTestFunc stack[bool]
 	processedFuncs := make(map[*ast.FuncDecl]goRequireVerdict)
 
 	nodesFilter := []ast.Node{
@@ -115,6 +124,15 @@ func (checker GoRequire) Check(pass *analysis.Pass, insp *inspector.Inspector) (
 		}
 
 		ce := node.(*ast.CallExpr)
+		if isWaitGroupGoCall(pass, ce) {
+			if push {
+				inGoroutineRunningTestFunc.Push(false)
+			} else {
+				inGoroutineRunningTestFunc.Pop()
+			}
+			return true
+		}
+
 		if isSubTestRun(pass, ce) {
 			if push {
 				// t.Run spawns the new testing goroutine and declines
@@ -236,6 +254,10 @@ func (checker GoRequire) checkFunc(
 			return true
 		}
 
+		if isWaitGroupGoCall(pass, ce) { // The similar to GoStmt.
+			return false
+		}
+
 		testifyCall := NewCallMeta(pass, ce)
 		if testifyCall != nil {
 			if v := checker.checkCall(testifyCall); v != goRequireVerdictNoExit {
@@ -315,31 +337,32 @@ func (fd funcDeclarations) Get(pass *analysis.Pass, ce *ast.CallExpr) *ast.FuncD
 	return nil
 }
 
-type boolStack []bool
-
-func (s boolStack) Len() int {
-	return len(s)
-}
-
-func (s *boolStack) Push(v bool) {
-	*s = append(*s, v)
-}
-
-func (s *boolStack) Pop() bool {
-	n := len(*s)
-	if n == 0 {
+// isWaitGroupGoCall returns true if ce is a call to (*sync.WaitGroup).Go, introduced in Go 1.25.
+func isWaitGroupGoCall(pass *analysis.Pass, ce *ast.CallExpr) bool {
+	se, ok := ce.Fun.(*ast.SelectorExpr)
+	if !ok || se.Sel == nil || se.Sel.Name != "Go" {
 		return false
 	}
 
-	last := (*s)[n-1]
-	*s = (*s)[:n-1]
-	return last
-}
-
-func (s boolStack) Last() bool {
-	n := len(s)
-	if n == 0 {
+	sel, ok := pass.TypesInfo.Selections[se]
+	if !ok {
 		return false
 	}
-	return s[n-1]
+
+	fn, ok := sel.Obj().(*types.Func)
+	if !ok {
+		return false
+	}
+
+	sig := fn.Type().(*types.Signature)
+	rcv := sig.Recv()
+	if rcv == nil {
+		return false
+	}
+
+	t := rcv.Type()
+	if ptr, ok := t.(*types.Pointer); ok {
+		t = ptr.Elem()
+	}
+	return isNamedType(t, "sync", "WaitGroup")
 }

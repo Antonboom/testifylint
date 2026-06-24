@@ -60,7 +60,7 @@ func findSurroundingFunc(pass *analysis.Pass, stack []ast.Node) *funcID {
 						isTestCleanup = implementsTestingT(pass, se.X) && se.Sel != nil && (se.Sel.Name == "Cleanup")
 					}
 
-					if _, ok := stack[i-2].(*ast.GoStmt); ok {
+					if _, ok := stack[i-2].(*ast.GoStmt); ok || isWaitGroupGoCall(pass, ce) {
 						isGoroutine = true
 					}
 				}
