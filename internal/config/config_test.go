@@ -44,6 +44,12 @@ func TestNewDefault(t *testing.T) {
 	if cfg.SuiteExtraAssertCall.Mode != checkers.SuiteExtraAssertCallModeRemove {
 		t.Fatal()
 	}
+	if cfg.SuiteConsistency.ReceiverName != checkers.DefaultSuiteConsistencyReceiverName {
+		t.Fatal()
+	}
+	if cfg.SuiteConsistency.TestNamePattern.String() != checkers.DefaultSuiteConsistencyTestNamePattern.String() {
+		t.Fatal()
+	}
 	if cfg.TimeCompare.SuppressCallsPattern.String() !=
 		checkers.DefaultTimeCompareSuppressCallsPattern.String() {
 		t.Fatal()
@@ -100,6 +106,15 @@ func TestConfig_Validate(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "valid suite consistency receiver name",
+			cfg: config.Config{
+				SuiteConsistency: config.SuiteConsistencyConfig{
+					ReceiverName: "suite",
+				},
+			},
+			wantErr: false,
+		},
 
 		// Negative.
 		{
@@ -141,6 +156,15 @@ func TestConfig_Validate(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			name: "invalid suite consistency receiver name",
+			cfg: config.Config{
+				SuiteConsistency: config.SuiteConsistencyConfig{
+					ReceiverName: "_",
+				},
+			},
+			wantErr: true,
+		},
 	}
 
 	for _, tt := range cases {
@@ -171,6 +195,8 @@ func TestBindToFlags(t *testing.T) {
 		"formatter.require-string-msg":        "true",
 		"go-require.ignore-http-handlers":     "false",
 		"require-error.fn-pattern":            cfg.RequireError.FnPattern.String(),
+		"suite-consistency.receiver-name":     cfg.SuiteConsistency.ReceiverName,
+		"suite-consistency.test-name-pattern": cfg.SuiteConsistency.TestNamePattern.String(),
 		"suite-extra-assert-call.mode":        "remove",
 		"time-compare.suppress-calls-pattern": cfg.TimeCompare.SuppressCallsPattern.String(),
 	} {

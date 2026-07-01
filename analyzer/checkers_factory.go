@@ -69,6 +69,10 @@ func newCheckers(cfg config.Config) ([]checkers.RegularChecker, []checkers.Advan
 		case *checkers.SuiteExtraAssertCall:
 			c.SetMode(cfg.SuiteExtraAssertCall.Mode)
 
+		case *checkers.SuiteConsistency:
+			c.SetReceiverName(cfg.SuiteConsistency.ReceiverName)
+			c.SetTestNamePattern(cfg.SuiteConsistency.TestNamePattern.Regexp)
+
 		case *checkers.TimeCompare:
 			c.SetSuppressCallsPattern(cfg.TimeCompare.SuppressCallsPattern.Regexp)
 		}

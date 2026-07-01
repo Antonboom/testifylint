@@ -136,6 +136,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [http-const](#http-const)
 - [http-sugar](#http-sugar)
 - [require-len](#require-len)
+- [suite-empty-subtest-name](#suite-empty-subtest-name)
 - [zero](#zero)
 
 ---
@@ -325,6 +326,30 @@ then before that there must be a length constraint through `require`.
 **Reason**: Similar to [require-error](README.md#require-error). Save you from annoying panics.
 
 Or maybe do something similar for maps? And come up with better name for the checker.
+
+---
+
+### suite-empty-subtest-name
+
+```go
+❌
+func (s *MySuite) TestSomething() {
+    s.Run("", func() {
+        s.Equal(42, result)
+    })
+}
+
+✅
+func (s *MySuite) TestSomething() {
+    s.Run("descriptive name", func() {
+        s.Equal(42, result)
+    })
+}
+```
+
+**Autofix**: false. <br>
+**Enabled by default**: false. <br>
+**Reason**: Empty subtest names produce uninformative test output.
 
 ---
 

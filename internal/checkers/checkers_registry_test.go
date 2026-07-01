@@ -60,10 +60,10 @@ func TestAll(t *testing.T) {
 		"mock-expect",
 		"require-error",
 		"suite-broken-parallel",
+		"suite-consistency",
 		"suite-method-signature",
 		"suite-subtest-run",
 		"suite-thelper",
-		"suite-test-name",
 	}
 	if !slices.Equal(expected, checkerList) {
 		t.Fatalf("unexpected list: %#v", checkerList)

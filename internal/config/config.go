@@ -35,6 +35,10 @@ func NewDefault() Config {
 		SuiteExtraAssertCall: SuiteExtraAssertCallConfig{
 			Mode: checkers.DefaultSuiteExtraAssertCallMode,
 		},
+		SuiteConsistency: SuiteConsistencyConfig{
+			ReceiverName:    checkers.DefaultSuiteConsistencyReceiverName,
+			TestNamePattern: RegexpValue{Regexp: checkers.DefaultSuiteConsistencyTestNamePattern},
+		},
 		TimeCompare: TimeCompareConfig{
 			SuppressCallsPattern: RegexpValue{checkers.DefaultTimeCompareSuppressCallsPattern},
 		},
@@ -54,6 +58,7 @@ type Config struct {
 	GoRequire            GoRequireConfig
 	RequireError         RequireErrorConfig
 	SuiteExtraAssertCall SuiteExtraAssertCallConfig
+	SuiteConsistency     SuiteConsistencyConfig
 	TimeCompare          TimeCompareConfig
 }
 
@@ -89,6 +94,12 @@ type SuiteExtraAssertCallConfig struct {
 	Mode checkers.SuiteExtraAssertCallMode
 }
 
+// SuiteConsistencyConfig implements configuration of checkers.SuiteConsistency.
+type SuiteConsistencyConfig struct {
+	ReceiverName    string
+	TestNamePattern RegexpValue
+}
+
 // TimeCompareConfig implements configuration of checkers.TimeCompare.
 type TimeCompareConfig struct {
 	SuppressCallsPattern RegexpValue
@@ -119,6 +130,11 @@ func (cfg Config) Validate() error {
 		if cfg.EnabledCheckers.Contains(checker) {
 			return fmt.Errorf("checker %q disabled and enabled at one moment", checker)
 		}
+	}
+
+	if cfg.SuiteConsistency.ReceiverName != "" &&
+		!checkers.IsValidSuiteConsistencyReceiverName(cfg.SuiteConsistency.ReceiverName) {
+		return errors.New("suite-consistency.receiver-name must be valid non-blank identifier")
 	}
 
 	return nil
@@ -160,6 +176,13 @@ func BindToFlags(cfg *Config, fs *flag.FlagSet) {
 	fs.Var(NewEnumValue(suiteExtraAssertCallModeAsString, &cfg.SuiteExtraAssertCall.Mode),
 		"suite-extra-assert-call.mode",
 		"to require or remove extra Assert() call")
+
+	fs.StringVar(&cfg.SuiteConsistency.ReceiverName,
+		"suite-consistency.receiver-name", checkers.DefaultSuiteConsistencyReceiverName,
+		"expected suite receiver name")
+	fs.Var(&cfg.SuiteConsistency.TestNamePattern,
+		"suite-consistency.test-name-pattern",
+		"regexp for suite test method names")
 
 	fs.Var(&cfg.TimeCompare.SuppressCallsPattern,
 		"time-compare.suppress-calls-pattern",
