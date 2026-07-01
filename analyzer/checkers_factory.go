@@ -63,6 +63,9 @@ func newCheckers(cfg config.Config) ([]checkers.RegularChecker, []checkers.Advan
 		case *checkers.GoRequire:
 			c.SetIgnoreHTTPHandlers(cfg.GoRequire.IgnoreHTTPHandlers)
 
+		case *checkers.ManualAssert:
+			c.SetDropMessage(cfg.ManualAssert.DropMessage)
+
 		case *checkers.RequireError:
 			c.SetFnPattern(cfg.RequireError.FnPattern.Regexp)
 

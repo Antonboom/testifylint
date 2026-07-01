@@ -103,6 +103,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [formatter](#formatter)                             | ✅                  | 🤏      |
 | [go-require](#go-require)                           | ✅                  | ❌       |
 | [len](#len)                                         | ✅                  | ✅       |
+| [manual-assert](#manual-assert)                     | ❌                  | ✅       |
 | [mock-expect](#mock-expect)                         | ✅                  | 🤏      |
 | [negative-positive](#negative-positive)             | ✅                  | ✅       |
 | [nil-compare](#nil-compare)                         | ✅                  | ✅       |
@@ -877,6 +878,57 @@ assert.Len(t, arr, len(expArr))
 > ```go
 > assert.Equal(t, len(arr), value)
 > ```
+
+---
+
+### manual-assert
+
+`manual-assert` rewrites hand-rolled `if cond { t.Fatal/Error(...) }` patterns into the equivalent
+`testify` assertion.
+
+```go
+❌
+if err != nil {
+    t.Fatalf("ValidateToken() error = %v", err)
+}
+if token == "" {
+    t.Fatal("GenerateToken() returned empty token")
+}
+if claims.VisitorID != "visitor-123" {
+    t.Errorf("ValidateToken() VisitorID = %v, want %v", claims.VisitorID, "visitor-123")
+}
+
+✅
+require.NoError(t, err, "ValidateToken() error = %v", err)
+require.NotEmpty(t, token, "GenerateToken() returned empty token")
+assert.Equal(t, "visitor-123", claims.VisitorID, "ValidateToken() VisitorID = %v, want %v", claims.VisitorID, "visitor-123")
+```
+
+`t.Fatal*` is rewritten to `require.*` (test stops on failure); `t.Error*` is rewritten to `assert.*`
+(test continues). The original failure message is forwarded as `msgAndArgs` by default; pass
+`-manual-assert.drop-message=true` to drop it instead.
+
+Patterns covered:
+
+| Hand-rolled condition                  | Suggested fix         |
+|----------------------------------------|-----------------------|
+| `err != nil` / `err == nil`            | `NoError` / `Error`   |
+| `s == ""` / `s != ""`                  | `NotEmpty` / `Empty`  |
+| `x == nil` / `x != nil` (non-error)    | `NotNil` / `Nil`      |
+| `cond` / `!cond` (bool)                | `False` / `True`      |
+| `a != b` / `a == b`                    | `Equal` / `NotEqual`  |
+| `len(x) == 0` / `len(x) != 0`          | `NotEmpty` / `Empty`  |
+| `len(x) != N`                          | `Len`                 |
+| `!errors.Is(...)` / `errors.Is(...)`   | `ErrorIs` / `NotErrorIs` |
+| `!strings.Contains(...)` / `strings.Contains(...)` | `Contains` / `NotContains` |
+
+**Autofix**: true. <br>
+**Enabled by default**: false. <br>
+**Reason**: Code simplification — testify assertions self-describe and produce richer failure messages than ad-hoc `t.Fatal/Errorf` calls.
+
+> [!NOTE]
+> The checker ignores `if` statements with an `else` branch, multi-statement bodies, and `if x := f(); cond { ... }`
+> forms with an init clause (the autofix would have to lift the init out of the header).
 
 ---
 
