@@ -191,6 +191,10 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 			},
 		},
 		{
+			dir:   "require-len",
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewRequireLen().Name()},
+		},
+		{
 			dir:   "suite-extra-assert-call-issue176",
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewSuiteExtraAssertCall().Name()},
 		},

@@ -108,6 +108,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [nil-compare](#nil-compare)                         | ✅                  | ✅       |
 | [regexp](#regexp)                                   | ✅                  | ✅       |
 | [require-error](#require-error)                     | ✅                  | ❌       |
+| [require-len](#require-len)                         | ✅                  | ✅       |
 | [suite-broken-parallel](#suite-broken-parallel)     | ✅                  | ✅       |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
 | [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
@@ -1039,6 +1040,43 @@ Also, to minimize false positives, `require-error` ignores:
   callbacks, such as `go callback()` or `wg.Go(callback)`, are not supported;
 - assertions in an explicit testing cleanup function or suite teardown methods;
 - sequence of `NoError` assertions.
+
+---
+
+### require-len
+
+```go
+❌
+assert.Len(t, arr, 2)
+assert.Positive(t, arr[1])
+
+❌
+assert.Positive(t, arr[1])
+
+✅
+require.GreaterOrEqual(t, len(arr), 2)
+assert.Positive(t, arr[1])
+
+✅
+require.Contains(t, want, 1)
+require.Contains(t, res, 1)
+assert.Equal(t, want[1], res[1])
+```
+
+**Autofix**: true (for direct indexed access assertions without existing guards). <br>
+**Enabled by default**: true. <br>
+**Reason**: fail-fast guards prevent panic-prone indexed access in tests.
+
+`require-len` checks both:
+
+- `assert.Len*` used as an index guard before indexed access (prefer `require.Len*`);
+- direct indexed assertions without a prior guard in the same block (inserts guard autofix).
+
+For direct indexed assertions, autofix inserts:
+
+- `require.GreaterOrEqual(t, len(collection), maxIndex+1)` based on the greatest literal index used;
+- `require.NotEmpty(t, collection)` when the greatest used index is `0`.
+- for map accesses with known key expressions: `require.Contains(t, collection, key)` per accessed key.
 
 ---
 
