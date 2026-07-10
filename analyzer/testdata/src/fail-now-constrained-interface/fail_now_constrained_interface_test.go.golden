@@ -1,0 +1,78 @@
+package failnowconstrainedinterface
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+type assertOnlyTestingT interface {
+	Errorf(format string, args ...interface{})
+}
+
+type requireOnlyTestingT interface {
+	Errorf(format string, args ...interface{})
+	FailNow()
+}
+
+type assertWrongReplacementSignaturesT interface {
+	Errorf(format string, args ...interface{})
+	Error(args ...interface{}) int
+	Fatal(args ...interface{}) int
+	Fatalf(format string, args ...interface{}) int
+}
+
+type assertPointerOnlyReplacementsT struct{}
+
+func (assertPointerOnlyReplacementsT) Errorf(format string, args ...interface{}) {}
+func (*assertPointerOnlyReplacementsT) Error(args ...interface{})                 {}
+func (*assertPointerOnlyReplacementsT) Fatal(args ...interface{})                 {}
+func (*assertPointerOnlyReplacementsT) Fatalf(format string, args ...interface{}) {}
+
+func newAssertPointerOnlyReplacementsT() assertPointerOnlyReplacementsT {
+	return assertPointerOnlyReplacementsT{}
+}
+
+func TestFailNowConstrainedInterface(t *testing.T) {
+	var (
+		assertT            assertOnlyTestingT
+		requireT           requireOnlyTestingT
+		assertWrongMethods assertWrongReplacementSignaturesT
+	)
+
+	// Invalid (full *testing.T supports replacements).
+	{
+		t.Error("failure")        // want "fail-now: use t\\.Error or t\\.Errorf instead"
+		t.Fatal("failure")        // want "fail-now: use t\\.Fatal or t\\.Fatalf instead"
+		t.Errorf("fmt %s", "arg") // want "fail-now: use t\\.Error or t\\.Errorf instead"
+		t.Fatalf("fmt %s", "arg") // want "fail-now: use t\\.Fatal or t\\.Fatalf instead"
+	}
+
+	// Valid (ignored): constrained interfaces can miss Error/Fatal methods.
+	{
+		assert.Fail(assertT, "failure")
+		assert.Failf(assertT, "failure", "fmt %s", "arg")
+		assert.FailNow(assertT, "failure")
+		assert.FailNowf(assertT, "failure", "fmt %s", "arg")
+
+		require.Fail(requireT, "failure")
+		require.Failf(requireT, "failure", "fmt %s", "arg")
+		require.FailNow(requireT, "failure")
+		require.FailNowf(requireT, "failure", "fmt %s", "arg")
+	}
+
+	// Valid (ignored): replacement method names can exist with incompatible signatures.
+	{
+		assert.Fail(assertWrongMethods, "failure")
+		assert.Failf(assertWrongMethods, "failure", "fmt %s", "arg")
+		assert.FailNow(assertWrongMethods, "failure")
+		assert.FailNowf(assertWrongMethods, "failure", "fmt %s", "arg")
+	}
+
+	// Valid (ignored): non-addressable values must not rely on pointer-only replacement methods.
+	{
+		assert.Fail(newAssertPointerOnlyReplacementsT(), "failure")
+		assert.FailNow(newAssertPointerOnlyReplacementsT(), "failure")
+	}
+}
