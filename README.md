@@ -107,6 +107,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [negative-positive](#negative-positive)             | ✅                  | ✅       |
 | [nil-compare](#nil-compare)                         | ✅                  | ✅       |
 | [regexp](#regexp)                                   | ✅                  | ✅       |
+| [redundant-error-assertion](#redundant-error-assertion) | ✅                  | ✅       |
 | [require-error](#require-error)                     | ✅                  | ❌       |
 | [suite-broken-parallel](#suite-broken-parallel)     | ✅                  | ✅       |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
@@ -989,6 +990,35 @@ assert.NotRegexp(t, regexp.MustCompile(`\[.*\] TRACE message`), out)
 ✅
 assert.Regexp(t, `\[.*\] DEBUG \(.*TestNew.*\): message`, out)
 assert.NotRegexp(t, `\[.*\] TRACE message`, out)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: Code simplification.
+
+---
+
+### redundant-error-assertion
+
+```go
+❌
+assert.Error(t, err)
+assert.ErrorContains(t, err, "not found")
+
+assert.Error(t, err)
+assert.ErrorIs(t, err, io.EOF)
+
+assert.Error(t, err)
+assert.ErrorAs(t, err, &target)
+
+assert.Error(t, err)
+assert.EqualError(t, err, "end of file")
+
+✅
+assert.ErrorContains(t, err, "not found")
+assert.ErrorIs(t, err, io.EOF)
+assert.ErrorAs(t, err, &target)
+assert.EqualError(t, err, "end of file")
 ```
 
 **Autofix**: true. <br>
