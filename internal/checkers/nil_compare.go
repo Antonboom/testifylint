@@ -30,7 +30,7 @@ func (checker NilCompare) Check(pass *analysis.Pass, call *CallMeta) *analysis.D
 		return nil
 	}
 
-	survivingArg, ok := xorNil(call.Args[0], call.Args[1])
+	survivingArg, ok := xorNil(pass, call.Args[0], call.Args[1])
 	if !ok {
 		return nil
 	}

@@ -293,6 +293,11 @@ func (g ExpectedActualTestsGenerator) TemplateData() any {
 			{Fn: "Equal", Argsf: "len(interfaces), len(directions)"},
 			{Fn: "Equal", Argsf: "value, &resultPtr"},
 			{Fn: "Equal", Argsf: "[]int{1, 2}, map[int]int{1: 2}"},
+			// Typed nil in comparison functions is handled by nil-compare checker, not expected-actual.
+			{Fn: "Equal", Argsf: "result, (*int)(nil)"},
+			{Fn: "Equal", Argsf: "(*int)(nil), result"},
+			{Fn: "EqualValues", Argsf: "result, (*int)(nil)"},
+			{Fn: "EqualValues", Argsf: "(*int)(nil), result"},
 			{Fn: "NotEqual", Argsf: "result, result"},
 			{Fn: "NotEqual", Argsf: "value, &resultPtr"},
 			{Fn: "EqualExportedValues", Argsf: `user{Name: "Rob"}, struct {Name string}{Name: "Rob"}`},
