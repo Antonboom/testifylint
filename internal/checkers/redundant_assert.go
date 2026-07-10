@@ -13,15 +13,15 @@ import (
 	"github.com/Antonboom/testifylint/internal/analysisutil"
 )
 
-// RedundantAssert detects redundant assert.Error calls when a stronger error assertion
+// RedundantErrorAssertion detects redundant error assertions when a stronger error assertion
 // on the same error value is present in the same block.
-type RedundantAssert struct{}
+type RedundantErrorAssertion struct{}
 
-// NewRedundantAssert constructs RedundantAssert checker.
-func NewRedundantAssert() RedundantAssert { return RedundantAssert{} }
-func (RedundantAssert) Name() string      { return "redundant-assert" }
+// NewRedundantErrorAssertion constructs RedundantErrorAssertion checker.
+func NewRedundantErrorAssertion() RedundantErrorAssertion { return RedundantErrorAssertion{} }
+func (RedundantErrorAssertion) Name() string              { return "redundant-error-assertion" }
 
-func (checker RedundantAssert) Check(pass *analysis.Pass, insp *inspector.Inspector) []analysis.Diagnostic {
+func (checker RedundantErrorAssertion) Check(pass *analysis.Pass, insp *inspector.Inspector) []analysis.Diagnostic {
 	callsByBlock := make(map[*ast.BlockStmt][]redundantAssertCallMeta)
 
 	insp.WithStack([]ast.Node{(*ast.CallExpr)(nil)}, func(node ast.Node, push bool, stack []ast.Node) bool {
@@ -58,7 +58,7 @@ func (checker RedundantAssert) Check(pass *analysis.Pass, insp *inspector.Inspec
 
 	for block, calls := range callsByBlock {
 		for currIdx, curr := range calls {
-			if !curr.testifyCall.IsAssert || curr.testifyCall.Fn.NameFTrimmed != "Error" {
+			if curr.testifyCall.Fn.NameFTrimmed != "Error" {
 				continue
 			}
 			if len(curr.testifyCall.Args) < 1 {
@@ -107,12 +107,13 @@ func (checker RedundantAssert) Check(pass *analysis.Pass, insp *inspector.Inspec
 			}
 
 			if closestStrongerFn != "" {
+				removedCall := curr.testifyCall.String()
 				diagnostics = append(diagnostics, *newDiagnostic(
 					checker.Name(),
 					curr.testifyCall,
-					fmt.Sprintf("remove assert.%s: %s already asserts that the error is not nil", curr.testifyCall.Fn.Name, closestStrongerFn),
+					fmt.Sprintf("remove %s: %s already asserts that the error is not nil", removedCall, closestStrongerFn),
 					analysis.SuggestedFix{
-						Message: "Remove redundant assert.Error assertion",
+						Message: "Remove redundant error assertion",
 						TextEdits: []analysis.TextEdit{{
 							Pos:     curr.parentStmt.Pos(),
 							End:     toStmtLineEnd(pass, curr.parentStmt.End()),

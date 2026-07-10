@@ -107,7 +107,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [negative-positive](#negative-positive)             | ✅                  | ✅       |
 | [nil-compare](#nil-compare)                         | ✅                  | ✅       |
 | [regexp](#regexp)                                   | ✅                  | ✅       |
-| [redundant-assert](#redundant-assert)               | ✅                  | ✅       |
+| [redundant-error-assertion](#redundant-error-assertion) | ✅                  | ✅       |
 | [require-error](#require-error)                     | ✅                  | ❌       |
 | [suite-broken-parallel](#suite-broken-parallel)     | ✅                  | ✅       |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
@@ -998,7 +998,7 @@ assert.NotRegexp(t, `\[.*\] TRACE message`, out)
 
 ---
 
-### redundant-assert
+### redundant-error-assertion
 
 ```go
 ❌

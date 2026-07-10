@@ -1,4 +1,4 @@
-package redundantassert
+package redundanterrorassertion
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRedundantAssert(t *testing.T) {
+func TestRedundantErrorAssertion(t *testing.T) {
 	t.Parallel()
 
 	var (
@@ -19,20 +19,50 @@ func TestRedundantAssert(t *testing.T) {
 		target *os.PathError
 	)
 
-	assObj := assert.New(t)
+	assObj, reqObj := assert.New(t), require.New(t)
 
 	// Invalid.
 	{
-		assert.Error(t, errA) // want "redundant-assert: remove assert\\.Error: assert\\.ErrorContains already asserts that the error is not nil"
 		assert.ErrorContains(t, errA, "err")
+	}
 
+	{
+		assert.ErrorContains(t, errA, "err")
+	}
+
+	{
+		require.ErrorContains(t, errA, "err")
+	}
+
+	{
+		require.ErrorContains(t, errA, "err")
+	}
+
+	{
 		assert.EqualError(t, errA, "err A")
-		assert.Error(t, errA) // want "redundant-assert: remove assert\\.Error: assert\\.EqualError already asserts that the error is not nil"
+	}
 
-		assObj.Error(errA) // want "redundant-assert: remove assert\\.Error: assObj\\.ErrorAs already asserts that the error is not nil"
+	{
+		require.EqualError(t, errA, "err A")
+	}
+
+	{
 		assObj.ErrorAs(errA, &target)
+	}
 
-		assert.Errorf(t, errA, "msg") // want "redundant-assert: remove assert\\.Errorf: assObj\\.ErrorAs already asserts that the error is not nil"
+	{
+		reqObj.ErrorAs(errA, &target)
+	}
+
+	{
+		reqObj.ErrorAs(errA, &target)
+	}
+
+	{
+		reqObj.ErrorAs(errA, &target)
+	}
+
+	{
 		require.ErrorIs(t, errA, io.EOF)
 	}
 
@@ -40,6 +70,11 @@ func TestRedundantAssert(t *testing.T) {
 	{
 		{
 			assert.Error(t, errA)
+			assert.ErrorContains(t, errB, "err")
+		}
+
+		{
+			require.Error(t, errA)
 			assert.ErrorContains(t, errB, "err")
 		}
 
@@ -65,8 +100,5 @@ func TestRedundantAssert(t *testing.T) {
 			errA = io.EOF
 			assert.ErrorContains(t, errA, "EOF")
 		}
-
-		require.Error(t, errA)
-		require.ErrorContains(t, errA, "err")
 	}
 }
