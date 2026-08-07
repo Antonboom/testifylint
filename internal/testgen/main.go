@@ -51,6 +51,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	SuiteTHelperTestsGenerator{},
 	TimeCompareTestsGenerator{},
 	UselessAssertTestsGenerator{},
+	GracefulTeardownTestsGenerator{},
 	ZeroTestsGenerator{},
 }
 

@@ -60,7 +60,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewFormatter(),
 	}
 
-	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{
+	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{ //nolint:prealloc // Pointless here
 		checkers.NewBlankImport(),
 		checkers.NewGoRequire(),
 		checkers.NewMockExpect(),
@@ -78,6 +78,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewSuiteMethodSignature(),
 		checkers.NewSuiteSubtestRun(),
 		checkers.NewSuiteTHelper(),
+		checkers.NewGracefulTeardown(),
 	}
 
 	formatterWithoutEnabledOptions := checkers.RegularChecker(checkers.NewFormatter().
@@ -145,7 +146,7 @@ func Test_newCheckers(t *testing.T) {
 				},
 			},
 			expRegular:  replace(enabledByDefaultRegularCheckers, formatterWithoutEnabledOptions),
-			expAdvanced: allAdvancedCheckers,
+			expAdvanced: append(enabledByDefaultAdvancedCheckers, checkers.NewSuiteTHelper()),
 		},
 		{
 			name: "disable three checkers from enabled by default checkers",

@@ -36,6 +36,7 @@ var registry = checkersRegistry{
 	{factory: asCheckerFactory(NewSuiteMethodSignature), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteSubtestRun), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteTHelper), enabledByDefault: false},
+	{factory: asCheckerFactory(NewGracefulTeardown), enabledByDefault: false},
 }
 
 type checkersRegistry []checkerMeta

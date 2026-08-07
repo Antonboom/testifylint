@@ -202,6 +202,10 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 				"suite-extra-assert-call.mode": "require",
 			},
 		},
+		{
+			dir:   "graceful-teardown-no-import",
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewGracefulTeardown().Name()},
+		},
 	}
 
 	for _, tt := range cases {
