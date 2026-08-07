@@ -102,6 +102,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [float-compare](#float-compare)                     | ✅                  | ❌       |
 | [formatter](#formatter)                             | ✅                  | 🤏      |
 | [go-require](#go-require)                           | ✅                  | ❌       |
+| [http-multiple](#http-multiple)                     | ✅                  | ✅       |
 | [len](#len)                                         | ✅                  | ✅       |
 | [mock-expect](#mock-expect)                         | ✅                  | 🤏      |
 | [negative-positive](#negative-positive)             | ✅                  | ✅       |
@@ -836,6 +837,30 @@ tests. You can turn off the check using the `--go-require.ignore-http-handlers` 
 Indirect callbacks, such as `go callback()` or `wg.Go(callback)`, are not supported.
 
 P.S. Look at [testify's issue](https://github.com/stretchr/testify/issues/772), related to assertions in the goroutines.
+
+---
+
+### http-multiple
+
+```go
+❌
+assert.HTTPStatusCode(t, handler, "GET", "/path", nil, http.StatusOK)
+assert.HTTPBodyContains(t, handler, "GET", "/path", nil, "hello")
+
+✅
+r := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/path", nil)
+w := httptest.NewRecorder()
+handler(w, r)
+assert.Equal(t, http.StatusOK, w.Code)
+assert.Contains(t, w.Body.String(), "hello")
+```
+
+**Autofix**: true. The checker replaces each group of HTTP assertions with a scoped `httptest` block. <br>
+**Enabled by default**: true. <br>
+**Reason**: Each HTTP assertion function makes a separate HTTP call to the handler. Using multiple HTTP
+assertions with the same handler and arguments means a stateful handler could satisfy the tests
+independently but not in a single call. Use `httptest.NewRecorder()` to make a single HTTP call and
+assert multiple properties of the response.
 
 ---
 
