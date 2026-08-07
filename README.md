@@ -105,9 +105,10 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [len](#len)                                         | ✅                  | ✅       |
 | [mock-expect](#mock-expect)                         | ✅                  | 🤏      |
 | [negative-positive](#negative-positive)             | ✅                  | ✅       |
+| [negated-assert](#negated-assert)                   | ✅                  | ✅       |
 | [nil-compare](#nil-compare)                         | ✅                  | ✅       |
 | [regexp](#regexp)                                   | ✅                  | ✅       |
-| [require-error](#require-error)                     | ✅                  | ❌       |
+| [require-error](#require-error)                     | ✅                  | 🤏      |
 | [suite-broken-parallel](#suite-broken-parallel)     | ✅                  | ✅       |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
 | [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
@@ -1009,14 +1010,27 @@ assert.ErrorContains(t, err, "end of file")
 assert.NoError(t, err)
 assert.NotErrorIs(t, err, io.EOF)
 
+// Also detected and fixed (with autofix):
+if !assert.NoError(t, err) {
+    return
+}
+if !assert.NoError(t, err1) || !assert.NoError(t, err2) {
+    return
+}
+
 ✅
 require.Error(t, err) // s.Require().Error(err), s.Require().Error(err)
 require.ErrorIs(t, err, io.EOF)
 require.ErrorAs(t, err, &target)
 // And so on...
+
+// Fixed forms:
+require.NoError(t, err)
+require.NoError(t, err1)
+require.NoError(t, err2)
 ```
 
-**Autofix**: false. <br>
+**Autofix**: partially (for `if !assert.ErrorXxx { return/continue }` patterns). <br>
 **Enabled by default**: true. <br>
 **Reason**: Such "ignoring" of errors leads to further panics, making the test harder to debug.
 
@@ -1031,7 +1045,7 @@ and `NoErrorf`.
 
 Also, to minimize false positives, `require-error` ignores:
 
-- assertions in the `if` condition;
+- non-negated assertions in the `if` condition;
 - assertions in the bool expression;
 - the entire `if-else[-if]` block, if there is an assertion in any `if` condition;
 - the last assertion in the block, if there are no methods/functions calls after it;
@@ -1039,6 +1053,44 @@ Also, to minimize false positives, `require-error` ignores:
   callbacks, such as `go callback()` or `wg.Go(callback)`, are not supported;
 - assertions in an explicit testing cleanup function or suite teardown methods;
 - sequence of `NoError` assertions.
+
+For the same `if !assert.Xxx { return }` pattern applied to **non-error** assertions, see [negated-assert](#negated-assert).
+
+---
+
+### negated-assert
+
+```go
+❌
+if !assert.NoError(t, err) {
+    return
+}
+if !assert.Equal(t, expected, actual) {
+    return
+}
+if !assert.NoError(t, err) || !assert.Equal(t, expected, actual) {
+    return
+}
+
+✅
+require.NoError(t, err)
+require.Equal(t, expected, actual)
+require.NoError(t, err)
+require.Equal(t, expected, actual)
+```
+
+**Autofix**: true. <br>
+**Enabled by default**: true. <br>
+**Reason**: The `if !assert.Xxx { return }` pattern is semantically equivalent to `require.Xxx` and is more
+idiomatic. This applies to **any** assertion, not only error ones.
+
+The checker skips:
+
+- patterns where the if body is not a single `return` or `continue` statement;
+- patterns with an `else` clause;
+- `else if` branches (would leave a dangling `else`);
+- patterns in goroutines, HTTP handlers, and test cleanup functions;
+- conditions using `&&` (different short-circuit semantics).
 
 ---
 
