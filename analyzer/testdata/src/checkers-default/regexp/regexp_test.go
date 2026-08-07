@@ -9,15 +9,74 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type myDefinedString string
+
+type myStrAlias = string
+
+type myRegexpStructAlias = regexp.Regexp
+
+type testStringer struct{}
+
+func (testStringer) String() string { return "42" }
+
+// myRxAlias is a type alias for *regexp.Regexp used to verify that alias types are accepted.
+type myRxAlias = *regexp.Regexp
+
+// assertRegexpGeneric demonstrates that a type parameter is accepted conservatively.
+// This differs from aliases such as myStrAlias or myRxAlias, which are handled separately.
+func assertRegexpGeneric[T ~string](t *testing.T, rx T, str string) {
+	assert.Regexp(t, rx, str)
+	assert.NotRegexp(t, rx, str)
+}
+
 func TestRegexpChecker(t *testing.T) {
 	var out string
+	compiledRegexp := regexp.MustCompile(`\w+`)
+	var rxRegexpStructAlias *myRegexpStructAlias = regexp.MustCompile(`\w+`)
+	var rxAlias myRxAlias = regexp.MustCompile(`\w+`)
 
-	// Invalid.
+	// Invalid: regexp.MustCompile usage.
 	{
 		assert.Regexp(t, regexp.MustCompile(`\[.*\] DEBUG \(.*TestNew.*\): message`), out)                                   // want "regexp: remove unnecessary regexp\\.MustCompile"
 		assert.Regexpf(t, regexp.MustCompile(`\[.*\] DEBUG \(.*TestNew.*\): message`), out, "msg with args %d %s", 42, "42") // want "regexp: remove unnecessary regexp\\.MustCompile"
 		assert.NotRegexp(t, regexp.MustCompile(`\[.*\] TRACE message`), out)                                                 // want "regexp: remove unnecessary regexp\\.MustCompile"
 		assert.NotRegexpf(t, regexp.MustCompile(`\[.*\] TRACE message`), out, "msg with args %d %s", 42, "42")               // want "regexp: remove unnecessary regexp\\.MustCompile"
+	}
+
+	// Invalid: non-string, non-*regexp.Regexp first argument.
+	{
+		assert.Regexp(t, []byte(`\w+`), out)                                               // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexpf(t, []byte(`\w+`), out, "msg with args %d %s", 42, "42")             // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexp(t, []byte(`\w+`), out)                                            // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexpf(t, []byte(`\w+`), out, "msg with args %d %s", 42, "42")          // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexp(t, myDefinedString(`\w+`), out)                                      // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexpf(t, myDefinedString(`\w+`), out, "msg with args %d %s", 42, "42")    // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexp(t, myDefinedString(`\w+`), out)                                   // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexpf(t, myDefinedString(`\w+`), out, "msg with args %d %s", 42, "42") // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexp(t, rxRegexpStructAlias, out)                                         // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexpf(t, rxRegexpStructAlias, out, "msg with args %d %s", 42, "42")       // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexp(t, rxRegexpStructAlias, out)                                      // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexpf(t, rxRegexpStructAlias, out, "msg with args %d %s", 42, "42")    // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexp(t, 42, out)                                                          // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexpf(t, 42, out, "msg with args %d %s", 42, "42")                        // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexp(t, 42, out)                                                       // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexpf(t, 42, out, "msg with args %d %s", 42, "42")                     // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexp(t, int8(42), out)                                                    // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexpf(t, int8(42), out, "msg with args %d %s", 42, "42")                  // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexp(t, int8(42), out)                                                 // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexpf(t, int8(42), out, "msg with args %d %s", 42, "42")               // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexp(t, uint8(42), out)                                                   // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexpf(t, uint8(42), out, "msg with args %d %s", 42, "42")                 // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexp(t, uint8(42), out)                                                // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexpf(t, uint8(42), out, "msg with args %d %s", 42, "42")              // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexp(t, 42.0, out)                                                        // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexpf(t, 42.0, out, "msg with args %d %s", 42, "42")                      // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexp(t, 42.0, out)                                                     // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexpf(t, 42.0, out, "msg with args %d %s", 42, "42")                   // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexp(t, testStringer{}, out)                                              // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.Regexpf(t, testStringer{}, out, "msg with args %d %s", 42, "42")            // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexp(t, testStringer{}, out)                                           // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
+		assert.NotRegexpf(t, testStringer{}, out, "msg with args %d %s", 42, "42")         // want "regexp: use string or \\*regexp\\.Regexp as the first argument"
 	}
 
 	// Valid.
@@ -26,5 +85,17 @@ func TestRegexpChecker(t *testing.T) {
 		assert.Regexpf(t, `\[.*\] DEBUG \(.*TestNew.*\): message`, out, "msg with args %d %s", 42, "42")
 		assert.NotRegexp(t, `\[.*\] TRACE message`, out)
 		assert.NotRegexpf(t, `\[.*\] TRACE message`, out, "msg with args %d %s", 42, "42")
+		assert.Regexp(t, myStrAlias(`\w+`), out)
+		assert.Regexpf(t, myStrAlias(`\w+`), out, "msg with args %d %s", 42, "42")
+		assert.NotRegexp(t, myStrAlias(`\w+`), out)
+		assert.NotRegexpf(t, myStrAlias(`\w+`), out, "msg with args %d %s", 42, "42")
+		assert.Regexp(t, compiledRegexp, out)
+		assert.Regexpf(t, compiledRegexp, out, "msg with args %d %s", 42, "42")
+		assert.NotRegexp(t, compiledRegexp, out)
+		assert.NotRegexpf(t, compiledRegexp, out, "msg with args %d %s", 42, "42")
+		assert.Regexp(t, rxAlias, out)
+		assert.Regexpf(t, rxAlias, out, "msg with args %d %s", 42, "42")
+		assert.NotRegexp(t, rxAlias, out)
+		assert.NotRegexpf(t, rxAlias, out, "msg with args %d %s", 42, "42")
 	}
 }
