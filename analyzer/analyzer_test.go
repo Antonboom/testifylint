@@ -202,6 +202,14 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 				"suite-extra-assert-call.mode": "require",
 			},
 		},
+		{
+			dir:   "http-method-no-import",
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewHTTPMethod().Name()},
+		},
+		{
+			dir:   "http-status-code-no-import",
+			flags: map[string]string{"disable-all": "true", "enable": checkers.NewHTTPStatusCode().Name()},
+		},
 	}
 
 	for _, tt := range cases {

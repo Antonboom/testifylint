@@ -133,7 +133,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [go-require](#go-require)
 - [graceful-teardown](#graceful-teardown)
 - [float-compare](#float-compare)
-- [http-const](#http-const)
 - [http-sugar](#http-sugar)
 - [require-len](#require-len)
 - [suite-test-name](#suite-test-name)
@@ -264,24 +263,6 @@ And similar idea for `assert.InEpsilonSlice` / `assert.InDeltaSlice`.
 **Autofix**: false. <br>
 **Enabled by default**: true. <br>
 **Reason**: Work with floating properly.
-
----
-
-### http-const
-
-```go
-❌   assert.HTTPStatusCode(t, handler, "GET", "/index", nil, 200)
-     assert.HTTPBodyContains(t, handler, "GET", "/index", nil, "counter")
-     // etc.
-
-✅   assert.HTTPStatusCode(t, handler, http.MethodGet, "/index", nil, http.StatusOK)
-     assert.HTTPBodyContains(t, handler, http.MethodGet, "/index", nil, "counter")
-```
-
-**Autofix**: true. <br>
-**Enabled by default**: true. <br>
-**Reason**: Is similar to the [usestdlibvars](https://golangci-lint.run/usage/linters/#usestdlibvars) linter. <br>
-**Related issues**: [#141](https://github.com/Antonboom/testifylint/issues/141)
 
 ---
 
