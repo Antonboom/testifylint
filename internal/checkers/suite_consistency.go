@@ -21,6 +21,14 @@ const (
 )
 
 var (
+	// DefaultSuiteConsistencyTestNamePattern matches suite test method names in the form
+	// Test<Name> or Test<Name>_<Variant>[_<Variant>...], where each term uses UpperCamelCase
+	// and may contain digits after the first letter.
+	//
+	// Examples of matching names:
+	//   - TestCreateUser
+	//   - TestCreateUser_HTTP2
+	//   - TestCreateUser_HTTP2_WithRetry3
 	DefaultSuiteConsistencyTestNamePattern = regexp.MustCompile(
 		"^Test" + upperCamelNameTermPattern + "(_" + upperCamelNameTermPattern + ")*$",
 	)
@@ -304,6 +312,10 @@ func renameObjectEdits(pass *analysis.Pass, obj types.Object, proposedName strin
 	return edits
 }
 
+// IsValidSuiteConsistencyReceiverName reports whether name can be used as a configured
+// suite receiver identifier.
+//
+// A valid receiver name must be a Go identifier and cannot be the blank identifier "_".
 func IsValidSuiteConsistencyReceiverName(name string) bool {
 	return token.IsIdentifier(name) && name != "_"
 }

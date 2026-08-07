@@ -61,7 +61,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewFormatter(),
 	}
 
-	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{
+	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{ //nolint:prealloc // Pointless here
 		checkers.NewBlankImport(),
 		checkers.NewGoRequire(),
 		checkers.NewMockExpect(),
