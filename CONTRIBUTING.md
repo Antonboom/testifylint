@@ -136,7 +136,7 @@ Describe a new checker in [checkers section](./README.md#checkers).
 - [http-const](#http-const)
 - [http-sugar](#http-sugar)
 - [require-len](#require-len)
-- [suite-test-name](#suite-test-name)
+- [suite-empty-subtest-name](#suite-empty-subtest-name)
 - [zero](#zero)
 
 ---
@@ -329,40 +329,27 @@ Or maybe do something similar for maps? And come up with better name for the che
 
 ---
 
-### suite-test-name
+### suite-empty-subtest-name
 
 ```go
-import (
-    "testing"
-    "github.com/stretchr/testify/suite"
-)
-
-type BalanceSubscriptionSuite struct {
-    suite.Suite
+❌
+func (s *MySuite) TestSomething() {
+    s.Run("", func() {
+        s.Equal(42, result)
+    })
 }
 
-❌ func TestBalanceSubs_Run(t *testing.T) {
-    suite.Run(t, new(BalanceSubscriptionSuite))
-}
-
-
-✅ func TestBalanceSubscriptionSuite(t *testing.T) {
-    suite.Run(t, new(BalanceSubscriptionSuite))
+✅
+func (s *MySuite) TestSomething() {
+    s.Run("descriptive name", func() {
+        s.Equal(42, result)
+    })
 }
 ```
 
-**Autofix**: true. <br>
+**Autofix**: false. <br>
 **Enabled by default**: false. <br>
-**Reason**: Just unification of approach. <br>
-**Related issues**: [#48](https://github.com/Antonboom/testifylint/issues/48)
-
-Also, maybe to check the configurable format of subtest name? Mess example:
-
-```go
-func (s *HandlersSuite) Test_Usecase_Success()
-func (s *HandlersSuite) TestUsecaseSuccess()
-func (s *HandlersSuite) Test_UsecaseSuccess()
-```
+**Reason**: Empty subtest names produce uninformative test output.
 
 ---
 

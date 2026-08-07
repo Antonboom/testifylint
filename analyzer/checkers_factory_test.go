@@ -13,6 +13,7 @@ import (
 func Test_newCheckers(t *testing.T) {
 	expVarPattern := regexp.MustCompile(`^expected[A-Z0-9].*`)
 	fnPattern := regexp.MustCompile(`^NoErrorf?$`)
+	suiteTestNamePattern := regexp.MustCompile(`^Test_[A-Z][a-zA-Z0-9]*$`)
 	timeCallsPattern := regexp.MustCompile(`Round|UTC`)
 
 	enabledByDefaultRegularCheckers := []checkers.RegularChecker{
@@ -60,7 +61,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewFormatter(),
 	}
 
-	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{
+	enabledByDefaultAdvancedCheckers := []checkers.AdvancedChecker{ //nolint:prealloc // Pointless here
 		checkers.NewBlankImport(),
 		checkers.NewGoRequire(),
 		checkers.NewMockExpect(),
@@ -75,6 +76,7 @@ func Test_newCheckers(t *testing.T) {
 		checkers.NewMockExpect(),
 		checkers.NewRequireError(),
 		checkers.NewSuiteBrokenParallel(),
+		checkers.NewSuiteConsistency(),
 		checkers.NewSuiteMethodSignature(),
 		checkers.NewSuiteSubtestRun(),
 		checkers.NewSuiteTHelper(),
@@ -84,6 +86,9 @@ func Test_newCheckers(t *testing.T) {
 		SetCheckFormatString(false).
 		SetRequireFFuncs(false).
 		SetRequireStringMsg(false))
+	suiteConsistencyWithoutOptions := checkers.AdvancedChecker(checkers.NewSuiteConsistency().
+		SetReceiverName("").
+		SetTestNamePattern(nil))
 
 	cases := []struct {
 		name        string
@@ -132,7 +137,7 @@ func Test_newCheckers(t *testing.T) {
 				checkers.NewRequireError().Name(),
 				checkers.NewSuiteTHelper().Name(),
 			}),
-			expAdvanced: filter(allAdvancedCheckers, config.KnownCheckersValue{
+			expAdvanced: filter(replace(allAdvancedCheckers, suiteConsistencyWithoutOptions), config.KnownCheckersValue{
 				checkers.NewRequireError().Name(),
 				checkers.NewSuiteTHelper().Name(),
 			}),
@@ -145,7 +150,7 @@ func Test_newCheckers(t *testing.T) {
 				},
 			},
 			expRegular:  replace(enabledByDefaultRegularCheckers, formatterWithoutEnabledOptions),
-			expAdvanced: allAdvancedCheckers,
+			expAdvanced: append(enabledByDefaultAdvancedCheckers, checkers.NewSuiteTHelper()),
 		},
 		{
 			name: "disable three checkers from enabled by default checkers",
@@ -236,6 +241,23 @@ func Test_newCheckers(t *testing.T) {
 				checkers.NewSuiteExtraAssertCall().SetMode(checkers.SuiteExtraAssertCallModeRequire),
 			},
 			expAdvanced: []checkers.AdvancedChecker{},
+		},
+		{
+			name: "suite-consistency options defined",
+			cfg: config.Config{
+				DisableAll:      true,
+				EnabledCheckers: config.KnownCheckersValue{checkers.NewSuiteConsistency().Name()},
+				SuiteConsistency: config.SuiteConsistencyConfig{
+					ReceiverName:    "suite",
+					TestNamePattern: config.RegexpValue{Regexp: suiteTestNamePattern},
+				},
+			},
+			expRegular: []checkers.RegularChecker{},
+			expAdvanced: []checkers.AdvancedChecker{
+				checkers.NewSuiteConsistency().
+					SetReceiverName("suite").
+					SetTestNamePattern(suiteTestNamePattern),
+			},
 		},
 		{
 			name: "time-compare calls to suppress defined",

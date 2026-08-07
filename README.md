@@ -73,6 +73,7 @@ $ testifylint --expected-actual.pattern="^wanted$" ./...
 $ testifylint --formatter.check-format-string --formatter.require-f-funcs --formatter.require-string-msg ./...
 $ testifylint --go-require.ignore-http-handlers ./...
 $ testifylint --require-error.fn-pattern="^(Errorf?|NoErrorf?)$" ./...
+$ testifylint --suite-consistency.receiver-name=s --suite-consistency.test-name-pattern='^Test[A-Z][a-zA-Z0-9]*(_[A-Z][a-zA-Z0-9]*)*$' ./...
 $ testifylint --suite-extra-assert-call.mode=require ./...
 $ testifylint --time-compare.suppress-calls-pattern="UTC|Round" ./...
 ```
@@ -109,6 +110,7 @@ https://golangci-lint.run/docs/linters/configuration/#testifylint
 | [regexp](#regexp)                                   | ✅                  | ✅       |
 | [require-error](#require-error)                     | ✅                  | ❌       |
 | [suite-broken-parallel](#suite-broken-parallel)     | ✅                  | ✅       |
+| [suite-consistency](#suite-consistency)             | ❌                  | 🤏      |
 | [suite-dont-use-pkg](#suite-dont-use-pkg)           | ✅                  | ✅       |
 | [suite-extra-assert-call](#suite-extra-assert-call) | ✅                  | ✅       |
 | [suite-method-signature](#suite-method-signature)   | ✅                  | ❌       |
@@ -1195,6 +1197,53 @@ Autofix is disabled because in the most cases it requires rewriting the assertio
 code.
 
 The checker is especially useful in combination with [suite-dont-use-pkg](#suite-dont-use-pkg).
+
+---
+
+### suite-consistency
+
+```go
+import (
+    "testing"
+    "github.com/stretchr/testify/suite"
+)
+
+type BalanceSubscriptionSuite struct {
+    suite.Suite
+}
+
+❌
+func TestBalanceSubs_Run(t *testing.T) {
+    suite.Run(t, new(BalanceSubscriptionSuite))
+}
+
+✅
+func TestBalanceSubscriptionSuite(t *testing.T) {
+    suite.Run(t, new(BalanceSubscriptionSuite))
+}
+
+✅
+func TestBalanceSubscriptionSuite_NoSignature(t *testing.T) {
+    suite.Run(t, new(BalanceSubscriptionSuite))
+}
+
+❌
+func (suite *BalanceSubscriptionSuite) Test_Usecase_Success() {
+}
+
+✅
+func (s *BalanceSubscriptionSuite) TestUsecase_Success() {
+}
+```
+
+By default, suite test method names should match `TestMyLogic` or `TestMyLogic_SubTest`.
+
+Indirect `suite.Run` callbacks are out of scope. The checker only analyzes direct `suite.Run` calls inside top-level test
+functions.
+
+**Autofix**: partially (runner function, named receiver, and the `Test_...` legacy method prefix). <br>
+**Enabled by default**: false. <br>
+**Reason**: Just unification of approach.
 
 ---
 

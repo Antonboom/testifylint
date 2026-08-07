@@ -44,6 +44,7 @@ var checkerTestsGenerators = []CheckerTestsGenerator{
 	RegexpTestsGenerator{},
 	RequireErrorTestsGenerator{},
 	SuiteBrokenParallelTestsGenerator{},
+	SuiteConsistencyTestsGenerator{},
 	SuiteDontUsePkgTestsGenerator{},
 	SuiteExtraAssertCallTestsGenerator{},
 	SuiteMethodSignatureTestsGenerator{},

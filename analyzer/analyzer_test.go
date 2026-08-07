@@ -195,6 +195,15 @@ func TestTestifyLint_NotDefaultCases(t *testing.T) {
 			flags: map[string]string{"disable-all": "true", "enable": checkers.NewSuiteExtraAssertCall().Name()},
 		},
 		{
+			dir: "suite-consistency-custom",
+			flags: map[string]string{
+				"disable-all":                         "true",
+				"enable":                              checkers.NewSuiteConsistency().Name(),
+				"suite-consistency.receiver-name":     "suite",
+				"suite-consistency.test-name-pattern": `^Test_[A-Z][a-zA-Z0-9]*$`,
+			},
+		},
+		{
 			dir: "suite-require-extra-assert-call",
 			flags: map[string]string{
 				"disable-all":                  "true",

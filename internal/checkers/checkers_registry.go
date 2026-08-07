@@ -33,6 +33,7 @@ var registry = checkersRegistry{
 	{factory: asCheckerFactory(NewMockExpect), enabledByDefault: true},
 	{factory: asCheckerFactory(NewRequireError), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteBrokenParallel), enabledByDefault: true},
+	{factory: asCheckerFactory(NewSuiteConsistency), enabledByDefault: false},
 	{factory: asCheckerFactory(NewSuiteMethodSignature), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteSubtestRun), enabledByDefault: true},
 	{factory: asCheckerFactory(NewSuiteTHelper), enabledByDefault: false},
