@@ -129,7 +129,6 @@ Describe a new checker in [checkers section](./README.md#checkers).
 # Open for contribution
 
 - [elements-match](#elements-match)
-- [error-compare](#error-compare)
 - [go-require](#go-require)
 - [graceful-teardown](#graceful-teardown)
 - [float-compare](#float-compare)
@@ -177,27 +176,6 @@ callback := func() {     // Error from `go-require` needed.
 wg.Go(callback)
 go callback()
 ```
-
----
-
-### error-compare
-
-```go
-❌   assert.ErrorContains(t, err, "not found")
-     assert.EqualError(t, err, "user not found")
-     assert.Equal(t, err.Error(), "user not found")
-     assert.Equal(t, err, errSentinel) // Through `reflect.DeepEqual` causes error strings to be compared.
-     assert.NotEqual(t, err, errSentinel)
-     require.Error(t, fmt.Errorf("you need to specify either logGroupName or logGroupArn"), err) // grafana case
-     // etc.
-
-✅   assert.ErrorIs(t, err, ErrUserNotFound)
-```
-
-**Autofix**: false. <br>
-**Enabled by default**: true. <br>
-**Reason**: The `Error()` method on the `error` interface exists for humans, not code. <br>
-**Related issues**: [#47](https://github.com/Antonboom/testifylint/issues/47)
 
 ---
 
