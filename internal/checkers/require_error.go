@@ -241,8 +241,9 @@ func markCallsInNoErrorSequence(callsByBlock map[*ast.BlockStmt][]*callMeta) {
 type callMeta struct {
 	call         *ast.CallExpr
 	testifyCall  *CallMeta
-	rootIf       *ast.IfStmt // The root `if` in if-else[-if] chain.
-	parentIf     *ast.IfStmt // The nearest `if`, can be equal with rootIf.
+	rootIf       *ast.IfStmt     // The root `if` in if-else[-if] chain.
+	parentIf     *ast.IfStmt     // The nearest `if`, can be equal with rootIf.
+	parentSwitch *ast.SwitchStmt // The nearest tagless/tagged `switch`.
 	parentBlock  *ast.BlockStmt
 	inIfCond     bool // True for code like `if assert.ErrorAs(t, err, &target) {`.
 	inBoolExpr   bool // True for code like `assert.Error(t, err) && assert.ErrorContains(t, err, "value")`

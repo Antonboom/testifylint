@@ -56,6 +56,7 @@ func TestAll(t *testing.T) {
 		"useless-assert",
 		"formatter",
 		"blank-import",
+		"error-first",
 		"go-require",
 		"mock-expect",
 		"require-error",
