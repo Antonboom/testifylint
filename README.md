@@ -567,6 +567,23 @@ require.NoError(t, err)
 res, err = myfunc()
 require.NoError(t, err)
 assert.NotNil(t, res)
+
+res, err := myfunc()
+if someCond {
+    require.ErrorContains(t, err, "msg")
+} else {
+    require.NoError(t, err)
+}
+assert.Equal(t, 0, res)
+
+res, err := myfunc()
+switch {
+case someCond:
+    require.ErrorContains(t, err, "msg")
+default:
+    require.NoError(t, err)
+}
+assert.Equal(t, 0, res)
 ```
 
 **Autofix**: false. <br>
@@ -575,6 +592,8 @@ assert.NotNil(t, res)
 The error should always be asserted first.
 Any testify assertion counts only when the `err` variable is used in assertion arguments (not message arguments like `msgAndArgs`).
 Reassigning tracked variables from a new multi-return call requires a new error assertion.
+An `if/else[-if]` or `switch` is only considered to check the error when every branch asserts
+it and the chain is exhaustive (trailing `else`, or `switch` with a `default` case).
 
 ---
 

@@ -14,6 +14,12 @@ func resultAndErr() (int, error)                { return 0, nil }
 func errAndResult() (error, int)                { return nil, 0 }
 func resultOnly() int                           { return 0 }
 func resultAndErrAndMore() (int, string, error) { return 0, "", nil }
+func process(v int) *int                        { return &v }
+
+var (
+	cond  bool
+	cond2 bool
+)
 
 func TestErrorFirstChecker(t *testing.T) {
 	// Invalid: error not checked before asserting result.
@@ -147,6 +153,61 @@ func TestErrorFirstChecker(t *testing.T) {
 		res = 1
 		assert.Equal(t, 1, res)
 	}
-}
 
-func process(v int) *int { return &v }
+	// Valid: error checked in both branches of an exhaustive if/else, result used after.
+	{
+		res, err := resultAndErr()
+		if cond {
+			require.ErrorContains(t, err, "msg")
+		} else {
+			require.NoError(t, err)
+		}
+		assert.Equal(t, 0, res)
+	}
+
+	// Valid: error checked in every branch of an exhaustive if/else-if/else, result used after.
+	{
+		res, err := resultAndErr()
+		if cond {
+			require.ErrorContains(t, err, "msg")
+		} else if cond2 {
+			require.ErrorIs(t, err, errors.New("msg"))
+		} else {
+			require.NoError(t, err)
+		}
+		assert.Equal(t, 0, res)
+	}
+
+	// Invalid: if branch asserts error but there is no else — not exhaustive.
+	{
+		res, err := resultAndErr()
+		if cond {
+			require.NoError(t, err)
+		}
+		assert.Equal(t, 0, res) // want "error-first: assert error before making other assertions"
+	}
+
+	// Valid: error checked in every case of an exhaustive switch (with default), result used after.
+	{
+		res, err := resultAndErr()
+		switch {
+		case cond:
+			require.ErrorContains(t, err, "msg")
+		case cond2:
+			require.ErrorIs(t, err, errors.New("msg"))
+		default:
+			require.NoError(t, err)
+		}
+		assert.Equal(t, 0, res)
+	}
+
+	// Invalid: switch has no default case — not exhaustive.
+	{
+		res, err := resultAndErr()
+		switch {
+		case cond:
+			require.NoError(t, err)
+		}
+		assert.Equal(t, 0, res) // want "error-first: assert error before making other assertions"
+	}
+}

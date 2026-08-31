@@ -194,13 +194,14 @@ func (checker ErrorFirst) Check(pass *analysis.Pass, insp *inspector.Inspector) 
 		testifyCall := NewCallMeta(pass, callExpr)
 
 		call := &callMeta{
-			call:        callExpr,
-			testifyCall: testifyCall,
-			rootIf:      findRootIf(stack),
-			parentIf:    findNearestNode[*ast.IfStmt](stack),
-			parentBlock: findNearestNode[*ast.BlockStmt](stack),
-			inIfCond:    inIfCond,
-			inBoolExpr:  inBoolExpr,
+			call:         callExpr,
+			testifyCall:  testifyCall,
+			rootIf:       findRootIf(stack),
+			parentIf:     findNearestNode[*ast.IfStmt](stack),
+			parentSwitch: findNearestNode[*ast.SwitchStmt](stack),
+			parentBlock:  findNearestNode[*ast.BlockStmt](stack),
+			inIfCond:     inIfCond,
+			inBoolExpr:   inBoolExpr,
 		}
 
 		callsByFunc[*fID] = append(callsByFunc[*fID], call)
@@ -375,8 +376,112 @@ func errorFirstIsErrChecked(
 			nodeContains(other.parentBlock, c.call) {
 			return true
 		}
+
+		// Case 4: error assertion is in an if/else body (not condition), and the
+		// whole if-else[-if] chain exhaustively asserts the error in every branch;
+		// the call must come after the chain, in one of its ancestor blocks.
+		if !other.inIfCond && other.rootIf != nil &&
+			errorFirstIfElseChecksErr(pass, other.rootIf, info.errObj, allCalls) &&
+			other.rootIf.End() <= c.call.Pos() &&
+			nodeContains(c.parentBlock, other.rootIf) {
+			return true
+		}
+
+		// Case 5: error assertion is in a switch case/default body, and the whole
+		// switch exhaustively asserts the error in every case (including default);
+		// the call must come after the switch, in one of its ancestor blocks.
+		if other.parentSwitch != nil &&
+			errorFirstSwitchChecksErr(pass, other.parentSwitch, info.errObj, allCalls) &&
+			other.parentSwitch.End() <= c.call.Pos() &&
+			nodeContains(c.parentBlock, other.parentSwitch) {
+			return true
+		}
 	}
 	return false
+}
+
+// errorFirstSwitchChecksErr returns true if sw has a `default` clause and
+// every clause (including default) contains an assertion on errObj.
+func errorFirstSwitchChecksErr(
+	pass *analysis.Pass,
+	sw *ast.SwitchStmt,
+	errObj *types.Var,
+	allCalls []*callMeta,
+) bool {
+	hasDefault := false
+	for _, stmt := range sw.Body.List {
+		clause, ok := stmt.(*ast.CaseClause)
+		if !ok {
+			continue
+		}
+		if clause.List == nil {
+			hasDefault = true
+		}
+		if !errorFirstNodeAssertsErr(pass, clause, errObj, allCalls) {
+			return false
+		}
+	}
+	return hasDefault
+}
+
+// errorFirstNodeAssertsErr returns true if n contains a canonical error
+// assertion referencing errObj.
+func errorFirstNodeAssertsErr(
+	pass *analysis.Pass,
+	n ast.Node,
+	errObj *types.Var,
+	allCalls []*callMeta,
+) bool {
+	for _, c := range allCalls {
+		if c.testifyCall == nil {
+			continue
+		}
+		if !isErrorFirstErrorAssertion(c.testifyCall.Fn.NameFTrimmed) {
+			continue
+		}
+		if !errorFirstErrArgMatchesAssertionArgs(pass, c.testifyCall, errObj) {
+			continue
+		}
+		if nodeContains(n, c.call) {
+			return true
+		}
+	}
+	return false
+}
+
+// errorFirstIfElseChecksErr returns true if ifStmt has a trailing `else` and
+// every terminal branch of the if-else[-if] chain contains an assertion on errObj.
+func errorFirstIfElseChecksErr(
+	pass *analysis.Pass,
+	ifStmt *ast.IfStmt,
+	errObj *types.Var,
+	allCalls []*callMeta,
+) bool {
+	if ifStmt.Else == nil {
+		return false
+	}
+	if !errorFirstBlockAssertsErr(pass, ifStmt.Body, errObj, allCalls) {
+		return false
+	}
+	switch elseNode := ifStmt.Else.(type) {
+	case *ast.BlockStmt:
+		return errorFirstBlockAssertsErr(pass, elseNode, errObj, allCalls)
+	case *ast.IfStmt:
+		return errorFirstIfElseChecksErr(pass, elseNode, errObj, allCalls)
+	default:
+		return false
+	}
+}
+
+// errorFirstBlockAssertsErr returns true if block contains a canonical error
+// assertion referencing errObj.
+func errorFirstBlockAssertsErr(
+	pass *analysis.Pass,
+	block *ast.BlockStmt,
+	errObj *types.Var,
+	allCalls []*callMeta,
+) bool {
+	return errorFirstNodeAssertsErr(pass, block, errObj, allCalls)
 }
 
 // errorFirstErrArgMatchesAssertionArgs returns true if any non-message argument
