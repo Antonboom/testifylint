@@ -1,0 +1,5 @@
+project = "github.com/nnutter/testifylint"
+bin = ["testifylint"]
+
+[source]
+repo = "https://github.com/nnutter/testifylint"

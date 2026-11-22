@@ -59,11 +59,18 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     env:
       GH_REPO: ${{ github.repository }}
       GH_TOKEN: ${{ github.token }}
       TAG: ${{ github.ref_name }}
     steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Download the artifacts
         uses: actions/download-artifact@v8
         with:
@@ -85,6 +92,12 @@ jobs:
         run: gh release create "$TAG" --verify-tag --draft --generate-notes --title "$TAG"
       - name: Upload the assets
         run: gh release upload "$TAG" dist/* --clobber
+      - name: Sign the release with packslip
+        uses: jdx/packslip@v1
+        with:
+          artifacts: dist/*.tar.gz
+          bin: testifylint
+          manifest: release.toml
       - name: Publish the release
         if: steps.state.outputs.state != 'published'
         run: gh release edit "$TAG" --draft=false --latest
