@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  GO_VERSION: ^1.26
+  GO_VERSION: 1.26.x
 
 jobs:
   build:
@@ -46,8 +46,9 @@ jobs:
           name="${BINARY}_${TAG}_${GOOS}_${GOARCH}"
           ldflags="-s -w -X main.version=${TAG} -X main.commit=${GITHUB_SHA}"
           ldflags="${ldflags} -X main.date=$(git log -1 --format=%cI)"
-          CGO_ENABLED=0 go build -trimpath -ldflags "${ldflags}" -o "$name" .
-          tar -czf "${name}.tar.gz" "$name"
+          CGO_ENABLED=0 go build -trimpath -ldflags "${ldflags}" -o testifylint .
+          tar -czf "${name}.tar.gz" testifylint
+          rm testifylint
       - name: Upload the artifact
         uses: actions/upload-artifact@v7
         with:
